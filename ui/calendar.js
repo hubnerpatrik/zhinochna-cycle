@@ -22,6 +22,7 @@ export function renderTempScale() {
   if (!scale) return;
   scale.innerHTML = "";
   for (let temp = LAYOUT.maxTemp; temp >= LAYOUT.minTemp - LAYOUT.tempStep / 2; temp -= LAYOUT.tempStep) {
+    if (LAYOUT.chartHeight < 600 && Math.round((LAYOUT.maxTemp - temp) / LAYOUT.tempStep) % 4 !== 0) continue;
     const label = document.createElement("div");
     label.className = "temp-scale-label";
     label.textContent = Number(temp).toFixed(2);

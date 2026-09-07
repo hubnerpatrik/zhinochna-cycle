@@ -349,6 +349,7 @@ export function drawAdjustedTemperaturePoints(ctx, columns) {
 /** Draws the measurement time label under a temperature dot, when set. */
 export function drawMeasurementTimes(ctx, columns) {
   columns.forEach(col => {
+    if (LAYOUT.columnWidth < 24 && col.key !== store.selectedKey) return;
     if (col.temp == null || !col.measurementTime) return;
     const pointY = chartY(col.temp);
     ctx.font = "10px Inter";

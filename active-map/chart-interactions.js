@@ -40,7 +40,10 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
   let suppressNextClick = false;
   let markerHintTimer = null;
 
-  const renderCurrentChart = () => renderChart(getColumns(), { coverlineSelected });
+  const renderCurrentChart = () => {
+    qs("tempChart")?.classList.toggle("coverline-touch-edit", coverlineSelected);
+    renderChart(getColumns(), { coverlineSelected });
+  };
 
   function persist() {
     try {
@@ -139,7 +142,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     if (!toast) return;
     const label = document.createElement("span");
     const remove = document.createElement("button");
-    label.textContent = "Drag a line to move it or drag an endpoint to resize it.";
+    label.textContent = "Drag a line or endpoint to adjust it. Tap away from the lines to finish.";
     remove.type = "button";
     remove.className = "toast-action toast-action-danger";
     remove.textContent = "Delete";
@@ -238,6 +241,8 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     const canvas = qs("tempChart");
     if (!canvas) return;
     canvas.addEventListener("pointerdown", event => {
+      // First touch selects a line with a tap; swiping over it still scrolls the page.
+      if (event.pointerType === "touch" && (!coverlineSelected || !event.isPrimary)) return;
       if (event.button !== 0 || store.crossCellSelectionMode || store.markerSelectionMode
         || store.horizontalCoverlineMode || store.verticalCoverlineMode) return;
       const point = canvasPointerPosition(event, canvas);
@@ -295,6 +300,14 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       const point = canvasPointerPosition(event, canvas);
       if (!point) return;
       const columns = getColumns();
+      if (!coverlineSelected && !store.crossCellSelectionMode && !store.markerSelectionMode
+        && !store.horizontalCoverlineMode && !store.verticalCoverlineMode
+        && getCoverlineDragTarget(point.x, point.y, columns)) {
+        coverlineSelected = true;
+        showCoverlinePill();
+        renderCurrentChart();
+        return;
+      }
       if (coverlineSelected && !getCoverlineDragTarget(point.x, point.y, columns)) {
         coverlineSelected = false;
         hideToolPill();
@@ -356,6 +369,18 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       bindCanvas();
     },
     render: renderCurrentChart,
+    finishTouchDrag() {
+      if (activeDrag) {
+        const canvas = qs("tempChart");
+        if (activeDrag.moved) persist();
+        canvas?.releasePointerCapture?.(activeDrag.pointerId);
+        activeDrag = null;
+        if (canvas) setCursor(canvas, null);
+      }
+      if (coverlineSelected) hideToolPill();
+      coverlineSelected = false;
+      renderCurrentChart();
+    },
     finishMarkerPlacement() {
       cancelMarkerPlacement();
       hideToolPill();
@@ -364,6 +389,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       const active = coverlineSelected || store.horizontalCoverlineMode || store.verticalCoverlineMode
         || store.crossCellSelectionMode || store.markerSelectionMode;
       clearModes();
+      qs("tempChart")?.classList.remove("coverline-touch-edit");
       if (active) hideToolPill();
     },
   };

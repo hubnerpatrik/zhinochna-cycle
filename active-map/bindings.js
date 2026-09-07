@@ -1,5 +1,6 @@
 import { store } from "../store.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
+import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
 import { LAYOUT, qs, qsa, syncCSSVariables } from "../core.js";
 import {
   changeFertileRangeMonth,
@@ -39,9 +40,6 @@ import {
   syncMucusModalUI,
 } from "../ui.js";
 
-const ZOOM_MIN = 24;
-const ZOOM_MAX = 90;
-const ZOOM_STEP = 8;
 let initialized = false;
 
 function bindButton(id, handler) {
@@ -83,6 +81,7 @@ export function saveActiveMap({
 
 export function initializeActiveMapControls({
   chartInteractions,
+  mobileMap,
   getColumns,
   render,
   renderZoomLabel,
@@ -157,17 +156,32 @@ export function initializeActiveMapControls({
     ["dayInfoModal", closeDayInfoModal],
   ]);
 
-  bindButton("zoomInBtn", () => {
-    LAYOUT.columnWidth = Math.min(ZOOM_MAX, LAYOUT.columnWidth + ZOOM_STEP);
+  const mapScroll = document.querySelector(".map-scroll");
+  const fixedWidth = () => LAYOUT.sideLabelWidth + LAYOUT.tempScaleWidth;
+  const setWidth = width => {
+    mobileMap.setWidth(width);
     syncCSSVariables();
     render();
     renderZoomLabel();
-  });
-  bindButton("zoomOutBtn", () => {
-    LAYOUT.columnWidth = Math.max(ZOOM_MIN, LAYOUT.columnWidth - ZOOM_STEP);
-    syncCSSVariables();
-    render();
-    renderZoomLabel();
+  };
+  const zoomBy = step => {
+    const width = mobileMap.clampWidth(mobileMap.zoomStep(step));
+    const oldHeight = LAYOUT.chartHeight;
+    const top = mapScroll?.scrollTop || 0;
+    const anchorY = (mapScroll?.clientHeight || 0) / 2;
+    const left = mapScroll && zoomScrollLeft(mapScroll.scrollLeft, mapScroll.clientWidth / 2,
+      fixedWidth(), LAYOUT.columnWidth, width);
+    setWidth(width);
+    if (mapScroll) mapScroll.scrollLeft = left;
+    if (mapScroll && mobileMap.active()) mapScroll.scrollTop = Math.max(0, (top + anchorY - 28) * LAYOUT.chartHeight / oldHeight - anchorY + 28);
+  };
+  bindButton("zoomInBtn", () => zoomBy(1));
+  bindButton("zoomOutBtn", () => zoomBy(-1));
+  if (mapScroll) bindMapGestures(mapScroll, {
+    getWidth: () => LAYOUT.columnWidth, setWidth, fixedWidth,
+    clampWidth: width => mobileMap.clampWidth(width),
+    getHeight: () => LAYOUT.chartHeight,
+    onPinch: () => chartInteractions.finishTouchDrag(),
   });
 
   bindButton("devReset", () => {

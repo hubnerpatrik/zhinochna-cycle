@@ -5,6 +5,7 @@ import { buildColumns } from "./domain.js";
 import { createRouter } from "./router.js";
 import { createChartInteractions } from "./active-map/chart-interactions.js";
 import { initializeActiveMapControls } from "./active-map/bindings.js";
+import { createMobileMap } from "./active-map/mobile-map.js";
 import { configureModalNavigation, hideAllModals } from "./ui/modal-shared.js";
 import {
   openActionModal,
@@ -58,6 +59,8 @@ const chartInteractions = createChartInteractions({
   showMessage,
 });
 
+const mobileMap = createMobileMap({ render, getColumns: () => currentColumns, interactions: chartInteractions });
+
 function renderActiveMapMeta() {
   const activeMap = store.getActiveMap();
   const name = qs("activeMapName");
@@ -78,6 +81,7 @@ function renderActiveMapMeta() {
 }
 
 export function render() {
+  mobileMap.prepare();
   renderMonth();
   renderCalendar(selectColumn);
   renderTempScale();
@@ -86,6 +90,7 @@ export function render() {
   chartInteractions.render();
   renderProfileInfo();
   renderActiveMapMeta();
+  mobileMap.update();
 }
 
 function renderZoomLabel() {
@@ -97,11 +102,13 @@ function showStandaloneScreen() {
   hideAllModals();
   qs("screenRoot")?.classList.remove("hidden");
   qs("activeMapScreen")?.classList.add("hidden");
+  mobileMap.prepare();
 }
 
 function openActiveMapScreen() {
   initializeActiveMapControls({
     chartInteractions,
+    mobileMap,
     getColumns: () => currentColumns,
     render,
     renderZoomLabel,
@@ -117,6 +124,7 @@ function openActiveMapScreen() {
   displayedMapId = store.getActiveMapId();
   qs("screenRoot")?.classList.add("hidden");
   qs("activeMapScreen")?.classList.remove("hidden");
+  mobileMap.init();
   render();
   renderZoomLabel();
 }
