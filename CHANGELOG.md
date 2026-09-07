@@ -12,7 +12,23 @@ vMAJOR.MINOR.PATCH
 
 ---
 
-## 0.10.6 — In development
+## 0.10.7 — In development
+
+### Changed
+
+- Give phones a Graph / Calendar switch that preserves the selected day and chart zoom.
+- Fit the full temperature chart to the phone viewport, add Show all, and zoom both axes for detailed editing.
+- Move Day record and Tools below the chart; keep tool feedback and actions clear of the data.
+- Combine the day summary with existing editors, and include Fertile range in the mobile Tools menu.
+- Keep observation rows available through Show observations and retain the desktop layout.
+- Refine mobile controls with subtle tool icons, the shared orange accent, and a neutral Fertile range button.
+- Add brief panel and button animations that respect reduced-motion preferences.
+- Support two-finger chart zoom anchored between the fingers, with native one-finger scrolling and inertia.
+- Keep the visible chart position when using zoom buttons and prevent gestures from selecting chart cells.
+- Require a tap to select coverlines before dragging them on touch screens.
+- Improve mobile touch targets, form text, narrow layouts, safe-area spacing, and chart gesture guidance.
+
+## 0.10.6
 
 ### Changed
 

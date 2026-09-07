@@ -21,7 +21,7 @@ export function renderInfoLines(element, lines) {
   });
 }
 
-export function openDayInfoModal(currentColumns) {
+export function renderDayInfo(currentColumns) {
   if (!store.selectedKey) return showMessage("Select a day first");
   const key = store.selectedKey;
   const data = store.entries[key] || {};
@@ -56,6 +56,11 @@ export function openDayInfoModal(currentColumns) {
   const sex = data.sex === true ? "Yes" : data.sex === false ? "No" : "-";
   const notes = typeof data.other === "string" && data.other.trim() ? data.other : "-";
   renderInfoLines(qs("infoOther"), [`Sex: ${sex}`, `Notes: ${notes}`]);
+}
+
+export function openDayInfoModal(currentColumns) {
+  if (!store.selectedKey) return showMessage("Select a day first");
+  renderDayInfo(currentColumns);
   showModal("dayInfoModal");
 }
 

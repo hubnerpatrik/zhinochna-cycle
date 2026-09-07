@@ -36,6 +36,7 @@ export function showMessage(text, duration = 2200) {
     toastTransitionHandler = null;
   }
   toast.textContent = text;
+  toast.classList.remove("persistent-toast", "action-toast");
   toast.classList.remove("hidden");
   requestAnimationFrame(() => toast.classList.add("show"));
 

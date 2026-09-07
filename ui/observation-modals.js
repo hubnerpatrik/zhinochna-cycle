@@ -11,6 +11,8 @@ import {
   updateSelectedEntry,
 } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
+import { renderDayInfo } from "./day-info-modal.js";
+import { buildColumns } from "../domain.js";
 
 export function returnsToActionMenuAfterSave(modalId) {
   return modalId !== "markersModal";
@@ -26,6 +28,15 @@ function finishSave(modalId, render) {
 }
 
 export function openActionModal() {
+  const summary = qs("mobileDaySummary");
+  if (summary && window.matchMedia("(max-width: 560px)").matches && store.selectedKey) {
+    renderDayInfo(buildColumns());
+    const title = document.createElement("p");
+    title.textContent = qs("dayInfoTitle").innerText;
+    const panel = qs("dayInfoModal").querySelector(".info-panel").cloneNode(true);
+    panel.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
+    summary.replaceChildren(title, panel);
+  }
   showModal("actionModal");
 }
 

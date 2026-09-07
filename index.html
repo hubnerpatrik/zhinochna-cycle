@@ -7,7 +7,7 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
   <title>
@@ -45,7 +45,16 @@
     <div id="screenRoot"></div>
 
     <section id="activeMapScreen" class="hidden" aria-label="Active map">
-      <section class="layout" aria-label="Cycle tracker dashboard">
+      <div class="mobile-map-header mobile-only">
+        <button id="mobileMenuBtn" type="button" aria-label="Main Menu">‹</button>
+        <strong id="mobileMapName">Active map</strong>
+        <button id="mobileSaveBtn" type="button">Save Map</button>
+      </div>
+      <div class="mobile-map-tabs mobile-only" role="tablist" aria-label="Map view">
+        <button id="mobileGraphTab" type="button" role="tab" aria-selected="true" aria-controls="mobileGraphPanel">Graph</button>
+        <button id="mobileCalendarTab" type="button" role="tab" aria-selected="false" aria-controls="mobileCalendarPanel">Calendar</button>
+      </div>
+      <section id="mobileCalendarPanel" class="layout" aria-label="Cycle tracker dashboard">
         <section class="calendar-card" aria-label="Calendar view">
           <div class="calendar-nav">
             <button id="prevMonth" type="button">‹</button>
@@ -74,7 +83,8 @@
         </aside>
       </section>
 
-      <section class="chart-card" aria-label="Cycle chart">
+      <section id="mobileGraphPanel" class="chart-card" aria-label="Cycle chart">
+        <div class="mobile-chart-toolbar mobile-only"><span>Temperature · °C</span><button id="mobileFitBtn" type="button">Show all</button><button id="mobileZoomOutBtn" type="button" aria-label="Zoom out">−</button><button id="mobileZoomInBtn" type="button" aria-label="Zoom in">+</button></div>
         <div class="chart-tools">
           <div class="chart-tools-left">
             <div class="active-map-meta">
@@ -82,9 +92,9 @@
               <span id="activeMapStatusPill" class="map-pill hidden">Open</span>
             </div>
             <div class="zoom-controls">
-              <button id="zoomOutBtn" class="tool-btn" type="button">−</button>
+              <button id="zoomOutBtn" class="tool-btn" type="button" aria-label="Zoom out">−</button>
               <span id="zoomLabel">100%</span>
-              <button id="zoomInBtn" class="tool-btn" type="button">+</button>
+              <button id="zoomInBtn" class="tool-btn" type="button" aria-label="Zoom in">+</button>
             </div>
           </div>
           <div class="chart-tools-right">
@@ -95,8 +105,9 @@
           </div>
         </div>
 
+        <p id="mapGestureHint" class="map-gesture-hint">Swipe to move · Pinch to zoom · Tap a day to select it</p>
         <div class="cycle-map">
-          <div class="map-scroll">
+          <div class="map-scroll" tabindex="0" role="region" aria-label="Cycle chart" aria-describedby="mapGestureHint">
             <div class="map-grid">
               <div class="map-header-row">
                 <div class="map-side-label"></div>
@@ -116,7 +127,24 @@
             </div>
           </div>
         </div>
+        <button id="mobileObservationsBtn" class="mobile-only mobile-observations-btn" type="button" aria-expanded="false">Show observations</button>
       </section>
+
+      <footer id="mobileMapDock" class="mobile-only">
+        <div class="mobile-selected-day"><div><strong id="mobileSelectedDate">Select a day</strong><span id="mobileSelectedCycle"></span></div><strong id="mobileSelectedTemp"></strong></div>
+        <div id="mobileToolFeedback"></div>
+        <div id="mobileMapActions" class="mobile-map-actions">
+          <button id="mobileDayBtn" class="btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4H5v16h14v-9M14 4l3-2 5 5-3 3M11 13l3-1 5-5-3-3-5 5v4Z"/></svg><span>Day record</span></button>
+          <button id="mobileTools" class="btn" type="button" aria-expanded="false" aria-controls="mobileToolsList"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h4m4 0h8M4 12h10m4 0h2M4 18h2m4 0h10"/><circle cx="10" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></svg><span>Tools</span><svg class="mobile-tools-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></button>
+          <div id="mobileToolsList" class="mobile-tools-list" hidden>
+            <button type="button" data-mobile-tool="fertileRangeActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16m-12 4h2m4 0h2"/></svg></span><span>Fertile range</span></button>
+            <button type="button" data-mobile-tool="coverlineBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v14h14M3 7l3-3 3 3m8 8 3 3-3 3"/></svg></span><span>Coverlines</span></button>
+            <button type="button" data-mobile-tool="markersActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4m0 0h13l-3 4 3 4H6"/></svg></span><span>Markers</span></button>
+            <button type="button" data-mobile-tool="crossCellsActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span>Cross cells</span></button>
+          </div>
+        </div>
+        <button id="mobileCancelToolBtn" type="button" class="hidden">Cancel</button>
+      </footer>
 
       <div class="dev-panel">
         <button id="devReset" class="text-btn" type="button">DEV RESET</button>
@@ -132,7 +160,7 @@
 
       <div class="modal-section">
         <div class="section-title">Temperature</div>
-        <input id="tempInput" type="number" step="0.01" min="36" max="37.4" placeholder="36.50">
+        <input id="tempInput" type="number" inputmode="decimal" step="0.01" min="36" max="37.4" placeholder="36.50">
 
         <label class="input-label">Influence factors</label>
         <select id="tempFactorsInput"></select>
@@ -156,6 +184,7 @@
   <div id="actionModal" class="modal hidden">
     <div class="modal-card">
       <h2>Edit Day</h2>
+      <div id="mobileDaySummary" class="mobile-only"></div>
       <div id="actionModalActions"></div>
       <button id="closeActionModalBtn" class="btn secondary" type="button">Close</button>
     </div>
