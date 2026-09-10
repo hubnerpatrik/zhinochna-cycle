@@ -21,6 +21,7 @@ import {
   normalizeDayMarkers,
   normalizeMap,
   normalizeProfile,
+  normalizeCycleSummaries,
 } from "./data-validation.js";
 import { parseBackup, serializeBackup } from "./backup.js";
 
@@ -392,6 +393,13 @@ export class Store {
     if (this.activeMapId === mapId) {
       this.entries = this.maps[mapId].entries;
     }
+    this._persistAll();
+  }
+
+  saveCycleSummaries(mapId, summaries) {
+    if (!this.maps[mapId]) throw new Error('The selected map no longer exists.');
+    const normalized = normalizeCycleSummaries(summaries, true);
+    this.maps[mapId] = { ...this.maps[mapId], cycleSummaries: normalized };
     this._persistAll();
   }
 

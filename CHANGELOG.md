@@ -12,7 +12,17 @@ vMAJOR.MINOR.PATCH
 
 ---
 
-## 0.10.7 — In development
+## 0.10.8 — In development
+
+### Changed
+
+- Add editable cycle summaries, calendar calculations, and 6/12-cycle history across local maps; keep shared maps separate and exclude incomplete or conflicting records.
+- Replace the sidebar avatar placeholder with cycle results and add mobile Profile and Summary buttons.
+- Make the summary editor full-screen on phones, with fixed equal-size actions, numeric inputs, and independent content scrolling.
+- Lock background scrolling for all modals and close native dialogs during navigation.
+- Reuse observation history while editing summary fields; BBT results still use chart markers rather than automatic temperature-rule detection.
+
+## 0.10.7
 
 ### Changed
 

@@ -60,6 +60,14 @@
   .mobile-map-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: #f4e9e1; }
   .mobile-map-tabs button { min-height: 44px; background: transparent; border: 0; border-radius: 10px; font: inherit; font-size: 14px; color: var(--text); }
   .mobile-map-tabs button[aria-selected="true"] { background: #fffaf6; box-shadow: 0 2px 6px #0000000a; }
+  .mobile-profile-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0; }
+  .mobile-profile-actions button { min-height:44px; padding:10px 12px; border:1px solid #e9d9d3; border-radius:12px; background:#fffaf6; color:var(--text); font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+  .mobile-profile-actions button:active { background:#f4e9e1; }
+  #mobileProfileBtn { background:linear-gradient(135deg,#e9def8,#f5eafa); border-color:#d6c3e8; color:#62477c; }
+  #mobileSummaryBtn { background:linear-gradient(135deg,#ffe0c5,#fff0dc); border-color:#edc39f; color:#804d2e; }
+  .mobile-profile-actions button:active { filter:brightness(.95); }
+  .mobile-profile-actions button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .mobile-profile-actions button:disabled { opacity:.5; cursor:default; }
   #activeMapScreen .info-card, #activeMapScreen .dev-panel, #activeMapScreen .chart-tools { display: none; }
   #activeMapScreen:not(.mobile-calendar-view) > .layout { display: none; }
   #activeMapScreen.mobile-calendar-view > .chart-card { display: none; }

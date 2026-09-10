@@ -1392,6 +1392,20 @@ h1::before{
 
 /* ─── modal ──────────────────────────────── */
 
+/* Lock the document while any overlay is open, including native dialogs. */
+html:has(.modal.show:not(.hidden), dialog:modal) {
+  overflow:hidden;
+  scrollbar-gutter:stable;
+}
+
+body:has(.modal.show:not(.hidden), dialog:modal) {
+  overflow:hidden;
+}
+
+.modal, .modal-card, dialog:modal {
+  overscroll-behavior:contain;
+}
+
 .modal {
   position: fixed;
   inset: 0;

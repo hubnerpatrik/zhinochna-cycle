@@ -22,7 +22,7 @@ The app combines **basal body temperature, bleeding, cervical mucus, cervix obse
 
 It does **not** predict ovulation, assign fertility scores or automatically decide what the cycle data means.
 
-> **Current status:** Active prototype · v0.10.7 (in development)
+> **Current status:** Active prototype · v0.10.8 (in development)
 
 Each main screen has its own URL (`#/menu`, `#/my-profile`, `#/my-maps`,
 `#/create-map`, and `#/active-map?map=…`). Day editors also have history entries,

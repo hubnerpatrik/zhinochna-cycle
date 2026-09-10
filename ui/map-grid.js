@@ -1,5 +1,7 @@
 import { store } from "../store.js";
 import { chartWidth, qs } from "../core.js";
+import { renderCycleSummary } from "./cycle-summary.js";
+import { profileInfoRows } from "./profile-info-modal.js";
 
 const SIDEBAR_ACTIONS = [
   ["editBtn", "Edit Day", "chip-edit-special", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4Z"/><path d="M14 6l3 3"/></svg>`],
@@ -52,24 +54,15 @@ export function renderProfileInfo() {
   const card = qs("profileInfoCard");
   if (!card) return;
   const profile = store.getActiveMapProfile();
-  const rows = [
-    ["Name", profile.name],
-    ["Consultant", profile.consultantName],
-    ["Age", profile.age],
-    ["Time", profile.usualMeasurementTime],
-    ["Goal", { avoid: "Avoid pregnancy", achieve: "Achieve pregnancy", observation: "Observation only" }[profile.goal]],
-    ["Method", { oral: "Oral", vaginal: "Vaginal", rectal: "Rectal" }[profile.measurementMethod]],
-  ].filter(([, value]) => value);
+  const rows = profileInfoRows(profile).filter(([, value]) => value);
 
   if (!rows.length) {
     card.replaceChildren();
+    renderCycleSummary(card);
     return;
   }
   card.innerHTML = `
     <div class="profile-info-title">Profile</div>
-    <div class="sidebar-profile-photo" role="img" aria-label="Empty profile photo placeholder">
-      <svg viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="35" r="17"></circle><path d="M18 84c2-19 14-30 30-30s28 11 30 30"></path></svg>
-    </div>
     <div class="profile-info-rows"></div>`;
   const container = card.querySelector(".profile-info-rows");
   rows.forEach(([label, value]) => {
@@ -84,6 +77,7 @@ export function renderProfileInfo() {
     row.append(name, content);
     container.appendChild(row);
   });
+  renderCycleSummary(card);
 }
 
 function makeCell(text = "", selected = "", group = "", ...classes) {
