@@ -12,7 +12,7 @@ vMAJOR.MINOR.PATCH
 
 ---
 
-## 0.10.7 — In development
+## 0.10.8 — In development
 
 ### Changed
 
@@ -21,6 +21,10 @@ vMAJOR.MINOR.PATCH
 - Make the summary editor full-screen on phones, with fixed equal-size actions, numeric inputs, and independent content scrolling.
 - Lock background scrolling for all modals and close native dialogs during navigation.
 - Reuse observation history while editing summary fields; BBT results still use chart markers rather than automatic temperature-rule detection.
+
+## 0.10.7
+
+### Changed
 
 - Give phones a Graph / Calendar switch that preserves the selected day and chart zoom.
 - Fit the full temperature chart to the phone viewport, add Show all, and zoom both axes for detailed editing.
