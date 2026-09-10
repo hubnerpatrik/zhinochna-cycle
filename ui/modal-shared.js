@@ -8,6 +8,7 @@ export function configureModalNavigation(callbacks) {
 }
 
 export function hideAllModals() {
+  qsa('dialog:modal').forEach(dialog => dialog.close());
   qsa(".modal").forEach(modal => {
     modal.classList.remove("show");
     modal.classList.add("hidden");

@@ -31,6 +31,19 @@ function populatedStore(storage = new MemoryStorage()) {
   return { store, map };
 }
 
+test('cycle summaries survive reload, full backup restore, and shared-map export', () => {
+  const storage = new MemoryStorage();
+  const { store, map } = populatedStore(storage);
+  store.saveCycleSummaries(map.id, { '2026-08-18': { mucusPeak: 13, qualityDays: 3, historyCount: 12 } });
+  const reloaded = new Store(new LocalStorageAdapter(storage));
+  assert.equal(reloaded.getMap(map.id).cycleSummaries['2026-08-18'].mucusPeak, 13);
+  const restored = new Store(new LocalStorageAdapter(new MemoryStorage()));
+  restored.restoreBackup(store.createBackup());
+  assert.equal(restored.getMap(map.id).cycleSummaries['2026-08-18'].historyCount, 12);
+  const shared = parseBackup(store.createMapBackup(map.id));
+  assert.equal(shared.maps[map.id].cycleSummaries['2026-08-18'].qualityDays, 3);
+});
+
 test("serialization exports all restorable state with stable metadata", () => {
   const { store, map } = populatedStore();
   const backup = JSON.parse(store.createBackup("2026-08-18T12:00:00.000Z"));

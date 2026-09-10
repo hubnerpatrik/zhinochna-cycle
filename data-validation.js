@@ -322,6 +322,34 @@ function normalizeFertileRange(range, strict) {
   return { start, end };
 }
 
+export function normalizeCycleSummaries(value, strict = false) {
+  if (value == null) return {};
+  if (!isPlainObject(value)) {
+    if (strict) throw new DataValidationError('Cycle summaries are malformed.');
+    return {};
+  }
+  const result = {};
+  for (const [start, summary] of Object.entries(value)) {
+    if (!isDateKey(start) || !isPlainObject(summary)) {
+      if (strict) throw new DataValidationError('A cycle summary is malformed.');
+      continue;
+    }
+    const normalized = {};
+    for (const field of ['firstMucus', 'qualityMucus', 'qualityDays', 'mucusPeak', 'cervixPeak']) {
+      const number = summary[field];
+      const valid = number == null || (Number.isSafeInteger(number) && number >= (field === 'qualityDays' ? 0 : 1));
+      if (!valid && strict) throw new DataValidationError(`Invalid cycle summary field: ${field}.`);
+      normalized[field] = valid ? number ?? null : null;
+    }
+    if (summary.historyCount != null && ![6, 12].includes(summary.historyCount) && strict) {
+      throw new DataValidationError('History must use 6 or 12 cycles.');
+    }
+    normalized.historyCount = summary.historyCount === 12 ? 12 : 6;
+    result[start] = normalized;
+  }
+  return result;
+}
+
 export function normalizeMap(map, fallbackId, fallbackName = "", { strict = false } = {}) {
   if (strict && !isPlainObject(map)) throw new DataValidationError(`Map “${fallbackId}” is malformed.`);
   const source = isPlainObject(map) ? map : {};
@@ -354,6 +382,7 @@ export function normalizeMap(map, fallbackId, fallbackName = "", { strict = fals
       ? normalizeProfile(source.profileSnapshot, { strict })
       : null,
     profileSnapshotLocked: source.profileSnapshotLocked === true,
+    ...(source.cycleSummaries != null ? { cycleSummaries: normalizeCycleSummaries(source.cycleSummaries, strict) } : {}),
   };
 }
 

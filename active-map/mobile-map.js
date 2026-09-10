@@ -1,4 +1,7 @@
 import { store } from "../store.js";
+import { openCycleSummary } from "../ui/cycle-summary.js";
+import { openProfileInfo } from "../ui/profile-info-modal.js";
+import { cycleStarts } from "../cycle-summary.js";
 import { LAYOUT, chartY, formatDateKey, formatTemp, parseDateKey, qs, syncCSSVariables } from "../core.js";
 
 export function fittedColumnWidth(viewportWidth, count, axisWidth = 48) {
@@ -66,6 +69,8 @@ export function createMobileMap({ render, getColumns, interactions }) {
       };
       qs("mobileGraphTab").onclick = () => switchTab("graph");
       qs("mobileCalendarTab").onclick = () => switchTab("calendar");
+      qs("mobileProfileBtn").onclick = () => openProfileInfo(qs("mobileProfileBtn"));
+      qs("mobileSummaryBtn").onclick = () => openCycleSummary(qs("mobileSummaryBtn"));
       const tabs = [qs("mobileGraphTab"), qs("mobileCalendarTab")];
       tabs.forEach((tab, index) => tab.onkeydown = event => {
         if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
@@ -152,6 +157,8 @@ export function createMobileMap({ render, getColumns, interactions }) {
     update() {
       if (!active()) return;
       qs("mobileMapName").textContent = store.getActiveMap()?.name || "Active map";
+      qs("mobileSummaryBtn").disabled = cycleStarts(store.entries).length === 0;
+      qs("mobileSummaryBtn").title = qs("mobileSummaryBtn").disabled ? "Record menstruation to start a cycle" : "Open cycle summary";
       qs("mobileSaveBtn").disabled = qs("saveActiveMapBtn").disabled;
       const key = store.selectedKey;
       qs("mobileSelectedDate").textContent = key ? parseDateKey(key).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "Select a day";

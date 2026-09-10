@@ -14,14 +14,17 @@ test("switching and closing editors does not depend on animation events or defer
     } };
   };
   const elements = { actionModal: element(), mucusModal: element() };
+  let nativeOpen = true;
+  const nativeDialog = { close() { nativeOpen = false; } };
   globalThis.document = {
     getElementById: id => elements[id],
-    querySelectorAll: () => Object.values(elements),
+    querySelectorAll: selector => selector === 'dialog:modal' ? (nativeOpen ? [nativeDialog] : []) : Object.values(elements),
   };
   const opened = [];
   let closed = 0;
   configureModalNavigation({ modalOpened: id => opened.push(id), modalClosed: () => closed++ });
   showModal("actionModal");
+  assert.equal(nativeOpen, false);
   showModal("mucusModal");
   assert.equal(elements.actionModal.classList.contains("hidden"), true);
   assert.equal(elements.mucusModal.classList.contains("show"), true);
