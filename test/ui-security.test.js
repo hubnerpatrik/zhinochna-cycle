@@ -33,7 +33,7 @@ test("marker saves return directly to the chart", () => {
   assert.equal(returnsToActionMenuAfterSave("mucusModal"), true);
 });
 
-test("day-info lines append user input as text nodes", () => {
+test("day-info lines render user input as plain text", () => {
   const appended = [];
   globalThis.document = {
     createElement: tagName => ({ tagName }),
@@ -48,9 +48,9 @@ test("day-info lines append user input as text nodes", () => {
   renderInfoLines(element, ["Sex: No", `Notes: ${payload}`]);
 
   assert.deepEqual(appended, [
-    { textContent: "Sex: No" },
+    { tagName: "span", textContent: "Sex: No" },
     { tagName: "br" },
-    { textContent: `Notes: ${payload}` },
+    { tagName: "span", textContent: `Notes: ${payload}` },
   ]);
   assert.equal(globalThis.pwned, undefined);
 });

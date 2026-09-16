@@ -1,3 +1,4 @@
+import { setText } from '../i18n.js';
 import { store } from "../store.js";
 import { clearCycleCoverlineValues } from "../domain.js";
 import {
@@ -81,7 +82,10 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     if (!current) return null;
     const toast = current.cloneNode(false);
     toast.className = "toast persistent-toast";
-    toast.textContent = text;
+    toast.removeAttribute("data-i18n");
+    const message = document.createElement("span");
+    setText(message, text);
+    toast.replaceChildren(message);
     current.replaceWith(toast);
     requestAnimationFrame(() => toast.classList.add("show"));
     return toast;
@@ -91,7 +95,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     const button = qs("crossCellsActionBtn");
     if (!button) return;
     button.classList.toggle("active", active);
-    button.innerText = "Cross cells";
+    setText(button, "Cross cells");
   }
 
   function setCoverlineButton(active) {
@@ -124,14 +128,14 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     const label = document.createElement("span");
     const cancel = document.createElement("button");
     const save = document.createElement("button");
-    label.textContent = "Select cells directly in the temperature chart.";
+    setText(label, "Select cells directly in the temperature chart.");
     cancel.type = "button";
     cancel.className = "toast-action toast-action-cancel";
-    cancel.textContent = "Cancel";
+    setText(cancel, "Cancel");
     cancel.onclick = cancelCrossCells;
     save.type = "button";
     save.className = "toast-action toast-action-primary";
-    save.textContent = "Save";
+    setText(save, "Save");
     save.onclick = startOrSaveCrossCells;
     toast.replaceChildren(label, cancel, save);
     toast.classList.add("action-toast");
@@ -142,10 +146,10 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     if (!toast) return;
     const label = document.createElement("span");
     const remove = document.createElement("button");
-    label.textContent = "Drag a line or endpoint to adjust it. Tap away from the lines to finish.";
+    setText(label, "Drag a line or endpoint to adjust it. Tap away from the lines to finish.");
     remove.type = "button";
     remove.className = "toast-action toast-action-danger";
-    remove.textContent = "Delete";
+    setText(remove, "Delete");
     remove.onclick = deleteCoverline;
     toast.replaceChildren(label, remove);
     toast.classList.add("action-toast");

@@ -23,7 +23,7 @@ test("pinch keeps the vertical temperature anchor when zooming both axes", () =>
   const previousCancel = globalThis.cancelAnimationFrame;
   globalThis.requestAnimationFrame = () => 1;
   globalThis.cancelAnimationFrame = () => {};
-  const touch = x => ({ clientX: x, clientY: 150 });
+  const touch = (x, y = 150) => ({ clientX: x, clientY: y });
   const event = touches => ({ touches, preventDefault() {} });
   try {
     bindMapGestures(element, {
@@ -32,11 +32,11 @@ test("pinch keeps the vertical temperature anchor when zooming both axes", () =>
       setWidth: value => { width = value; height = value * 30; },
     });
     handlers.touchstart(event([touch(100), touch(200)]));
-    handlers.touchmove(event([touch(50), touch(250)]));
+    handlers.touchmove(event([touch(50, 175), touch(250, 175)]));
     handlers.touchend(event([]));
     assert.equal(width, 20, "mobile overview zoom is allowed below the desktop minimum");
     assert.equal(height, 600);
-    assert.equal((element.scrollTop + 150 - 28) / height, (100 + 150 - 28) / 300);
+    assert.equal((element.scrollTop + 175 - 28) / height, (100 + 150 - 28) / 300, 'the temperature follows the moving midpoint as well as the scale');
     handlers.touchcancel(event([]));
     const previous = element.scrollTop;
     handlers.touchmove(event([touch(10), touch(300)]));

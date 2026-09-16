@@ -1,3 +1,4 @@
+import { setText } from './i18n.js';
 // chart.js — Canvas rendering and coverline interaction
 // ─────────────────────────────────────────────
 // Owns all draw* functions, renderChart, and handleCanvasClick.
@@ -125,7 +126,7 @@ export function drawVerticalCoverline(ctx, columns, selected = false) {
   if (!vertical) return;
 
   ctx.beginPath();
-  ctx.setLineDash([6, 4]);
+  ctx.setLineDash([]);
   ctx.strokeStyle = selected ? "rgba(180,20,20,1)" : "rgba(180,20,20,0.8)";
   ctx.lineWidth = selected ? 3 : 1.5;
   ctx.shadowColor = selected ? "rgba(180,20,20,0.35)" : "transparent";
@@ -152,7 +153,7 @@ export function drawHorizontalCoverline(ctx, columns, selected = false) {
   if (!horizontal) return;
 
   ctx.beginPath();
-  ctx.setLineDash([6, 4]);
+  ctx.setLineDash([]);
   ctx.strokeStyle = selected ? "rgba(180,20,20,1)" : "rgba(180,20,20,0.8)";
   ctx.lineWidth = selected ? 3 : 1.5;
   ctx.shadowColor = selected ? "rgba(180,20,20,0.35)" : "transparent";
@@ -242,7 +243,8 @@ export function drawCycleSeparators(ctx, cycleGroups) {
   cycleGroups.slice(1).forEach(group => {
     const x = group.columns[0].x - 0.5;
     ctx.beginPath();
-    ctx.strokeStyle = "rgba(0,0,0,0.22)";
+    ctx.setLineDash([]);
+    ctx.strokeStyle = "#b41414";
     ctx.lineWidth = 2;
     ctx.moveTo(x, 0);
     ctx.lineTo(x, LAYOUT.chartHeight);
@@ -579,7 +581,7 @@ export function handleCanvasClick(x, y, columns) {
   const btn = qs("coverlineBtn");
   if (btn) {
     btn.classList.remove("active");
-    btn.innerText = "Coverlines";
+    setText(btn, "Coverlines");
     btn.setAttribute("aria-pressed", "false");
   }
   return true;

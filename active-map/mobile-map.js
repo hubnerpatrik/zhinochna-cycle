@@ -1,3 +1,4 @@
+import { setText, setDateText } from '../i18n.js';
 import { store } from "../store.js";
 import { openCycleSummary } from "../ui/cycle-summary.js";
 import { openProfileInfo } from "../ui/profile-info-modal.js";
@@ -90,7 +91,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
       qs("mobileObservationsBtn").onclick = () => {
         const expanded = qs("activeMapScreen").classList.toggle("mobile-observations");
         qs("mobileObservationsBtn").setAttribute("aria-expanded", String(expanded));
-        qs("mobileObservationsBtn").textContent = expanded ? "Hide observations" : "Show observations";
+        setText(qs("mobileObservationsBtn"), expanded ? "Hide observations" : "Show observations");
         schedule();
       };
       document.querySelectorAll("[data-mobile-tool]").forEach(button => {
@@ -134,12 +135,14 @@ export function createMobileMap({ render, getColumns, interactions }) {
         screen.classList.toggle("mobile-calendar-view", state.tab === "calendar");
         qs("mobileGraphTab").setAttribute("aria-selected", String(state.tab === "graph"));
         qs("mobileCalendarTab").setAttribute("aria-selected", String(state.tab === "calendar"));
+        qs("mobileGraphTab").tabIndex = state.tab === "graph" ? 0 : -1;
+        qs("mobileCalendarTab").tabIndex = state.tab === "calendar" ? 0 : -1;
         // Measure the available space, including safe-area padding and tool feedback.
         if (state.tab === "graph") {
           const top = document.querySelector(".cycle-map").getBoundingClientRect().top + window.scrollY;
           const bottomPadding = parseFloat(getComputedStyle(document.querySelector(".app")).paddingBottom) || 8;
           fitHeight = Math.max(140, Math.min(520, window.innerHeight - top - qs("mobileMapDock").offsetHeight
-            - qs("mobileObservationsBtn").offsetHeight - bottomPadding - 36));
+            - qs("mobileObservationsBtn").offsetHeight - bottomPadding - 40));
         }
         fitWidth = fittedColumnWidth(screen.clientWidth - 16, Object.keys(store.entries).length);
         LAYOUT.sideLabelWidth = 0;
@@ -156,16 +159,26 @@ export function createMobileMap({ render, getColumns, interactions }) {
     },
     update() {
       if (!active()) return;
-      qs("mobileMapName").textContent = store.getActiveMap()?.name || "Active map";
+      const mapName = qs("mobileMapName");
+      if (store.getActiveMap()?.name) {
+        mapName.removeAttribute("data-i18n");
+        mapName.textContent = store.getActiveMap().name;
+      } else setText(mapName, "Active map");
       qs("mobileSummaryBtn").disabled = cycleStarts(store.entries).length === 0;
-      qs("mobileSummaryBtn").title = qs("mobileSummaryBtn").disabled ? "Record menstruation to start a cycle" : "Open cycle summary";
+      qs("mobileSummaryBtn").setAttribute("data-i18n-title", qs("mobileSummaryBtn").disabled ? "Record menstruation to start a cycle" : "Open cycle summary");
       qs("mobileSaveBtn").disabled = qs("saveActiveMapBtn").disabled;
       const key = store.selectedKey;
-      qs("mobileSelectedDate").textContent = key ? parseDateKey(key).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "Select a day";
+      if (key) {
+        qs("mobileSelectedDate").removeAttribute("data-i18n");
+        setDateText(qs("mobileSelectedDate"), parseDateKey(key), "short");
+      } else {
+        qs("mobileSelectedDate").removeAttribute("data-i18n-date");
+        setText(qs("mobileSelectedDate"), "Select a day");
+      }
       const column = getColumns().find(item => item.key === key);
-      qs("mobileSelectedCycle").textContent = column?.cycleDay ? `Cycle day ${column.cycleDay}` : "";
+      setText(qs("mobileSelectedCycle"), column?.cycleDay ? `Cycle day ${column.cycleDay}` : "");
       const temp = store.entries[key]?.temp;
-      qs("mobileSelectedTemp").textContent = temp == null ? "No temperature" : `${formatTemp(temp)} °C`;
+      setText(qs("mobileSelectedTemp"), temp == null ? "No temperature" : `${formatTemp(temp)} °C`);
       qs("mobileDayBtn").disabled = !key;
       const step = Math.ceil(28 / LAYOUT.columnWidth);
       [...qs("dayNumbers").children].forEach((cell, index) => { cell.style.color = index % step ? "transparent" : ""; });
@@ -176,6 +189,6 @@ export function createMobileMap({ render, getColumns, interactions }) {
       if (active()) view().zoom = this.clampWidth(width) / fitWidth;
       else { desktopWidth = width; LAYOUT.columnWidth = width; }
     },
-    zoomStep(direction) { return active() ? LAYOUT.columnWidth * (direction > 0 ? 1.35 : 1 / 1.35) : LAYOUT.columnWidth + direction * 8; },
+    zoomStep(direction, width = LAYOUT.columnWidth) { return active() ? width * (direction > 0 ? 1.35 : 1 / 1.35) : width + direction * 8; },
   };
 }

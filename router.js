@@ -1,4 +1,5 @@
 import { store } from "./store.js";
+import { t } from "./i18n.js";
 import { renderMenuView } from "./views/menu.js";
 import { renderProfileScreen } from "./views/profile.js";
 import { renderMyMapsView } from "./views/my-maps.js";
@@ -177,7 +178,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
               return;
             }
 
-            if (!confirm("Import this shared map? It will be added to My Maps without changing your profile or existing maps.")) return;
+            if (!confirm(t("Import this shared map? It will be added to My Maps without changing your profile or existing maps."))) return;
 
             try {
               const importedMap = store.importMapBackup(contents);

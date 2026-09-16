@@ -1,7 +1,9 @@
+import { setText, setTranslatedAttribute } from '../i18n.js';
 import { store } from "../store.js";
 import { chartWidth, qs } from "../core.js";
 import { renderCycleSummary } from "./cycle-summary.js";
 import { profileInfoRows } from "./profile-info-modal.js";
+import { observationIcon } from "./observation-icons.js";
 
 const SIDEBAR_ACTIONS = [
   ["editBtn", "Edit Day", "chip-edit-special", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4Z"/><path d="M14 6l3 3"/></svg>`],
@@ -32,7 +34,7 @@ function createActionButton([id, label, iconClass, iconSvg]) {
   button.type = "button";
   button.innerHTML = `
     <span class="action-icon ${iconClass}">${iconSvg}</span>
-    <span class="action-label">${label}</span>
+    <span class="action-label" data-i18n>${label}</span>
     <svg class="action-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
   `;
   return button;
@@ -62,7 +64,7 @@ export function renderProfileInfo() {
     return;
   }
   card.innerHTML = `
-    <div class="profile-info-title">Profile</div>
+    <div class="profile-info-title" data-i18n>Profile</div>
     <div class="profile-info-rows"></div>`;
   const container = card.querySelector(".profile-info-rows");
   rows.forEach(([label, value]) => {
@@ -72,8 +74,9 @@ export function renderProfileInfo() {
     row.className = "profile-info-row";
     name.className = "profile-info-label";
     content.className = "profile-info-value";
-    name.textContent = label;
-    content.textContent = value;
+    setText(name, label);
+    if (label === "Goal" || label === "Method") setText(content, value);
+    else content.textContent = value;
     row.append(name, content);
     container.appendChild(row);
   });
@@ -112,7 +115,7 @@ function createRowDefinitions() {
       if (col.cervixOpenness) {
         const indicator = document.createElement("span");
         indicator.className = `cervix-indicator ${col.cervixOpenness}`;
-        indicator.title = `Openness: ${col.cervixOpenness}`;
+        setTranslatedAttribute(indicator, "title", `Openness: ${{ closed: "Closed", medium: "Medium", open: "Open" }[col.cervixOpenness]}`);
         cell.appendChild(indicator);
       }
       return cell;
@@ -131,7 +134,7 @@ function createRowDefinitions() {
   });
 }
 
-function createMapRow({ label, group, position }) {
+function createMapRow({ id, label, group, position }) {
   const row = document.createElement("div");
   row.className = [
     "map-row",
@@ -142,7 +145,16 @@ function createMapRow({ label, group, position }) {
   const spacer = document.createElement("div");
   const cells = document.createElement("div");
   sideLabel.className = "map-side-label";
-  sideLabel.textContent = label;
+  const icon = document.createElement("span");
+  icon.className = "map-row-icon";
+  icon.setAttribute("role", "img");
+  setTranslatedAttribute(icon, "aria-label", label.trim());
+  setTranslatedAttribute(icon, "title", label.trim());
+  icon.innerHTML = observationIcon(id);
+  const caption = document.createElement("span");
+  caption.className = "map-row-caption";
+  setText(caption, label);
+  sideLabel.append(icon, caption);
   spacer.className = "map-temp-spacer";
   cells.className = ["map-cells", group ? `map-cells-group-${group}` : ""].filter(Boolean).join(" ");
   row.append(sideLabel, spacer, cells);
@@ -166,16 +178,19 @@ export function renderMapRows(columns, selectColumn, hoverColumn, clearHover) {
     element.onclick = () => selectColumn(column.key);
   };
 
-  columns.forEach(column => {
+  columns.forEach((column, index) => {
+    const boundary = index > 0 && column.cycleId !== columns[index - 1].cycleId;
     const selected = store.selectedKey === column.key ? "selected-column" : "";
     const dayCell = document.createElement("div");
     dayCell.className = ["map-day", selected, column.isFertile ? "fertility-cell" : ""].filter(Boolean).join(" ");
     dayCell.textContent = column.date.getDate();
+    if (boundary) dayCell.classList.add("cycle-boundary");
     attach(dayCell, column);
     dayNumbers.appendChild(dayCell);
 
     definitions.forEach(definition => {
       const cell = definition.render(column);
+      if (boundary) cell.classList.add("cycle-boundary");
       if (selected) cell.classList.add(selected);
       if (column.isFertile) cell.classList.add("fertility-cell");
       if (store.entries[column.key]?.crossedRows?.includes(definition.id)) cell.classList.add("crossed-cell");

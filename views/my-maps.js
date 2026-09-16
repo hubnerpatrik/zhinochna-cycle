@@ -1,4 +1,5 @@
 import { escapeHtml } from "./view-utils.js";
+import { t } from "../i18n.js";
 
 function getSortedEntryDates(entries) {
   return Object.keys(entries || {}).sort();
@@ -42,8 +43,8 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
   if (!filteredMaps.length) {
     list.innerHTML = `
       <div class="screen-card empty-state">
-        <h3>No maps found</h3>
-        <p>Try a different month or year, or create a new map.</p>
+        <h3 data-i18n>No maps found</h3>
+        <p data-i18n>Try a different month or year, or create a new map.</p>
       </div>
     `;
     return;
@@ -54,27 +55,27 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
       <div class="map-list-main">
         <div>
           <div class="map-list-title-row">
-            <h3>${escapeHtml(map.name || "Untitled map")}</h3>
-            <span class="map-pill ${map.status === "closed" ? "map-pill-closed" : ""}">${map.status === "closed" ? "Closed" : "Open"}</span>
-            ${map.id === activeMapId ? '<span class="map-pill">Active</span>' : ""}
-            ${map.profileSnapshotLocked ? '<span class="map-pill">Shared</span>' : ""}
+            <h3 ${map.name ? "" : "data-i18n"}>${escapeHtml(map.name || "Untitled map")}</h3>
+            <span class="map-pill ${map.status === "closed" ? "map-pill-closed" : ""}" data-i18n>${map.status === "closed" ? "Closed" : "Open"}</span>
+            ${map.id === activeMapId ? '<span class="map-pill" data-i18n>Active</span>' : ""}
+            ${map.profileSnapshotLocked ? '<span class="map-pill" data-i18n>Shared</span>' : ""}
           </div>
-          <p class="map-list-meta">${escapeHtml(map.dateRange)}</p>
-          <p class="map-list-preview">Preview: ${escapeHtml(map.preview)}</p>
-          <p class="map-list-meta">Last activity: ${escapeHtml(String(map.lastActivity).slice(0, 10))}</p>
+          <p class="map-list-meta"> <span data-i18n>${escapeHtml(map.dateRange)}</span></p>
+          <p class="map-list-preview"><span data-i18n>Preview:</span> <span data-i18n>${escapeHtml(map.preview)}</span></p>
+          <p class="map-list-meta"><span data-i18n>Last activity:</span> ${escapeHtml(String(map.lastActivity).slice(0, 10))}</p>
         </div>
         <div class="map-list-actions">
-          <button type="button" class="btn secondary map-export-btn" data-map-export-id="${escapeHtml(map.id)}">Export</button>
-          <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}">Edit name</button>
-          <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}">Delete</button>
-          <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}">${map.status === "closed" ? "Reopen" : "Open"}</button>
+          <button type="button" class="btn secondary map-export-btn" data-map-export-id="${escapeHtml(map.id)}" data-i18n>Export</button>
+          <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
+          <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
+          <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
         </div>
       </div>
       <div class="map-delete-confirmation hidden" data-map-delete-confirmation="${escapeHtml(map.id)}" role="alert">
-        <span>Are you sure you want to delete this map? This cannot be undone.</span>
+        <span data-i18n>Are you sure you want to delete this map? This cannot be undone.</span>
         <div class="map-delete-confirmation-actions">
-          <button type="button" class="btn secondary" data-map-delete-no="${escapeHtml(map.id)}">No</button>
-          <button type="button" class="btn danger" data-map-delete-yes="${escapeHtml(map.id)}">Yes</button>
+          <button type="button" class="btn secondary" data-map-delete-no="${escapeHtml(map.id)}" data-i18n>No</button>
+          <button type="button" class="btn danger" data-map-delete-yes="${escapeHtml(map.id)}" data-i18n>Yes</button>
         </div>
       </div>
     </article>
@@ -94,7 +95,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
       const map = filteredMaps.find(item => item.id === mapId);
       if (!map) return;
 
-      const nextName = prompt("Edit map name", map.name || "");
+      const nextName = prompt(t("Edit map name"), map.name || "");
       if (nextName == null) return;
 
       onRename?.(mapId, nextName);
@@ -127,45 +128,45 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
   let selectedMonth = "";
 
   container.innerHTML = `
-    <section class="screen" aria-label="My maps">
+    <section class="screen" aria-label="My maps" data-i18n-aria-label="My maps">
       <div class="screen-shell">
         <div class="screen-hero">
-          <p class="screen-kicker">My Maps</p>
-          <h2>Saved cycle maps</h2>
-          <p>Export individual maps with their saved profile, or import a shared map without replacing your own data.</p>
+          <p class="screen-kicker" data-i18n>My Maps</p>
+          <h2 data-i18n>Saved cycle maps</h2>
+          <p data-i18n>Export individual maps with their saved profile, or import a shared map without replacing your own data.</p>
         </div>
 
         <div class="screen-card map-filter-card">
           <div class="map-filters">
             <label>
-              <span class="input-label">Year</span>
+              <span class="input-label" data-i18n>Year</span>
               <select id="mapsYearFilter">
-                <option value="">All years</option>
+                <option value="" data-i18n>All years</option>
                 ${allYears.map(year => `<option value="${year}">${year}</option>`).join("")}
               </select>
             </label>
             <label>
-              <span class="input-label">Month</span>
+              <span class="input-label" data-i18n>Month</span>
               <select id="mapsMonthFilter">
-                <option value="">All months</option>
-                <option value="01">January</option>
-                <option value="02">February</option>
-                <option value="03">March</option>
-                <option value="04">April</option>
-                <option value="05">May</option>
-                <option value="06">June</option>
-                <option value="07">July</option>
-                <option value="08">August</option>
-                <option value="09">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
+                <option value="" data-i18n>All months</option>
+                <option value="01" data-i18n>January</option>
+                <option value="02" data-i18n>February</option>
+                <option value="03" data-i18n>March</option>
+                <option value="04" data-i18n>April</option>
+                <option value="05" data-i18n>May</option>
+                <option value="06" data-i18n>June</option>
+                <option value="07" data-i18n>July</option>
+                <option value="08" data-i18n>August</option>
+                <option value="09" data-i18n>September</option>
+                <option value="10" data-i18n>October</option>
+                <option value="11" data-i18n>November</option>
+                <option value="12" data-i18n>December</option>
               </select>
             </label>
           </div>
           <div class="screen-inline-actions">
-            <button type="button" class="btn secondary" id="myMapsImportBtn">Import map</button>
-            <button type="button" class="btn primary" id="myMapsCreateBtn">Create map</button>
+            <button type="button" class="btn secondary" id="myMapsImportBtn" data-i18n>Import map</button>
+            <button type="button" class="btn primary" id="myMapsCreateBtn" data-i18n>Create map</button>
             <input class="visually-hidden" id="myMapsImportFile" type="file" accept="application/json,.json" tabindex="-1">
           </div>
         </div>

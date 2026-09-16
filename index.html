@@ -30,36 +30,42 @@
   <main class="app">
     <header class="app-header">
       <div class="header-brand">
-        <p class="app-kicker">Cycle tracking</p>
+        <p class="app-kicker" data-i18n>Cycle tracking</p>
         <h1>Marta Zhinochna STM</h1>
       </div>
-      <nav id="headerNav" class="header-nav hidden" aria-label="Main navigation">
-        <button id="navMenuBtn" class="header-nav-btn" type="button">Main Menu</button>
-        <button id="navProfileBtn" class="header-nav-btn" type="button">My Profile</button>
-        <button id="navMapsBtn" class="header-nav-btn" type="button">My Maps</button>
-        <button id="navCreateMapBtn" class="header-nav-btn" type="button">Create Map</button>
-        <button id="navActiveMapBtn" class="header-nav-btn" type="button">Active Map</button>
+      <nav id="headerNav" class="header-nav hidden" aria-label="Main navigation" data-i18n-aria-label="Main navigation">
+        <button id="navMenuBtn" class="header-nav-btn" type="button" data-i18n>Main Menu</button>
+        <button id="navProfileBtn" class="header-nav-btn" type="button" data-i18n>My Profile</button>
+        <button id="navMapsBtn" class="header-nav-btn" type="button" data-i18n>My Maps</button>
+        <button id="navCreateMapBtn" class="header-nav-btn" type="button" data-i18n>Create Map</button>
+        <button id="navActiveMapBtn" class="header-nav-btn" type="button" data-i18n>Active Map</button>
       </nav>
+      <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
+        <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
+      </select>
     </header>
 
     <div id="screenRoot"></div>
 
-    <section id="activeMapScreen" class="hidden" aria-label="Active map">
+    <section id="activeMapScreen" class="hidden" aria-label="Active map" data-i18n-aria-label="Active map">
       <div class="mobile-map-header mobile-only">
-        <button id="mobileMenuBtn" type="button" aria-label="Main Menu">‹</button>
+        <button id="mobileMenuBtn" type="button" aria-label="Main Menu" data-i18n-aria-label="Main Menu">‹</button>
         <strong id="mobileMapName">Active map</strong>
-        <button id="mobileSaveBtn" type="button">Save Map</button>
+        <button id="mobileSaveBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2Z"/><path d="M7 3v6h9V3M7 21v-8h10v8"/></svg><span data-i18n>Save Map</span></button>
+        <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
+          <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
+        </select>
       </div>
-      <div class="mobile-map-tabs mobile-only" role="tablist" aria-label="Map view">
-        <button id="mobileGraphTab" type="button" role="tab" aria-selected="true" aria-controls="mobileGraphPanel">Graph</button>
-        <button id="mobileCalendarTab" type="button" role="tab" aria-selected="false" aria-controls="mobileCalendarPanel">Calendar</button>
+      <div class="mobile-map-tabs mobile-only" role="tablist" aria-label="Map view" data-i18n-aria-label="Map view">
+        <button id="mobileGraphTab" type="button" role="tab" aria-selected="true" aria-controls="mobileGraphPanel" aria-label="Graph" data-i18n-aria-label="Graph" title="Graph" data-i18n-title="Graph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v17h17M7 15l4-5 4 3 5-8"/><circle cx="11" cy="10" r="1"/><circle cx="15" cy="13" r="1"/></svg></button>
+        <button id="mobileCalendarTab" type="button" role="tab" aria-selected="false" aria-controls="mobileCalendarPanel" aria-label="Calendar" data-i18n-aria-label="Calendar" title="Calendar" data-i18n-title="Calendar" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h2m6 0h2m-10 3h2"/></svg></button>
       </div>
-      <div class="mobile-profile-actions mobile-only" aria-label="Profile and cycle summary">
-        <button id="mobileProfileBtn" type="button" aria-haspopup="dialog">Profile</button>
-        <button id="mobileSummaryBtn" type="button" aria-haspopup="dialog">Summary</button>
+      <div class="mobile-profile-actions mobile-only" aria-label="Profile and cycle summary" data-i18n-aria-label="Profile and cycle summary">
+        <button id="mobileProfileBtn" type="button" aria-haspopup="dialog" data-i18n>Profile</button>
+        <button id="mobileSummaryBtn" type="button" aria-haspopup="dialog" data-i18n>Summary</button>
       </div>
-      <section id="mobileCalendarPanel" class="layout" aria-label="Cycle tracker dashboard">
-        <section class="calendar-card" aria-label="Calendar view">
+      <section id="mobileCalendarPanel" class="layout" aria-label="Cycle tracker dashboard" data-i18n-aria-label="Cycle tracker dashboard">
+        <section class="calendar-card" aria-label="Calendar view" data-i18n-aria-label="Calendar view">
           <div class="calendar-nav">
             <button id="prevMonth" type="button">‹</button>
             <div id="monthLabel" class="month-label"></div>
@@ -71,47 +77,47 @@
           <div class="legend">
             <div class="legend-item">
               <span class="dot red"></span>
-              Menstruation
+              <span data-i18n>Menstruation</span>
             </div>
             <div class="legend-item">
               <span class="dot green"></span>
-              Fertile
+              <span data-i18n>Fertile</span>
             </div>
           </div>
         </section>
 
-        <aside class="info-card" aria-label="Action menu">
-          <h2 class="info-title">Actions</h2>
+        <aside class="info-card" aria-label="Action menu" data-i18n-aria-label="Action menu">
+          <h2 class="info-title" data-i18n>Actions</h2>
           <div id="sidebarActions"></div>
           <div id="profileInfoCard" class="profile-info-card"></div>
         </aside>
       </section>
 
-      <section id="mobileGraphPanel" class="chart-card" aria-label="Cycle chart">
-        <div class="mobile-chart-toolbar mobile-only"><span>Temperature · °C</span><button id="mobileFitBtn" type="button">Show all</button><button id="mobileZoomOutBtn" type="button" aria-label="Zoom out">−</button><button id="mobileZoomInBtn" type="button" aria-label="Zoom in">+</button></div>
+      <section id="mobileGraphPanel" class="chart-card" aria-label="Cycle chart" data-i18n-aria-label="Cycle chart">
+        <div class="mobile-chart-toolbar mobile-only"><span data-i18n>Temperature · °C</span><button id="mobileFitBtn" type="button" data-i18n>Show all</button><button id="mobileZoomOutBtn" type="button" aria-label="Zoom out" data-i18n-aria-label="Zoom out">−</button><button id="mobileZoomInBtn" type="button" aria-label="Zoom in" data-i18n-aria-label="Zoom in">+</button></div>
         <div class="chart-tools">
           <div class="chart-tools-left">
             <div class="active-map-meta">
               <span id="activeMapName" class="active-map-name">Active map</span>
-              <span id="activeMapStatusPill" class="map-pill hidden">Open</span>
+              <span id="activeMapStatusPill" class="map-pill hidden" data-i18n>Open</span>
             </div>
             <div class="zoom-controls">
-              <button id="zoomOutBtn" class="tool-btn" type="button" aria-label="Zoom out">−</button>
+              <button id="zoomOutBtn" class="tool-btn" type="button" aria-label="Zoom out" data-i18n-aria-label="Zoom out">−</button>
               <span id="zoomLabel">100%</span>
-              <button id="zoomInBtn" class="tool-btn" type="button" aria-label="Zoom in">+</button>
+              <button id="zoomInBtn" class="tool-btn" type="button" aria-label="Zoom in" data-i18n-aria-label="Zoom in">+</button>
             </div>
           </div>
           <div class="chart-tools-right">
-            <button id="coverlineBtn" class="tool-btn coverline-btn" type="button" aria-pressed="false">Coverlines</button>
-            <button id="markersActionBtn" class="tool-btn marker-btn" type="button">Markers</button>
-            <button id="crossCellsActionBtn" class="tool-btn cross-cells-btn" type="button">Cross cells</button>
-            <button id="saveActiveMapBtn" class="btn primary chart-save-btn" type="button">Save Map</button>
+            <button id="coverlineBtn" class="tool-btn coverline-btn" type="button" aria-pressed="false" data-i18n>Coverlines</button>
+            <button id="markersActionBtn" class="tool-btn marker-btn" type="button" data-i18n>Markers</button>
+            <button id="crossCellsActionBtn" class="tool-btn cross-cells-btn" type="button" data-i18n>Cross cells</button>
+            <button id="saveActiveMapBtn" class="btn primary chart-save-btn" type="button" data-i18n>Save Map</button>
           </div>
         </div>
 
-        <p id="mapGestureHint" class="map-gesture-hint">Swipe to move · Pinch to zoom · Tap a day to select it</p>
+        <p id="mapGestureHint" class="map-gesture-hint" data-i18n>Swipe to move · Pinch to zoom · Tap a day to select it</p>
         <div class="cycle-map">
-          <div class="map-scroll" tabindex="0" role="region" aria-label="Cycle chart" aria-describedby="mapGestureHint">
+          <div class="map-scroll" tabindex="0" role="region" aria-label="Cycle chart" data-i18n-aria-label="Cycle chart" aria-describedby="mapGestureHint">
             <div class="map-grid">
               <div class="map-header-row">
                 <div class="map-side-label"></div>
@@ -120,7 +126,7 @@
               </div>
 
               <div class="map-chart-row">
-                <div class="map-side-label">Temp (°C)</div>
+                <div class="map-side-label" data-i18n>Temp (°C)</div>
                 <div id="tempScale" class="temp-scale-column"></div>
                 <div class="map-chart-area">
                   <canvas id="tempChart"></canvas>
@@ -131,27 +137,27 @@
             </div>
           </div>
         </div>
-        <button id="mobileObservationsBtn" class="mobile-only mobile-observations-btn" type="button" aria-expanded="false">Show observations</button>
+        <button id="mobileObservationsBtn" class="mobile-only mobile-observations-btn" type="button" aria-expanded="false" data-i18n>Show observations</button>
       </section>
 
       <footer id="mobileMapDock" class="mobile-only">
-        <div class="mobile-selected-day"><div><strong id="mobileSelectedDate">Select a day</strong><span id="mobileSelectedCycle"></span></div><strong id="mobileSelectedTemp"></strong></div>
+        <div class="mobile-selected-day"><div><strong id="mobileSelectedDate" data-i18n>Select a day</strong><span id="mobileSelectedCycle"></span></div><strong id="mobileSelectedTemp"></strong></div>
         <div id="mobileToolFeedback"></div>
         <div id="mobileMapActions" class="mobile-map-actions">
-          <button id="mobileDayBtn" class="btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4H5v16h14v-9M14 4l3-2 5 5-3 3M11 13l3-1 5-5-3-3-5 5v4Z"/></svg><span>Day record</span></button>
-          <button id="mobileTools" class="btn" type="button" aria-expanded="false" aria-controls="mobileToolsList"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h4m4 0h8M4 12h10m4 0h2M4 18h2m4 0h10"/><circle cx="10" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></svg><span>Tools</span><svg class="mobile-tools-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></button>
+          <button id="mobileDayBtn" class="btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4H5v16h14v-9M14 4l3-2 5 5-3 3M11 13l3-1 5-5-3-3-5 5v4Z"/></svg><span data-i18n>Day record</span></button>
+          <button id="mobileTools" class="btn" type="button" aria-expanded="false" aria-controls="mobileToolsList"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h4m4 0h8M4 12h10m4 0h2M4 18h2m4 0h10"/><circle cx="10" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></svg><span data-i18n>Tools</span><svg class="mobile-tools-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></button>
           <div id="mobileToolsList" class="mobile-tools-list" hidden>
-            <button type="button" data-mobile-tool="fertileRangeActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16m-12 4h2m4 0h2"/></svg></span><span>Fertile range</span></button>
-            <button type="button" data-mobile-tool="coverlineBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v14h14M3 7l3-3 3 3m8 8 3 3-3 3"/></svg></span><span>Coverlines</span></button>
-            <button type="button" data-mobile-tool="markersActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4m0 0h13l-3 4 3 4H6"/></svg></span><span>Markers</span></button>
-            <button type="button" data-mobile-tool="crossCellsActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span>Cross cells</span></button>
+            <button type="button" data-mobile-tool="fertileRangeActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16m-12 4h2m4 0h2"/></svg></span><span data-i18n>Fertile range</span></button>
+            <button type="button" data-mobile-tool="coverlineBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v14h14M3 7l3-3 3 3m8 8 3 3-3 3"/></svg></span><span data-i18n>Coverlines</span></button>
+            <button type="button" data-mobile-tool="markersActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4m0 0h13l-3 4 3 4H6"/></svg></span><span data-i18n>Markers</span></button>
+            <button type="button" data-mobile-tool="crossCellsActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span data-i18n>Cross cells</span></button>
           </div>
         </div>
-        <button id="mobileCancelToolBtn" type="button" class="hidden">Cancel</button>
+        <button id="mobileCancelToolBtn" type="button" class="hidden" data-i18n>Cancel</button>
       </footer>
 
       <div class="dev-panel">
-        <button id="devReset" class="text-btn" type="button">DEV RESET</button>
+        <button id="devReset" class="text-btn" type="button" data-i18n>DEV RESET</button>
       </div>
     </section>
   </main>
@@ -160,153 +166,153 @@
 
   <div id="modal" class="modal hidden">
     <div class="modal-card">
-      <h2 id="modalTitle">Edit day</h2>
+      <h2 id="modalTitle" data-i18n>Edit day</h2>
 
       <div class="modal-section">
-        <div class="section-title">Temperature</div>
+        <div class="section-title" data-i18n>Temperature</div>
         <input id="tempInput" type="number" inputmode="decimal" step="0.01" min="36" max="37.4" placeholder="36.50">
 
-        <label class="input-label">Influence factors</label>
+        <label class="input-label" data-i18n>Influence factors</label>
         <select id="tempFactorsInput"></select>
 
-        <label class="checkbox-row"><input id="measurementTimeCheckbox" type="checkbox"><span>Different measurement time</span></label>
+        <label class="checkbox-row"><input id="measurementTimeCheckbox" type="checkbox"><span data-i18n>Different measurement time</span></label>
 
         <div id="measurementTimeWrapper" class="hidden">
-          <label class="input-label">Measurement time</label>
+          <label class="input-label" data-i18n>Measurement time</label>
           <input id="measurementTimeInput" type="time">
           <div id="timeAdjustmentHint" class="field-hint"></div>
         </div>
       </div>
 
       <div class="modal-actions">
-        <button id="closeBtn" class="btn secondary" type="button">Back</button>
-        <button id="saveBtn" class="btn primary" type="button">Save</button>
+        <button id="closeBtn" class="btn secondary" type="button" data-i18n>Back</button>
+        <button id="saveBtn" class="btn primary" type="button" data-i18n>Save</button>
       </div>
     </div>
   </div>
 
   <div id="actionModal" class="modal hidden">
     <div class="modal-card">
-      <h2>Edit Day</h2>
+      <h2 data-i18n>Edit Day</h2>
       <div id="mobileDaySummary" class="mobile-only"></div>
       <div id="actionModalActions"></div>
-      <button id="closeActionModalBtn" class="btn secondary" type="button">Close</button>
+      <button id="closeActionModalBtn" class="btn secondary" type="button" data-i18n>Close</button>
     </div>
   </div>
 
   <div id="bleedingModal" class="modal hidden">
     <div class="modal-card">
-      <h2>Bleeding</h2>
+      <h2 data-i18n>Bleeding</h2>
 
       <div class="modal-section">
-        <div class="section-title">Bleeding</div>
+        <div class="section-title" data-i18n>Bleeding</div>
         <div class="segmented three">
-          <button type="button" data-group="bleeding" data-value="none">No bleeding</button>
-          <button type="button" data-group="bleeding" data-value="spotting">Spotting</button>
-          <button type="button" data-group="bleeding" data-value="menstruation">Period</button>
+          <button type="button" data-group="bleeding" data-value="none" data-i18n>No bleeding</button>
+          <button type="button" data-group="bleeding" data-value="spotting" data-i18n>Spotting</button>
+          <button type="button" data-group="bleeding" data-value="menstruation" data-i18n>Period</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title">Clots</div>
+        <div class="section-title" data-i18n>Clots</div>
         <div class="segmented two">
-          <button type="button" data-group="sediment" data-value="false">No</button>
-          <button type="button" data-group="sediment" data-value="true">Yes</button>
+          <button type="button" data-group="sediment" data-value="false" data-i18n>No</button>
+          <button type="button" data-group="sediment" data-value="true" data-i18n>Yes</button>
         </div>
       </div>
 
       <div class="modal-actions">
-        <button id="closeBleedingModalBtn" class="btn secondary" type="button">Back</button>
-        <button id="saveBleedingModalBtn" class="btn primary" type="button">Save</button>
+        <button id="closeBleedingModalBtn" class="btn secondary" type="button" data-i18n>Back</button>
+        <button id="saveBleedingModalBtn" class="btn primary" type="button" data-i18n>Save</button>
       </div>
     </div>
   </div>
 
   <div id="mucusModal" class="modal hidden">
     <div class="modal-card">
-      <h2>Mucus</h2>
+      <h2 data-i18n>Mucus</h2>
 
       <div class="modal-section">
-        <div class="section-title">Sensation</div>
+        <div class="section-title" data-i18n>Sensation</div>
         <div class="segmented four">
-          <button type="button" data-group="sensation" data-value="">None</button>
-          <button type="button" data-group="sensation" data-value="dry">Dry</button>
-          <button type="button" data-group="sensation" data-value="moist">Moist</button>
-          <button type="button" data-group="sensation" data-value="wet">Wet</button>
+          <button type="button" data-group="sensation" data-value="" data-i18n>None</button>
+          <button type="button" data-group="sensation" data-value="dry" data-i18n>Dry</button>
+          <button type="button" data-group="sensation" data-value="moist" data-i18n>Moist</button>
+          <button type="button" data-group="sensation" data-value="wet" data-i18n>Wet</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title">Slippery when wiping?</div>
+        <div class="section-title" data-i18n>Slippery when wiping?</div>
         <div class="segmented two">
-          <button type="button" data-group="stretch" data-value="false">No</button>
-          <button type="button" data-group="stretch" data-value="true">Yes</button>
+          <button type="button" data-group="stretch" data-value="false" data-i18n>No</button>
+          <button type="button" data-group="stretch" data-value="true" data-i18n>Yes</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title">Presence of discharge?</div>
+        <div class="section-title" data-i18n>Presence of discharge?</div>
         <div class="segmented two">
-          <button type="button" data-group="visible" data-value="false">None</button>
-          <button type="button" data-group="visible" data-value="true">Yes</button>
+          <button type="button" data-group="visible" data-value="false" data-i18n>None</button>
+          <button type="button" data-group="visible" data-value="true" data-i18n>Yes</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title">Consistency</div>
+        <div class="section-title" data-i18n>Consistency</div>
         <div class="segmented four">
-          <button type="button" data-group="consistency" data-value="">None</button>
-          <button type="button" data-group="consistency" data-value="creamy">Creamy</button>
-          <button type="button" data-group="consistency" data-value="slightlyStretchy">Slightly stretchy</button>
-          <button type="button" data-group="consistency" data-value="stretchy">Stretchy</button>
+          <button type="button" data-group="consistency" data-value="" data-i18n>None</button>
+          <button type="button" data-group="consistency" data-value="creamy" data-i18n>Creamy</button>
+          <button type="button" data-group="consistency" data-value="slightlyStretchy" data-i18n>Slightly stretchy</button>
+          <button type="button" data-group="consistency" data-value="stretchy" data-i18n>Stretchy</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title">Color</div>
+        <div class="section-title" data-i18n>Color</div>
         <div class="segmented four">
-          <button type="button" data-group="color" data-value="">No color</button>
-          <button type="button" data-group="color" data-value="white">White</button>
-          <button type="button" data-group="color" data-value="whiteTranslucent">White-translucent</button>
-          <button type="button" data-group="color" data-value="translucent">Translucent</button>
+          <button type="button" data-group="color" data-value="" data-i18n>No color</button>
+          <button type="button" data-group="color" data-value="white" data-i18n>White</button>
+          <button type="button" data-group="color" data-value="whiteTranslucent" data-i18n>White-translucent</button>
+          <button type="button" data-group="color" data-value="translucent" data-i18n>Translucent</button>
         </div>
-        <label class="checkbox-row"><input type="checkbox" id="mucusColorOtherCheckbox"><span>Other</span></label>
-        <input id="mucusColorOtherInput" type="text" placeholder="Describe color" class="hidden" />
+        <label class="checkbox-row"><input type="checkbox" id="mucusColorOtherCheckbox"><span data-i18n>Other</span></label>
+        <input id="mucusColorOtherInput" type="text" placeholder="Describe color" data-i18n-placeholder="Describe color" class="hidden" />
       </div>
 
       <div class="modal-actions">
-        <button id="closeMucusModalBtn" class="btn secondary" type="button">Back</button>
-        <button id="saveMucusModalBtn" class="btn primary" type="button">Save</button>
+        <button id="closeMucusModalBtn" class="btn secondary" type="button" data-i18n>Back</button>
+        <button id="saveMucusModalBtn" class="btn primary" type="button" data-i18n>Save</button>
       </div>
     </div>
   </div>
 
   <div id="markersModal" class="modal hidden">
     <div class="modal-card">
-      <h2>Markers</h2>
+      <h2 data-i18n>Markers</h2>
 
       <div class="modal-section">
-        <div class="section-title">Jump control of STM</div>
+        <div class="section-title" data-i18n>Jump control of STM</div>
         <div class="segmented two peak-day-toggle">
-          <button type="button" data-group="isPeak" data-value="false">Don't apply</button>
-          <button type="button" data-group="isPeak" data-value="true">Apply</button>
+          <button type="button" data-group="isPeak" data-value="false" data-i18n>Don't apply</button>
+          <button type="button" data-group="isPeak" data-value="true" data-i18n>Apply</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title">Peak type</div>
+        <div class="section-title" data-i18n>Peak type</div>
         <div class="segmented three">
-          <button type="button" data-group="markerColor" data-value="green">BBT</button>
-          <button type="button" data-group="markerColor" data-value="blue">Mucus</button>
-          <button type="button" data-group="markerColor" data-value="orange">Cervix</button>
+          <button type="button" data-group="markerColor" data-value="green" data-i18n>BBT</button>
+          <button type="button" data-group="markerColor" data-value="blue" data-i18n>Mucus</button>
+          <button type="button" data-group="markerColor" data-value="orange" data-i18n>Cervix</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div id="markersMarkerLabel" class="section-title">Mucus Marker</div>
+        <div id="markersMarkerLabel" class="section-title" data-i18n>Mucus Marker</div>
         <select id="markersMarker">
-          <option value="">None</option>
-          <option value="P">P</option>
+          <option value="" data-i18n>None</option>
+          <option value="P" data-i18n>P</option>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -317,53 +323,53 @@
       </div>
 
       <div class="modal-actions">
-        <button id="clearMarkersModalBtn" class="btn secondary" type="button">Clear</button>
-        <button id="closeMarkersModalBtn" class="btn secondary" type="button">Close</button>
-        <button id="saveMarkersModalBtn" class="btn primary" type="button">Save</button>
+        <button id="clearMarkersModalBtn" class="btn secondary" type="button" data-i18n>Clear</button>
+        <button id="closeMarkersModalBtn" class="btn secondary" type="button" data-i18n>Close</button>
+        <button id="saveMarkersModalBtn" class="btn primary" type="button" data-i18n>Save</button>
       </div>
     </div>
   </div>
 
   <div id="cervixModal" class="modal hidden">
     <div class="modal-card">
-      <h2>Cervix</h2>
+      <h2 data-i18n>Cervix</h2>
 
       <div class="modal-section">
-        <div class="section-title">Firmness</div>
+        <div class="section-title" data-i18n>Firmness</div>
         <div class="segmented two">
-          <button type="button" data-group="cervixFirmness" data-value="hard">Hard</button>
-          <button type="button" data-group="cervixFirmness" data-value="soft">Soft</button>
+          <button type="button" data-group="cervixFirmness" data-value="hard" data-i18n>Hard</button>
+          <button type="button" data-group="cervixFirmness" data-value="soft" data-i18n>Soft</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title">Height</div>
+        <div class="section-title" data-i18n>Height</div>
         <div class="segmented three">
-          <button type="button" data-group="cervixHeight" data-value="low">Low</button>
-          <button type="button" data-group="cervixHeight" data-value="medium">Medium</button>
-          <button type="button" data-group="cervixHeight" data-value="high">High</button>
+          <button type="button" data-group="cervixHeight" data-value="low" data-i18n>Low</button>
+          <button type="button" data-group="cervixHeight" data-value="medium" data-i18n>Medium</button>
+          <button type="button" data-group="cervixHeight" data-value="high" data-i18n>High</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title">Openness</div>
+        <div class="section-title" data-i18n>Openness</div>
         <div class="segmented three">
-          <button type="button" data-group="cervixOpenness" data-value="closed">Closed</button>
-          <button type="button" data-group="cervixOpenness" data-value="medium">Medium</button>
-          <button type="button" data-group="cervixOpenness" data-value="open">Open</button>
+          <button type="button" data-group="cervixOpenness" data-value="closed" data-i18n>Closed</button>
+          <button type="button" data-group="cervixOpenness" data-value="medium" data-i18n>Medium</button>
+          <button type="button" data-group="cervixOpenness" data-value="open" data-i18n>Open</button>
         </div>
       </div>
 
       <div class="modal-actions">
-        <button id="closeCervixModalBtn" class="btn secondary" type="button">Back</button>
-        <button id="saveCervixModalBtn" class="btn primary" type="button">Save</button>
+        <button id="closeCervixModalBtn" class="btn secondary" type="button" data-i18n>Back</button>
+        <button id="saveCervixModalBtn" class="btn primary" type="button" data-i18n>Save</button>
       </div>
     </div>
   </div>
 
   <div id="fertileRangeModal" class="modal hidden">
     <div class="modal-card wide">
-      <h2>Fertile range</h2>
+      <h2 data-i18n>Fertile range</h2>
 
       <div class="calendar-nav">
         <button id="fertileRangePrevMonth" type="button">‹</button>
@@ -374,71 +380,71 @@
       <div id="fertileRangeCalendar" class="calendar-grid"></div>
 
       <div class="text-btn-row">
-        <button id="clearFertileRangeBtn" class="text-btn" type="button">Clear range</button>
+        <button id="clearFertileRangeBtn" class="text-btn" type="button" data-i18n>Clear range</button>
       </div>
 
       <div class="modal-actions">
-        <button id="closeFertileRangeModalBtn" class="btn secondary" type="button">Close</button>
-        <button id="saveFertileRangeModalBtn" class="btn primary" type="button">Save</button>
+        <button id="closeFertileRangeModalBtn" class="btn secondary" type="button" data-i18n>Close</button>
+        <button id="saveFertileRangeModalBtn" class="btn primary" type="button" data-i18n>Save</button>
       </div>
     </div>
   </div>
 
   <div id="otherModal" class="modal hidden">
     <div class="modal-card">
-      <h2>Other</h2>
+      <h2 data-i18n>Other</h2>
 
       <div class="modal-section">
-        <div class="section-title">Sex</div>
+        <div class="section-title" data-i18n>Sex</div>
         <div class="segmented two">
-          <button type="button" data-group="sex" data-value="false">No</button>
-          <button type="button" data-group="sex" data-value="true">Yes</button>
+          <button type="button" data-group="sex" data-value="false" data-i18n>No</button>
+          <button type="button" data-group="sex" data-value="true" data-i18n>Yes</button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title">Additional symptoms</div>
-        <input id="otherModalInput" type="text" placeholder="Additional symptoms or observations">
+        <div class="section-title" data-i18n>Additional symptoms</div>
+        <input id="otherModalInput" type="text" placeholder="Additional symptoms or observations" data-i18n-placeholder="Additional symptoms or observations">
       </div>
 
       <div class="modal-actions">
-        <button id="closeOtherModalBtn" class="btn secondary" type="button">Back</button>
-        <button id="saveOtherModalBtn" class="btn primary" type="button">Save</button>
+        <button id="closeOtherModalBtn" class="btn secondary" type="button" data-i18n>Back</button>
+        <button id="saveOtherModalBtn" class="btn primary" type="button" data-i18n>Save</button>
       </div>
     </div>
   </div>
 
   <div id="dayInfoModal" class="modal hidden">
     <div class="modal-card">
-      <h2 id="dayInfoTitle">Day info</h2>
+      <h2 id="dayInfoTitle" data-i18n>Day info</h2>
       <div class="info-panel">
         <div class="info-group">
-          <div class="info-label">Temperature</div>
+          <div class="info-label" data-i18n>Temperature</div>
           <div id="infoTemp" class="info-value">-</div>
         </div>
         <div class="info-group">
-          <div class="info-label">Influence factors</div>
+          <div class="info-label" data-i18n>Influence factors</div>
           <div id="infoTempFactors" class="info-value">-</div>
         </div>
         <div class="info-group">
-          <div class="info-label">Bleeding</div>
+          <div class="info-label" data-i18n>Bleeding</div>
           <div id="infoBleeding" class="info-value">-</div>
         </div>
         <div class="info-group">
-          <div class="info-label">Mucus</div>
+          <div class="info-label" data-i18n>Mucus</div>
           <div id="infoMucus" class="info-value">-</div>
         </div>
         <div class="info-group">
-          <div class="info-label">Cervix</div>
+          <div class="info-label" data-i18n>Cervix</div>
           <div id="infoCervix" class="info-value">-</div>
         </div>
         <div class="info-group">
-          <div class="info-label">Other</div>
+          <div class="info-label" data-i18n>Other</div>
           <div id="infoOther" class="info-value">-</div>
         </div>
       </div>
       <div class="modal-actions">
-        <button id="closeDayInfoModalBtn" class="btn secondary" type="button">Close</button>
+        <button id="closeDayInfoModalBtn" class="btn secondary" type="button" data-i18n>Close</button>
       </div>
     </div>
   </div>

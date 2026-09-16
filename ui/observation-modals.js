@@ -1,3 +1,4 @@
+import { setText } from '../i18n.js';
 import { normalizeDayMarkers, store } from "../store.js";
 import { TEMPERATURE_RANGE, getTimeAdjustment, qs, qsa } from "../core.js";
 import { markerColorFromType, markerTypeFromColor, normalizeMarkerColor } from "./marker-utils.js";
@@ -32,7 +33,7 @@ export function openActionModal() {
   if (summary && window.matchMedia("(max-width: 560px)").matches && store.selectedKey) {
     renderDayInfo(buildColumns());
     const title = document.createElement("p");
-    title.textContent = qs("dayInfoTitle").innerText;
+    setText(title, qs("dayInfoTitle").getAttribute("data-i18n"));
     const panel = qs("dayInfoModal").querySelector(".info-panel").cloneNode(true);
     panel.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
     summary.replaceChildren(title, panel);
@@ -56,7 +57,7 @@ export function openModal(currentColumns) {
     measurementTime: data.measurementTime ?? "",
     measurementTimeEnabled: Boolean(data.measurementTime),
   });
-  qs("modalTitle").innerText = `${key} (CD ${column?.cycleDay ?? "-"})`;
+  setText(qs("modalTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
   qs("tempInput").value = store.modal.temp == null ? "" : Number(store.modal.temp).toFixed(2);
   qs("tempFactorsInput").value = store.modal.tempFactors;
   qs("measurementTimeInput").value = store.modal.measurementTime;
@@ -101,9 +102,9 @@ export function syncMeasurementTimeUI() {
     : 0;
   const hint = qs("timeAdjustmentHint");
   if (hint) {
-    hint.innerText = adjustment
+    setText(hint, adjustment
       ? `≈ ${adjustment > 0 ? "+" : ""}${adjustment.toFixed(2)} °C vs usual time`
-      : "";
+      : "");
   }
 }
 
@@ -224,7 +225,7 @@ export function markerHeadingFromColor(color) {
 
 function syncMarkerHeading() {
   const heading = qs("markersMarkerLabel");
-  if (heading) heading.textContent = markerHeadingFromColor(store.modal.markerColor);
+  if (heading) setText(heading, markerHeadingFromColor(store.modal.markerColor));
 }
 
 export function openMarkersModal() {
