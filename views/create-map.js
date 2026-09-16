@@ -1,22 +1,22 @@
 export function renderCreateMapView(container, { onBack, onCreate }) {
   container.innerHTML = `
-    <section class="screen screen-form" aria-label="Create map">
+    <section class="screen screen-form" aria-label="Create map" data-i18n-aria-label="Create map">
       <div class="screen-shell narrow-shell">
         <div class="screen-hero">
-          <p class="screen-kicker">Create Map</p>
-          <h2>Name your next map</h2>
-          <p>Create an empty map and jump straight into the active chart.</p>
+          <p class="screen-kicker" data-i18n>Create Map</p>
+          <h2 data-i18n>Name your next map</h2>
+          <p data-i18n>Create an empty map and jump straight into the active chart.</p>
         </div>
 
         <form class="screen-card screen-form-card" id="createMapForm">
           <div class="modal-section">
-            <div class="input-label">Map name</div>
+            <div class="input-label" data-i18n>Map name</div>
             <input id="createMapNameInput" type="text" required maxlength="80">
           </div>
 
           <div class="modal-actions screen-actions">
-            <button type="button" class="btn secondary" id="createMapBackBtn">Back</button>
-            <button type="submit" class="btn primary">Create</button>
+            <button type="button" class="btn secondary" id="createMapBackBtn" data-i18n>Back</button>
+            <button type="submit" class="btn primary" data-i18n>Create</button>
           </div>
         </form>
       </div>

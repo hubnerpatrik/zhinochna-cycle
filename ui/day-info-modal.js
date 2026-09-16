@@ -1,4 +1,5 @@
 import { store } from "../store.js";
+import { setText } from "../i18n.js";
 import { TEMP_FACTORS, formatTemp, getAdjustedTemp, qs } from "../core.js";
 import { hideModal, showModal } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
@@ -17,7 +18,9 @@ export function renderInfoLines(element, lines) {
   element.replaceChildren();
   lines.forEach((line, index) => {
     if (index) element.appendChild(document.createElement("br"));
-    element.appendChild(document.createTextNode(line));
+    const span = document.createElement("span");
+    setText(span, line);
+    element.appendChild(span);
   });
 }
 
@@ -26,17 +29,17 @@ export function renderDayInfo(currentColumns) {
   const key = store.selectedKey;
   const data = store.entries[key] || {};
   const column = currentColumns.find(item => item.key === key);
-  qs("dayInfoTitle").innerText = `${key} (CD ${column?.cycleDay ?? "-"})`;
+  setText(qs("dayInfoTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
 
   const adjusted = getAdjustedTemp(
     data.temp,
     data.measurementTime,
     store.getActiveMapProfile().usualMeasurementTime,
   );
-  qs("infoTemp").innerText = data.temp == null
+  setText(qs("infoTemp"), data.temp == null
     ? "-"
-    : `${formatTemp(data.temp)} °C${data.measurementTime ? ` at ${data.measurementTime}` : ""}${adjusted == null ? "" : ` (adjusted ${formatTemp(adjusted)} °C)`}`;
-  qs("infoTempFactors").innerText = data.tempFactors ? TEMP_FACTORS[data.tempFactors] : "-";
+    : `${formatTemp(data.temp)} °C${data.measurementTime ? ` at ${data.measurementTime}` : ""}${adjusted == null ? "" : ` (adjusted ${formatTemp(adjusted)} °C)`}`);
+  setText(qs("infoTempFactors"), data.tempFactors ? TEMP_FACTORS[data.tempFactors] : "-");
   renderInfoLines(qs("infoBleeding"), [
     `Bleeding: ${LABELS.bleeding[data.bleeding ?? "none"]}`,
     `Clots: ${data.sediment ? "Yes" : "No"}`,

@@ -1,3 +1,4 @@
+import { setText, setDateText } from '../i18n.js';
 import { store } from "../store.js";
 import {
   LAYOUT,
@@ -13,8 +14,7 @@ import {
 import { getCycleStartDates, isFertileDay } from "../domain.js";
 
 export function renderMonth() {
-  qs("monthLabel").innerText = new Date(store.year, store.month)
-    .toLocaleString("en-US", { month: "long", year: "numeric" });
+  setDateText(qs("monthLabel"), new Date(store.year, store.month));
 }
 
 export function renderTempScale() {
@@ -37,7 +37,7 @@ export function renderCalendar(selectColumn) {
 
   ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach(day => {
     const weekday = document.createElement("div");
-    weekday.textContent = day;
+    setText(weekday, day);
     weekday.className = "calendar-weekday";
     element.appendChild(weekday);
   });
@@ -85,8 +85,8 @@ export function renderTempFactorsOptions() {
     tempInput.max = String(TEMPERATURE_RANGE.max);
   }
 
-  select.innerHTML = `<option value="">None</option>`
+  select.innerHTML = `<option value="" data-i18n>None</option>`
     + Object.entries(TEMP_FACTORS)
-      .map(([value, label]) => `<option value="${value}">${label}</option>`)
+      .map(([value, label]) => `<option value="${value}" data-i18n>${label}</option>`)
       .join("");
 }

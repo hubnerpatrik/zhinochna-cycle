@@ -1,4 +1,5 @@
 import { store } from "../store.js";
+import { t } from "../i18n.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
 import { LAYOUT, qs, qsa, syncCSSVariables } from "../core.js";
@@ -84,6 +85,7 @@ export function initializeActiveMapControls({
   mobileMap,
   getColumns,
   render,
+  renderZoom = render,
   renderZoomLabel,
   restart,
 }) {
@@ -161,11 +163,17 @@ export function initializeActiveMapControls({
   const setWidth = width => {
     mobileMap.setWidth(width);
     syncCSSVariables();
-    render();
+    renderZoom();
     renderZoomLabel();
   };
-  const zoomBy = step => {
-    const width = mobileMap.clampWidth(mobileMap.zoomStep(step));
+  let zoomFrame = null;
+  let zoomTarget = null;
+  const cancelZoom = () => {
+    if (zoomFrame !== null) cancelAnimationFrame(zoomFrame);
+    zoomFrame = null;
+    zoomTarget = null;
+  };
+  const applyZoom = width => {
     const oldHeight = LAYOUT.chartHeight;
     const top = mapScroll?.scrollTop || 0;
     const anchorY = (mapScroll?.clientHeight || 0) / 2;
@@ -175,8 +183,27 @@ export function initializeActiveMapControls({
     if (mapScroll) mapScroll.scrollLeft = left;
     if (mapScroll && mobileMap.active()) mapScroll.scrollTop = Math.max(0, (top + anchorY - 28) * LAYOUT.chartHeight / oldHeight - anchorY + 28);
   };
+  const zoomBy = step => {
+    const target = mobileMap.clampWidth(mobileMap.zoomStep(step, zoomTarget ?? LAYOUT.columnWidth));
+    cancelZoom();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return applyZoom(target);
+    const startWidth = LAYOUT.columnWidth;
+    const start = performance.now();
+    zoomTarget = target;
+    const animate = now => {
+      const progress = Math.min(1, (now - start) / 180);
+      applyZoom(startWidth + (target - startWidth) * (1 - (1 - progress) ** 3));
+      if (progress < 1) zoomFrame = requestAnimationFrame(animate);
+      else { zoomFrame = null; zoomTarget = null; }
+    };
+    zoomFrame = requestAnimationFrame(animate);
+  };
   bindButton("zoomInBtn", () => zoomBy(1));
   bindButton("zoomOutBtn", () => zoomBy(-1));
+  mapScroll?.addEventListener("touchstart", cancelZoom, { passive: true });
+  mapScroll?.addEventListener("wheel", cancelZoom, { passive: true });
+  qs("mobileFitBtn")?.addEventListener("click", cancelZoom);
+  window.addEventListener("hashchange", cancelZoom);
   if (mapScroll) bindMapGestures(mapScroll, {
     getWidth: () => LAYOUT.columnWidth, setWidth, fixedWidth,
     clampWidth: width => mobileMap.clampWidth(width),
@@ -185,7 +212,7 @@ export function initializeActiveMapControls({
   });
 
   bindButton("devReset", () => {
-    if (!confirm("Reset all data? This cannot be undone.")) return;
+    if (!confirm(t("Reset all data? This cannot be undone."))) return;
     try {
       store.reset();
       restart();

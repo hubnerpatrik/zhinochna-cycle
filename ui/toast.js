@@ -1,3 +1,4 @@
+import { setText } from '../i18n.js';
 import { qs } from "../core.js";
 
 let toastTimer = null;
@@ -35,7 +36,7 @@ export function showMessage(text, duration = 2200) {
     toast.removeEventListener("transitionend", toastTransitionHandler);
     toastTransitionHandler = null;
   }
-  toast.textContent = text;
+  setText(toast, text);
   toast.classList.remove("persistent-toast", "action-toast");
   toast.classList.remove("hidden");
   requestAnimationFrame(() => toast.classList.add("show"));

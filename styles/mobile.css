@@ -57,9 +57,11 @@
   .mobile-map-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; min-height: 44px; }
   .mobile-map-header strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; }
   .mobile-map-header button, .mobile-chart-toolbar button, #mobileCancelToolBtn { min-height: 44px; min-width: 44px; border: 0; border-radius: 10px; background: var(--card); color: var(--text); padding: 8px; font: inherit; font-size: 12px; }
-  .mobile-map-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: #f4e9e1; }
-  .mobile-map-tabs button { min-height: 44px; background: transparent; border: 0; border-radius: 10px; font: inherit; font-size: 14px; color: var(--text); }
-  .mobile-map-tabs button[aria-selected="true"] { background: #fffaf6; box-shadow: 0 2px 6px #0000000a; }
+  .mobile-map-tabs { display: flex; justify-content: center; gap: 16px; padding: 2px; }
+  .mobile-map-tabs button { display: grid; place-items: center; width: 48px; min-height: 44px; background: transparent; border: 2px solid transparent; border-radius: 10px; color: var(--muted); cursor: pointer; }
+  .mobile-map-tabs button[aria-selected="true"] { color: #a64e25; border-bottom-color: currentColor; }
+  .mobile-map-tabs svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .mobile-map-tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .mobile-profile-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0; }
   .mobile-profile-actions button { min-height:44px; padding:10px 12px; border:1px solid #e9d9d3; border-radius:12px; background:#fffaf6; color:var(--text); font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
   .mobile-profile-actions button:active { background:#f4e9e1; }
@@ -75,13 +77,14 @@
   #activeMapScreen .chart-card { padding: 0 8px; margin-top: 4px; background: transparent; box-shadow: none; border: 0; }
   .mobile-chart-toolbar { display: flex; align-items: center; gap: 3px; }
   .mobile-chart-toolbar > span { flex: 1; font-size: 11px; color: var(--muted); }
-  #activeMapScreen .map-scroll { max-height: var(--mobile-plot-height); overflow: auto; overscroll-behavior: contain; }
+  #activeMapScreen .map-scroll { height: var(--mobile-plot-height); max-height: var(--mobile-plot-height); overflow: auto; overscroll-behavior: contain; }
   #activeMapScreen .cycle-map { border-radius: 10px; }
   #activeMapScreen .map-side-label { display: none; }
   #activeMapScreen .map-temp-spacer { font-size: 10px; }
   #activeMapScreen .map-header-row > .map-temp-spacer, #activeMapScreen .temp-scale-column { grid-column: 2; grid-row: 1; }
   #activeMapScreen .map-days, #activeMapScreen .map-chart-area { grid-column: 3; grid-row: 1; }
   #activeMapScreen .map-chart-row .map-side-label { display: none; }
+  #activeMapScreen .map-chart-area canvas { display: block; }
   #activeMapScreen:not(.mobile-observations) #mapRows { display: none; }
   #activeMapScreen .map-row { grid-template-columns: 48px 0 1fr; min-width: max-content; height: 44px; }
   #activeMapScreen .map-row .map-side-label { display: flex; width: 48px; font-size: 10px; padding-left: 2px; grid-column: 1; }

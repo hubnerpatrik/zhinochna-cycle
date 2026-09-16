@@ -1,3 +1,4 @@
+import { setText } from '../i18n.js';
 import { store } from '../store.js';
 import { buildCycleHistory, calculateSummary, cycleStarts, manualFields, summaryRows } from '../cycle-summary.js';
 
@@ -13,9 +14,9 @@ function rowsElement(manual, result) {
     const row = document.createElement('span');
     row.className = 'cycle-summary-row';
     const name = document.createElement('span');
-    name.textContent = label;
+    setText(name, label);
     const content = document.createElement('strong');
-    content.textContent = value;
+    setText(content, value);
     row.append(name, content);
     rows.append(row);
   });
@@ -37,10 +38,10 @@ export function renderCycleSummary(container, preferredStart) {
   button.setAttribute('aria-haspopup', 'dialog');
   const title = document.createElement('span');
   title.className = 'cycle-summary-heading';
-  title.textContent = 'Cycle summary  ✎';
+  setText(title, 'Cycle summary  ✎');
   const subtitle = document.createElement('span');
   subtitle.className = 'cycle-summary-note';
-  subtitle.textContent = start ? `From ${start} · history ${result.available}/${result.count}${result.historyIncomplete ? ' · incomplete records' : ''}` : 'Record menstruation to start a cycle';
+  setText(subtitle, start ? `From ${start} · history ${result.available}/${result.count}${result.historyIncomplete ? ' · incomplete records' : ''}` : 'Record menstruation to start a cycle');
   button.append(title, subtitle, rowsElement(manual, result));
   button.disabled = !start;
   button.onclick = () => openSummary(container, start, button);
@@ -65,28 +66,30 @@ function openSummary(container, initialStart, trigger) {
   const dialog = document.createElement('dialog');
   dialog.className = 'cycle-summary-dialog';
   dialog.setAttribute('aria-labelledby', 'cycleSummaryTitle');
-  dialog.innerHTML = `<form><h2 id="cycleSummaryTitle">Cycle summary</h2>
+  dialog.innerHTML = `<form><h2 id="cycleSummaryTitle" data-i18n>Cycle summary</h2>
     <div class="cycle-summary-content">
-    <label class="cycle-summary-field">Cycle<select name="cycle"></select></label>
-    <h3>Manual observations</h3><div class="cycle-summary-fields"></div>
-    <label class="cycle-summary-field">Previous cycles<select name="historyCount"><option value="6">6 cycles</option><option value="12">12 cycles</option></select></label>
-    <h3>Calculated results</h3><div class="cycle-summary-preview"></div>
+    <label class="cycle-summary-field"><span data-i18n>Cycle</span><select name="cycle"></select></label>
+    <h3 data-i18n>Manual observations</h3><div class="cycle-summary-fields"></div>
+    <label class="cycle-summary-field"><span data-i18n>Previous cycles</span><select name="historyCount"><option value="6" data-i18n>6 cycles</option><option value="12" data-i18n>12 cycles</option></select></label>
+    <h3 data-i18n>Calculated results</h3><div class="cycle-summary-preview"></div>
     <p class="cycle-summary-note"><strong data-history-status></strong></p>
     <p class="cycle-summary-error" role="alert"></p>
     </div>
-    <div class="cycle-summary-actions"><button type="button" class="btn" data-cancel>Cancel</button><button type="submit" class="btn primary">Save changes</button></div></form>`;
+    <div class="cycle-summary-actions"><button type="button" class="btn" data-cancel data-i18n>Cancel</button><button type="submit" class="btn primary" data-i18n>Save changes</button></div></form>`;
   const form = dialog.querySelector('form');
   const cycleSelect = form.elements.cycle;
   cycleStarts(store.entries).reverse().forEach(key => {
     const option = document.createElement('option');
     option.value = key;
-    option.textContent = `From ${key}`;
+    setText(option, `From ${key}`);
     cycleSelect.append(option);
   });
   manualFields.forEach(([key, text]) => {
     const label = document.createElement('label');
     label.className = 'cycle-summary-field';
-    label.textContent = text + (key === 'qualityDays' ? ' (days)' : ' (cycle day)');
+    const caption = document.createElement('span');
+    setText(caption, text + (key === 'qualityDays' ? ' (days)' : ' (cycle day)'));
+    label.append(caption);
     const input = document.createElement('input');
     input.name = key;
     input.type = 'number';
@@ -106,7 +109,7 @@ function openSummary(container, initialStart, trigger) {
     const manual = drafts[current] ?? {};
     const result = summarizeDraft(manual);
     form.querySelector('.cycle-summary-preview').replaceChildren(rowsElement(manual, result));
-    form.querySelector('[data-history-status]').textContent = `History: ${result.available}/${result.count} completed cycles${result.historyIncomplete ? ' · missing or conflicting records' : ''}.`;
+    setText(form.querySelector('[data-history-status]'), `History: ${result.available}/${result.count} completed cycles${result.historyIncomplete ? ' · missing or conflicting records' : ''}.`);
   };
   const populate = () => {
     const manual = drafts[current] ?? {};
@@ -133,7 +136,7 @@ function openSummary(container, initialStart, trigger) {
       renderCycleSummary(container, current);
       dialog.close();
     } catch (error) {
-      form.querySelector('.cycle-summary-error').textContent = error.message;
+      setText(form.querySelector('.cycle-summary-error'), error.message);
     }
   };
   dialog.addEventListener('close', () => {

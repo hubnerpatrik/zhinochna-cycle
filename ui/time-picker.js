@@ -1,3 +1,4 @@
+import { setText, setTranslatedAttribute } from '../i18n.js';
 let activePicker = null;
 let nextId = 0;
 
@@ -13,22 +14,22 @@ export function enhanceTimeInputs(root) {
     input.placeholder = "HH:MM";
     input.pattern = "([01][0-9]|2[0-3]):[0-5][0-9]";
     input.maxLength = 5;
-    input.setAttribute("aria-label", "Measurement time (HH:MM)");
+    setTranslatedAttribute(input, "aria-label", "Measurement time (HH:MM)");
 
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "time-picker-toggle";
-    toggle.setAttribute("aria-label", "Choose time");
+    setTranslatedAttribute(toggle, "aria-label", "Choose time");
     toggle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>';
     const panel = document.createElement("div");
     panel.id = `time-picker-${++nextId}`;
     panel.className = "time-picker-panel";
     panel.hidden = true;
     panel.setAttribute("role", "group");
-    panel.setAttribute("aria-label", "Choose measurement time");
+    setTranslatedAttribute(panel, "aria-label", "Choose measurement time");
     toggle.setAttribute("aria-controls", panel.id);
     toggle.setAttribute("aria-expanded", "false");
-    panel.innerHTML = '<div class="time-picker-heading">Measurement time</div><div class="time-picker-columns"></div><div class="time-picker-footer"><button type="button" class="time-picker-clear">Clear</button><button type="button" class="time-picker-done">Done</button></div>';
+    panel.innerHTML = '<div class="time-picker-heading" data-i18n>Measurement time</div><div class="time-picker-columns"></div><div class="time-picker-footer"><button type="button" class="time-picker-clear" data-i18n>Clear</button><button type="button" class="time-picker-done" data-i18n>Done</button></div>';
     wrapper.append(toggle, panel);
     const columns = panel.querySelector(".time-picker-columns");
     const choices = [];
@@ -44,11 +45,11 @@ export function enhanceTimeInputs(root) {
       column.className = "time-picker-column";
       const heading = document.createElement("div");
       heading.className = "time-picker-label";
-      heading.textContent = label;
+      setText(heading, label);
       const list = document.createElement("div");
       list.className = "time-picker-options";
       list.setAttribute("role", "listbox");
-      list.setAttribute("aria-label", label);
+      setTranslatedAttribute(list, "aria-label", label);
       list.tabIndex = 0;
       let timer;
       let interacting = false;
@@ -93,7 +94,7 @@ export function enhanceTimeInputs(root) {
         button.id = `${panel.id}-${part}-${value}`;
         button.setAttribute("role", "option");
         button.textContent = padded;
-        button.setAttribute("aria-label", `${label}: ${padded}`);
+        setTranslatedAttribute(button, "aria-label", `${label}: ${padded}`);
         button.onclick = () => {
           interacting = false;
           clearTimeout(timer);

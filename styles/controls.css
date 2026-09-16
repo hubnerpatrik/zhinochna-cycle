@@ -1,0 +1,43 @@
+/* Shared language, navigation, and calendar controls. */
+:root { --ui-icon-size: 20px; }
+.action-icon, .mobile-tool-icon { width: 32px; height: 32px; }
+.action-icon svg, .action-chevron, .time-picker-toggle svg,
+.mobile-map-tabs svg, .mobile-map-actions svg, #mobileSaveBtn svg,
+#mobileTools .mobile-tools-chevron, .map-row-icon svg {
+  width: var(--ui-icon-size);
+  height: var(--ui-icon-size);
+  flex: 0 0 var(--ui-icon-size);
+  stroke-width: 1.8;
+}
+.map-row-icon { display: none; }
+.app-header { padding-right: 88px; }
+.app-header > .language-select { position: absolute; top: 12px; right: 14px; }
+.language-select { width: 64px; min-width: 64px; min-height: 44px; padding: 8px; border: 1px solid #d9c9c0; border-radius: 10px; color: var(--text); background: #fffaf6; font: inherit; font-size: 13px; cursor: pointer; }
+.language-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button.menu-summary-card { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+button.menu-summary-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+button.menu-summary-card:disabled { cursor: default; opacity: .65; }
+button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
+#fertileRangeCalendar button.day { font: inherit; color: var(--text); }
+#fertileRangeCalendar button.day:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.map-day.cycle-boundary, .map-cell.cycle-boundary { box-shadow: inset 2px 0 #b41414; }
+@media (max-width: 560px) {
+  .mobile-map-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0; }
+  .mobile-map-tabs button { width: 100%; min-height: 48px; border-radius: 12px; }
+  .mobile-map-tabs svg { width: 28px; height: 28px; }
+  #mobileSaveBtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0; padding: 10px; border: 1px solid var(--accent); border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-3)); color: var(--text); font-weight: 600; box-shadow: 0 3px 10px rgba(255, 138, 101, .16); cursor: pointer; }
+  #mobileSaveBtn svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  #mobileSaveBtn:active:not(:disabled) { filter: brightness(.96); }
+  #mobileSaveBtn:focus-visible { outline: 2px solid #a64e25; outline-offset: 2px; }
+  #mobileSaveBtn:disabled { opacity: .5; box-shadow: none; cursor: default; }
+  #activeMapScreen .map-row .map-side-label { padding: 0; justify-content: center; }
+  #activeMapScreen .map-row .map-row-caption { display: none; }
+  #activeMapScreen .map-row .map-cell { height: 100%; }
+  .map-row-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: #eee8e2; color: #645d57; flex: 0 0 32px; }
+  .map-row-group-red .map-row-icon { background: #f8e3e2; color: #a74646; }
+  .map-row-group-mucus .map-row-icon { background: #e6eaf2; color: var(--mucus-navy); }
+  .map-row-group-cervix .map-row-icon { background: #e1f2f1; color: #287c7c; }
+  .map-row-group-symptoms .map-row-icon { background: #efe4f1; color: #825594; }
+  .app-header { padding-right: 82px; }
+  .mobile-map-header .language-select { flex: 0 0 60px; width: 60px; min-width: 60px; }
+}

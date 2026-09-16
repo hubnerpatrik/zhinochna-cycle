@@ -28,21 +28,21 @@ export function renderMenuView(container, { activeMap, onNavigate }) {
   const activeMapHint = activeMap ? "Your active map you're working on." : "Create a map first to see it here.";
 
   container.innerHTML = `
-    <section class="screen screen-menu" aria-label="Main menu">
+    <section class="screen screen-menu" aria-label="Main menu" data-i18n-aria-label="Main menu">
       <div class="screen-shell">
         <div class="screen-hero">
-          <p class="screen-kicker">Main Menu</p>
-          <h2>Start making maps</h2>
-          <p>To create a map, go to the create map menu.</p>
+          <p class="screen-kicker" data-i18n>Main Menu</p>
+          <h2 data-i18n>Start making maps</h2>
+          <p data-i18n>To create a map, go to the create map menu.</p>
         </div>
 
-        <div class="screen-card menu-summary-card">
+        <button type="button" class="screen-card menu-summary-card" data-screen="active-map" ${activeMap ? "" : "disabled"}>
           <div>
-            <div class="menu-summary-label">Active map</div>
-            <div class="menu-summary-value">${escapeHtml(activeMapName)}</div>
+            <div class="menu-summary-label" data-i18n>Active map</div>
+            <div class="menu-summary-value" ${activeMap?.name?.trim() ? "" : "data-i18n"}>${escapeHtml(activeMapName)}</div>
           </div>
-          <div class="menu-summary-note">${escapeHtml(activeMapHint)}</div>
-        </div>
+          <div class="menu-summary-note"> <span data-i18n>${escapeHtml(activeMapHint)}</span></div>
+        </button>
 
         <div class="menu-grid">
           ${MENU_ITEMS.map(item => {
@@ -55,8 +55,8 @@ export function renderMenuView(container, { activeMap, onNavigate }) {
                 ${disabled ? "disabled" : ""}
               >
                 <span class="menu-card-index">${MENU_ITEMS.indexOf(item) + 1}</span>
-                <span class="menu-card-title">${escapeHtml(item.title)}</span>
-                <span class="menu-card-description">${escapeHtml(item.description)}</span>
+                <span class="menu-card-title"> <span data-i18n>${escapeHtml(item.title)}</span></span>
+                <span class="menu-card-description"> <span data-i18n>${escapeHtml(item.description)}</span></span>
               </button>
             `;
           }).join("")}

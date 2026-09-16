@@ -12,7 +12,22 @@ vMAJOR.MINOR.PATCH
 
 ---
 
-## 0.10.8 — In development
+## 0.10.9 — In development
+
+### Changed
+
+- Show cycle-day numbers in the fertile-day picker, including month and cycle boundaries; retain keyboard focus when toggling a day.
+- Open the active map from the summary card in the main menu; disable the card when no map is active.
+- Render chart geometry separately during zoom, animate zoom buttons, and keep the moving two-finger anchor stable on both axes.
+- Replace the phone Graph / Calendar labels with accessible icons and remove the wide tab background.
+- Replace every phone observation-row label with a consistently sized icon, including a palette for Color and P for both peak rows; retain translated accessible labels and desktop captions.
+- Standardize interface icons to 20 px and icon tiles to 32 px; align mobile observation values with their row icons. Use a single circle for Openness and linked male/female symbols for Sex.
+- Enlarge the mobile Graph / Calendar icons to 28 px and align their controls with Profile / Summary; style Save Map with the app's peach gradient and a save icon.
+- Use Suchý, Vlhký, and Mokrý for the Czech sensation options.
+- Add an upper-right EN / UA / CZ / SK language switch with English as the default and a saved local preference. Translate application labels, calendars, editors, and summaries without replacing form drafts or translating user data.
+- Draw cycle boundaries in solid red through the chart and observation rows, and make horizontal and vertical coverlines solid.
+
+## 0.10.8
 
 ### Changed
 

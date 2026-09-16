@@ -1,3 +1,4 @@
+import { initializeLanguage, setText } from './i18n.js';
 // Application bootstrap and top-level active-map rendering.
 
 import { store } from "./store.js";
@@ -24,7 +25,7 @@ import {
   renderTempScale,
   showMessage,
 } from "./ui.js";
-import { LAYOUT, getCalendarFocusDate, qs } from "./core.js";
+import { LAYOUT, chartWidth, columnX, columnCenterX, getCalendarFocusDate, qs } from "./core.js";
 
 const ZOOM_BASE = 50;
 
@@ -68,13 +69,16 @@ function renderActiveMapMeta() {
   const save = qs("saveActiveMapBtn");
   if (!name || !status || !save) return;
   if (!activeMap) {
-    name.innerText = "No active map";
+    setText(name, "No active map");
     status.classList.add("hidden");
     save.disabled = true;
     return;
   }
-  name.innerText = activeMap.name || "Untitled map";
-  status.innerText = activeMap.status === "closed" ? "Closed" : "Open";
+  if (activeMap.name) {
+    name.removeAttribute("data-i18n");
+    name.textContent = activeMap.name;
+  } else setText(name, "Untitled map");
+  setText(status, activeMap.status === "closed" ? "Closed" : "Open");
   status.classList.remove("hidden", "map-pill-closed");
   status.classList.toggle("map-pill-closed", activeMap.status === "closed");
   save.disabled = activeMap.status === "closed";
@@ -97,6 +101,20 @@ function renderZoomLabel() {
   qs("zoomLabel").innerText = `${Math.round((LAYOUT.columnWidth / ZOOM_BASE) * 100)}%`;
 }
 
+// Zoom changes geometry only. Keep row nodes, calendar and summary intact.
+function renderZoom() {
+  mobileMap.prepare();
+  currentColumns.forEach((column, index) => {
+    column.x = columnX(index);
+    column.centerX = columnCenterX(index);
+  });
+  qs("dayNumbers").style.width = `${chartWidth(currentColumns)}px`;
+  renderTempScale();
+  chartInteractions.render();
+  mobileMap.update();
+  renderZoomLabel();
+}
+
 function showStandaloneScreen() {
   chartInteractions.deactivate();
   hideAllModals();
@@ -111,6 +129,7 @@ function openActiveMapScreen() {
     mobileMap,
     getColumns: () => currentColumns,
     render,
+    renderZoom,
     renderZoomLabel,
     restart: () => router?.start(),
   });
@@ -143,6 +162,7 @@ function bindNavigation() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  initializeLanguage();
   router = createRouter({
     root: qs("screenRoot"),
     showStandaloneScreen,

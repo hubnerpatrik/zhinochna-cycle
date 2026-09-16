@@ -26,11 +26,11 @@ export function bindMapGestures(element, { getWidth, setWidth, fixedWidth, onPin
     if (frame !== null) cancelAnimationFrame(frame);
     frame = null;
     if (!pending) return;
-    const { width, left, height, top, anchorY } = pending;
+    const { width, left, height, top, anchorY, currentY } = pending;
     pending = null;
     setWidth(width);
     element.scrollLeft = left;
-    if (height) element.scrollTop = Math.max(0, (top + anchorY - 28) * getHeight() / height - anchorY + 28);
+    if (height) element.scrollTop = Math.max(0, (top + anchorY - 28) * getHeight() / height - currentY + 28);
   }
 
   element.addEventListener("touchstart", event => {
@@ -64,6 +64,7 @@ export function bindMapGestures(element, { getWidth, setWidth, fixedWidth, onPin
     pending = {
       width,
       height: pinch.height, top: pinch.top, anchorY: pinch.anchorY,
+      currentY: (event.touches[0].clientY + event.touches[1].clientY) / 2 - element.getBoundingClientRect().top,
       left: zoomScrollLeft(pinch.left, pinch.anchor, fixedWidth(), pinch.width, width)
         + pinch.anchor - midpoint(event.touches),
     };
