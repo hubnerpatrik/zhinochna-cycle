@@ -3,21 +3,25 @@ import { escapeHtml } from "./view-utils.js";
 const MENU_ITEMS = [
   {
     screen: "my-profile",
+    icon: "profile",
     title: "My Profile",
     description: "Review or edit your profile.",
   },
   {
     screen: "my-maps",
+    icon: "maps",
     title: "My Maps",
     description: "Browse saved cycle map.",
   },
   {
     screen: "create-map",
+    icon: "create",
     title: "Create Map",
     description: "Start a new empty cycle map.",
   },
   {
     screen: "active-map",
+    icon: "chart",
     title: "Active Map",
     description: "Continue editing the currently active map.",
   },
@@ -55,6 +59,7 @@ export function renderMenuView(container, { activeMap, onNavigate }) {
                 ${disabled ? "disabled" : ""}
               >
                 <span class="menu-card-index">${MENU_ITEMS.indexOf(item) + 1}</span>
+                <span class="menu-card-icon" aria-hidden="true"><svg><use href="/icons.svg#nav-${item.icon}"/></svg></span>
                 <span class="menu-card-title"> <span data-i18n>${escapeHtml(item.title)}</span></span>
                 <span class="menu-card-description"> <span data-i18n>${escapeHtml(item.description)}</span></span>
               </button>

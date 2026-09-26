@@ -34,11 +34,11 @@
         <h1>Marta Zhinochna STM</h1>
       </div>
       <nav id="headerNav" class="header-nav hidden" aria-label="Main navigation" data-i18n-aria-label="Main navigation">
-        <button id="navMenuBtn" class="header-nav-btn" type="button" data-i18n>Main Menu</button>
-        <button id="navProfileBtn" class="header-nav-btn" type="button" data-i18n>My Profile</button>
-        <button id="navMapsBtn" class="header-nav-btn" type="button" data-i18n>My Maps</button>
-        <button id="navCreateMapBtn" class="header-nav-btn" type="button" data-i18n>Create Map</button>
-        <button id="navActiveMapBtn" class="header-nav-btn" type="button" data-i18n>Active Map</button>
+        <button id="navMenuBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-home"/></svg><span class="nav-label-desktop" data-i18n>Main Menu</span><span class="nav-label-mobile" data-i18n>Menu</span></button>
+        <button id="navProfileBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-profile"/></svg><span class="nav-label-desktop" data-i18n>My Profile</span><span class="nav-label-mobile" data-i18n>Profile</span></button>
+        <button id="navMapsBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-maps"/></svg><span class="nav-label-desktop" data-i18n>My Maps</span><span class="nav-label-mobile" data-i18n>Maps</span></button>
+        <button id="navCreateMapBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-create"/></svg><span class="nav-label-desktop" data-i18n>Create Map</span><span class="nav-label-mobile" data-i18n>New map</span></button>
+        <button id="navActiveMapBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-chart"/></svg><span class="nav-label-desktop" data-i18n>Active Map</span><span class="nav-label-mobile" data-i18n>Active Map</span></button>
       </nav>
       <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
         <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
@@ -49,20 +49,21 @@
 
     <section id="activeMapScreen" class="hidden" aria-label="Active map" data-i18n-aria-label="Active map">
       <div class="mobile-map-header mobile-only">
-        <button id="mobileMenuBtn" type="button" aria-label="Main Menu" data-i18n-aria-label="Main Menu">‹</button>
         <strong id="mobileMapName">Active map</strong>
-        <button id="mobileSaveBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2Z"/><path d="M7 3v6h9V3M7 21v-8h10v8"/></svg><span data-i18n>Save Map</span></button>
+        <button id="mobileSaveBtn" type="button" aria-label="Save Map" data-i18n-aria-label="Save Map"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2Z"/><path d="M7 3v6h9V3M7 21v-8h10v8"/></svg><span data-i18n>Save</span></button>
         <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
           <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
         </select>
       </div>
-      <div class="mobile-map-tabs mobile-only" role="tablist" aria-label="Map view" data-i18n-aria-label="Map view">
+      <div class="mobile-map-navigation mobile-only">
+        <div class="mobile-map-tabs" role="tablist" aria-label="Map view" data-i18n-aria-label="Map view">
         <button id="mobileGraphTab" type="button" role="tab" aria-selected="true" aria-controls="mobileGraphPanel" aria-label="Graph" data-i18n-aria-label="Graph" title="Graph" data-i18n-title="Graph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v17h17M7 15l4-5 4 3 5-8"/><circle cx="11" cy="10" r="1"/><circle cx="15" cy="13" r="1"/></svg></button>
         <button id="mobileCalendarTab" type="button" role="tab" aria-selected="false" aria-controls="mobileCalendarPanel" aria-label="Calendar" data-i18n-aria-label="Calendar" title="Calendar" data-i18n-title="Calendar" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h2m6 0h2m-10 3h2"/></svg></button>
       </div>
-      <div class="mobile-profile-actions mobile-only" aria-label="Profile and cycle summary" data-i18n-aria-label="Profile and cycle summary">
+        <div class="mobile-profile-actions" aria-label="Profile and cycle summary" data-i18n-aria-label="Profile and cycle summary">
         <button id="mobileProfileBtn" type="button" aria-haspopup="dialog" data-i18n>Profile</button>
         <button id="mobileSummaryBtn" type="button" aria-haspopup="dialog" data-i18n>Summary</button>
+        </div>
       </div>
       <section id="mobileCalendarPanel" class="layout" aria-label="Cycle tracker dashboard" data-i18n-aria-label="Cycle tracker dashboard">
         <section class="calendar-card" aria-label="Calendar view" data-i18n-aria-label="Calendar view">

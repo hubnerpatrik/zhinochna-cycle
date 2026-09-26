@@ -57,12 +57,12 @@ export function renderProfileScreen(container, {
             <div class="profile-fields">
               <div class="modal-section">
                 <div class="input-label" data-i18n>Name</div>
-                <input name="name" type="text" placeholder="Name and surname" data-i18n-placeholder="Name and surname" value="${escapeHtml(profile.name)}">
+                <input name="name" type="text" placeholder="Name" data-i18n-placeholder="Name" value="${escapeHtml(profile.name)}">
               </div>
 
               <div class="modal-section">
                 <div class="input-label" data-i18n>Consultant name</div>
-                <input name="consultantName" type="text" placeholder="Name Surname" data-i18n-placeholder="Name Surname" value="${escapeHtml(profile.consultantName)}">
+                <input name="consultantName" type="text" placeholder="Consultant name" data-i18n-placeholder="Consultant name" value="${escapeHtml(profile.consultantName)}">
               </div>
 
               <div class="modal-section">
