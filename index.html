@@ -27,7 +27,20 @@
 </head>
 
 <body>
-  <main class="app">
+  <section id="authRoot" class="auth-shell" aria-live="polite">
+    <p data-i18n>Checking your session…</p>
+  </section>
+  <main class="app hidden" id="trackerApp">
+    <div class="account-bar">
+      <span id="accountEmail"></span>
+      <button id="signOutBtn" class="btn secondary" type="button" data-i18n>Sign out</button>
+    </div>
+    <aside id="cloudStatusPanel" class="cloud-status" aria-label="Cloud storage" data-i18n-aria-label="Cloud storage">
+      <span data-cloud-message role="status" aria-live="polite" data-i18n>Loading your cloud maps…</span>
+      <button type="button" data-cloud-retry hidden data-i18n>Retry sync</button>
+      <button type="button" data-cloud-backup hidden data-i18n>Download local backup</button>
+      <button type="button" data-cloud-reload hidden data-i18n>Back up and load cloud version</button>
+    </aside>
     <header class="app-header">
       <div class="header-brand">
         <p class="app-kicker" data-i18n>Cycle tracking</p>
@@ -450,6 +463,6 @@
     </div>
   </div>
 
-  <script type="module" src="app.js"></script>
+  <script type="module" src="bootstrap.js"></script>
 </body>
 </html>

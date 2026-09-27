@@ -6,7 +6,7 @@
 import {
   ACTIVE_MAP_ID_STORAGE_KEY,
   LEGACY_STORAGE_KEY,
-  LocalStorageAdapter,
+  createPersistence,
   MAPS_STORAGE_KEY,
   PROFILE_STORAGE_KEY,
 } from "./storage/local-storage-adapter.js";
@@ -45,7 +45,7 @@ export {
 /* ─── store ───────────────────────────────── */
 
 export class Store {
-  constructor(persistence = new LocalStorageAdapter()) {
+  constructor(persistence = createPersistence()) {
     this.persistence = persistence;
     this.selectedKey = null;
     this.selectedPointType = "temp";

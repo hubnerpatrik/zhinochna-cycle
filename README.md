@@ -110,11 +110,11 @@ The main menu provides direct access to the profile, saved maps, map creation an
 
 **Transparency over hidden calculations.** Values shown on the map come from data entered by the user. Manual elements such as coverlines and fertile days stay explicitly user-controlled.
 
-**Privacy by default.** The current prototype stores its data locally in the browser and does not require a remote account or backend.
+**Account privacy.** Neon Auth manages sign-in. Profiles and maps sync through an authenticated server API to Neon Postgres, with an account-specific local copy for recovery and pending changes.
 
 ## Tech stack
 
-`JavaScript` · `HTML5 Canvas` · `CSS` · `Vite` · `localStorage`
+`JavaScript` · `HTML5 Canvas` · `CSS` · `Vite` · `Neon Auth / Postgres` · `localStorage`
 
 The frontend is built with **vanilla JavaScript and ES modules** without a framework.
 
@@ -127,7 +127,10 @@ core.js         Shared date, temperature, DOM and chart utilities
 store.js        Application state and persistence coordination
 backup.js       JSON backup serialization and parsing
 data-validation.js  Persisted and imported data normalization
-storage/        Browser local-storage adapter
+storage/        Local cache, durable sync queue and cloud adapter
+api/            Vercel authenticated persistence endpoint and health check
+server/         Token verification and account-scoped database queries
+migrations/     Database schema migrations
 domain.js       Cycle detection and chart-column generation
 chart.js        Canvas temperature chart and markers
 active-map/     Active-map bindings and chart interactions
@@ -146,7 +149,9 @@ Requires **Node.js 20.19+** and npm.
 
 ```bash
 npm ci
-npm run dev
+# Set DATABASE_URL and VITE_NEON_AUTH_URL in .env first (see .env.example).
+npm run db:migrate
+npx vercel dev
 ```
 
 Run the project checks before committing:
@@ -164,11 +169,18 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the repository workflow and [CHANGELO
 
 ## Data storage
 
-The current prototype stores profile data, maps, daily observations, coverlines, fertile days and the active map identifier locally in the browser using `localStorage`. No account or server is required.
+Profiles, maps, daily observations, coverlines, fertile days and the active map identifier sync to Neon Postgres through `/api/state`. A verified Neon Auth account is required. The API verifies signed tokens and derives ownership on the server. Each account also has a separate local cache and durable queue for changes awaiting upload.
 
 Each saved map captures a profile snapshot and has an **Export** action in **My Maps**, allowing maps to be shared separately as identifiable JSON backup files. **Import map** validates a shared backup and asks for confirmation before adding it to My Maps. The recipient's profile, existing maps and active map are preserved, while opening the imported map displays the profile saved by its author. If reading, validation, or persistence fails, existing data is preserved.
 
-A database-backed persistence layer is planned for a future version.
+The sync indicator distinguishes local pending changes from confirmed cloud saves. New devices load the account's cloud state on sign-in. Conflicting edits do not overwrite each other: the app offers a local JSON backup and an explicit switch to the cloud version. This is document-level synchronization, not collaborative live editing. See [cloud storage](docs/cloud-storage.md) for limits and recovery.
+
+## Account sign-in
+
+Neon Auth now provides email/password registration, verification, sign-in, sign-out, and password
+reset. Configure the public Auth URL before running the app; see [Auth setup](docs/auth-setup.md).
+Existing maps created before accounts are preserved without being automatically assigned.
+Local maps already assigned to a verified account are queued for their first cloud upload. Explicit migration of older, unassigned maps is still pending.
 
 ## Disclaimer
 
