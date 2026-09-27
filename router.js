@@ -55,6 +55,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
       const button = document.getElementById(id);
       if (!button) return;
       button.classList.toggle("is-active", route === screen);
+      button.setAttribute("aria-current", route === screen ? "page" : "false");
     });
 
     const activeMapButton = document.getElementById("navActiveMapBtn");

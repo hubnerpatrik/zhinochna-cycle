@@ -1,4 +1,4 @@
-import { initializeLanguage, setText } from './i18n.js';
+import { setText } from './i18n.js';
 // Application bootstrap and top-level active-map rendering.
 
 import { store } from "./store.js";
@@ -161,8 +161,8 @@ function bindNavigation() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  initializeLanguage();
+export function startApplication() {
+  if (router) return;
   router = createRouter({
     root: qs("screenRoot"),
     showStandaloneScreen,
@@ -186,4 +186,4 @@ document.addEventListener("DOMContentLoaded", () => {
   bindNavigation();
   configureModalNavigation(router);
   router.start();
-});
+}

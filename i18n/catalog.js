@@ -1,6 +1,9 @@
 // English source copy → Czech, Slovak, Ukrainian. UA is the UI label;
 // uk is the standard language code used by HTML and Intl.
+import { authMessages } from './auth.js';
+
 export const messages = {
+  ...authMessages,
   'Language': ['Jazyk', 'Jazyk', 'Мова'],
   'The selected file is not valid JSON.': ['Vybraný soubor není platný JSON.', 'Vybraný súbor nie je platný JSON.', 'Вибраний файл не є коректним JSON.'],
   'This file is not a supported Cycle Tracker backup.': ['Tento soubor není podporovaná záloha Cycle Tracker.', 'Tento súbor nie je podporovaná záloha Cycle Tracker.', 'Цей файл не є підтримуваною резервною копією Cycle Tracker.'],
@@ -23,6 +26,9 @@ export const messages = {
   'Additional symptoms or observations': ['Další příznaky nebo pozorování', 'Ďalšie príznaky alebo pozorovania', 'Додаткові симптоми або спостереження'],
   'Cycle tracking': ['Sledování cyklu', 'Sledovanie cyklu', 'Відстеження циклу'],
   'Main Menu': ['Hlavní menu', 'Hlavné menu', 'Головне меню'],
+  'Menu': ['Menu', 'Menu', 'Меню'],
+  'Maps': ['Mapy', 'Mapy', 'Карти'],
+  'New map': ['Nová mapa', 'Nová mapa', 'Нова карта'],
   'Main menu': ['Hlavní menu', 'Hlavné menu', 'Головне меню'],
   'Main navigation': ['Hlavní navigace', 'Hlavná navigácia', 'Головна навігація'],
   'My Profile': ['Můj profil', 'Môj profil', 'Мій профіль'],

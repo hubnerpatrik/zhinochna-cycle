@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+node_modules
+.git
+.vercel
+dist
+coverage
+test
+docs
+assets/readme

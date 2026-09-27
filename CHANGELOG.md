@@ -12,6 +12,34 @@ vMAJOR.MINOR.PATCH
 
 ---
 
+## 0.11.0 — 2026-09-27
+
+### Added
+
+- Add Neon Auth email/password accounts with email verification by one-time code, sign-in, sign-out, and password reset.
+- Add account-scoped cloud storage for profiles, maps, observations, coverlines, fertile ranges, summaries, and the active map through Neon Postgres.
+- Keep a durable local cache and upload queue for offline changes, retries, lost responses, and recovery backups.
+- Add server-side JWT verification, account ownership checks, input validation, size limits, version checks, and private database storage with row-level security enabled.
+- Add a cloud status indicator with retry, local backup, and explicit conflict recovery actions.
+- Add database migration and integration-check scripts for Neon environments.
+
+### Changed
+
+- Keep existing maps separated by verified account and upload account-assigned local data when cloud storage is empty.
+- Require a verified, unexpired account session before opening the tracker.
+- Improve mobile navigation, touch controls, graph/calendar switching, zoom controls, and responsive layout.
+- Align desktop colors and shared interface icons with the refreshed mobile design.
+
+### Fixed
+
+- Fix automatic cloud-save scheduling in the browser so creating a map reaches the server sync queue correctly.
+- Prevent stale tabs or devices from overwriting newer cloud data; retain local recovery data before switching versions.
+- Prevent database credentials from entering the client bundle or Vercel deployment archive.
+
+### Validation
+
+- Pass 109 automated tests, production build, real Neon persistence/isolation/concurrency checks, and browser cloud-save regression check.
+
 ## 0.10.9 — In development
 
 ### Changed

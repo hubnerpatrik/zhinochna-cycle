@@ -60,7 +60,6 @@ export function createMobileMap({ render, getColumns, interactions }) {
       ready = true;
       toastHome = document.createComment("Desktop notifications");
       qs("toast").before(toastHome);
-      qs("mobileMenuBtn").onclick = () => qs("navMenuBtn").click();
       qs("mobileSaveBtn").onclick = () => qs("saveActiveMapBtn").click();
       qs("mobileDayBtn").onclick = () => qs("editBtn").click();
       qs("mobileTools").onclick = () => {
