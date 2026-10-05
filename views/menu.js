@@ -1,4 +1,5 @@
 import { escapeHtml } from "./view-utils.js";
+import { currentRelease } from '../release-notes.js';
 
 const MENU_ITEMS = [
   {
@@ -66,6 +67,7 @@ export function renderMenuView(container, { activeMap, onNavigate }) {
             `;
           }).join("")}
         </div>
+        <footer class="menu-footer"><span>v${escapeHtml(currentRelease.version)}</span><a class="menu-changelog" href="${escapeHtml(currentRelease.githubUrl)}" target="_blank" rel="noopener noreferrer">Changelog <span aria-hidden="true">↗</span></a></footer>
       </div>
     </section>
   `;

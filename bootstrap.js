@@ -5,6 +5,9 @@ import { configurePersistence, useAccountStorage } from "./storage/local-storage
 import { CloudStorageAdapter, createCloudTransport } from "./storage/cloud-storage-adapter.js";
 import { setupCloudStatus } from "./views/cloud-status.js";
 import { renderAuthView } from "./views/auth.js";
+import { setupFeedback, concealFeedback } from './ui/feedback.js';
+import { initializeFieldErrors } from './ui/field-errors.js';
+import { authErrorFields } from './auth/service.js';
 
 const root = document.getElementById("authRoot");
 const app = document.getElementById("trackerApp");
@@ -25,10 +28,13 @@ let cloudReady;
 let cloudUserId;
 
 initializeLanguage();
+initializeFieldErrors();
 try { auth = configuredAuth(location.origin); } catch { auth = null; }
 try { channel = new BroadcastChannel("cycle-account-session"); } catch { /* Focus checks still work. */ }
 
 function concealApp() {
+  concealFeedback();
+  document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
   if (!app.classList.contains("hidden")) mapModeBeforeLock = document.body.classList.contains("mobile-map-active");
   app.classList.add("hidden");
   app.inert = true;
@@ -36,12 +42,12 @@ function concealApp() {
   document.body.classList.remove("mobile-map-active");
 }
 
-function show(modeName, message = "", error = false) {
+function show(modeName, message = "", error = false, fieldErrors = []) {
   mode = modeName;
   concealApp();
   root.classList.remove("hidden");
   renderAuthView(root, {
-    mode, email: rememberedEmail, message, error,
+    mode, email: rememberedEmail, message, error, fieldErrors,
     onMode: (next, email) => {
       if (email !== undefined) rememberedEmail = email.trim();
       if (activeUserId) { location.replace("/"); return; }
@@ -97,6 +103,7 @@ async function enter(session, epoch = sessionEpoch) {
     app.inert = false;
     document.body.classList.remove("auth-locked");
     startApplication();
+    setupFeedback({ auth, app });
     mapModeBeforeLock = document.body.classList.contains("mobile-map-active");
     document.getElementById("accountEmail").textContent = user.email || "";
     document.getElementById("signOutBtn").onclick = signOut;
@@ -176,7 +183,7 @@ async function submit(action, values) {
     }
   } catch (error) {
     if (isEmailUnverified(error)) history.replaceState(null, "", "/#/verify-email");
-    show(isEmailUnverified(error) ? "verify-email" : action, authErrorMessage(error), true);
+    show(isEmailUnverified(error) ? "verify-email" : action, authErrorMessage(error), true, authErrorFields(error));
   }
 }
 

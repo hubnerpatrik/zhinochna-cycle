@@ -14,6 +14,7 @@ import {
 import { showMessage } from "./toast.js";
 import { renderDayInfo } from "./day-info-modal.js";
 import { buildColumns } from "../domain.js";
+import { showFieldError, validationMessage } from './field-errors.js';
 
 export function returnsToActionMenuAfterSave(modalId) {
   return modalId !== "markersModal";
@@ -70,6 +71,7 @@ export function closeModal() {
 }
 
 export function validateTempInput() {
+  if (qs('tempInput')?.validity?.badInput || qs('tempInput')?.validity?.stepMismatch) return false;
   const raw = qs("tempInput")?.value.trim().replace(",", ".");
   if (!raw) return true;
   const value = Number(raw);
@@ -79,7 +81,10 @@ export function validateTempInput() {
 export function saveModal(render) {
   if (!store.selectedKey) return showMessage("Select a day first");
   if (!validateTempInput()) {
-    return showMessage(`Temperature must be between ${TEMPERATURE_RANGE.min}–${TEMPERATURE_RANGE.max} °C`);
+    const input = qs('tempInput');
+    const message = input.validity?.badInput || input.validity?.stepMismatch ? validationMessage(input)
+      : `Temperature must be between ${TEMPERATURE_RANGE.min}–${TEMPERATURE_RANGE.max} °C`;
+    return showFieldError(input, message, { focus: true, constraint: true });
   }
   if (store.modal.measurementTimeEnabled && !qs("measurementTimeInput").reportValidity()) return;
   const raw = qs("tempInput").value.trim().replace(",", ".");

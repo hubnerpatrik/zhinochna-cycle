@@ -1,0 +1,44 @@
+.feedback-launch { position: fixed; right: 20px; bottom: 20px; z-index: 140; min-height: 44px; background: #fff; color: #253e36; border: 1px solid #98b9ad; box-shadow: 0 4px 20px #16382b22; }
+.feedback-panel { position: fixed; inset: 16px 16px 16px auto; margin: 0; width: min(420px, calc(100vw - 32px)); max-width: none; max-height: calc(100dvh - 32px); height: calc(100dvh - 32px); overflow: auto; overscroll-behavior: contain; padding: 24px; border: 1px solid #c9d9d1; border-radius: 20px; background: #fff; color: #223b32; box-shadow: 0 12px 60px #16382b30; }
+.feedback-panel::backdrop { background: #17382e30; }
+.feedback-panel header, .feedback-toolbar { display: flex; gap: 10px; justify-content: space-between; align-items: center; }
+.feedback-panel h2 { margin: 0; font-size: 22px; }
+.feedback-panel button, .feedback-pick-hint { min-height: 44px; padding: 10px 14px; border: 1px solid #aac5b8; border-radius: 12px; background: #eef6f1; color: #223b32; cursor: pointer; }
+.feedback-panel button:disabled { opacity: .5; cursor: wait; }
+.feedback-panel textarea { display: block; width: 100%; min-height: 120px; resize: vertical; font: inherit; font-size: 16px; padding: 12px; border: 1px solid #aac5b8; border-radius: 10px; margin: 8px 0 12px; }
+.feedback-panel label { display: block; }
+.feedback-panel form { margin: 18px 0; }
+.feedback-intro, .feedback-thread time, .feedback-thread > p { font-size: 12px; color: #566b61; }
+.feedback-status { color: #a13d2c; }
+.feedback-thread article { padding: 14px; margin: 12px 0; background: #f1f6f3; border-radius: 12px; }
+.feedback-thread article p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.feedback-list { display: grid; gap: 10px; margin-top: 16px; }
+.feedback-list button { display: grid; gap: 8px; text-align: left; overflow-wrap: anywhere; }
+.feedback-pin { position: fixed; z-index: 145; transform: translate(-50%, -50%); border-radius: 50%; width: 30px; height: 30px; border: 2px solid white; background: #975327; color: white; box-shadow: 0 2px 8px #0003; cursor: pointer; }
+.feedback-pick-hint { position: fixed; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); z-index: 2000; width: min(420px, 90vw); background: #fff3d9; box-shadow: 0 3px 20px #0003; }
+.feedback-picking * { cursor: crosshair !important; }
+.feedback-pick-hint { pointer-events: none; }
+.feedback-picking .feedback-pins { visibility: hidden; }
+.auth-locked .feedback-pin, .auth-locked .feedback-launch, .auth-locked .feedback-pick-hint { display: none; }
+.map-export-picker { position: relative; min-width: 0; }
+.map-export-picker > .btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.export-chevron { transition: transform .15s ease; }
+[data-export-toggle][aria-expanded="true"] .export-chevron { transform: rotate(180deg); }
+.map-export-formats { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; display: grid; gap: 6px; width: max(100%, 132px); padding: 8px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card, #fffaf6); box-shadow: 0 8px 24px #32201826; }
+.map-export-formats[hidden] { display: none; }
+.map-export-formats .btn { width: 100%; min-width: 0; min-height: 44px; }
+@media (max-width: 560px) {
+  .feedback-launch { bottom: calc(92px + env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right)); padding: 10px; width: 48px; min-width: 48px; height: 48px; border-radius: 50%; }
+  .feedback-launch > span:last-child { display: none; }
+  .feedback-panel { inset: auto 0 0; width: 100%; height: 78dvh; max-height: calc(100dvh - 16px); border-radius: 22px 22px 0 0; padding: 20px 18px max(20px, env(safe-area-inset-bottom)); }
+  .app, .screen, .screen-shell, .screen-card { min-width: 0; }
+  .map-list-actions { display: flex; flex-wrap: wrap; }
+  .map-list-actions > * { flex: 1 1 110px; min-width: 0; }
+  .map-list-actions > .map-export-picker.is-expanded { flex-basis: 100%; }
+  .map-export-formats { position: static; width: 100%; margin-top: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .map-list-actions .btn, .modal-actions .btn { min-height: 44px; white-space: normal; }
+  .modal-card { max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; }
+  .modal-card input, .modal-card select, .modal-card textarea { font-size: 16px; }
+  .account-bar { flex-wrap: wrap; }
+  #accountEmail { overflow-wrap: anywhere; min-width: 0; }
+}

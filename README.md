@@ -169,6 +169,15 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the repository workflow and [CHANGELO
 
 ## Data storage
 
+My Maps also offers **PDF** and **CSV** downloads. The **bug button** opens anchored
+feedback threads with replies and resolution. Support administrators can review
+reports across accounts. See [feedback setup and exports](docs/feedback.md) for the
+required database migration, administrator configuration and export details.
+
+New versions show a one-time **What's new** bubble; the main menu's **Changelog**
+link opens GitHub Releases. Forms explain invalid values next to the input. See
+[release announcements and form feedback](docs/release-notes.md) for behavior and maintenance.
+
 Profiles, maps, daily observations, coverlines, fertile days and the active map identifier sync to Neon Postgres through `/api/state`. A verified Neon Auth account is required. The API verifies signed tokens and derives ownership on the server. Each account also has a separate local cache and durable queue for changes awaiting upload.
 
 Each saved map captures a profile snapshot and has an **Export** action in **My Maps**, allowing maps to be shared separately as identifiable JSON backup files. **Import map** validates a shared backup and asks for confirmation before adding it to My Maps. The recipient's profile, existing maps and active map are preserved, while opening the imported map displays the profile saved by its author. If reading, validation, or persistence fails, existing data is preserved.

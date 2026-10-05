@@ -1,5 +1,6 @@
 import { escapeHtml } from "./view-utils.js";
 import { getLanguage, setLanguage, setText, translateDOM } from "../i18n.js";
+import { showFieldError, initializeFieldErrors } from '../ui/field-errors.js';
 
 const screens = {
   "sign-in": ["Welcome back", "Sign in to your account.", "Sign in"],
@@ -13,7 +14,8 @@ const screens = {
   "loading": ["Checking your session…", "", ""],
 };
 
-export function renderAuthView(root, { mode, email = "", message = "", error = false, onSubmit, onMode, onRetry }) {
+export function renderAuthView(root, { mode, email = "", message = "", error = false, fieldErrors = [], onSubmit, onMode, onRetry }) {
+  initializeFieldErrors();
   const [title, description, action] = screens[mode] || screens["sign-in"];
   const hasForm = ["sign-in", "sign-up", "forgot-password", "reset-password", "verify-email", "resend-code"].includes(mode);
   const emailField = hasForm && mode !== "reset-password";
@@ -56,13 +58,17 @@ export function renderAuthView(root, { mode, email = "", message = "", error = f
   });
   root.querySelector("[data-retry]")?.addEventListener("click", onRetry);
   const form = root.querySelector("form");
+  const invalidFields = fieldErrors.map(name => ['email', 'password', 'otp'].includes(name) ? form?.querySelector(`[name="${name}"]`) : null).filter(Boolean);
+  if (error && invalidFields.length) {
+    setText(root.querySelector('.auth-feedback'), '');
+    invalidFields.forEach(input => showFieldError(input, message)); invalidFields[0].focus();
+  }
   form?.addEventListener("submit", async event => {
     event.preventDefault();
     if (form.getAttribute("aria-busy") === "true") return;
     const values = Object.fromEntries(new FormData(form));
     if (values.confirmPassword !== undefined && values.password !== values.confirmPassword) {
-      setText(root.querySelector(".auth-feedback"), "Passwords do not match.");
-      root.querySelector(".auth-feedback").dataset.error = "true";
+      showFieldError(form.querySelector('[name="confirmPassword"]'), 'Passwords do not match.', { focus: true });
       return;
     }
     form.setAttribute("aria-busy", "true");

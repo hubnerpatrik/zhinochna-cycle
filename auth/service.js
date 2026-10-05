@@ -39,6 +39,13 @@ export function isEmailUnverified(error) {
   return ["EMAIL_NOT_VERIFIED", "email_not_confirmed"].includes(error?.code);
 }
 
+export function authErrorFields(error) {
+  if (['INVALID_EMAIL_OR_PASSWORD', 'INVALID_PASSWORD', 'invalid_credentials'].includes(error?.code)) return ['email', 'password'];
+  if (error?.code === 'PASSWORD_TOO_SHORT') return ['password'];
+  if (['INVALID_OTP', 'OTP_EXPIRED'].includes(error?.code) || ['Invalid OTP', 'OTP expired'].includes(error?.message)) return ['otp'];
+  return [];
+}
+
 export function createAuthService(client, origin) {
   const callbackURL = new URL("/", origin).href;
   const redirectTo = new URL("/?auth=reset-password", origin).href;

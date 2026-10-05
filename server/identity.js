@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
-export function createIdentityVerifier(authUrl, keys) {
+export function createIdentityVerifier(authUrl, keys, { includeEmail = false } = {}) {
   const url = new URL(authUrl);
   if (url.protocol !== "https:" || url.username || url.password) throw new Error("Invalid auth configuration");
   const jwks = keys || createRemoteJWKSet(new URL(`${url.href.replace(/\/$/, "")}/.well-known/jwks.json`), { timeoutDuration: 5000 });
@@ -13,6 +13,6 @@ export function createIdentityVerifier(authUrl, keys) {
     });
     if (typeof payload.sub !== "string" || !payload.sub.trim() || payload.sub.length > 256
       || payload.emailVerified !== true || payload.banned === true || payload.role === "anonymous") throw new Error("Unauthorized");
-    return payload.sub;
+    return includeEmail ? { userId: payload.sub, email: typeof payload.email === 'string' ? payload.email.trim().toLowerCase() : '' } : payload.sub;
   };
 }

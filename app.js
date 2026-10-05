@@ -1,4 +1,6 @@
 import { setText } from './i18n.js';
+import { initializeFieldErrors } from './ui/field-errors.js';
+import { setupReleaseNotes } from './ui/release-notes.js';
 // Application bootstrap and top-level active-map rendering.
 
 import { store } from "./store.js";
@@ -163,6 +165,7 @@ function bindNavigation() {
 
 export function startApplication() {
   if (router) return;
+  initializeFieldErrors();
   router = createRouter({
     root: qs("screenRoot"),
     showStandaloneScreen,
@@ -186,4 +189,5 @@ export function startApplication() {
   bindNavigation();
   configureModalNavigation(router);
   router.start();
+  setupReleaseNotes(qs('trackerApp'));
 }
