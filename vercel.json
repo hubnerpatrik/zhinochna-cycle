@@ -4,5 +4,8 @@
   "installCommand": "npm ci",
   "buildCommand": "npm run build",
   "devCommand": "npm run dev -- --port $PORT",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/auth/:authPath*", "destination": "/api/auth?authPath=:authPath*" }
+  ]
 }

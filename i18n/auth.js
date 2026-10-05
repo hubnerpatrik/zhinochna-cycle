@@ -1,4 +1,5 @@
 export const authMessages = {
+  'Sign-in could not be kept in this browser. Allow cookies for this site and try again.': ['Prohlížeč neudržel přihlášení. Povol cookies pro tento web a zkus to znovu.', 'Prehliadač neudržal prihlásenie. Povoľ cookies pre tento web a skús to znova.', 'Браузер не зберіг сеанс входу. Дозвольте файли cookie для цього сайту та спробуйте ще раз.'],
   'Cloud storage': ['Cloudové úložiště', 'Cloudové úložisko', 'Хмарне сховище'],
   'Loading your cloud maps…': ['Načítám tvoje mapy z cloudu…', 'Načítavam tvoje mapy z cloudu…', 'Завантажуємо ваші карти з хмари…'],
   'Saved to your account': ['Uloženo do tvého účtu', 'Uložené do tvojho účtu', 'Збережено у вашому обліковому записі'],

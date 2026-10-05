@@ -16,6 +16,7 @@ export function readAuthCallback(href) {
 }
 
 export function authErrorMessage(error) {
+  if (error?.code === "SESSION_NOT_AVAILABLE") return "Sign-in could not be kept in this browser. Allow cookies for this site and try again.";
   // The Neon SDK normalizes INVALID_CALLBACK_URL to feature_not_supported,
   // while retaining this fixed provider message. Match only known constants.
   if (["INVALID_CALLBACK_URL", "INVALID_ORIGIN", "INVALID_REDIRECT_URL", "INVALID_REDIRECT_TO"].includes(error?.code)
@@ -54,10 +55,17 @@ export function createAuthService(client, origin) {
       if (typeof result?.token !== "string" || !result.token) throw new Error("Unauthorized");
       return result.token;
     },
-    session: () => unwrap(client.getSession({
-      query: { disableCookieCache: true },
-      fetchOptions: { headers: { "X-Force-Fetch": "true" }, timeout: 15000 },
-    })),
+    session: async ({ required = false } = {}) => {
+      const session = await unwrap(client.getSession({
+        query: { disableCookieCache: true },
+        fetchOptions: { headers: { "X-Force-Fetch": "true" }, timeout: 15000 },
+      }));
+      // A successful sign-in response does not prove the browser retained its cookie.
+      if (required && !verifiedUser(session) && session?.user?.emailVerified !== false) {
+        throw Object.assign(new Error("Session unavailable after sign-in"), { code: "SESSION_NOT_AVAILABLE" });
+      }
+      return session;
+    },
     signIn: ({ email, password }) => unwrap(client.signIn.email({ email, password })),
     signUp: ({ name, email, password }) => unwrap(client.signUp.email({ name, email, password, callbackURL })),
     signOut: () => unwrap(client.signOut()),

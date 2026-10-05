@@ -139,8 +139,9 @@ async function submit(action, values) {
   try {
     if (action === "sign-in") {
       await auth.signIn({ email: rememberedEmail, password: values.password });
+      const session = await auth.session({ required: true });
       channel?.postMessage("changed");
-      await enter(await auth.session());
+      await enter(session);
     } else if (action === "sign-up") {
       await auth.signUp({ name: values.name.trim(), email: rememberedEmail, password: values.password });
       const session = await auth.session();
