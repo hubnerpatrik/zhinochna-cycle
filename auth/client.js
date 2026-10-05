@@ -9,7 +9,7 @@ export function configuredAuth(origin) {
   if (parsed.protocol !== "https:" || parsed.username || parsed.password) {
     throw new Error("Invalid auth configuration");
   }
-  return createAuthService(createAuthClient(url, {
+  return createAuthService(createAuthClient(new URL("/api/auth", origin).href, {
     adapter: BetterAuthVanillaAdapter({ fetchOptions: { timeout: 15000, retry: 0, credentials: "include" } }),
   }), origin);
 }

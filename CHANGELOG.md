@@ -12,6 +12,13 @@ vMAJOR.MINOR.PATCH
 
 ---
 
+## Unreleased
+
+### Fixed
+
+- Route browser authentication through the app origin to avoid dependence on third-party cookies in Safari.
+- Show an explicit error when a successful sign-in is followed by a missing session instead of silently returning to the form.
+
 ## 0.11.0 — 2026-09-27
 
 ### Added
