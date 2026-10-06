@@ -120,6 +120,10 @@
   #mobileTools .mobile-tools-chevron { width: 14px; height: 14px; margin-left: 1px; transition: transform .15s ease; }
   #mobileTools[aria-expanded="true"] .mobile-tools-chevron { transform: rotate(180deg); }
   #mobileDaySummary .info-panel { padding: 12px; gap: 10px; }
+  #actionModal .modal-card { display: flex; flex-direction: column; }
+  #actionModalActions { order: 1; }
+  #mobileDaySummary { order: 2; margin-top: 16px; }
+  #closeActionModalBtn { order: 3; }
   #mobileDaySummary .info-value { font-size: 13px; overflow-wrap: anywhere; }
   #actionModal .modal-card > h2 { margin-bottom: 0; }
   .app-header,

@@ -22,7 +22,7 @@ The app combines **basal body temperature, bleeding, cervical mucus, cervix obse
 
 It does **not** predict ovulation, assign fertility scores or automatically decide what the cycle data means.
 
-> **Current status:** Active prototype · v0.12.0
+> **Current status:** Active prototype · v0.12.1
 
 Each main screen has its own URL (`#/menu`, `#/my-profile`, `#/my-maps`,
 `#/create-map`, and `#/active-map?map=…`). Day editors also have history entries,
@@ -86,6 +86,11 @@ Any selected date can be opened as a read-only summary, making it possible to re
 ## Maps and profile
 
 Cycle data is organized into named maps. Only one map is active at a time, while previous maps remain available for later review.
+
+In My Profile, choose a JPG, PNG or WebP photo up to 10 MB. The browser crops it to
+a square and stores a compact 256 × 256 JPEG with the account profile; Save profile
+confirms the change, and Back discards the draft. Remove photo also takes effect
+when the profile is saved. JSON backups and map profile snapshots include the photo.
 
 <table>
   <tr>

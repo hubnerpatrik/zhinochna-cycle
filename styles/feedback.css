@@ -5,6 +5,13 @@
 .feedback-panel h2 { margin: 0; font-size: 22px; }
 .feedback-panel button, .feedback-pick-hint { min-height: 44px; padding: 10px 14px; border: 1px solid #aac5b8; border-radius: 12px; background: #eef6f1; color: #223b32; cursor: pointer; }
 .feedback-panel button:disabled { opacity: .5; cursor: wait; }
+.feedback-panel [data-new], .feedback-panel button[type="submit"] { background: linear-gradient(135deg, #ff916e, #ffd09b); border-color: #e88c65; color: #30231f; font-weight: 600; }
+.feedback-panel [data-refresh] { background: #e8f1ff; border-color: #a0bbdf; color: #203f68; }
+.feedback-panel [data-back], .feedback-panel [data-discard], .feedback-panel [data-close] { background: #f6f2ee; border-color: #d5c6bd; color: #493e38; }
+.feedback-panel [data-resolve] { background: #e2f2dd; border-color: #93bc82; color: #294522; }
+.feedback-panel [data-resolve="reopen"] { background: #fff0cf; border-color: #d8b66b; color: #634817; }
+.feedback-panel button:focus-visible { outline: 3px solid #346a92; outline-offset: 3px; }
+.feedback-panel button:not(:disabled):hover { filter: brightness(.96); }
 .feedback-panel textarea { display: block; width: 100%; min-height: 120px; resize: vertical; font: inherit; font-size: 16px; padding: 12px; border: 1px solid #aac5b8; border-radius: 10px; margin: 8px 0 12px; }
 .feedback-panel label { display: block; }
 .feedback-panel form { margin: 18px 0; }
