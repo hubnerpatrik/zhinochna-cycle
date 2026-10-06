@@ -4,8 +4,10 @@ import { authMessages } from './auth.js';
 import { feedbackMessages } from './feedback.js';
 import { formFeedbackMessages } from './form-feedback.js';
 import { helpMessages } from './help.js';
+import { profilePhotoMessages } from './profile-photo.js';
 
 export const messages = {
+  ...profilePhotoMessages,
   ...helpMessages,
   ...formFeedbackMessages,
   ...feedbackMessages,

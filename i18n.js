@@ -95,7 +95,7 @@ export function setDateText(element, date, format = 'month') {
     ? { month: 'long', year: 'numeric' } : { day: 'numeric', month: 'short' });
 }
 
-const selector = '[data-i18n], [data-i18n-date], [data-i18n-title], [data-i18n-aria-label], [data-i18n-placeholder]';
+const selector = '[data-i18n], [data-i18n-date], [data-i18n-title], [data-i18n-aria-label], [data-i18n-placeholder], [data-i18n-alt]';
 function localizeElement(element) {
   if (element.hasAttribute('data-i18n')) {
     const stored = element.getAttribute('data-i18n');
@@ -114,7 +114,7 @@ function localizeElement(element) {
       ? { month: 'long', year: 'numeric' } : { day: 'numeric', month: 'short' });
     if (element.textContent !== value) element.textContent = value;
   }
-  for (const attr of ['title', 'aria-label', 'placeholder']) {
+  for (const attr of ['title', 'aria-label', 'placeholder', 'alt']) {
     const source = element.getAttribute(`data-i18n-${attr}`);
     if (source !== null && element.getAttribute(attr) !== t(source)) element.setAttribute(attr, t(source));
   }
@@ -151,6 +151,6 @@ export function initializeLanguage() {
       }
     }
   }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true,
-    attributeFilter: ['data-i18n', 'data-i18n-date', 'data-i18n-date-format', 'data-i18n-title', 'data-i18n-aria-label', 'data-i18n-placeholder'] });
+    attributeFilter: ['data-i18n', 'data-i18n-date', 'data-i18n-date-format', 'data-i18n-title', 'data-i18n-aria-label', 'data-i18n-placeholder', 'data-i18n-alt'] });
   update();
 }

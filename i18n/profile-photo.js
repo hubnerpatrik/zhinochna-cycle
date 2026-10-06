@@ -1,0 +1,15 @@
+export const profilePhotoMessages = {
+  'Choose photo': ['Vybrat fotku', 'Vybrať fotku', 'Вибрати фото'],
+  'Remove photo': ['Odstranit fotku', 'Odstrániť fotku', 'Видалити фото'],
+  'JPG, PNG or WebP · up to 10 MB. Saved as a small square JPG.': ['JPG, PNG nebo WebP · do 10 MB. Uloží se jako malý čtvercový JPG.', 'JPG, PNG alebo WebP · do 10 MB. Uloží sa ako malý štvorcový JPG.', 'JPG, PNG або WebP · до 10 МБ. Зберігається як невеликий квадратний JPG.'],
+  'Preparing photo…': ['Připravuji fotku…', 'Pripravujem fotku…', 'Підготовка фото…'],
+  'Photo ready. Save your profile to keep it.': ['Fotka je připravená. Uložte profil, aby se zachovala.', 'Fotka je pripravená. Uložte profil, aby sa zachovala.', 'Фото готове. Збережіть профіль, щоб зберегти його.'],
+  'Photo removed. Save your profile to keep the change.': ['Fotka je odstraněná. Uložte profil pro potvrzení změny.', 'Fotka je odstránená. Uložte profil na potvrdenie zmeny.', 'Фото видалено. Збережіть профіль, щоб підтвердити зміну.'],
+  'Choose a JPG, PNG or WebP image.': ['Vyberte obrázek JPG, PNG nebo WebP.', 'Vyberte obrázok JPG, PNG alebo WebP.', 'Виберіть зображення JPG, PNG або WebP.'],
+  'Choose an image smaller than 10 MB.': ['Vyberte obrázek menší než 10 MB.', 'Vyberte obrázok menší ako 10 MB.', 'Виберіть зображення менше ніж 10 МБ.'],
+  'This image could not be opened. Choose another file.': ['Obrázek nelze otevřít. Vyberte jiný soubor.', 'Obrázok sa nedá otvoriť. Vyberte iný súbor.', 'Не вдалося відкрити зображення. Виберіть інший файл.'],
+  'The profile photo is malformed.': ['Profilová fotka je poškozená.', 'Profilová fotka je poškodená.', 'Фото профілю пошкоджено.'],
+  'Add or remove a profile photo in JPG, PNG or WebP format.': ['Přidejte nebo odstraňte profilovou fotku ve formátu JPG, PNG nebo WebP.', 'Pridajte alebo odstráňte profilovú fotku vo formáte JPG, PNG alebo WebP.', 'Додайте або видаліть фото профілю у форматі JPG, PNG або WebP.'],
+  'Feedback actions now have distinct colors.': ['Akce v komentářích nyní mají odlišné barvy.', 'Akcie v komentároch teraz majú odlišné farby.', 'Дії у відгуках тепер мають різні кольори.'],
+  'On phones, day editing buttons appear before the saved observations.': ['Na telefonu jsou tlačítka editorů dne před uloženými pozorováními.', 'Na telefóne sú tlačidlá editorov dňa pred uloženými pozorovaniami.', 'На телефоні кнопки редагування дня розташовані перед збереженими спостереженнями.'],
+};

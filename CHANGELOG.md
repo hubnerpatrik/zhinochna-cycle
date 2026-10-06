@@ -12,6 +12,17 @@ vMAJOR.MINOR.PATCH
 
 ---
 
+## 0.12.1 — 2026-10-06
+
+### Added
+
+- Choose and remove a profile photo from JPG, PNG or WebP files up to 10 MB; crop and resize locally to a compact 256 × 256 JPEG, saved with the account profile and JSON backups.
+
+### Changed
+
+- Distinguish feedback actions by color: peach for sending/new reports, blue for refresh, green for resolution, yellow for reopening and neutral for navigation.
+- Place day editor buttons before the saved-day information on phones; keep the desktop order.
+
 ## 0.12.0 — 2026-10-06
 
 ### Added

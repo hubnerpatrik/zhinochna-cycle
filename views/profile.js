@@ -1,4 +1,6 @@
 import { enhanceTimeInputs } from "../ui/time-picker.js";
+import { prepareProfilePhoto, isStoredProfilePhoto } from '../profile-photo.js';
+import { setText } from '../i18n.js';
 
 const GOAL_OPTIONS = [
   ["", "Not set"],
@@ -43,6 +45,9 @@ export function renderProfileScreen(container, {
   onSave,
   onCancel,
 }) {
+  let photo = isStoredProfilePhoto(profile.photo) ? profile.photo : '';
+  let photoGeneration = 0;
+  let processingPhoto = false;
   container.innerHTML = `
     <section class="screen screen-form" aria-label="${escapeHtml(title)}" data-i18n-aria-label="${escapeHtml(title)}">
       <div class="screen-shell">
@@ -92,14 +97,19 @@ export function renderProfileScreen(container, {
             </div>
 
             <aside class="profile-photo-panel" aria-label="Profile photo" data-i18n-aria-label="Profile photo">
-              <div class="profile-photo-placeholder" role="img" aria-label="Empty profile photo placeholder" data-i18n-aria-label="Empty profile photo placeholder">
+              <div class="profile-photo-placeholder">
+                <img class="profile-photo-image" alt="Profile photo" data-i18n-alt="Profile photo" ${photo ? `src="${escapeHtml(photo)}"` : 'hidden'}>
                 <svg viewBox="0 0 96 96" aria-hidden="true">
                   <circle cx="48" cy="35" r="17"></circle>
                   <path d="M18 84c2-19 14-30 30-30s28 11 30 30"></path>
                 </svg>
               </div>
               <div class="profile-photo-title" data-i18n>Profile photo</div>
-              <p data-i18n>Photo upload can be added here later.</p>
+              <p data-i18n>JPG, PNG or WebP · up to 10 MB. Saved as a small square JPG.</p>
+              <button type="button" class="btn primary profile-photo-upload" id="profilePhotoChoose" data-i18n>Choose photo</button>
+              <input id="profilePhotoFile" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+              <button type="button" class="btn secondary" id="profilePhotoRemove" data-i18n>Remove photo</button>
+              <p id="profilePhotoStatus" role="status" aria-live="polite"></p>
             </aside>
           </div>
         </form>
@@ -109,10 +119,58 @@ export function renderProfileScreen(container, {
   `;
 
   const form = container.querySelector("#profileScreenForm");
+  if (!form) return;
+  const photoImage = container.querySelector('.profile-photo-image');
+  const placeholder = container.querySelector('.profile-photo-placeholder svg');
+  const removePhoto = container.querySelector('#profilePhotoRemove');
+  const fileInput = container.querySelector('#profilePhotoFile');
+  const photoStatus = container.querySelector('#profilePhotoStatus');
+  const submit = form.querySelector('[type="submit"]');
+  container.querySelector('#profilePhotoChoose').onclick = () => fileInput.click();
+  const updatePhoto = () => {
+    photoImage.hidden = !photo;
+    if (photo) photoImage.src = photo;
+    else photoImage.removeAttribute('src');
+    placeholder.style.display = photo ? 'none' : '';
+    removePhoto.disabled = !photo && !processingPhoto;
+    submit.disabled = processingPhoto;
+  };
+  updatePhoto();
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const generation = ++photoGeneration;
+    processingPhoto = true;
+    setText(photoStatus, 'Preparing photo…');
+    updatePhoto();
+    try {
+      const prepared = await prepareProfilePhoto(file);
+      if (generation !== photoGeneration || container.querySelector('#profileScreenForm') !== form) return;
+      photo = prepared;
+      setText(photoStatus, 'Photo ready. Save your profile to keep it.');
+    } catch (error) {
+      if (generation !== photoGeneration || container.querySelector('#profileScreenForm') !== form) return;
+      setText(photoStatus, error.message);
+    } finally {
+      if (generation === photoGeneration && container.querySelector('#profileScreenForm') === form) {
+        processingPhoto = false;
+        fileInput.value = '';
+        updatePhoto();
+      }
+    }
+  });
+  removePhoto.addEventListener('click', () => {
+    ++photoGeneration;
+    processingPhoto = false;
+    photo = '';
+    fileInput.value = '';
+    setText(photoStatus, 'Photo removed. Save your profile to keep the change.');
+    updatePhoto();
+  });
   enhanceTimeInputs(container);
   form?.addEventListener("submit", event => {
     event.preventDefault();
-    onSave?.(readProfile(container));
+    if (!processingPhoto) onSave?.({ ...readProfile(container), photo });
   });
 
   container.querySelector("#profileScreenCancelBtn")?.addEventListener("click", () => onCancel?.());

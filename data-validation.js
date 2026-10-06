@@ -1,4 +1,5 @@
 import { TEMPERATURE_RANGE, TEMP_FACTORS } from "./core.js";
+import { isStoredProfilePhoto } from './profile-photo.js';
 
 export const CROSSABLE_ROW_IDS = Object.freeze([
   "cycleDayRow", "bleedingRow", "spottingRow", "sedimentRow", "sensationRow",
@@ -40,6 +41,7 @@ const PROFILE_DEFAULTS = Object.freeze({
   usualMeasurementTime: "",
   goal: "",
   measurementMethod: "",
+  photo: "",
 });
 
 export class DataValidationError extends Error {
@@ -126,6 +128,10 @@ export function normalizeProfile(profile, { strict = false } = {}) {
     }
   }
   const normalized = { ...PROFILE_DEFAULTS, ...source };
+  if (!isStoredProfilePhoto(normalized.photo)) {
+    if (strict) throw new DataValidationError('The profile photo is malformed.');
+    normalized.photo = '';
+  }
   if (typeof normalized.age === "number" && Number.isFinite(normalized.age)) {
     normalized.age = String(normalized.age);
   }
