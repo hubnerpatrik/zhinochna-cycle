@@ -21,6 +21,8 @@ export function t(source) {
   const key = text.trim();
   const translated = messages[key]?.[languageIndex[language]];
   if (translated) return text.replace(key, translated);
+  const dayHelp = /^(\d{4}-\d{2}-\d{2} · )(.*)$/.exec(text);
+  if (dayHelp) return dayHelp[1] + t(dayHelp[2]);
   const info = /^(Bleeding|Clots|Sensation|Slippery|Discharge|Consistency|Color|Firmness|Height|Openness|Sex|Notes|Hours|Minutes): (.*)$/.exec(text);
   if (info) {
     const [, label, value] = info;

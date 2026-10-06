@@ -12,10 +12,11 @@ vMAJOR.MINOR.PATCH
 
 ---
 
-## Unreleased
+## 0.12.0 — 2026-10-06
 
 ### Added
 
+- Explain controls, features, headings and calendar/chart days on hover in all four interface languages.
 - Show a dismissible new-version bubble, an always-available change summary and a link to GitHub Releases.
 - Explain invalid form values next to the field with red highlighting and a brief shake that respects reduced-motion preferences.
 

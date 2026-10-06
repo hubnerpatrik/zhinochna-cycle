@@ -3,8 +3,10 @@
 import { authMessages } from './auth.js';
 import { feedbackMessages } from './feedback.js';
 import { formFeedbackMessages } from './form-feedback.js';
+import { helpMessages } from './help.js';
 
 export const messages = {
+  ...helpMessages,
   ...formFeedbackMessages,
   ...feedbackMessages,
   ...authMessages,

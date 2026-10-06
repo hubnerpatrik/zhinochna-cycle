@@ -1,4 +1,5 @@
 import { initializeLanguage } from "./i18n.js";
+import { initializeHelp } from './ui/help.js';
 import { configuredAuth } from "./auth/client.js";
 import { authErrorMessage, isEmailUnverified, readAuthCallback, verifiedUser } from "./auth/service.js";
 import { configurePersistence, useAccountStorage } from "./storage/local-storage-adapter.js";
@@ -28,6 +29,7 @@ let cloudReady;
 let cloudUserId;
 
 initializeLanguage();
+initializeHelp();
 initializeFieldErrors();
 try { auth = configuredAuth(location.origin); } catch { auth = null; }
 try { channel = new BroadcastChannel("cycle-account-session"); } catch { /* Focus checks still work. */ }

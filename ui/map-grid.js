@@ -184,6 +184,7 @@ export function renderMapRows(columns, selectColumn, hoverColumn, clearHover) {
     const dayCell = document.createElement("div");
     dayCell.className = ["map-day", selected, column.isFertile ? "fertility-cell" : ""].filter(Boolean).join(" ");
     dayCell.textContent = column.date.getDate();
+    setTranslatedAttribute(dayCell, 'title', `${column.key} · Select this day to review or edit its observations.`);
     if (boundary) dayCell.classList.add("cycle-boundary");
     attach(dayCell, column);
     dayNumbers.appendChild(dayCell);
