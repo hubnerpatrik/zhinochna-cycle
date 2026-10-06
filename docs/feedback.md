@@ -2,7 +2,7 @@
 
 The bug button opens a report inbox. Choose **Point to a problem**, select a control,
 and send a comment. Open reports have numbered pins on the corresponding screen.
-Each thread supports replies, resolution and reopening. On phones the inbox is a
+Each thread supports replies; only support administrators can resolve or reopen it. On phones the inbox is a
 bottom sheet. Refresh fetches the latest replies; this is not live chat.
 
 Reports are stored separately from cycle maps. The server authenticates each request.
@@ -10,6 +10,15 @@ Users see only their own reports; configured support administrators can see and 
 to all reports. The inbox returns the latest 200 threads; each accepts up to 100
 messages of 4,000 characters. Failed submissions retain the draft in memory until
 the page is reloaded. Retry IDs prevent duplicate posts after a lost response.
+
+Messages display the writer's saved profile name and photo. The server binds new
+messages to the authenticated account and looks up only the name and photo of
+participants in authorized threads, never their cycle records or email address.
+Legacy user messages use the ticket owner's profile. Old support messages without
+an account identifier retain the support label; their writer cannot be recovered
+reliably. Missing names/photos use a user/support label and an initial avatar.
+There is no database migration. Cached inbox data and administrator controls are
+cleared when the session is concealed and while the inbox refreshes.
 
 ## Deployment
 

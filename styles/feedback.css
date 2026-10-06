@@ -19,6 +19,11 @@
 .feedback-status { color: #a13d2c; }
 .feedback-thread article { padding: 14px; margin: 12px 0; background: #f1f6f3; border-radius: 12px; }
 .feedback-thread article p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.feedback-message-author { display: flex; align-items: center; gap: 10px; }
+.feedback-message-author > div { min-width: 0; overflow-wrap: anywhere; }
+.feedback-message-author time { display: block; margin-top: 3px; }
+.feedback-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: 0 0 40px; }
+.feedback-avatar-placeholder { display: grid; place-items: center; background: #ddebe3; color: #294c3b; font-weight: 700; }
 .feedback-list { display: grid; gap: 10px; margin-top: 16px; }
 .feedback-list button { display: grid; gap: 8px; text-align: left; overflow-wrap: anywhere; }
 .feedback-pin { position: fixed; z-index: 145; transform: translate(-50%, -50%); border-radius: 50%; width: 30px; height: 30px; border: 2px solid white; background: #975327; color: white; box-shadow: 0 2px 8px #0003; cursor: pointer; }

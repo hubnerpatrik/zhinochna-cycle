@@ -25,6 +25,7 @@ export function createFeedbackHandler({ identify, repository, adminIds = [], adm
       if (!raw || Buffer.byteLength(raw) > 24000) return res.status(413).json({ error: 'too_large' });
       input = validateFeedback(JSON.parse(raw));
     } catch { return res.status(400).json({ error: 'invalid_feedback' }); }
+    if (input.action === 'resolve' && !admin) return res.status(403).json({ error: 'admin_required' });
     try {
       const result = await repository.write(userId, admin, input);
       return result ? res.status(200).json({ thread: result }) : res.status(404).json({ error: 'not_found_or_full' });

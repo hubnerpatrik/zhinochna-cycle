@@ -1,6 +1,7 @@
 import { t } from '../i18n.js';
 import { escapeHtml as esc } from '../views/view-utils.js';
 import { validateFeedback } from '../feedback-model.js';
+import { feedbackMessageHtml, feedbackResolutionHtml } from './feedback-thread.js';
 import metadata from '../package.json';
 
 let conceal = () => {};
@@ -51,15 +52,18 @@ export function setupFeedback({ auth, app }) {
   }
   function open() { if (!panel.open) panel.showModal(); render(); }
   function close() { panel.close(); button.focus(); }
-  conceal = () => { generation++; cancelPick(); panel.close(); pins.replaceChildren(); };
+  conceal = () => {
+    generation++; cancelPick(); panel.close(); pins.replaceChildren();
+    threads = []; admin = false; selected = null; panel.replaceChildren();
+  };
   async function refresh() {
     if (loading || busy) return;
-    loading = true; error = ''; render();
+    loading = true; error = ''; threads = []; admin = false; pins.replaceChildren(); render();
     const epoch = generation;
     try {
       const result = await request('GET');
       if (epoch !== generation) return;
-      threads = result.threads; admin = result.admin;
+      threads = result.threads; admin = result.admin === true;
     } catch { if (epoch === generation) error = t('Feedback could not be loaded. Try again.'); }
     finally { loading = false; if (epoch === generation) { render(); positionPins(); } }
   }
@@ -88,14 +92,14 @@ export function setupFeedback({ auth, app }) {
         <label>${esc(t('Describe the problem'))}<textarea maxlength="4000" required ${busy ? 'disabled' : ''}>${esc(draftText)}</textarea></label>
         <button type="submit" ${busy ? 'disabled' : ''}>${esc(t(busy ? 'Sending…' : 'Send comment'))}</button>
         <button type="button" data-discard ${busy ? 'disabled' : ''}>${esc(t('Cancel'))}</button></form>` : ''}
-      ${thread && !draft ? `<section class="feedback-thread"><button type="button" data-back>${esc(t('All reports'))}</button>
+      ${thread && !draft ? `<section class="feedback-thread"><button type="button" data-back>${esc(t(admin ? 'All reports' : 'My reports'))}</button>
         <h3>${esc(thread.anchor.label || thread.anchor.screen)}</h3><p>${esc(thread.anchor.screen)} · v${esc(thread.anchor.version)} · ${esc(thread.anchor.viewport)}</p>
         <p>${esc(t(thread.resolved ? 'Resolved' : 'Open'))}</p>
-        ${thread.messages.map(message => `<article><strong>${esc(t(message.author))}</strong> <time>${esc(new Date(message.at).toLocaleString())}</time><p>${esc(message.text)}</p></article>`).join('')}
+        ${thread.messages.map(feedbackMessageHtml).join('')}
         <form data-reply><label>${esc(t('Reply'))}<textarea maxlength="4000" required ${busy ? 'disabled' : ''}>${esc(replyText)}</textarea></label>
         <button type="submit" ${busy ? 'disabled' : ''}>${esc(t(busy ? 'Sending…' : 'Send reply'))}</button></form>
-        <button type="button" data-resolve="${thread.resolved ? 'reopen' : 'resolve'}" ${busy ? 'disabled' : ''}>${esc(t(thread.resolved ? 'Reopen report' : 'Mark resolved'))}</button></section>` : ''}
-      ${!draft && !thread ? `<label>${esc(t('Filter'))}<select data-filter><option value="open">${esc(t('Open'))}</option><option value="resolved">${esc(t('Resolved'))}</option><option value="all">${esc(t('All reports'))}</option></select></label>
+        ${feedbackResolutionHtml(thread, admin, busy)}</section>` : ''}
+      ${!draft && !thread ? `<label>${esc(t('Filter'))}<select data-filter><option value="open">${esc(t('Open'))}</option><option value="resolved">${esc(t('Resolved'))}</option><option value="all">${esc(t(admin ? 'All reports' : 'My reports'))}</option></select></label>
         <div class="feedback-list">${shown.length ? shown.map(item => `<button type="button" data-thread="${esc(item.id)}"><strong>${esc(item.anchor.label || item.anchor.screen)}</strong><span>${esc(item.messages[0].text.slice(0, 130))}</span><small>${esc(t(item.resolved ? 'Resolved' : 'Open'))} · ${item.messages.length}</small></button>`).join('') : `<p>${esc(t('No reports in this view.'))}</p>`}</div>` : ''}`;
     panel.querySelector('[data-close]').onclick = close;
     panel.querySelector('[data-refresh]').onclick = refresh;
@@ -114,7 +118,7 @@ export function setupFeedback({ auth, app }) {
       e.preventDefault(); if (!replyText.trim()) return;
       replyId ||= crypto.randomUUID(); void save({ action: 'reply', id: selected, messageId: replyId, text: replyText });
     });
-    panel.querySelector('[data-resolve]')?.addEventListener('click', () => void save({ action: 'resolve', id: selected, resolved: !thread.resolved }));
+    panel.querySelector('[data-resolve]')?.addEventListener('click', () => { if (admin === true) void save({ action: 'resolve', id: selected, resolved: !thread.resolved }); });
     const select = panel.querySelector('[data-filter]');
     if (select) { select.value = filter; select.onchange = () => { filter = select.value; render(); }; }
     panel.querySelectorAll('[data-thread]').forEach(node => { node.onclick = () => { selected = node.dataset.thread; replyText = ''; replyId = null; render(); }; });

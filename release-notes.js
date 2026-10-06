@@ -1,11 +1,10 @@
 // Update together with package.json when preparing a release. Keep copy user-facing.
 export const currentRelease = {
-  version: '0.12.1',
+  version: '0.12.2',
   githubUrl: 'https://github.com/hubnerpatrik/zhinochna-cycle/releases',
   changes: [
-    'Feedback actions now have distinct colors.',
-    'Add or remove a profile photo in JPG, PNG or WebP format.',
-    'On phones, day editing buttons appear before the saved observations.',
+    'Only support can resolve or reopen reports; users see their own tickets.',
+    'Comments show the writer’s saved profile name and photo.',
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';

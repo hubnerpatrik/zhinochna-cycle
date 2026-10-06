@@ -1,4 +1,6 @@
 export const feedbackMessages = {
+  'Only support can resolve or reopen reports; users see their own tickets.': ['Stav hlášení může měnit jen podpora; uživatelé vidí své vlastní tickety.', 'Stav hlásení môže meniť len podpora; používatelia vidia svoje vlastné tickety.', 'Змінювати стан повідомлень може лише підтримка; користувачі бачать власні звернення.'],
+  'Comments show the writer’s saved profile name and photo.': ['Komentáře zobrazují uložené jméno a profilovou fotku pisatele.', 'Komentáre zobrazujú uložené meno a profilovú fotku pisateľa.', 'Коментарі показують збережене ім’я та фото профілю автора.'],
   'Feedback': ['Připomínky', 'Pripomienky', 'Відгуки'],
   'Report a bug': ['Nahlásit chybu', 'Nahlásiť chybu', 'Повідомити про помилку'],
   'Point to a problem': ['Označit místo chyby', 'Označiť miesto chyby', 'Позначити місце помилки'],
@@ -14,6 +16,8 @@ export const feedbackMessages = {
   'Sending…': ['Odesílání…', 'Odosielanie…', 'Надсилання…'],
   'Send comment': ['Odeslat komentář', 'Odoslať komentár', 'Надіслати коментар'],
   'All reports': ['Všechna hlášení', 'Všetky hlásenia', 'Усі повідомлення'],
+  'My reports': ['Moje hlášení', 'Moje hlásenia', 'Мої повідомлення'],
+  'User': ['Uživatel', 'Používateľ', 'Користувач'],
   'Resolved': ['Vyřešeno', 'Vyriešené', 'Вирішено'],
   'Reply': ['Odpověď', 'Odpoveď', 'Відповідь'],
   'Send reply': ['Odeslat odpověď', 'Odoslať odpoveď', 'Надіслати відповідь'],
