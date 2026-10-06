@@ -46,6 +46,7 @@ function renderPicker() {
     cell.type = "button";
     cell.setAttribute("data-date", key);
     cell.className = "day";
+    setTranslatedAttribute(cell, 'title', `${key} · Manually mark or unmark individual fertile days.`);
     const start = starts.find(start => start <= parseDateKey(key));
     if (start) {
       const cycleNumber = document.createElement("span");

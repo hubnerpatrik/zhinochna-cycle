@@ -6,6 +6,7 @@ import { renderMyMapsView } from "./views/my-maps.js";
 import { renderCreateMapView } from "./views/create-map.js";
 import { backupFilename } from "./backup.js";
 import { createNavigation } from "./navigation.js";
+import { downloadFile, exportFilename, mapCsv, mapPdf } from './map-export.js';
 
 export const MODAL_ROUTES = Object.freeze({
   actionModal: "edit-day", modal: "temperature", bleedingModal: "bleeding",
@@ -206,11 +207,13 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
             showMessage?.("Map deleted");
             navigate("my-maps");
           },
-          onExport: mapId => {
+          onExport: async (mapId, format = 'json') => {
             try {
               const map = store.getMap(mapId);
               if (!map) throw new Error("Map not found");
-              downloadBackup(store.createMapBackup(mapId), map.name);
+              if (format === 'csv') downloadFile(mapCsv(map), 'text/csv;charset=utf-8', exportFilename(map.name, 'csv'));
+              else if (format === 'pdf') downloadFile(await mapPdf(map), 'application/pdf', exportFilename(map.name, 'pdf'));
+              else downloadBackup(store.createMapBackup(mapId), map.name);
               showMessage?.(`“${map.name || "Untitled map"}” exported ✓`);
             } catch {
               showMessage?.("Map export failed. Your data was not changed.");

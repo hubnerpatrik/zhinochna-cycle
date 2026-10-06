@@ -12,7 +12,20 @@ vMAJOR.MINOR.PATCH
 
 ---
 
-## Unreleased
+## 0.12.0 — 2026-10-06
+
+### Added
+
+- Explain controls, features, headings and calendar/chart days on hover in all four interface languages.
+- Show a dismissible new-version bubble, an always-available change summary and a link to GitHub Releases.
+- Explain invalid form values next to the field with red highlighting and a brief shake that respects reduced-motion preferences.
+
+- Report interface problems with a bug button, anchored comments, replies and resolved threads; support administrators have a shared inbox backed by authenticated server storage.
+- Download individual maps as CSV or landscape PDF with temperature charts and daily observations, alongside the existing JSON backup.
+
+### Improved
+
+- Make feedback a bottom sheet on phones, wrap map actions and long account names, and keep mobile form controls and scrollable dialogs usable with larger text and small screens.
 
 ### Fixed
 

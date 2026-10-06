@@ -22,7 +22,7 @@ The app combines **basal body temperature, bleeding, cervical mucus, cervix obse
 
 It does **not** predict ovulation, assign fertility scores or automatically decide what the cycle data means.
 
-> **Current status:** Active prototype · v0.11.0
+> **Current status:** Active prototype · v0.12.0
 
 Each main screen has its own URL (`#/menu`, `#/my-profile`, `#/my-maps`,
 `#/create-map`, and `#/active-map?map=…`). Day editors also have history entries,
@@ -168,6 +168,15 @@ Development uses two branches:
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the repository workflow and [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## Data storage
+
+My Maps also offers **PDF** and **CSV** downloads. The **bug button** opens anchored
+feedback threads with replies and resolution. Support administrators can review
+reports across accounts. See [feedback setup and exports](docs/feedback.md) for the
+required database migration, administrator configuration and export details.
+
+New versions show a one-time **What's new** bubble; the main menu's **Changelog**
+link opens GitHub Releases. Forms explain invalid values next to the input. See
+[release announcements and form feedback](docs/release-notes.md) for behavior and maintenance.
 
 Profiles, maps, daily observations, coverlines, fertile days and the active map identifier sync to Neon Postgres through `/api/state`. A verified Neon Auth account is required. The API verifies signed tokens and derives ownership on the server. Each account also has a separate local cache and durable queue for changes awaiting upload.
 

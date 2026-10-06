@@ -1,3 +1,4 @@
+import { showFieldError } from '../ui/field-errors.js';
 export function renderCreateMapView(container, { onBack, onCreate }) {
   container.innerHTML = `
     <section class="screen screen-form" aria-label="Create map" data-i18n-aria-label="Create map">
@@ -30,7 +31,7 @@ export function renderCreateMapView(container, { onBack, onCreate }) {
     event.preventDefault();
     const name = input?.value.trim() ?? "";
     if (!name) {
-      input?.focus();
+      showFieldError(input, 'Fill in this field.', { focus: true, constraint: true });
       return;
     }
     onCreate?.(name);

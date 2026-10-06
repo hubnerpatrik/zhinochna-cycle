@@ -1,6 +1,7 @@
 import { store } from "../store.js";
 import { qs, qsa } from "../core.js";
 import { showMessage } from "./toast.js";
+import { clearFieldErrors } from './field-errors.js';
 
 let navigation = null;
 export function configureModalNavigation(callbacks) {
@@ -19,6 +20,7 @@ export function showModal(modalId) {
   const modal = qs(modalId);
   if (!modal) return;
   hideAllModals();
+  clearFieldErrors(modal);
   modal.classList.remove("hidden");
   modal.classList.add("show");
   navigation?.modalOpened(modalId);

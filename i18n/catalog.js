@@ -1,8 +1,14 @@
 // English source copy → Czech, Slovak, Ukrainian. UA is the UI label;
 // uk is the standard language code used by HTML and Intl.
 import { authMessages } from './auth.js';
+import { feedbackMessages } from './feedback.js';
+import { formFeedbackMessages } from './form-feedback.js';
+import { helpMessages } from './help.js';
 
 export const messages = {
+  ...helpMessages,
+  ...formFeedbackMessages,
+  ...feedbackMessages,
   ...authMessages,
   'Language': ['Jazyk', 'Jazyk', 'Мова'],
   'The selected file is not valid JSON.': ['Vybraný soubor není platný JSON.', 'Vybraný súbor nie je platný JSON.', 'Вибраний файл не є коректним JSON.'],

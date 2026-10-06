@@ -1,4 +1,4 @@
-import { setText, setDateText } from '../i18n.js';
+import { setText, setDateText, setTranslatedAttribute } from '../i18n.js';
 import { store } from "../store.js";
 import {
   LAYOUT,
@@ -54,6 +54,7 @@ export function renderCalendar(selectColumn) {
     const entry = store.entries[key];
     const cell = document.createElement("div");
     cell.className = "day";
+    setTranslatedAttribute(cell, 'title', `${key} · Select this day to review or edit its observations.`);
 
     const latestCycleStart = [...cycleStarts].reverse().find(start => start <= date);
     if (latestCycleStart) {
