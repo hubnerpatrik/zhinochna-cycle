@@ -12,6 +12,18 @@ vMAJOR.MINOR.PATCH
 
 ---
 
+## 0.12.2 — 2026-10-06
+
+### Fixed
+
+- Restrict ticket resolution and reopening to server-authorized support administrators, including direct API requests; ordinary users can read and reply only to their own tickets.
+- Hide administrator status controls from ordinary users and label their ticket navigation as My reports.
+- Clear cached inbox records and administrator permissions when concealing the session or refreshing the inbox.
+
+### Changed
+
+- Display each message writer's saved profile name and photo, using the authenticated account identifier stored by the server. Legacy owner messages use the owner's profile; old support messages without a writer identifier retain the support label. No database migration is required.
+
 ## 0.12.1 — 2026-10-06
 
 ### Added
