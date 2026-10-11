@@ -22,7 +22,7 @@ The app combines **basal body temperature, bleeding, cervical mucus, cervix obse
 
 It does **not** predict ovulation, assign fertility scores or automatically decide what the cycle data means.
 
-> **Current status:** Active prototype · v0.12.2
+> **Current status:** Active prototype · v0.12.3
 
 Each main screen has its own URL (`#/menu`, `#/my-profile`, `#/my-maps`,
 `#/create-map`, and `#/active-map?map=…`). Day editors also have history entries,
@@ -32,7 +32,8 @@ Unsaved form changes are discarded when leaving the editor or refreshing.
 
 On phones, switch between Graph and Calendar without losing the selected day
 or zoom. The graph initially fits the full map and temperature range; pinch to
-zoom, swipe to move, or use Show all to return to the overview. Day record
+zoom, swipe to move, or use Show all in Tools to return to the overview. Save Map
+is available above the mobile graph. Day record
 combines the saved-day summary and editors. Tools contains Fertile range,
 Coverlines, Markers and Cross cells, with actions below the chart. Tap a
 coverline to select it before dragging; tap away to return to scrolling.

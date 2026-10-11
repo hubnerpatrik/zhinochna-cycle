@@ -40,6 +40,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
   let coverlineSelected = false;
   let suppressNextClick = false;
   let markerHintTimer = null;
+  let hintFrame = null;
 
   const renderCurrentChart = () => {
     qs("tempChart")?.classList.toggle("coverline-touch-edit", coverlineSelected);
@@ -72,11 +73,14 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
   }
 
   function hideToolPill() {
+    if (hintFrame !== null) cancelAnimationFrame(hintFrame);
+    hintFrame = null;
     qs("toast")?.classList.remove("action-toast");
     showMessage("", 0);
   }
 
   function showPersistentHint(text) {
+    if (hintFrame !== null) cancelAnimationFrame(hintFrame);
     showMessage("", null);
     const current = qs("toast");
     if (!current) return null;
@@ -87,7 +91,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     setText(message, text);
     toast.replaceChildren(message);
     current.replaceWith(toast);
-    requestAnimationFrame(() => toast.classList.add("show"));
+    hintFrame = requestAnimationFrame(() => { hintFrame = null; toast.classList.add("show"); });
     return toast;
   }
 

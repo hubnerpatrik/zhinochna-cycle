@@ -63,7 +63,6 @@
     <section id="activeMapScreen" class="hidden" aria-label="Active map" data-i18n-aria-label="Active map">
       <div class="mobile-map-header mobile-only">
         <strong id="mobileMapName">Active map</strong>
-        <button id="mobileSaveBtn" type="button" aria-label="Save Map" data-i18n-aria-label="Save Map"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2Z"/><path d="M7 3v6h9V3M7 21v-8h10v8"/></svg><span data-i18n>Save</span></button>
         <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
           <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
         </select>
@@ -108,7 +107,7 @@
       </section>
 
       <section id="mobileGraphPanel" class="chart-card" aria-label="Cycle chart" data-i18n-aria-label="Cycle chart">
-        <div class="mobile-chart-toolbar mobile-only"><span data-i18n>Temperature · °C</span><button id="mobileFitBtn" type="button" data-i18n>Show all</button><button id="mobileZoomOutBtn" type="button" aria-label="Zoom out" data-i18n-aria-label="Zoom out">−</button><button id="mobileZoomInBtn" type="button" aria-label="Zoom in" data-i18n-aria-label="Zoom in">+</button></div>
+        <div class="mobile-chart-toolbar mobile-only"><span data-i18n>Temperature · °C</span><button id="mobileSaveBtn" type="button" data-i18n>Save Map</button></div>
         <div class="chart-tools">
           <div class="chart-tools-left">
             <div class="active-map-meta">
@@ -161,6 +160,7 @@
           <button id="mobileDayBtn" class="btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4H5v16h14v-9M14 4l3-2 5 5-3 3M11 13l3-1 5-5-3-3-5 5v4Z"/></svg><span data-i18n>Day record</span></button>
           <button id="mobileTools" class="btn" type="button" aria-expanded="false" aria-controls="mobileToolsList"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h4m4 0h8M4 12h10m4 0h2M4 18h2m4 0h10"/><circle cx="10" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></svg><span data-i18n>Tools</span><svg class="mobile-tools-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></button>
           <div id="mobileToolsList" class="mobile-tools-list" hidden>
+            <button id="mobileFitBtn" type="button" data-i18n>Show all</button>
             <button type="button" data-mobile-tool="fertileRangeActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16m-12 4h2m4 0h2"/></svg></span><span data-i18n>Fertile range</span></button>
             <button type="button" data-mobile-tool="coverlineBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v14h14M3 7l3-3 3 3m8 8 3 3-3 3"/></svg></span><span data-i18n>Coverlines</span></button>
             <button type="button" data-mobile-tool="markersActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4m0 0h13l-3 4 3 4H6"/></svg></span><span data-i18n>Markers</span></button>

@@ -1,4 +1,6 @@
 export const formFeedbackMessages = {
+  'Report problems from open dialogs without losing your draft.': ['Nahlas chybu z otevřeného dialogu bez ztráty rozpracovaných změn.', 'Nahlás chybu z otvoreného dialógu bez straty rozpracovaných zmien.', 'Повідомляйте про проблеми з відкритих діалогів без втрати чернетки.'],
+  'Clearer mobile chart controls and corrected Ukrainian goal labels.': ['Přehlednější ovládání grafu na mobilu a opravené ukrajinské názvy cílů.', 'Prehľadnejšie ovládanie grafu na mobile a opravené ukrajinské názvy cieľov.', 'Зручніше керування графіком на телефоні та виправлені українські назви цілей.'],
   "What's new": ['Co je nového', 'Čo je nové', 'Що нового'],
   'New version': ['Nová verze', 'Nová verzia', 'Нова версія'],
   'Version': ['Verze', 'Verzia', 'Версія'],

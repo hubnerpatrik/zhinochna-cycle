@@ -33,6 +33,20 @@ export function setupFeedback({ auth, app }) {
   hint.textContent = t('Tap the problem area. Use × or Escape to cancel.');
   app.append(hint);
   const pins = document.createElement('div'); pins.className = 'feedback-pins'; app.append(pins);
+  // Escape the app's stacking context so CSS modal backdrops cannot cover us.
+  // Native modal dialogs additionally make outside controls inert, so place
+  // reporting controls inside those dialogs without closing their drafts.
+  function placeControls() {
+    const dialogs = [...document.querySelectorAll('dialog[open]')].filter(dialog => dialog !== panel);
+    const host = dialogs.at(-1) || document.body;
+    for (const control of [button, hint, pins]) {
+      if (control.parentElement !== host) host.append(control);
+    }
+  }
+  new MutationObserver(placeControls).observe(document.body, {
+    childList: true, subtree: true, attributes: true, attributeFilter: ['open'],
+  });
+  placeControls();
   let threads = [], admin = false, picking = false, draft = null, selected = null, busy = false, filter = 'open';
   let draftText = '', replyText = '', replyId = null, error = '', loading = false, generation = 0;
   const screen = () => location.hash.split('?')[0] || '#/menu';
@@ -141,7 +155,11 @@ export function setupFeedback({ auth, app }) {
     });
   }
   button.onclick = () => { if (picking) cancelPick(); open(); void refresh(); };
-  document.addEventListener('keydown', e => { if (picking && e.key === 'Escape') { cancelPick(); open(); } });
+  document.addEventListener('keydown', e => {
+    if (picking && e.key === 'Escape') {
+      e.preventDefault(); e.stopImmediatePropagation(); cancelPick(); open();
+    }
+  }, true);
   document.addEventListener('pointerdown', e => {
     if (picking && !button.contains(e.target)) { e.preventDefault(); e.stopImmediatePropagation(); }
   }, true);
@@ -170,6 +188,6 @@ export function setupFeedback({ auth, app }) {
   // Observe app rendering but not our own pin updates.
   new MutationObserver(records => {
     if (records.some(record => !pins.contains(record.target) && record.target !== pins && !panel.contains(record.target))) schedulePins();
-  }).observe(app, { childList: true, subtree: true });
+  }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'open'] });
   void refresh();
 }

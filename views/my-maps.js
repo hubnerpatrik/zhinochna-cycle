@@ -175,7 +175,7 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
         <div class="screen-hero">
           <p class="screen-kicker" data-i18n>My Maps</p>
           <h2 data-i18n>Saved cycle maps</h2>
-          <p data-i18n>Export individual maps with their saved profile, or import a shared map without replacing your own data.</p>
+          <p data-i18n>Export maps or import a shared map.</p>
         </div>
 
         <div class="screen-card map-filter-card">
