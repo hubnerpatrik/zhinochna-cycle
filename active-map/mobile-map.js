@@ -79,14 +79,15 @@ export function createMobileMap({ render, getColumns, interactions }) {
       });
       qs("mobileFitBtn").onclick = () => {
         interactions.deactivate();
+        qs("mobileToolsList").hidden = true;
+        qs("mobileTools").setAttribute("aria-expanded", "false");
+        view().tab = "graph";
         view().zoom = 1;
         view().left = 0; view().top = 0;
         render();
         const scroll = document.querySelector(".map-scroll");
         scroll.scrollLeft = 0; scroll.scrollTop = 0;
       };
-      qs("mobileZoomInBtn").onclick = () => qs("zoomInBtn").click();
-      qs("mobileZoomOutBtn").onclick = () => qs("zoomOutBtn").click();
       qs("mobileObservationsBtn").onclick = () => {
         const expanded = qs("activeMapScreen").classList.toggle("mobile-observations");
         qs("mobileObservationsBtn").setAttribute("aria-expanded", String(expanded));

@@ -12,6 +12,26 @@ vMAJOR.MINOR.PATCH
 
 ---
 
+## 0.12.3 — 2026-10-11
+
+### Fixed
+
+- Keep the bug-report button and report pins above modal backdrops, including native dialogs, without discarding the open editor's draft.
+- Hide empty chart notifications immediately and cancel pending animation frames to prevent a dark strip after coverline interactions.
+- Update the Ukrainian profile goal labels for cycle observation and postponing pregnancy.
+
+### Changed
+
+- Move Save Map above the mobile chart, remove the mobile plus/minus controls, and move Show all into Tools while retaining pinch zoom.
+- Shorten the map import/export description in all supported languages.
+- Refine navigation translucency, blur, borders, and shadows.
+
+### Validation
+
+- Pass 135 automated tests, JavaScript syntax checks, and the production build.
+- Verify reporting above CSS and native dialogs, selecting a problem area, and returning to the open editor at desktop and mobile widths.
+- No database migration or persisted-data format changes. PDF export is unchanged.
+
 ## 0.12.2 — 2026-10-06
 
 ### Fixed

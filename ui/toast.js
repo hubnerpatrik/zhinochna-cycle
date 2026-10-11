@@ -2,7 +2,7 @@ import { setText } from '../i18n.js';
 import { qs } from "../core.js";
 
 let toastTimer = null;
-let toastTransitionHandler = null;
+let toastFrame = null;
 
 /** Hides the current message immediately, including persistent tool hints. */
 export function hideMessage() {
@@ -11,35 +11,24 @@ export function hideMessage() {
 
   clearTimeout(toastTimer);
   toastTimer = null;
-  if (toastTransitionHandler) {
-    toast.removeEventListener("transitionend", toastTransitionHandler);
-    toastTransitionHandler = null;
-  }
-
-  toast.classList.remove("show");
-  if (toast.classList.contains("hidden")) return;
-
-  toastTransitionHandler = () => {
-    toast.classList.add("hidden");
-    toastTransitionHandler = null;
-  };
-  toast.addEventListener("transitionend", toastTransitionHandler, { once: true });
+  if (toastFrame !== null) cancelAnimationFrame(toastFrame);
+  toastFrame = null;
+  toast.classList.remove("show", "persistent-toast", "action-toast");
+  toast.classList.add("hidden");
 }
 
 /** Shows a temporary message banner. Used for blocked actions and validation errors. */
 export function showMessage(text, duration = 2200) {
+  if (!String(text).trim()) { hideMessage(); return; }
   const toast = qs("toast");
   if (!toast) return;
 
   clearTimeout(toastTimer);
-  if (toastTransitionHandler) {
-    toast.removeEventListener("transitionend", toastTransitionHandler);
-    toastTransitionHandler = null;
-  }
+  if (toastFrame !== null) cancelAnimationFrame(toastFrame);
   setText(toast, text);
   toast.classList.remove("persistent-toast", "action-toast");
   toast.classList.remove("hidden");
-  requestAnimationFrame(() => toast.classList.add("show"));
+  toastFrame = requestAnimationFrame(() => { toastFrame = null; toast.classList.add("show"); });
 
   if (duration != null) toastTimer = setTimeout(hideMessage, duration);
 }

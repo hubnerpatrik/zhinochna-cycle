@@ -1,10 +1,10 @@
 // Update together with package.json when preparing a release. Keep copy user-facing.
 export const currentRelease = {
-  version: '0.12.2',
+  version: '0.12.3',
   githubUrl: 'https://github.com/hubnerpatrik/zhinochna-cycle/releases',
   changes: [
-    'Only support can resolve or reopen reports; users see their own tickets.',
-    'Comments show the writer’s saved profile name and photo.',
+    'Report problems from open dialogs without losing your draft.',
+    'Clearer mobile chart controls and corrected Ukrainian goal labels.',
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';
