@@ -41,6 +41,30 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
   let suppressNextClick = false;
   let markerHintTimer = null;
   let hintFrame = null;
+  let coverlineDraft = null;
+
+  function beginCoverlineEdit() {
+    coverlineDraft ??= { target: store.coverlines, values: structuredClone(store.coverlines) };
+  }
+
+  function finishCoverlineEdit(cancel = false) {
+    if (cancel && coverlineDraft) {
+      Object.keys(coverlineDraft.target).forEach(key => delete coverlineDraft.target[key]);
+      Object.assign(coverlineDraft.target, coverlineDraft.values);
+      if (!persist()) return;
+    }
+    if (!cancel && !persist()) return;
+    coverlineDraft = null;
+    coverlineSelected = false;
+    activeDrag = null;
+    store.horizontalCoverlineMode = false;
+    store.verticalCoverlineMode = false;
+    setCoverlineButton(false);
+    const canvas = qs("tempChart");
+    if (canvas) setCursor(canvas, null);
+    hideToolPill();
+    renderApp();
+  }
 
   const renderCurrentChart = () => {
     qs("tempChart")?.classList.toggle("coverline-touch-edit", coverlineSelected);
@@ -117,6 +141,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
   }
 
   function clearModes() {
+    if (coverlineDraft) finishCoverlineEdit(true);
     coverlineSelected = false;
     store.horizontalCoverlineMode = false;
     store.verticalCoverlineMode = false;
@@ -150,12 +175,21 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     if (!toast) return;
     const label = document.createElement("span");
     const remove = document.createElement("button");
-    setText(label, "Drag a line or endpoint to adjust it. Tap away from the lines to finish.");
+    setText(label, store.horizontalCoverlineMode || store.verticalCoverlineMode
+      ? "Tap the chart to place coverlines, then save or cancel."
+      : "Drag a line or endpoint, then save or cancel.");
+    const cancel = document.createElement("button");
+    cancel.type = "button"; cancel.className = "toast-action toast-action-cancel";
+    setText(cancel, "Cancel"); cancel.onclick = () => finishCoverlineEdit(true);
+    const save = document.createElement("button");
+    save.type = "button"; save.className = "toast-action toast-action-primary";
+    setText(save, "Save"); save.onclick = () => finishCoverlineEdit();
     remove.type = "button";
+    remove.disabled = !Object.keys(store.coverlines).length;
     remove.className = "toast-action toast-action-danger";
     setText(remove, "Delete");
     remove.onclick = deleteCoverline;
-    toast.replaceChildren(label, remove);
+    toast.replaceChildren(label, cancel, remove, save);
     toast.classList.add("action-toast");
   }
 
@@ -170,6 +204,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       renderApp();
       return;
     }
+    coverlineDraft = null;
     renderApp();
     showMessage("Coverline deleted.");
   }
@@ -226,6 +261,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     };
 
     qs("coverlineBtn").onclick = () => {
+      if (coverlineDraft) { finishCoverlineEdit(true); return; }
       const active = !(store.horizontalCoverlineMode && store.verticalCoverlineMode);
       const hadOtherTool = store.crossCellSelectionMode || store.markerSelectionMode;
       const hadSelection = coverlineSelected;
@@ -240,7 +276,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       store.horizontalCoverlineMode = active;
       store.verticalCoverlineMode = active;
       setCoverlineButton(active);
-      if (active) showPersistentHint("Click to place both coverlines");
+      if (active) { beginCoverlineEdit(); showCoverlinePill(); }
       else hideToolPill();
     };
   }
@@ -257,6 +293,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       const target = point && getCoverlineDragTarget(point.x, point.y, getColumns());
       if (!point || !target) return;
       event.preventDefault();
+      beginCoverlineEdit();
       coverlineSelected = true;
       showCoverlinePill();
       renderCurrentChart();
@@ -294,7 +331,6 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
         setTimeout(() => { suppressNextClick = false; }, 0);
       }
       if (!moved) return;
-      persist();
       renderCurrentChart();
     };
     canvas.addEventListener("pointerup", finishDrag);
@@ -311,15 +347,14 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       if (!coverlineSelected && !store.crossCellSelectionMode && !store.markerSelectionMode
         && !store.horizontalCoverlineMode && !store.verticalCoverlineMode
         && getCoverlineDragTarget(point.x, point.y, columns)) {
+        beginCoverlineEdit();
         coverlineSelected = true;
         showCoverlinePill();
         renderCurrentChart();
         return;
       }
       if (coverlineSelected && !getCoverlineDragTarget(point.x, point.y, columns)) {
-        coverlineSelected = false;
-        hideToolPill();
-        renderCurrentChart();
+        return;
       }
       if (store.crossCellSelectionMode) {
         const key = pixelXToColumnKey(point.x, columns);
@@ -332,11 +367,9 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       }
       if (store.horizontalCoverlineMode || store.verticalCoverlineMode) {
         if (handleCanvasClick(point.x, point.y, columns)) {
-          if (!persist()) renderApp();
-          else {
-            renderApp();
-            hideToolPill();
-          }
+          coverlineSelected = true;
+          renderApp();
+          showCoverlinePill();
         }
         return;
       }
@@ -363,12 +396,6 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
         renderCurrentChart();
       }
     });
-    document.addEventListener("click", event => {
-      if (!coverlineSelected || event.target === canvas || event.target.closest?.("#toast")) return;
-      coverlineSelected = false;
-      hideToolPill();
-      renderCurrentChart();
-    });
   }
 
   return {
@@ -380,13 +407,10 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     finishTouchDrag() {
       if (activeDrag) {
         const canvas = qs("tempChart");
-        if (activeDrag.moved) persist();
         canvas?.releasePointerCapture?.(activeDrag.pointerId);
         activeDrag = null;
         if (canvas) setCursor(canvas, null);
       }
-      if (coverlineSelected) hideToolPill();
-      coverlineSelected = false;
       renderCurrentChart();
     },
     finishMarkerPlacement() {

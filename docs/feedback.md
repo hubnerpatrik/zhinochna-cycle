@@ -11,6 +11,13 @@ to all reports. The inbox returns the latest 200 threads; each accepts up to 100
 messages of 4,000 characters. Failed submissions retain the draft in memory until
 the page is reloaded. Retry IDs prevent duplicate posts after a lost response.
 
+Reports and replies can include one screenshot. JPG, PNG and WebP uploads up to
+10 MB are resized without cropping (up to 1280 pixels on the longest side),
+converted to a JPEG and limited to 140,000 data-URL characters. A preview and remove
+button let the writer review it before sending. Attachments share the thread's
+existing access controls and JSON message storage; no migration is required.
+Only self-contained JPEG data is accepted by the API and displayed by the inbox.
+
 Messages display the writer's saved profile name and photo. The server binds new
 messages to the authenticated account and looks up only the name and photo of
 participants in authorized threads, never their cycle records or email address.

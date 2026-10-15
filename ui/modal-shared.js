@@ -46,7 +46,9 @@ export function syncModalUI() {
     let value = button.dataset.value;
     if (value === "true") value = true;
     if (value === "false") value = false;
-    button.classList.toggle("active", store.modal[button.dataset.group] === value);
+    const active = store.modal[button.dataset.group] === value;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
   });
 }
 

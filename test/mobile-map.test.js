@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { MemoryStorage } from "./setup.js";
 
 globalThis.localStorage = new MemoryStorage();
-const { fittedColumnWidth } = await import("../active-map/mobile-map.js");
+const { fittedColumnWidth, readableColumnWidth } = await import("../active-map/mobile-map.js");
 
 test("phone overview keeps short and long maps within the viewport, reserving the axis", () => {
   for (const viewport of [286, 356, 396]) {
@@ -14,4 +14,12 @@ test("phone overview keeps short and long maps within the viewport, reserving th
     }
   }
   assert.ok(Number.isFinite(fittedColumnWidth(286, 0)));
+});
+
+test('phone chart defaults keep days readable while an explicit overview can fit long maps', () => {
+  for (const days of [1, 8, 28, 90, 1000]) {
+    const width = readableColumnWidth(356, days);
+    assert.ok(width >= 32 && width <= 56);
+  }
+  assert.ok(readableColumnWidth(356, 90) > fittedColumnWidth(356, 90));
 });

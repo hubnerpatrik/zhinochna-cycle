@@ -33,7 +33,7 @@ export function createFeedbackRepository(sql) {
     },
     async write(userId, admin, input) {
       if (input.action === 'resolve' && !admin) return null;
-      const message = { id: input.messageId || input.id, authorId: userId, author: admin ? 'Support' : 'Author', text: input.text, at: new Date().toISOString() };
+      const message = { id: input.messageId || input.id, authorId: userId, author: admin ? 'Support' : 'Author', text: input.text, at: new Date().toISOString(), ...(input.image ? { image: input.image } : {}) };
       if (input.action === 'create') {
         const rows = await sql`INSERT INTO cycle_private.feedback AS current (id, owner_id, anchor, messages)
           VALUES (${input.id}::uuid, ${userId}, ${JSON.stringify(input.anchor)}::jsonb, ${JSON.stringify([message])}::jsonb)

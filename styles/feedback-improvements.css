@@ -1,0 +1,55 @@
+.map-create-plus { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.map-create-plus > span:first-child { font-size: 28px; line-height: 1; }
+.map-dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 26px; border: 1px solid var(--hairline); border-radius: 24px; background: var(--card, #fffaf6); color: var(--text); box-shadow: 0 20px 70px #32201833; }
+.map-dialog::backdrop, .mobile-tools-list::backdrop { background: #30282066; }
+.map-dialog h2 { margin: 0 0 24px; }
+.map-dialog label { display: grid; gap: 10px; }
+.map-dialog input { width: 100%; min-height: 48px; font: inherit; font-size: 16px; }
+.map-dialog .modal-actions { margin-top: 24px; }
+.map-dialog button { min-height: 44px; padding: 10px 18px; border-radius: 12px; border: 1px solid var(--hairline); font: inherit; cursor: pointer; }
+.feedback-attachment { display: block; width: auto; max-width: 100%; max-height: 360px; object-fit: contain; border-radius: 10px; margin-block: 12px; }
+.feedback-image-picker { display: grid; gap: 8px; margin-block: 16px; }
+.feedback-image-picker input { display: block; width: 100%; margin-top: 8px; font-size: 14px; }
+.feedback-image-picker small { color: #566b61; }
+@media (max-width: 560px) {
+  #mobileObservationsBtn { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; margin-top: 12px; border: 1px solid var(--hairline); border-radius: 14px; background: #fffaf6; font-size: 14px; font-weight: 600; color: var(--text); scroll-margin-top: 12px; }
+  #mobileObservationsBtn::after { content: '+'; font-size: 22px; }
+  #mobileObservationsBtn[aria-expanded="true"]::after { content: '−'; }
+  #mobileObservationPanel { margin-top: 10px; }
+  #mobileObservationPanel[hidden] { display: none; }
+  .mobile-observation-hint { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  #mobileObservationScroll { overflow-x: auto; overscroll-behavior-x: contain; touch-action: pan-x pan-y; border: 1px solid var(--hairline); border-radius: 14px; background: #fffaf6; }
+  #mobileObservationGrid { width: max-content; min-width: 100%; }
+  #mobileObservationGrid #mapRows { display: block; }
+  #activeMapScreen #mobileObservationGrid .map-row { grid-template-columns: 116px 0 max-content; height: 44px; overflow: visible; }
+  #activeMapScreen #mobileObservationGrid .map-side-label { position: sticky; left: 0; z-index: 2; display: flex; width: 116px; padding: 6px; background: #fffaf6; }
+  #activeMapScreen #mobileObservationGrid .map-row-caption { display: block; font-size: 10px; white-space: normal; }
+  #activeMapScreen #mobileObservationGrid .map-row-icon { display: none; }
+  #mobileObservationGrid .map-cell { height: 44px; }
+  .mobile-observation-header { display: grid; grid-template-columns: 116px max-content; min-height: 44px; border-bottom: 1px solid var(--hairline); }
+  .mobile-observation-header > span { position: sticky; left: 0; z-index: 3; display: flex; align-items: center; padding: 10px; background: #f4e9e1; font-size: 12px; }
+  #mobileObservationDays { height: 44px; }
+  #mobileObservationDays button { height: 44px; padding: 0; border: 0; border-right: 1px solid var(--hairline); border-radius: 0; background: #f4e9e1; font: inherit; font-size: 12px; color: var(--text); cursor: pointer; }
+  /* Glass treatment belongs only to the phone navigation dock. */
+  .header-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid #ffffffc9; background: linear-gradient(145deg, #ffffffa3, #fff8f075); -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%); box-shadow: inset 0 1px 1px #fff, inset 0 -1px 1px #ffffff66, 0 10px 36px #57483c26; }
+  .header-nav-btn.is-active { border-color: #ffffffdb; background: linear-gradient(135deg, #ffffffc7, #ffe5d795); box-shadow: inset 0 1px 1px #fff, 0 3px 12px #79503b12; color: #854023; }
+  .feedback-launch.btn { display: grid; place-items: center; flex: none; width: 48px; min-width: 48px; max-width: 48px; height: 48px; min-height: 48px; padding: 0; border-radius: 50%; font-size: 22px; line-height: 1; bottom: calc(92px + env(safe-area-inset-bottom)); }
+  .feedback-launch > span:first-child { display: block; }
+  #mobileToolsList { position: fixed; inset: 0; margin: auto; width: min(350px, calc(100vw - 32px)); max-height: calc(100dvh - 64px); padding: 20px; border: 1px solid #e9d9d3; border-radius: 24px; background: #fffaf6; color: var(--text); box-shadow: 0 16px 70px #32201833; }
+  #mobileToolsList:not([open]) { display: none; }
+  #mobileToolsList[open] { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  #mobileToolsList header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  #mobileToolsList h2 { margin: 0; font-size: 22px; }
+  #mobileToolsList button { min-height: 48px; padding: 12px; text-align: left; }
+  #mobileToolsList header button { text-align: center; width: 44px; font-size: 24px; }
+  #mobileToolFeedback:has(.persistent-toast.show) { position: fixed; z-index: 110; left: 16px; right: 16px; bottom: var(--mobile-nav-space); }
+  #mobileToolFeedback .action-toast { padding-bottom: 56px; }
+  #activeMapScreen .temp-scale-column { position: sticky; left: 0; z-index: 4; background: #fffaf6; }
+  #activeMapScreen.mobile-chart-expanded { position: fixed; inset: 0; z-index: 500; padding: max(12px, env(safe-area-inset-top)) 8px max(12px, env(safe-area-inset-bottom)); overflow: auto; background: var(--bg, #fffaf6); }
+  .mobile-chart-expanded > .mobile-map-header, .mobile-chart-expanded > .mobile-map-navigation, .mobile-chart-expanded > #mobileMapDock { display: none; }
+  body:has(.mobile-chart-expanded:not(.hidden)) { overflow: hidden; }
+  .mobile-chart-expanded .mobile-chart-toolbar { margin-bottom: 12px; }
+}
+@media (max-width: 560px) and (prefers-reduced-transparency: reduce) {
+  .header-nav { background: #fffaf6; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}

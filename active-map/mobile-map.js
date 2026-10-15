@@ -3,10 +3,15 @@ import { store } from "../store.js";
 import { openCycleSummary } from "../ui/cycle-summary.js";
 import { openProfileInfo } from "../ui/profile-info-modal.js";
 import { cycleStarts } from "../cycle-summary.js";
+import { buildColumns } from '../domain.js';
 import { LAYOUT, chartY, formatDateKey, formatTemp, parseDateKey, qs, syncCSSVariables } from "../core.js";
 
 export function fittedColumnWidth(viewportWidth, count, axisWidth = 48) {
   return Math.max(1, viewportWidth - axisWidth - 2) / Math.max(1, count);
+}
+
+export function readableColumnWidth(viewportWidth, count) {
+  return Math.min(56, Math.max(32, fittedColumnWidth(viewportWidth, count)));
 }
 
 export function createMobileMap({ render, getColumns, interactions }) {
@@ -18,10 +23,11 @@ export function createMobileMap({ render, getColumns, interactions }) {
   let fitHeight = 340;
   let raf = null;
   let toastHome;
+  let rowsHome;
   const active = () => media.matches && !qs("activeMapScreen")?.classList.contains("hidden");
   const view = () => {
     const id = store.getActiveMapId();
-    if (!views.has(id)) views.set(id, { tab: "graph", zoom: 1, left: 0, top: 0 });
+    if (!views.has(id)) views.set(id, { tab: "graph", zoom: null, left: 0, top: 0 });
     return views.get(id);
   };
   const schedule = () => {
@@ -60,12 +66,34 @@ export function createMobileMap({ render, getColumns, interactions }) {
       ready = true;
       toastHome = document.createComment("Desktop notifications");
       qs("toast").before(toastHome);
+      rowsHome = document.createComment('Desktop observations');
+      qs('mapRows').before(rowsHome);
+      const chartScroll = document.querySelector('.map-scroll');
+      const tableScroll = qs('mobileObservationScroll');
+      let scrollSource = null, scrollFrame = null;
+      for (const [source, target] of [[chartScroll, tableScroll], [tableScroll, chartScroll]]) {
+        source.addEventListener('scroll', () => {
+          if (!active() || (scrollSource && scrollSource !== source)) return;
+          scrollSource = source;
+          target.scrollLeft = source.scrollLeft;
+          if (scrollFrame !== null) cancelAnimationFrame(scrollFrame);
+          scrollFrame = requestAnimationFrame(() => { scrollSource = null; scrollFrame = null; });
+        }, { passive: true });
+      }
       qs("mobileSaveBtn").onclick = () => qs("saveActiveMapBtn").click();
       qs("mobileDayBtn").onclick = () => qs("editBtn").click();
       qs("mobileTools").onclick = () => {
         const list = qs("mobileToolsList");
-        list.hidden = !list.hidden;
-        qs("mobileTools").setAttribute("aria-expanded", String(!list.hidden));
+        list.showModal();
+        qs("mobileTools").setAttribute("aria-expanded", "true");
+      };
+      qs("mobileCloseToolsBtn").onclick = () => qs("mobileToolsList").close();
+      qs("mobileToolsList").addEventListener('close', () => qs("mobileTools").setAttribute("aria-expanded", "false"));
+      qs("mobileExpandBtn").onclick = () => {
+        const expanded = qs("activeMapScreen").classList.toggle('mobile-chart-expanded');
+        qs("mobileExpandBtn").setAttribute('aria-pressed', String(expanded));
+        setText(qs("mobileExpandBtn"), expanded ? 'Close full screen' : 'Expand chart');
+        render();
       };
       qs("mobileGraphTab").onclick = () => switchTab("graph");
       qs("mobileCalendarTab").onclick = () => switchTab("calendar");
@@ -77,26 +105,19 @@ export function createMobileMap({ render, getColumns, interactions }) {
         event.preventDefault();
         tabs[1 - index].click(); tabs[1 - index].focus();
       });
-      qs("mobileFitBtn").onclick = () => {
-        interactions.deactivate();
-        qs("mobileToolsList").hidden = true;
-        qs("mobileTools").setAttribute("aria-expanded", "false");
-        view().tab = "graph";
-        view().zoom = 1;
-        view().left = 0; view().top = 0;
-        render();
-        const scroll = document.querySelector(".map-scroll");
-        scroll.scrollLeft = 0; scroll.scrollTop = 0;
-      };
       qs("mobileObservationsBtn").onclick = () => {
         const expanded = qs("activeMapScreen").classList.toggle("mobile-observations");
         qs("mobileObservationsBtn").setAttribute("aria-expanded", String(expanded));
         setText(qs("mobileObservationsBtn"), expanded ? "Hide observations" : "Show observations");
-        schedule();
+        qs('mobileObservationPanel').hidden = !expanded;
+        if (expanded) {
+          tableScroll.scrollLeft = chartScroll.scrollLeft;
+          qs('mobileObservationsBtn').scrollIntoView({ block: 'start', behavior: 'auto' });
+        }
       };
       document.querySelectorAll("[data-mobile-tool]").forEach(button => {
         button.onclick = () => {
-          qs("mobileToolsList").hidden = true;
+          qs("mobileToolsList").close();
           qs("mobileTools").setAttribute("aria-expanded", "false");
           const id = button.dataset.mobileTool;
           if (id !== "fertileRangeActionBtn") {
@@ -126,6 +147,10 @@ export function createMobileMap({ render, getColumns, interactions }) {
     },
     prepare() {
       if (!ready) return;
+      const rows = qs('mapRows');
+      if (media.matches) {
+        if (rows.parentElement !== qs('mobileObservationGrid')) qs('mobileObservationGrid').append(rows);
+      } else if (rows.parentElement !== rowsHome.parentElement) rowsHome.after(rows);
       document.body.classList.toggle("mobile-map-active", active());
       const toast = qs("toast");
       if (active()) {
@@ -137,18 +162,20 @@ export function createMobileMap({ render, getColumns, interactions }) {
         qs("mobileCalendarTab").setAttribute("aria-selected", String(state.tab === "calendar"));
         qs("mobileGraphTab").tabIndex = state.tab === "graph" ? 0 : -1;
         qs("mobileCalendarTab").tabIndex = state.tab === "calendar" ? 0 : -1;
-        // Measure the available space, including safe-area padding and tool feedback.
+        // Keep the plot readable; the page scrolls to records and tools below it.
         if (state.tab === "graph") {
           const top = document.querySelector(".cycle-map").getBoundingClientRect().top + window.scrollY;
-          const bottomPadding = parseFloat(getComputedStyle(document.querySelector(".app")).paddingBottom) || 8;
-          fitHeight = Math.max(140, Math.min(520, window.innerHeight - top - qs("mobileMapDock").offsetHeight
-            - qs("mobileObservationsBtn").offsetHeight - bottomPadding - 40));
+          fitHeight = screen.classList.contains('mobile-chart-expanded')
+            ? Math.max(240, window.innerHeight - 120)
+            : Math.max(320, Math.min(560, window.innerHeight - top - 110));
         }
-        fitWidth = fittedColumnWidth(screen.clientWidth - 16, Object.keys(store.entries).length);
+        const count = buildColumns().length;
+        fitWidth = fittedColumnWidth(screen.clientWidth - 16, count);
+        if (state.zoom === null) state.zoom = readableColumnWidth(screen.clientWidth - 16, count) / fitWidth;
         LAYOUT.sideLabelWidth = 0;
         LAYOUT.tempScaleWidth = 48;
         LAYOUT.columnWidth = fitWidth * state.zoom;
-        LAYOUT.chartHeight = Math.min(1680, fitHeight * state.zoom);
+        LAYOUT.chartHeight = fitHeight;
         screen.style.setProperty("--mobile-plot-height", `${fitHeight + 30}px`);
         screen.classList.toggle("mobile-map-overview", LAYOUT.columnWidth < 24);
         if (!store.selectedKey) store.selectedKey = Object.keys(store.entries).sort().at(-1) || formatDateKey(new Date());
@@ -182,6 +209,15 @@ export function createMobileMap({ render, getColumns, interactions }) {
       qs("mobileDayBtn").disabled = !key;
       const step = Math.ceil(28 / LAYOUT.columnWidth);
       [...qs("dayNumbers").children].forEach((cell, index) => { cell.style.color = index % step ? "transparent" : ""; });
+      const tableDays = qs('mobileObservationDays');
+      tableDays.replaceChildren(...[...qs('dayNumbers').children].map((cell, index) => {
+        const day = document.createElement('button');
+        day.type = 'button'; day.className = cell.className;
+        day.textContent = cell.textContent;
+        day.setAttribute('aria-label', getColumns()[index].key);
+        day.onclick = () => qs('dayNumbers').children[index]?.click();
+        return day;
+      }));
       feedback();
     },
     clampWidth(width) { return active() ? Math.max(fitWidth, Math.min(Math.max(90, fitWidth), width)) : Math.max(24, Math.min(90, width)); },

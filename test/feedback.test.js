@@ -6,12 +6,45 @@ import { createFeedbackRepository } from '../server/feedback-repository.js';
 import { generateKeyPair, SignJWT } from 'jose';
 import { createIdentityVerifier } from '../server/identity.js';
 import { feedbackMessageHtml, feedbackResolutionHtml } from '../ui/feedback-thread.js';
+import { isFeedbackImage, prepareFeedbackImage } from '../feedback-image.js';
 
 const make = () => ({ action: 'create', id: crypto.randomUUID(), text: 'Chyba při ukládání', anchor: {
   screen: '#/active-map', selector: '#saveActiveMapBtn', label: 'Save Map', x: .5, y: .5, version: '0.11.0', viewport: '390x844',
 } });
 const response = () => ({ setHeader() {}, status(code) { this.code = code; return this; }, json(body) { this.body = body; return this; } });
 const req = (method, body) => ({ method, body, headers: { authorization: 'Bearer signed', 'content-type': 'application/json' } });
+
+test('feedback attachments accept bounded JPEG data and reject SVG, URLs and malformed payloads', async () => {
+  const image = 'data:image/jpeg;base64,/9j/AAAA';
+  assert.equal(validateFeedback({ ...make(), image }).image, image);
+  assert.equal(validateFeedback({ action: 'reply', id: crypto.randomUUID(), messageId: crypto.randomUUID(), text: 'Reply', image }).image, image);
+  for (const unsafe of ['https://example.test/image.jpg', 'data:image/svg+xml,<svg onload="alert(1)"/>', 'data:image/jpeg;base64,/9j/A', image + 'A'.repeat(140000)]) {
+    assert.equal(isFeedbackImage(unsafe), false);
+    assert.throws(() => validateFeedback({ ...make(), image: unsafe }));
+    assert.doesNotMatch(feedbackMessageHtml({ text: 'Report', at: '2026-10-15', image: unsafe }), /feedback-attachment/);
+  }
+  assert.match(feedbackMessageHtml({ text: 'Report', at: '2026-10-15', image }), /feedback-attachment/);
+  await assert.rejects(prepareFeedbackImage({ type: 'image/svg+xml', size: 30 }));
+  await assert.rejects(prepareFeedbackImage({ type: 'image/png', size: 11 * 1024 * 1024 }));
+});
+
+test('attachment survives authorized create/reply storage and handler payload limits', async () => {
+  const image = 'data:image/jpeg;base64,/9j/AAAA';
+  const queries = [];
+  const sql = async (_strings, ...values) => { queries.push(values); return []; };
+  const repository = createFeedbackRepository(sql);
+  const input = { ...make(), image };
+  await repository.write('owner', false, input);
+  assert.equal(JSON.parse(queries[0][3])[0].image, image);
+  await repository.write('owner', false, { action: 'reply', id: input.id, messageId: crypto.randomUUID(), text: 'Reply', image });
+  assert.equal(JSON.parse(queries[1][1])[0].image, image);
+  let received;
+  const handler = createFeedbackHandler({ identify: async () => 'owner', repository: { write: async (_id, _admin, data) => { received = data; return {}; } } });
+  const responseWithImage = response();
+  await handler(req('POST', { ...input, image: 'data:image/jpeg;base64,/9j/' + 'A'.repeat(130000) }), responseWithImage);
+  assert.equal(responseWithImage.code, 200);
+  assert.ok(received.image.length > 24000);
+});
 
 test('feedback rejects forged ownership, invalid anchors, oversized and blank comments', () => {
   assert.equal(validateFeedback(make()).text, 'Chyba při ukládání');
@@ -114,7 +147,7 @@ test('feedback does not disclose database failures and enforces input limits', a
     list: async () => { throw Error('private database credentials'); }, write: async () => null,
   } });
   const failure = response(); await handler(req('GET'), failure); assert.equal(failure.code, 503); assert.equal(JSON.stringify(failure.body).includes('private'), false);
-  const large = response(); await handler(req('POST', 'x'.repeat(24001)), large); assert.equal(large.code, 413);
+  const large = response(); await handler(req('POST', 'x'.repeat(164001)), large); assert.equal(large.code, 413);
   const missing = response(); await handler(req('POST', make()), missing); assert.equal(missing.code, 404);
 });
 

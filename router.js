@@ -3,7 +3,8 @@ import { t } from "./i18n.js";
 import { renderMenuView } from "./views/menu.js";
 import { renderProfileScreen } from "./views/profile.js";
 import { renderMyMapsView } from "./views/my-maps.js";
-import { renderCreateMapView } from "./views/create-map.js";
+import { openMapDialog } from "./ui/map-dialog.js";
+import { escapeHtml } from "./views/view-utils.js";
 import { backupFilename } from "./backup.js";
 import { createNavigation } from "./navigation.js";
 import { downloadFile, exportFilename, mapCsv, mapPdf } from './map-export.js';
@@ -146,7 +147,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
       case "my-profile":
         renderProfileScreen(root, {
           title: "My Profile",
-          subtitle: "Update the same values used in the active map sidebar.",
+          subtitle: "Manage your personal details, measurement preferences and profile photo.",
           profile: store.getProfile(),
           submitLabel: "Save profile",
           showCancel: true,
@@ -228,13 +229,18 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
         break;
 
       case "create-map":
-        renderCreateMapView(root, {
-          onBack: back,
-          onCreate: name => {
+        render('my-maps');
+        openMapDialog({ title: 'Create map', submitLabel: 'Create',
+          body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="80" autofocus></label>`,
+          onClose: () => { if (navigation.current?.screen === 'create-map') back(); },
+          onSubmit: dialog => {
+            const name = dialog.querySelector('input').value.trim();
+            if (!name) return;
             const result = runStoreAction(() => store.createMap(name));
             if (!result.ok) return;
             showMessage?.("Map created ✓");
             navigate("active-map", { replace: true });
+            dialog.close();
           },
         });
         break;

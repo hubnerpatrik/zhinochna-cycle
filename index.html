@@ -50,7 +50,6 @@
         <button id="navMenuBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-home"/></svg><span class="nav-label-desktop" data-i18n>Main Menu</span><span class="nav-label-mobile" data-i18n>Menu</span></button>
         <button id="navProfileBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-profile"/></svg><span class="nav-label-desktop" data-i18n>My Profile</span><span class="nav-label-mobile" data-i18n>Profile</span></button>
         <button id="navMapsBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-maps"/></svg><span class="nav-label-desktop" data-i18n>My Maps</span><span class="nav-label-mobile" data-i18n>Maps</span></button>
-        <button id="navCreateMapBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-create"/></svg><span class="nav-label-desktop" data-i18n>Create Map</span><span class="nav-label-mobile" data-i18n>New map</span></button>
         <button id="navActiveMapBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-chart"/></svg><span class="nav-label-desktop" data-i18n>Active Map</span><span class="nav-label-mobile" data-i18n>Active Map</span></button>
       </nav>
       <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
@@ -107,7 +106,7 @@
       </section>
 
       <section id="mobileGraphPanel" class="chart-card" aria-label="Cycle chart" data-i18n-aria-label="Cycle chart">
-        <div class="mobile-chart-toolbar mobile-only"><span data-i18n>Temperature · °C</span><button id="mobileSaveBtn" type="button" data-i18n>Save Map</button></div>
+        <div class="mobile-chart-toolbar mobile-only"><span data-i18n>Temperature · °C</span><button id="mobileExpandBtn" type="button" aria-pressed="false" data-i18n>Expand chart</button><button id="mobileSaveBtn" type="button" data-i18n>Save Map</button></div>
         <div class="chart-tools">
           <div class="chart-tools-left">
             <div class="active-map-meta">
@@ -150,7 +149,15 @@
             </div>
           </div>
         </div>
-        <button id="mobileObservationsBtn" class="mobile-only mobile-observations-btn" type="button" aria-expanded="false" data-i18n>Show observations</button>
+        <button id="mobileObservationsBtn" class="mobile-only mobile-observations-btn" type="button" aria-expanded="false" aria-controls="mobileObservationPanel" data-i18n>Show observations</button>
+        <section id="mobileObservationPanel" class="mobile-only" hidden aria-label="Observations table" data-i18n-aria-label="Observations table">
+          <p class="mobile-observation-hint" data-i18n>Swipe sideways to see more days. Tap a cell to select its day.</p>
+          <div id="mobileObservationScroll" tabindex="0" role="region" aria-label="Observations table" data-i18n-aria-label="Observations table">
+            <div id="mobileObservationGrid">
+              <div class="mobile-observation-header"><span data-i18n>Day</span><div id="mobileObservationDays" class="map-days"></div></div>
+            </div>
+          </div>
+        </section>
       </section>
 
       <footer id="mobileMapDock" class="mobile-only">
@@ -159,13 +166,13 @@
         <div id="mobileMapActions" class="mobile-map-actions">
           <button id="mobileDayBtn" class="btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4H5v16h14v-9M14 4l3-2 5 5-3 3M11 13l3-1 5-5-3-3-5 5v4Z"/></svg><span data-i18n>Day record</span></button>
           <button id="mobileTools" class="btn" type="button" aria-expanded="false" aria-controls="mobileToolsList"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h4m4 0h8M4 12h10m4 0h2M4 18h2m4 0h10"/><circle cx="10" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></svg><span data-i18n>Tools</span><svg class="mobile-tools-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></button>
-          <div id="mobileToolsList" class="mobile-tools-list" hidden>
-            <button id="mobileFitBtn" type="button" data-i18n>Show all</button>
+          <dialog id="mobileToolsList" class="mobile-tools-list" aria-labelledby="mobileToolsTitle">
+            <header><h2 id="mobileToolsTitle" data-i18n>Tools</h2><button id="mobileCloseToolsBtn" type="button" aria-label="Close" data-i18n-aria-label="Close">×</button></header>
             <button type="button" data-mobile-tool="fertileRangeActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16m-12 4h2m4 0h2"/></svg></span><span data-i18n>Fertile range</span></button>
             <button type="button" data-mobile-tool="coverlineBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v14h14M3 7l3-3 3 3m8 8 3 3-3 3"/></svg></span><span data-i18n>Coverlines</span></button>
             <button type="button" data-mobile-tool="markersActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4m0 0h13l-3 4 3 4H6"/></svg></span><span data-i18n>Markers</span></button>
             <button type="button" data-mobile-tool="crossCellsActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span data-i18n>Cross cells</span></button>
-          </div>
+          </dialog>
         </div>
         <button id="mobileCancelToolBtn" type="button" class="hidden" data-i18n>Cancel</button>
       </footer>

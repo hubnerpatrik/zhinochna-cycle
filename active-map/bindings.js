@@ -202,7 +202,6 @@ export function initializeActiveMapControls({
   bindButton("zoomOutBtn", () => zoomBy(-1));
   mapScroll?.addEventListener("touchstart", cancelZoom, { passive: true });
   mapScroll?.addEventListener("wheel", cancelZoom, { passive: true });
-  qs("mobileFitBtn")?.addEventListener("click", cancelZoom);
   window.addEventListener("hashchange", cancelZoom);
   if (mapScroll) bindMapGestures(mapScroll, {
     getWidth: () => LAYOUT.columnWidth, setWidth, fixedWidth,
@@ -229,7 +228,9 @@ export function initializeActiveMapControls({
       if (value === "true") value = true;
       if (value === "false") value = false;
       if (button.dataset.group === "markerColor") return selectMarkerType(value);
-      store.modal[button.dataset.group] = value;
+      const group = button.dataset.group;
+      store.modal[group] = store.modal[group] === value
+        ? (typeof value === "boolean" ? false : group === "bleeding" ? "none" : "") : value;
       syncModalUI();
     };
   });
