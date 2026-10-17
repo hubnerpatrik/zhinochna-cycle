@@ -119,11 +119,12 @@ export function setupFeedback({ auth, app }) {
       ${thread && !draft ? `<section class="feedback-thread"><button type="button" data-back>${esc(t(admin ? 'All reports' : 'My reports'))}</button>
         <h3>${esc(thread.anchor.label || thread.anchor.screen)}</h3><p>${esc(thread.anchor.screen)} · v${esc(thread.anchor.version)} · ${esc(thread.anchor.viewport)}</p>
         <p>${esc(t(thread.resolved ? 'Resolved' : 'Open'))}</p>
+        ${feedbackResolutionHtml(thread, admin, busy)}
         ${thread.messages.map(feedbackMessageHtml).join('')}
         <form data-reply><label>${esc(t('Reply'))}<textarea maxlength="4000" required ${busy ? 'disabled' : ''}>${esc(replyText)}</textarea></label>
         ${imagePicker(replyImage)}
         <button type="submit" ${busy || imageLoading ? 'disabled' : ''}>${esc(t(busy ? 'Sending…' : 'Send reply'))}</button></form>
-        ${feedbackResolutionHtml(thread, admin, busy)}</section>` : ''}
+        </section>` : ''}
       ${!draft && !thread ? `<label>${esc(t('Filter'))}<select data-filter><option value="open">${esc(t('Open'))}</option><option value="resolved">${esc(t('Resolved'))}</option><option value="all">${esc(t(admin ? 'All reports' : 'My reports'))}</option></select></label>
         <div class="feedback-list">${shown.length ? shown.map(item => `<button type="button" data-thread="${esc(item.id)}"><strong>${esc(item.anchor.label || item.anchor.screen)}</strong><span>${esc(item.messages[0].text.slice(0, 130))}</span><small>${esc(t(item.resolved ? 'Resolved' : 'Open'))} · ${item.messages.length}</small></button>`).join('') : `<p>${esc(t('No reports in this view.'))}</p>`}</div>` : ''}`;
     panel.querySelector('[data-close]').onclick = close;

@@ -1,4 +1,5 @@
 import { store } from "../store.js";
+import { toggleObservationChoice } from "../ui/modal-shared.js";
 import { t } from "../i18n.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
@@ -229,9 +230,7 @@ export function initializeActiveMapControls({
       if (value === "false") value = false;
       if (button.dataset.group === "markerColor") return selectMarkerType(value);
       const group = button.dataset.group;
-      store.modal[group] = store.modal[group] === value
-        ? (typeof value === "boolean" ? false : group === "bleeding" ? "none" : "") : value;
-      syncModalUI();
+      toggleObservationChoice(group, value);
     };
   });
 

@@ -52,12 +52,22 @@ export function syncModalUI() {
   });
 }
 
+export function toggleObservationChoice(group, value) {
+  store.modal[group] = store.modal[group] === value ? undefined : value;
+  syncModalUI();
+}
+
 export function resetModalState() {
   store.resetModal();
 }
 
 export function updateSelectedEntry(patch) {
-  return store.updateEntry(store.selectedKey, patch);
+  const entry = store.updateEntry(store.selectedKey, patch);
+  // Missing observations are omitted, rather than saved as a negative answer.
+  if (entry) Object.keys(patch).forEach(field => {
+    if (patch[field] === undefined) delete entry[field];
+  });
+  return entry;
 }
 
 export function persistStore() {

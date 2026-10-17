@@ -16,6 +16,9 @@ vMAJOR.MINOR.PATCH
 
 ### Changed
 
+- Preserve cleared observation choices as unrecorded when saving and reopening daily editors.
+- Show administrator feedback resolution controls beside the report status.
+
 - Make phone navigation a four-item glass dock; create maps with the plus button and a dialog in My Maps.
 - Replace the profile photo panel with a clickable photo that opens photo actions.
 - Start mobile charts with readable day widths, offer an expanded view, and open chart tools in a dialog.

@@ -41,13 +41,13 @@ export function renderDayInfo(currentColumns) {
     : `${formatTemp(data.temp)} °C${data.measurementTime ? ` at ${data.measurementTime}` : ""}${adjusted == null ? "" : ` (adjusted ${formatTemp(adjusted)} °C)`}`);
   setText(qs("infoTempFactors"), data.tempFactors ? TEMP_FACTORS[data.tempFactors] : "-");
   renderInfoLines(qs("infoBleeding"), [
-    `Bleeding: ${LABELS.bleeding[data.bleeding ?? "none"]}`,
-    `Clots: ${data.sediment ? "Yes" : "No"}`,
+    `Bleeding: ${LABELS.bleeding[data.bleeding] ?? "-"}`,
+    `Clots: ${data.sediment == null ? "-" : data.sediment ? "Yes" : "No"}`,
   ]);
   renderInfoLines(qs("infoMucus"), [
     `Sensation: ${LABELS.sensation[data.sensation ?? ""]}`,
-    `Slippery: ${data.stretch ? "Yes" : "No"}`,
-    `Discharge: ${data.visible ? "Yes" : "None"}`,
+    `Slippery: ${data.stretch == null ? "-" : data.stretch ? "Yes" : "No"}`,
+    `Discharge: ${data.visible == null ? "-" : data.visible ? "Yes" : "None"}`,
     `Consistency: ${LABELS.consistency[data.consistency ?? ""]}`,
     `Color: ${LABELS.color[data.color ?? ""]}${data.colorOther ? ` (${data.colorOther})` : ""}`,
   ]);

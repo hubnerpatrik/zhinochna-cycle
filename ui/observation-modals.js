@@ -134,13 +134,13 @@ export function openMucusModal() {
   resetModalState();
   const data = store.entries[store.selectedKey] || {};
   Object.assign(store.modal, {
-    sensation: data.sensation ?? "",
-    stretch: data.stretch === true,
-    visible: data.visible === true,
-    consistency: data.consistency ?? "",
-    color: data.color ?? "",
+    sensation: data.sensation,
+    stretch: data.stretch,
+    visible: data.visible,
+    consistency: data.consistency,
+    color: data.color,
     colorOther: data.colorOther ?? "",
-    isPeak: data.isPeak === true,
+    isPeak: data.isPeak,
   });
   showModal("mucusModal");
   syncMucusModalUI();
@@ -168,8 +168,8 @@ export function openBleedingModal() {
   if (!store.selectedKey) return showMessage("Select a day first");
   resetModalState();
   const data = store.entries[store.selectedKey] || {};
-  store.modal.bleeding = data.bleeding ?? "none";
-  store.modal.sediment = data.sediment === true;
+  store.modal.bleeding = data.bleeding;
+  store.modal.sediment = data.sediment;
   showModal("bleedingModal");
   syncModalUI();
 }
@@ -189,9 +189,9 @@ export function openCervixModal() {
   resetModalState();
   const data = store.entries[store.selectedKey] || {};
   Object.assign(store.modal, {
-    cervixFirmness: data.cervixFirmness ?? "",
-    cervixHeight: data.cervixHeight ?? "",
-    cervixOpenness: data.cervixOpenness ?? "",
+    cervixFirmness: data.cervixFirmness,
+    cervixHeight: data.cervixHeight,
+    cervixOpenness: data.cervixOpenness,
   });
   showModal("cervixModal");
   syncModalUI();
@@ -237,7 +237,7 @@ export function openMarkersModal() {
   if (!store.selectedKey) return showMessage("Select a day first");
   resetModalState();
   const data = store.entries[store.selectedKey] || {};
-  store.modal.isPeak = data.isPeak === true;
+  store.modal.isPeak = data.isPeak;
   store.modal.markers = normalizeDayMarkers(data.markers, data);
   const firstType = ["bbt", "mucus", "cervix"].find(type => store.modal.markers[type].value);
   store.modal.markerColor = normalizeMarkerColor(data.markerColor ?? markerColorFromType(firstType || "mucus"));
@@ -279,7 +279,7 @@ export function saveMarkersModal(render) {
   if (!store.selectedKey) return;
   saveVisibleMarkerDraft();
   updateSelectedEntry({
-    isPeak: store.modal.isPeak === true,
+    isPeak: store.modal.isPeak,
     markers: normalizeDayMarkers(store.modal.markers),
     markerColor: store.modal.markerColor,
   });
@@ -290,7 +290,7 @@ export function openOtherModal() {
   if (!store.selectedKey) return showMessage("Select a day first");
   resetModalState();
   const data = store.entries[store.selectedKey] || {};
-  store.modal.sex = data.sex === true;
+  store.modal.sex = data.sex;
   qs("otherModalInput").value = data.other ?? "";
   showModal("otherModal");
   syncModalUI();
@@ -302,7 +302,7 @@ export function closeOtherModal() {
 
 export function saveOtherModal(render) {
   if (!store.selectedKey) return;
-  updateSelectedEntry({ other: qs("otherModalInput").value.trim(), sex: store.modal.sex === true });
+  updateSelectedEntry({ other: qs("otherModalInput").value.trim(), sex: store.modal.sex });
   finishSave("otherModal", render);
 }
 
