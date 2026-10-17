@@ -208,7 +208,7 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
           </div>
           <div class="screen-inline-actions">
             <button type="button" class="btn secondary" id="myMapsImportBtn" data-i18n>Import map</button>
-            <button type="button" class="btn primary" id="myMapsCreateBtn" data-i18n>Create map</button>
+            <button type="button" class="btn primary map-create-plus" id="myMapsCreateBtn"><span aria-hidden="true">＋</span><span data-i18n>Create map</span></button>
             <input class="visually-hidden" id="myMapsImportFile" type="file" accept="application/json,.json" tabindex="-1">
           </div>
         </div>

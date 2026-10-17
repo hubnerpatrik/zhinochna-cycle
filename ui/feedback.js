@@ -3,6 +3,7 @@ import { escapeHtml as esc } from '../views/view-utils.js';
 import { validateFeedback } from '../feedback-model.js';
 import { feedbackMessageHtml, feedbackResolutionHtml } from './feedback-thread.js';
 import metadata from '../package.json';
+import { prepareFeedbackImage } from '../feedback-image.js';
 
 let conceal = () => {};
 export const concealFeedback = () => conceal();
@@ -49,6 +50,12 @@ export function setupFeedback({ auth, app }) {
   placeControls();
   let threads = [], admin = false, picking = false, draft = null, selected = null, busy = false, filter = 'open';
   let draftText = '', replyText = '', replyId = null, error = '', loading = false, generation = 0;
+  let draftImage = '', replyImage = '', imageLoading = false, imageGeneration = 0;
+  function imagePicker(image) {
+    return `<div class="feedback-image-picker"><label>${esc(t('Attach screenshot'))}<input type="file" data-image accept="image/jpeg,image/png,image/webp" ${busy || imageLoading ? 'disabled' : ''}></label>
+      <small>${esc(t('JPG, PNG or WebP · up to 10 MB. Check the preview before sending.'))}</small>
+      ${image ? `<img class="feedback-attachment" src="${esc(image)}" alt="${esc(t('Screenshot'))}"><button type="button" data-remove-image ${busy ? 'disabled' : ''}>${esc(t('Remove screenshot'))}</button>` : ''}</div>`;
+  }
   const screen = () => location.hash.split('?')[0] || '#/menu';
   async function request(method, body) {
     const token = await auth.token();
@@ -69,6 +76,7 @@ export function setupFeedback({ auth, app }) {
   conceal = () => {
     generation++; cancelPick(); panel.close(); pins.replaceChildren();
     threads = []; admin = false; selected = null; panel.replaceChildren();
+    draft = null; draftText = ''; replyText = ''; draftImage = ''; replyImage = ''; imageGeneration++; imageLoading = false;
   };
   async function refresh() {
     if (loading || busy) return;
@@ -90,6 +98,7 @@ export function setupFeedback({ auth, app }) {
       if (epoch !== generation) return;
       threads = [result.thread, ...threads.filter(item => item.id !== result.thread.id)];
       selected = result.thread.id; draft = null; draftText = ''; replyText = ''; replyId = null;
+      draftImage = ''; replyImage = ''; imageGeneration++;
     } catch { if (epoch === generation) error = t('Not sent. Your text is kept here; check your connection and retry.'); }
     finally { busy = false; if (epoch === generation) { render(); positionPins(); } }
   }
@@ -104,38 +113,59 @@ export function setupFeedback({ auth, app }) {
       <p role="status" class="feedback-status">${esc(error || (loading ? t('Loading…') : ''))}</p>
       ${draft ? `<form data-compose><h3>${esc(t('New comment'))}</h3><p>${esc(draft.anchor.label || draft.anchor.screen)}</p>
         <label>${esc(t('Describe the problem'))}<textarea maxlength="4000" required ${busy ? 'disabled' : ''}>${esc(draftText)}</textarea></label>
-        <button type="submit" ${busy ? 'disabled' : ''}>${esc(t(busy ? 'Sending…' : 'Send comment'))}</button>
+        ${imagePicker(draftImage)}
+        <button type="submit" ${busy || imageLoading ? 'disabled' : ''}>${esc(t(busy ? 'Sending…' : 'Send comment'))}</button>
         <button type="button" data-discard ${busy ? 'disabled' : ''}>${esc(t('Cancel'))}</button></form>` : ''}
       ${thread && !draft ? `<section class="feedback-thread"><button type="button" data-back>${esc(t(admin ? 'All reports' : 'My reports'))}</button>
         <h3>${esc(thread.anchor.label || thread.anchor.screen)}</h3><p>${esc(thread.anchor.screen)} · v${esc(thread.anchor.version)} · ${esc(thread.anchor.viewport)}</p>
         <p>${esc(t(thread.resolved ? 'Resolved' : 'Open'))}</p>
+        ${feedbackResolutionHtml(thread, admin, busy)}
         ${thread.messages.map(feedbackMessageHtml).join('')}
         <form data-reply><label>${esc(t('Reply'))}<textarea maxlength="4000" required ${busy ? 'disabled' : ''}>${esc(replyText)}</textarea></label>
-        <button type="submit" ${busy ? 'disabled' : ''}>${esc(t(busy ? 'Sending…' : 'Send reply'))}</button></form>
-        ${feedbackResolutionHtml(thread, admin, busy)}</section>` : ''}
+        ${imagePicker(replyImage)}
+        <button type="submit" ${busy || imageLoading ? 'disabled' : ''}>${esc(t(busy ? 'Sending…' : 'Send reply'))}</button></form>
+        </section>` : ''}
       ${!draft && !thread ? `<label>${esc(t('Filter'))}<select data-filter><option value="open">${esc(t('Open'))}</option><option value="resolved">${esc(t('Resolved'))}</option><option value="all">${esc(t(admin ? 'All reports' : 'My reports'))}</option></select></label>
         <div class="feedback-list">${shown.length ? shown.map(item => `<button type="button" data-thread="${esc(item.id)}"><strong>${esc(item.anchor.label || item.anchor.screen)}</strong><span>${esc(item.messages[0].text.slice(0, 130))}</span><small>${esc(t(item.resolved ? 'Resolved' : 'Open'))} · ${item.messages.length}</small></button>`).join('') : `<p>${esc(t('No reports in this view.'))}</p>`}</div>` : ''}`;
     panel.querySelector('[data-close]').onclick = close;
     panel.querySelector('[data-refresh]').onclick = refresh;
     panel.querySelector('[data-new]').onclick = () => {
+      imageGeneration++; imageLoading = false;
       panel.close(); picking = true; hint.hidden = false; document.body.classList.add('feedback-picking');
       button.querySelector('span').textContent = '×'; button.setAttribute('aria-label', t('Cancel'));
     };
-    panel.querySelector('[data-discard]')?.addEventListener('click', () => { draft = null; draftText = ''; render(); });
-    panel.querySelector('[data-back]')?.addEventListener('click', () => { selected = null; replyText = ''; replyId = null; render(); });
+    panel.querySelector('[data-discard]')?.addEventListener('click', () => { draft = null; draftText = ''; draftImage = ''; imageGeneration++; imageLoading = false; render(); });
+    panel.querySelector('[data-back]')?.addEventListener('click', () => { selected = null; replyText = ''; replyId = null; replyImage = ''; imageGeneration++; imageLoading = false; render(); });
     const compose = panel.querySelector('[data-compose]');
     compose?.querySelector('textarea').addEventListener('input', e => { draftText = e.target.value; draft.id = crypto.randomUUID(); });
-    compose?.addEventListener('submit', e => { e.preventDefault(); if (draftText.trim()) void save({ ...draft, text: draftText }); });
+    compose?.addEventListener('submit', e => { e.preventDefault(); if (!imageLoading && draftText.trim()) void save({ ...draft, text: draftText, ...(draftImage ? { image: draftImage } : {}) }); });
     const reply = panel.querySelector('[data-reply]');
     reply?.querySelector('textarea').addEventListener('input', e => { replyText = e.target.value; replyId = null; });
     reply?.addEventListener('submit', e => {
-      e.preventDefault(); if (!replyText.trim()) return;
-      replyId ||= crypto.randomUUID(); void save({ action: 'reply', id: selected, messageId: replyId, text: replyText });
+      e.preventDefault(); if (imageLoading || !replyText.trim()) return;
+      replyId ||= crypto.randomUUID(); void save({ action: 'reply', id: selected, messageId: replyId, text: replyText, ...(replyImage ? { image: replyImage } : {}) });
+    });
+    panel.querySelector('[data-image]')?.addEventListener('change', async event => {
+      const file = event.target.files[0]; if (!file) return;
+      const epoch = ++imageGeneration; const composing = Boolean(draft);
+      imageLoading = true; error = ''; render();
+      try {
+        const image = await prepareFeedbackImage(file);
+        if (epoch !== imageGeneration) return;
+        if (composing) { draftImage = image; draft.id = crypto.randomUUID(); }
+        else { replyImage = image; replyId = null; }
+      } catch (err) { if (epoch === imageGeneration) error = t(err.message); }
+      finally { if (epoch === imageGeneration) { imageLoading = false; render(); } }
+    });
+    panel.querySelector('[data-remove-image]')?.addEventListener('click', () => {
+      if (draft) { draftImage = ''; draft.id = crypto.randomUUID(); }
+      else { replyImage = ''; replyId = null; }
+      render();
     });
     panel.querySelector('[data-resolve]')?.addEventListener('click', () => { if (admin === true) void save({ action: 'resolve', id: selected, resolved: !thread.resolved }); });
     const select = panel.querySelector('[data-filter]');
     if (select) { select.value = filter; select.onchange = () => { filter = select.value; render(); }; }
-    panel.querySelectorAll('[data-thread]').forEach(node => { node.onclick = () => { selected = node.dataset.thread; replyText = ''; replyId = null; render(); }; });
+    panel.querySelectorAll('[data-thread]').forEach(node => { node.onclick = () => { selected = node.dataset.thread; replyText = ''; replyId = null; replyImage = ''; imageGeneration++; imageLoading = false; render(); }; });
   }
   function positionPins() {
     pins.replaceChildren();
@@ -169,6 +199,7 @@ export function setupFeedback({ auth, app }) {
     const element = e.target.closest('button, input, select, textarea, canvas, label, h1, h2, h3, p, [id]') || e.target;
     const rect = element.getBoundingClientRect();
     const label = (element.hasAttribute('data-i18n') ? element.textContent.trim() : '') || element.getAttribute('data-i18n-aria-label') || element.id || element.tagName;
+    draftImage = ''; draftText = '';
     draft = { action: 'create', id: crypto.randomUUID(), anchor: {
       screen: screen(), selector: feedbackSelector(element), label: label.slice(0, 100),
       x: Math.max(0, Math.min(1, (e.clientX - rect.left) / (rect.width || 1))),

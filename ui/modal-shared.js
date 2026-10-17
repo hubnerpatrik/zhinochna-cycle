@@ -46,8 +46,15 @@ export function syncModalUI() {
     let value = button.dataset.value;
     if (value === "true") value = true;
     if (value === "false") value = false;
-    button.classList.toggle("active", store.modal[button.dataset.group] === value);
+    const active = store.modal[button.dataset.group] === value;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
   });
+}
+
+export function toggleObservationChoice(group, value) {
+  store.modal[group] = store.modal[group] === value ? undefined : value;
+  syncModalUI();
 }
 
 export function resetModalState() {
@@ -55,7 +62,12 @@ export function resetModalState() {
 }
 
 export function updateSelectedEntry(patch) {
-  return store.updateEntry(store.selectedKey, patch);
+  const entry = store.updateEntry(store.selectedKey, patch);
+  // Missing observations are omitted, rather than saved as a negative answer.
+  if (entry) Object.keys(patch).forEach(field => {
+    if (patch[field] === undefined) delete entry[field];
+  });
+  return entry;
 }
 
 export function persistStore() {

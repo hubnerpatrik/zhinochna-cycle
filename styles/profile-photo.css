@@ -3,3 +3,13 @@
 .profile-photo-panel .btn { width: 100%; max-width: 210px; min-height: 44px; margin-top: 12px; white-space: normal; }
 .profile-photo-panel #profilePhotoStatus { min-height: 1.45em; overflow-wrap: anywhere; }
 .profile-photo-panel button:disabled { opacity: .5; cursor: default; }
+.profile-editor-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.profile-photo-control { grid-row: 1; display: grid; justify-items: center; min-width: 0; }
+.profile-photo-control .profile-photo-placeholder { width: 96px; height: 96px; margin: 0; padding: 0; cursor: pointer; overflow: hidden; }
+.profile-photo-control .profile-photo-placeholder svg { width: 48px; height: 48px; }
+.profile-photo-control .profile-photo-placeholder:hover { border-color: var(--accent); }
+.profile-photo-control .profile-photo-placeholder:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.profile-photo-control #profilePhotoStatus { margin: 8px 0 0; text-align: center; overflow-wrap: anywhere; }
+.profile-photo-control #profilePhotoStatus:empty { display: none; }
+.profile-photo-dialog .btn { display: block; width: 100%; margin-top: 12px; }
+.profile-photo-dialog .btn:disabled { opacity: .5; cursor: default; }

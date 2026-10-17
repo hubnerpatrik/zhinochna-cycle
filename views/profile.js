@@ -96,20 +96,23 @@ export function renderProfileScreen(container, {
               </div>
             </div>
 
-            <aside class="profile-photo-panel" aria-label="Profile photo" data-i18n-aria-label="Profile photo">
-              <div class="profile-photo-placeholder">
+            <aside class="profile-photo-control" aria-label="Profile photo" data-i18n-aria-label="Profile photo">
+              <button type="button" id="profilePhotoActions" class="profile-photo-placeholder" aria-label="Profile photo" data-i18n-aria-label="Profile photo" aria-haspopup="dialog" aria-controls="profilePhotoDialog">
                 <img class="profile-photo-image" alt="Profile photo" data-i18n-alt="Profile photo" ${photo ? `src="${escapeHtml(photo)}"` : 'hidden'}>
                 <svg viewBox="0 0 96 96" aria-hidden="true">
                   <circle cx="48" cy="35" r="17"></circle>
                   <path d="M18 84c2-19 14-30 30-30s28 11 30 30"></path>
                 </svg>
-              </div>
-              <div class="profile-photo-title" data-i18n>Profile photo</div>
-              <p data-i18n>JPG, PNG or WebP · up to 10 MB. Saved as a small square JPG.</p>
-              <button type="button" class="btn primary profile-photo-upload" id="profilePhotoChoose" data-i18n>Choose photo</button>
+              </button>
               <input id="profilePhotoFile" type="file" accept="image/jpeg,image/png,image/webp" hidden>
-              <button type="button" class="btn secondary" id="profilePhotoRemove" data-i18n>Remove photo</button>
               <p id="profilePhotoStatus" role="status" aria-live="polite"></p>
+              <dialog id="profilePhotoDialog" class="map-dialog profile-photo-dialog" aria-labelledby="profilePhotoTitle">
+                <h2 id="profilePhotoTitle" data-i18n>Profile photo</h2>
+                <p data-i18n>JPG, PNG or WebP · up to 10 MB. Saved as a small square JPG.</p>
+                <button type="button" class="btn primary" id="profilePhotoChoose" data-i18n>Choose photo</button>
+                <button type="button" class="btn secondary" id="profilePhotoRemove" data-i18n>Remove photo</button>
+                <button type="button" class="btn secondary" id="profilePhotoClose" data-i18n>Close</button>
+              </dialog>
             </aside>
           </div>
         </form>
@@ -126,7 +129,12 @@ export function renderProfileScreen(container, {
   const fileInput = container.querySelector('#profilePhotoFile');
   const photoStatus = container.querySelector('#profilePhotoStatus');
   const submit = form.querySelector('[type="submit"]');
-  container.querySelector('#profilePhotoChoose').onclick = () => fileInput.click();
+  const photoDialog = container.querySelector('#profilePhotoDialog');
+  const photoActions = container.querySelector('#profilePhotoActions');
+  photoActions.onclick = () => photoDialog.showModal();
+  container.querySelector('#profilePhotoClose').onclick = () => photoDialog.close();
+  photoDialog.addEventListener('close', () => photoActions.focus({ preventScroll: true }));
+  container.querySelector('#profilePhotoChoose').onclick = () => { photoDialog.close(); fileInput.click(); };
   const updatePhoto = () => {
     photoImage.hidden = !photo;
     if (photo) photoImage.src = photo;
@@ -160,6 +168,7 @@ export function renderProfileScreen(container, {
     }
   });
   removePhoto.addEventListener('click', () => {
+    photoDialog.close();
     ++photoGeneration;
     processingPhoto = false;
     photo = '';

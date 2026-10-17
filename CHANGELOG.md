@@ -12,6 +12,21 @@ vMAJOR.MINOR.PATCH
 
 ---
 
+## Unreleased
+
+### Changed
+
+- Preserve cleared observation choices as unrecorded when saving and reopening daily editors.
+- Show administrator feedback resolution controls beside the report status.
+
+- Make phone navigation a four-item glass dock; create maps with the plus button and a dialog in My Maps.
+- Replace the profile photo panel with a clickable photo that opens photo actions.
+- Start mobile charts with readable day widths, offer an expanded view, and open chart tools in a dialog.
+- Expand phone observations into a separate table below the graph, with readable row labels, day selection and synchronized horizontal scrolling.
+- Allow observation choices to be deselected and coverline edits to be saved or cancelled explicitly, without dismissing them on stray taps.
+- Keep the mobile feedback button circular and support screenshot attachments with a preview in reports and replies.
+- Refresh profile help text and remove the fit-whole-map action from mobile tools.
+
 ## 0.12.3 — 2026-10-11
 
 ### Fixed

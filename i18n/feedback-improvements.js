@@ -1,0 +1,16 @@
+export const feedbackImprovementMessages = {
+  'Observations table': ['Tabulka pozorování', 'Tabuľka pozorovaní', 'Таблиця спостережень'],
+  'Day': ['Den', 'Deň', 'День'],
+  'Swipe sideways to see more days. Tap a cell to select its day.': ['Posunutím do stran zobrazíš další dny. Klepnutím na buňku vybereš den.', 'Posunutím do strán zobrazíš ďalšie dni. Klepnutím na bunku vyberieš deň.', 'Гортайте вбік, щоб побачити інші дні. Торкніться клітинки, щоб вибрати день.'],
+  'Tap the chart to place coverlines, then save or cancel.': ['Klepnutím do grafu umísti pomocné čáry. Potom ulož nebo zruš změny.', 'Klepnutím do grafu umiestni pomocné čiary. Potom ulož alebo zruš zmeny.', 'Торкніться графіка, щоб розмістити допоміжні лінії. Потім збережіть або скасуйте зміни.'],
+  'Fit whole map': ['Zobrazit celou mapu', 'Zobraziť celú mapu', 'Показати всю карту'],
+  'Expand chart': ['Zvětšit graf', 'Zväčšiť graf', 'Збільшити графік'],
+  'Close full screen': ['Zavřít celý displej', 'Zavrieť celú obrazovku', 'Закрити повний екран'],
+  'Drag a line or endpoint, then save or cancel.': ['Přetáhni čáru nebo její konec. Potom ulož nebo zruš změny.', 'Potiahni čiaru alebo jej koniec. Potom ulož alebo zruš zmeny.', 'Перетягніть лінію або її кінець. Потім збережіть або скасуйте зміни.'],
+  'Manage your personal details, measurement preferences and profile photo.': ['Uprav své osobní údaje, nastavení měření a profilovou fotku.', 'Uprav svoje osobné údaje, nastavenie merania a profilovú fotku.', 'Редагуйте особисті дані, налаштування вимірювання та фото профілю.'],
+  'Attach screenshot': ['Přiložit screenshot', 'Priložiť snímku obrazovky', 'Додати знімок екрана'],
+  'Remove screenshot': ['Odebrat screenshot', 'Odobrať snímku obrazovky', 'Видалити знімок екрана'],
+  'Screenshot': ['Screenshot', 'Snímka obrazovky', 'Знімок екрана'],
+  'JPG, PNG or WebP · up to 10 MB. Check the preview before sending.': ['JPG, PNG nebo WebP · do 10 MB. Před odesláním zkontroluj náhled.', 'JPG, PNG alebo WebP · do 10 MB. Pred odoslaním skontroluj náhľad.', 'JPG, PNG або WebP · до 10 МБ. Перевірте зображення перед надсиланням.'],
+  'This screenshot is too large. Crop it and try again.': ['Screenshot je příliš velký. Ořízni ho a zkus to znovu.', 'Snímka je príliš veľká. Orež ju a skús to znova.', 'Знімок завеликий. Обріжте його та спробуйте ще раз.'],
+};

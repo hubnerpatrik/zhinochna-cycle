@@ -1,4 +1,5 @@
 import { store } from "../store.js";
+import { toggleObservationChoice } from "../ui/modal-shared.js";
 import { t } from "../i18n.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
@@ -202,7 +203,6 @@ export function initializeActiveMapControls({
   bindButton("zoomOutBtn", () => zoomBy(-1));
   mapScroll?.addEventListener("touchstart", cancelZoom, { passive: true });
   mapScroll?.addEventListener("wheel", cancelZoom, { passive: true });
-  qs("mobileFitBtn")?.addEventListener("click", cancelZoom);
   window.addEventListener("hashchange", cancelZoom);
   if (mapScroll) bindMapGestures(mapScroll, {
     getWidth: () => LAYOUT.columnWidth, setWidth, fixedWidth,
@@ -229,8 +229,8 @@ export function initializeActiveMapControls({
       if (value === "true") value = true;
       if (value === "false") value = false;
       if (button.dataset.group === "markerColor") return selectMarkerType(value);
-      store.modal[button.dataset.group] = value;
-      syncModalUI();
+      const group = button.dataset.group;
+      toggleObservationChoice(group, value);
     };
   });
 
