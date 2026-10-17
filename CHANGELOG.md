@@ -14,6 +14,8 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.13.0 — 2026-10-17
+
 ### Changed
 
 - Preserve cleared observation choices as unrecorded when saving and reopening daily editors.
