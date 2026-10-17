@@ -123,7 +123,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     const button = qs("crossCellsActionBtn");
     if (!button) return;
     button.classList.toggle("active", active);
-    setText(button, "Cross cells");
+    setText(button.querySelector?.('[data-i18n]') || button, "Cross cells");
   }
 
   function setCoverlineButton(active) {

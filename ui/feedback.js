@@ -19,7 +19,7 @@ export function feedbackSelector(element) {
   return parts.join(' > ').slice(0, 1000);
 }
 
-export function setupFeedback({ auth, app }) {
+export function setupFeedback({ auth, app, transport, description }) {
   const button = document.createElement('button');
   button.type = 'button'; button.className = 'feedback-launch btn';
   button.innerHTML = '<span aria-hidden="true">🐞</span> <span data-i18n>Feedback</span>';
@@ -58,6 +58,7 @@ export function setupFeedback({ auth, app }) {
   }
   const screen = () => location.hash.split('?')[0] || '#/menu';
   async function request(method, body) {
+    if (transport) return transport(method, body ? validateFeedback(body) : undefined);
     const token = await auth.token();
     const response = await fetch('/api/feedback', {
       method, cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(20000),
@@ -107,7 +108,7 @@ export function setupFeedback({ auth, app }) {
     const thread = threads.find(item => item.id === selected);
     const shown = threads.filter(item => filter === 'all' || (filter === 'resolved' ? item.resolved : !item.resolved));
     panel.innerHTML = `<header><h2 id="feedbackTitle">${esc(t('Feedback'))}</h2><button type="button" data-close aria-label="${esc(t('Close'))}">×</button></header>
-      <p class="feedback-intro">${esc(t(admin ? 'Shared inbox · latest 200 reports' : 'Your reports are shared with app support.'))}</p>
+      <p class="feedback-intro">${esc(t(description || (admin ? 'Shared inbox · latest 200 reports' : 'Your reports are shared with app support.')))}</p>
       <div class="feedback-toolbar"><button type="button" data-new ${busy ? 'disabled' : ''}>${esc(t('Point to a problem'))}</button>
       <button type="button" data-refresh ${loading || busy ? 'disabled' : ''}>${esc(t('Refresh'))}</button></div>
       <p role="status" class="feedback-status">${esc(error || (loading ? t('Loading…') : ''))}</p>

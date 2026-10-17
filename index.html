@@ -171,7 +171,7 @@
             <button type="button" data-mobile-tool="fertileRangeActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16m-12 4h2m4 0h2"/></svg></span><span data-i18n>Fertile range</span></button>
             <button type="button" data-mobile-tool="coverlineBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v14h14M3 7l3-3 3 3m8 8 3 3-3 3"/></svg></span><span data-i18n>Coverlines</span></button>
             <button type="button" data-mobile-tool="markersActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4m0 0h13l-3 4 3 4H6"/></svg></span><span data-i18n>Markers</span></button>
-            <button type="button" data-mobile-tool="crossCellsActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span data-i18n>Cross cells</span></button>
+            <button type="button" data-mobile-tool="crossCellsActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 18 16-12" stroke="currentColor" stroke-width="2"/></svg></span><span data-i18n>Cross cells</span></button>
           </dialog>
         </div>
         <button id="mobileCancelToolBtn" type="button" class="hidden" data-i18n>Cancel</button>
@@ -195,6 +195,7 @@
 
         <label class="input-label" data-i18n>Influence factors</label>
         <select id="tempFactorsInput"></select>
+        <label id="tempFactorsOtherWrapper" class="hidden"><span class="input-label" data-i18n>Other influence factor</span><input id="tempFactorsOtherInput" type="text" maxlength="1000"></label>
 
         <label class="checkbox-row"><input id="measurementTimeCheckbox" type="checkbox"><span data-i18n>Different measurement time</span></label>
 
@@ -223,23 +224,21 @@
 
   <div id="bleedingModal" class="modal hidden">
     <div class="modal-card">
-      <h2 data-i18n>Bleeding</h2>
+      <h2 data-i18n>Period</h2>
 
       <div class="modal-section">
-        <div class="section-title" data-i18n>Bleeding</div>
-        <div class="segmented three">
-          <button type="button" data-group="bleeding" data-value="none" data-i18n>No bleeding</button>
-          <button type="button" data-group="bleeding" data-value="spotting" data-i18n>Spotting</button>
-          <button type="button" data-group="bleeding" data-value="menstruation" data-i18n>Period</button>
+        <div class="section-title" data-i18n>Period intensity</div>
+        <div class="segmented four bleeding-intensity">
+          <button type="button" data-group="bleedingIntensity" data-value="heavy"><span data-bleeding-icon="heavy"></span><span data-i18n>Heavy</span></button>
+          <button type="button" data-group="bleedingIntensity" data-value="medium"><span data-bleeding-icon="medium"></span><span data-i18n>Moderate</span></button>
+          <button type="button" data-group="bleedingIntensity" data-value="light"><span data-bleeding-icon="light"></span><span data-i18n>Light</span></button>
+          <button type="button" data-group="bleedingIntensity" data-value="spotting"><span data-bleeding-icon="spotting"></span><span data-i18n>Spotting</span></button>
         </div>
+        <p class="field-hint" data-i18n>Tap the selected intensity again to clear it.</p>
       </div>
 
       <div class="modal-section">
-        <div class="section-title" data-i18n>Clots</div>
-        <div class="segmented two">
-          <button type="button" data-group="sediment" data-value="false" data-i18n>No</button>
-          <button type="button" data-group="sediment" data-value="true" data-i18n>Yes</button>
-        </div>
+        <label class="checkbox-row"><input type="checkbox" data-observation="sediment"><span data-i18n>Clots</span></label>
       </div>
 
       <div class="modal-actions">
@@ -264,19 +263,11 @@
       </div>
 
       <div class="modal-section">
-        <div class="section-title" data-i18n>Slippery when wiping?</div>
-        <div class="segmented two">
-          <button type="button" data-group="stretch" data-value="false" data-i18n>No</button>
-          <button type="button" data-group="stretch" data-value="true" data-i18n>Yes</button>
-        </div>
+        <label class="checkbox-row"><input type="checkbox" data-observation="stretch"><span data-i18n>Slippery when wiping?</span></label>
       </div>
 
       <div class="modal-section">
-        <div class="section-title" data-i18n>Presence of discharge?</div>
-        <div class="segmented two">
-          <button type="button" data-group="visible" data-value="false" data-i18n>None</button>
-          <button type="button" data-group="visible" data-value="true" data-i18n>Yes</button>
-        </div>
+        <label class="checkbox-row"><input type="checkbox" data-observation="visible"><span data-i18n>Presence of discharge?</span></label>
       </div>
 
       <div class="modal-section">
@@ -367,7 +358,7 @@
         <div class="section-title" data-i18n>Height</div>
         <div class="segmented three">
           <button type="button" data-group="cervixHeight" data-value="low" data-i18n>Low</button>
-          <button type="button" data-group="cervixHeight" data-value="medium" data-i18n>Medium</button>
+          <button type="button" data-group="cervixHeight" data-value="medium" data-i18n>Middle</button>
           <button type="button" data-group="cervixHeight" data-value="high" data-i18n>High</button>
         </div>
       </div>
@@ -416,11 +407,7 @@
       <h2 data-i18n>Other</h2>
 
       <div class="modal-section">
-        <div class="section-title" data-i18n>Sex</div>
-        <div class="segmented two">
-          <button type="button" data-group="sex" data-value="false" data-i18n>No</button>
-          <button type="button" data-group="sex" data-value="true" data-i18n>Yes</button>
-        </div>
+        <label class="checkbox-row"><input type="checkbox" data-observation="sex"><span data-i18n>Sex</span></label>
       </div>
 
       <div class="modal-section">

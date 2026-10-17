@@ -7,6 +7,7 @@ const { store } = await import("../store.js");
 const {
   markerHeadingFromColor,
   renderInfoLines,
+  renderDayInfo,
   returnsToActionMenuAfterSave,
   selectMarkerType,
   validateTempInput,
@@ -82,4 +83,27 @@ test("each peak type has its own marker heading", () => {
   assert.equal(markerHeadingFromColor("green"), "BBT Marker");
   assert.equal(markerHeadingFromColor("blue"), "Mucus Marker");
   assert.equal(markerHeadingFromColor("orange"), "Cervix Marker");
+});
+
+test('day details distinguish explicit empty choices from missing observations and preserve custom factor text', () => {
+  const element = () => ({ textContent: '', children: [], setAttribute() {}, removeAttribute() {},
+    replaceChildren() { this.children = []; this.textContent = ''; },
+    appendChild(child) { this.children.push(child); },
+  });
+  const nodes = new Map();
+  globalThis.document = { createElement: element,
+    getElementById(id) { if (!nodes.has(id)) nodes.set(id, element()); return nodes.get(id); },
+  };
+  store.reset(); store.createMap('Details'); store.selectedKey = '2026-10-07';
+  const text = node => node.textContent + node.children.map(text).join(' ');
+  store.updateEntry(store.selectedKey, { sensation: '', consistency: '', color: '', visible: true,
+    tempFactors: 'other', tempFactorsOther: '<b>Save & keep this text</b>' });
+  renderDayInfo([]);
+  const recorded = text(nodes.get('infoMucus'));
+  for (const expected of ['Sensation: None', 'Consistency: None', 'Color: No color', 'Discharge: Present']) assert.ok(recorded.includes(expected), expected);
+  assert.ok(text(nodes.get('infoTempFactors')).includes('<b>Save & keep this text</b>'));
+  store.selectedKey = '2026-10-08';
+  renderDayInfo([]);
+  const missing = text(nodes.get('infoMucus'));
+  for (const expected of ['Sensation: -', 'Consistency: -', 'Color: -', 'Discharge: -']) assert.ok(missing.includes(expected), expected);
 });

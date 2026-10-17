@@ -1,5 +1,6 @@
 import { escapeHtml } from "./view-utils.js";
 import { t } from "../i18n.js";
+import { openExportMenu } from '../ui/export-menu.js';
 
 function getSortedEntryDates(entries) {
   return Object.keys(entries || {}).sort();
@@ -50,7 +51,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
     return;
   }
 
-  list.innerHTML = filteredMaps.map((map, index) => `
+  list.innerHTML = filteredMaps.map(map => `
     <article class="screen-card map-list-card${map.id === activeMapId ? " is-active" : ""}">
       <div class="map-list-main">
         <div>
@@ -66,12 +67,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
         </div>
         <div class="map-list-actions">
           <div class="map-export-picker">
-            <button type="button" class="btn secondary map-export-btn" data-export-toggle aria-expanded="false" aria-controls="mapExportFormats${index}"><span data-i18n>Export</span><span class="export-chevron" aria-hidden="true">⌄</span></button>
-            <div class="map-export-formats" id="mapExportFormats${index}" hidden>
-              <button type="button" class="btn secondary" data-export-format="pdf" data-export-map="${escapeHtml(map.id)}">PDF</button>
-              <button type="button" class="btn secondary" data-export-format="csv" data-export-map="${escapeHtml(map.id)}">CSV</button>
-              <button type="button" class="btn secondary" data-export-format="json" data-export-map="${escapeHtml(map.id)}">JSON</button>
-            </div>
+            <button type="button" class="btn secondary map-export-btn" data-export-toggle data-export-map="${escapeHtml(map.id)}" aria-expanded="false"><span data-i18n>Export</span><span class="export-chevron" aria-hidden="true">⌄</span></button>
           </div>
           <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
           <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
@@ -92,44 +88,9 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
     button.addEventListener("click", () => onOpen?.(button.dataset.mapId));
   });
 
-  function closeExport(picker, focus = false) {
-    picker.classList.remove('is-expanded');
-    const toggle = picker.querySelector('[data-export-toggle]');
-    picker.querySelector('.map-export-formats').hidden = true;
-    toggle.setAttribute('aria-expanded', 'false');
-    if (focus) toggle.focus();
-  }
   list.querySelectorAll('[data-export-toggle]').forEach(toggle => {
-    toggle.addEventListener('click', () => {
-      const picker = toggle.closest('.map-export-picker');
-      const open = toggle.getAttribute('aria-expanded') !== 'true';
-      list.querySelectorAll('.map-export-picker').forEach(item => closeExport(item));
-      toggle.setAttribute('aria-expanded', String(open));
-      picker.classList.toggle('is-expanded', open);
-      picker.querySelector('.map-export-formats').hidden = !open;
-      if (open) picker.querySelector('[data-export-format]').focus();
-    });
+    toggle.addEventListener('click', () => openExportMenu(toggle, format => onExport?.(toggle.dataset.exportMap, format)));
   });
-  list.querySelectorAll('[data-export-format]').forEach(button => {
-    button.addEventListener('click', async () => {
-      const picker = button.closest('.map-export-picker');
-      closeExport(picker, true);
-      const toggle = picker.querySelector('[data-export-toggle]');
-      toggle.disabled = true;
-      try { await onExport?.(button.dataset.exportMap, button.dataset.exportFormat); }
-      finally { toggle.disabled = false; toggle.focus(); }
-    });
-  });
-  list.onkeydown = event => {
-    if (event.key !== 'Escape') return;
-    const picker = event.target.closest('.map-export-picker');
-    if (picker) { event.preventDefault(); closeExport(picker, true); }
-  };
-  list.onclick = event => {
-    list.querySelectorAll('.map-export-picker').forEach(picker => {
-      if (!picker.contains(event.target)) closeExport(picker);
-    });
-  };
 
   list.querySelectorAll("[data-map-rename-id]").forEach(button => {
     button.addEventListener("click", () => {

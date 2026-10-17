@@ -16,6 +16,9 @@ dist-ssr
 !.env.example
 coverage
 
+# Local previews, screenshots, diagnostic scripts and feedback backups
+/work/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

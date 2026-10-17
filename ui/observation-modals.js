@@ -55,12 +55,15 @@ export function openModal(currentColumns) {
   Object.assign(store.modal, {
     temp: data.temp ?? null,
     tempFactors: data.tempFactors ?? "",
+    tempFactorsOther: data.tempFactorsOther ?? "",
     measurementTime: data.measurementTime ?? "",
     measurementTimeEnabled: Boolean(data.measurementTime),
   });
   setText(qs("modalTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
   qs("tempInput").value = store.modal.temp == null ? "" : Number(store.modal.temp).toFixed(2);
   qs("tempFactorsInput").value = store.modal.tempFactors;
+  if (qs('tempFactorsOtherInput')) qs('tempFactorsOtherInput').value = store.modal.tempFactorsOther;
+  syncTempFactorsUI();
   qs("measurementTimeInput").value = store.modal.measurementTime;
   syncMeasurementTimeUI();
   showModal("modal");
@@ -91,9 +94,15 @@ export function saveModal(render) {
   updateSelectedEntry({
     temp: raw ? Number(raw) : null,
     tempFactors: qs("tempFactorsInput").value,
+    tempFactorsOther: qs('tempFactorsInput').value === 'other' ? (qs('tempFactorsOtherInput')?.value.trim() || '') : '',
     measurementTime: store.modal.measurementTimeEnabled ? qs("measurementTimeInput").value : "",
   });
   finishSave("modal", render);
+}
+
+export function syncTempFactorsUI() {
+  const other = qs('tempFactorsInput')?.value === 'other';
+  qs('tempFactorsOtherWrapper')?.classList.toggle('hidden', !other);
 }
 
 export function syncMeasurementTimeUI() {
@@ -169,6 +178,7 @@ export function openBleedingModal() {
   resetModalState();
   const data = store.entries[store.selectedKey] || {};
   store.modal.bleeding = data.bleeding;
+  store.modal.bleedingIntensity = data.bleedingIntensity || (data.bleeding === 'spotting' ? 'spotting' : undefined);
   store.modal.sediment = data.sediment;
   showModal("bleedingModal");
   syncModalUI();
@@ -180,7 +190,7 @@ export function closeBleedingModal() {
 
 export function saveBleedingModal(render) {
   if (!store.selectedKey) return;
-  updateSelectedEntry({ bleeding: store.modal.bleeding, sediment: store.modal.sediment });
+  updateSelectedEntry({ bleeding: store.modal.bleeding, bleedingIntensity: store.modal.bleedingIntensity, sediment: store.modal.sediment });
   finishSave("bleedingModal", render);
 }
 

@@ -4,28 +4,22 @@ import { chartWidth, qs } from "../core.js";
 import { renderCycleSummary } from "./cycle-summary.js";
 import { profileInfoRows } from "./profile-info-modal.js";
 import { observationIcon } from "./observation-icons.js";
+import { interfaceIcon } from './interface-icons.js';
+import { bleedingIcon, BLEEDING_LABELS } from './bleeding-icons.js';
+import { observationScaleIcon, OBSERVATION_LABELS } from './observation-scales.js';
 
 const SIDEBAR_ACTIONS = [
-  ["editBtn", "Edit Day", "chip-edit-special", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4Z"/><path d="M14 6l3 3"/></svg>`],
-  ["dayInfoBtn", "Day Info", "chip-gray", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>`],
-  ["fertileRangeActionBtn", "Fertile range", "chip-green", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2.5 3.5L16 11H5"/></svg>`],
+  ['editBtn', 'Edit Day', 'chip-edit-special', 'edit'],
+  ['dayInfoBtn', 'Day Info', 'chip-gray', 'info'],
+  ['fertileRangeActionBtn', 'Fertile range', 'chip-green', 'fertile'],
 ];
-
 const MODAL_ACTIONS = [
-  ["temperatureActionBtn", "Temperature", "chip-orange", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14.5V5a2 2 0 1 0-4 0v9.5a4 4 0 1 0 4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`],
-  ["bleedingActionBtn", "Bleeding", "chip-red", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 5 7 8.5 7 12a7 7 0 1 1-14 0c0-3.5 3-7 7-12Z"/></svg>`],
-  ["mucusActionBtn", "Mucus", "chip-blue", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9c1.5 1.6 3 1.6 4.5 0s3-1.6 4.5 0 3 1.6 4.5 0 3-1.6 4.5 0"/><path d="M3 15c1.5 1.6 3 1.6 4.5 0s3-1.6 4.5 0 3 1.6 4.5 0 3-1.6 4.5 0"/></svg>`],
-  ["cervixActionBtn", "Cervix", "chip-teal", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7"/></svg>`],
-  ["otherActionBtn", "Other", "chip-purple", `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></svg>`],
+  ['temperatureActionBtn', 'Temperature', 'chip-orange', 'temperature'],
+  ['bleedingActionBtn', 'Bleeding', 'chip-red', 'period'],
+  ['mucusActionBtn', 'Mucus', 'chip-blue', 'mucus'],
+  ['cervixActionBtn', 'Cervix', 'chip-teal', 'cervix'],
+  ['otherActionBtn', 'Other', 'chip-purple', 'other'],
 ];
-
-const LABELS = {
-  sensation: { "": "", dry: "D", moist: "M", wet: "W" },
-  consistency: { "": "", creamy: "CR", slightlyStretchy: "SS", stretchy: "ST" },
-  color: { "": "", white: "W", whiteTranslucent: "WT", translucent: "T", other: "O" },
-  firmness: { "": "", hard: "H", soft: "S" },
-  height: { "": "", low: "L", medium: "M", high: "H" },
-};
 
 function createActionButton([id, label, iconClass, iconSvg]) {
   const button = document.createElement("button");
@@ -33,7 +27,7 @@ function createActionButton([id, label, iconClass, iconSvg]) {
   button.className = "action-btn";
   button.type = "button";
   button.innerHTML = `
-    <span class="action-icon ${iconClass}">${iconSvg}</span>
+    <span class="action-icon ${iconClass}">${interfaceIcon(iconSvg)}</span>
     <span class="action-label" data-i18n>${label}</span>
     <svg class="action-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
   `;
@@ -75,7 +69,7 @@ export function renderProfileInfo() {
     name.className = "profile-info-label";
     content.className = "profile-info-value";
     setText(name, label);
-    if (label === "Goal" || label === "Method") setText(content, value);
+    if (label === "Goal" || label === "Measurement method") setText(content, value);
     else content.textContent = value;
     row.append(name, content);
     container.appendChild(row);
@@ -99,27 +93,18 @@ function makeCell(text = "", selected = "", group = "", ...classes) {
 function createRowDefinitions() {
   return [
     ["cycleDayRow", "Cycle days", "", col => makeCell(col.cycleDay)],
-    ["bleedingRow", "Bleeding", "red", col => makeCell(col.bleeding === "menstruation" ? "●" : "", "", "red", col.bleeding === "menstruation" ? "period" : "")],
-    ["spottingRow", "Spotting", "red", col => makeCell(col.bleeding === "spotting" ? "◐" : "", "", "red", col.bleeding === "spotting" ? "spotting" : "")],
+    ["bleedingRow", "Period", "red", col => bleedingCell(col, 'menstruation')],
+    ["spottingRow", "Spotting", "red", col => bleedingCell(col, 'spotting')],
     ["sedimentRow", "Clots", "red", col => makeCell(col.sediment ? "✓" : "", "", "red")],
-    ["sensationRow", "Sensation", "mucus", col => makeCell(LABELS.sensation[col.sensation] || "", "", "mucus")],
+    ["sensationRow", "Sensation", "mucus", col => scaleCell(col, 'sensation', 'Sensation', 'mucus')],
     ["stretchRow", "Slippery ", "mucus", col => makeCell(col.stretch ? "✓" : "", "", "mucus")],
     ["visibleRow", "Discharge", "mucus", col => makeCell(col.visible ? "✓" : "", "", "mucus")],
-    ["consistencyRow", "Consistency", "mucus", col => makeCell(LABELS.consistency[col.consistency] || "", "", "mucus")],
-    ["colorRow", "Color", "mucus", col => makeCell(LABELS.color[col.color] || "", "", "mucus")],
+    ["consistencyRow", "Consistency", "mucus", col => scaleCell(col, 'consistency', 'Consistency', 'mucus')],
+    ["colorRow", "Color", "mucus", col => scaleCell(col, 'color', 'Color', 'mucus')],
     ["blueMarkerRow", "Peak Mucus", "mucus", col => makeCell(col.markers?.mucus?.value || "", "", "mucus", col.markers?.mucus?.value ? "marker-blue" : "")],
-    ["cervixFirmnessRow", "Firmness", "cervix", col => makeCell(LABELS.firmness[col.cervixFirmness] || "", "", "cervix")],
-    ["cervixHeightRow", "Height", "cervix", col => makeCell(LABELS.height[col.cervixHeight] || "", "", "cervix")],
-    ["cervixOpennessRow", "Openness", "cervix", col => {
-      const cell = makeCell("", "", "cervix");
-      if (col.cervixOpenness) {
-        const indicator = document.createElement("span");
-        indicator.className = `cervix-indicator ${col.cervixOpenness}`;
-        setTranslatedAttribute(indicator, "title", `Openness: ${{ closed: "Closed", medium: "Medium", open: "Open" }[col.cervixOpenness]}`);
-        cell.appendChild(indicator);
-      }
-      return cell;
-    }],
+    ["cervixFirmnessRow", "Firmness", "cervix", col => scaleCell(col, 'cervixFirmness', 'Firmness', 'cervix')],
+    ["cervixHeightRow", "Height", "cervix", col => scaleCell(col, 'cervixHeight', 'Height', 'cervix')],
+    ["cervixOpennessRow", "Openness", "cervix", col => scaleCell(col, 'cervixOpenness', 'Openness', 'cervix')],
     ["orangeMarkerRow", "Peak Cervix", "cervix", col => makeCell(col.markers?.cervix?.value || "", "", "cervix", col.markers?.cervix?.value ? "marker-orange" : "")],
     ["otherRow", "Additional symptoms", "symptoms", col => makeCell(col.other ? "✓" : "", "", "symptoms")],
     ["sexRow", "Sex", "symptoms", col => makeCell(col.sex === true ? "✓" : "", "", "symptoms")],
@@ -132,6 +117,38 @@ function createRowDefinitions() {
     const position = start && end ? "single" : start ? "start" : end ? "end" : "middle";
     return { id, label, group, render, position };
   });
+}
+
+function scaleCell(column, field, label, group) {
+  const cell = makeCell('', '', group, 'observation-scale-cell');
+  const entry = store.entries[column.key];
+  if (!entry || !Object.hasOwn(entry, field)) return cell;
+  const value = entry[field];
+  const svg = observationScaleIcon(field, value);
+  if (!svg) return cell;
+  cell.innerHTML = svg;
+  const source = `${label}: ${OBSERVATION_LABELS[field][value]}${field === 'color' && value === 'other' && entry.colorOther ? ` (${entry.colorOther})` : ''}`;
+  setTranslatedAttribute(cell, 'title', source);
+  setTranslatedAttribute(cell, 'aria-label', source);
+  return cell;
+}
+
+function bleedingCell(column, kind) {
+  const cell = makeCell('', '', 'red', 'bleeding-cell');
+  if (column.bleeding === kind) {
+    cell.innerHTML = bleedingIcon(column.bleedingIntensity || (kind === 'spotting' ? 'spotting' : ''));
+    setTranslatedAttribute(cell, 'title', BLEEDING_LABELS[column.bleedingIntensity] || (kind === 'spotting' ? 'Spotting' : 'Period'));
+  }
+  return cell;
+}
+
+export function visibleObservationRows(entries) {
+  const observations = Object.values(entries);
+  const recorded = value => value !== undefined && value !== null && value !== '';
+  return {
+    cervix: observations.some(entry => ['cervixFirmness', 'cervixHeight', 'cervixOpenness'].some(key => recorded(entry[key])) || entry.markers?.cervix?.value),
+    symptoms: observations.some(entry => recorded(entry.sex) || entry.other?.trim()),
+  };
 }
 
 function createMapRow({ id, label, group, position }) {
@@ -170,7 +187,8 @@ export function renderMapRows(columns, selectColumn, hoverColumn, clearHover) {
   dayNumbers.style.width = `${chartWidth(columns)}px`;
   mapRows.replaceChildren();
 
-  const definitions = createRowDefinitions();
+  const visible = visibleObservationRows(store.entries);
+  const definitions = createRowDefinitions().filter(definition => visible[definition.group] !== false);
   const rows = Object.fromEntries(definitions.map(definition => [definition.id, createMapRow(definition)]));
   const attach = (element, column) => {
     element.onmouseenter = () => hoverColumn(column.key);

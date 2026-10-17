@@ -14,6 +14,27 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.14.0 — 2026-10-17
+
+### Fixed
+
+- Open Create Map above the page that launched it, keeping Main Menu or My Maps visible behind the dialog.
+- Dismiss the map creation dialog when navigating away, so returning to My Maps shows the saved maps without forcing map creation.
+- Keep unrecorded calendar days between observations visible in charts and cycle-day numbering.
+- Keep export choices above map cards and inside the viewport on desktop and phones.
+- Preserve Cross cells icons during chart state updates and center the original action drawings inside their badges.
+- Distinguish explicit None / No color observations from unrecorded values in day details.
+
+### Changed
+
+- Use matching icon scales for mucus and cervix choices in editors and saved map cells, with consistent checkboxes for binary observations.
+- Apply the Soft duotone icon style to observation scales, row labels, navigation, menu cards, actions and chart tools.
+- Offer a native Excel workbook alongside PDF and JSON map exports.
+- Record period intensity using matching drop symbols in the editor and map; use checkboxes for clots and intercourse.
+- Support a custom influence factor, restore map row icons, and hide cervix and additional-symptom groups until recorded in the map.
+- Refine Ukrainian measurement, period, mucus and cervix labels from feedback.
+- Update menu guidance for creating maps in My Maps and use Present consistently for recorded discharge.
+
 ## 0.13.0 — 2026-10-17
 
 ### Changed

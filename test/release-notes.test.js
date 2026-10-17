@@ -6,12 +6,13 @@ import { MemoryStorage } from './setup.js';
 
 test('release bubble appears once per new version and never reappears on downgrade', () => {
   const storage = new MemoryStorage();
-  const first = releasePreference(storage); assert.equal(first.isUnread(), true); first.dismiss();
+  const release = { version: '0.13.0' };
+  const first = releasePreference(storage, release); assert.equal(first.isUnread(), true); first.dismiss();
   assert.equal(first.isUnread(), false);
-  assert.equal(releasePreference(storage).isUnread(), false);
+  assert.equal(releasePreference(storage, release).isUnread(), false);
   assert.equal(releasePreference(storage, { version: '0.14.0' }).isUnread(), true);
   storage.setItem(RELEASE_SEEN_KEY, '0.14.0');
-  const older = releasePreference(storage); assert.equal(older.isUnread(), false); older.dismiss();
+  const older = releasePreference(storage, release); assert.equal(older.isUnread(), false); older.dismiss();
   assert.equal(storage.getItem(RELEASE_SEEN_KEY), '0.14.0');
   assert.equal(isNewRelease('0.12.0', '0.9.0'), true);
   assert.equal(isNewRelease('0.12.0', 'invalid'), true);

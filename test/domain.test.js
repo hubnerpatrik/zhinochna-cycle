@@ -79,3 +79,14 @@ test("cycle IDs advance only when a new cycle start occurs", () => {
   assert.equal(resolveCycleId(new Date(2026, 7, 20), starts), "cycle-2");
   assert.equal(resolveCycleId(new Date(2026, 7, 25), starts), "cycle-2");
 });
+
+test('charts include unrecorded days and calendar-based cycle numbers without inserting records', () => {
+  store.entries = { '2026-10-05': { temp: 36.4, bleeding: 'menstruation' }, '2026-10-07': { temp: 36.6 } };
+  const columns = buildColumns();
+  assert.deepEqual(columns.map(column => column.key), ['2026-10-05', '2026-10-06', '2026-10-07']);
+  assert.deepEqual(columns.map(column => column.cycleDay), [1, 2, 3]);
+  assert.equal(columns[1].temp, null);
+  assert.equal(Object.hasOwn(store.entries, '2026-10-06'), false);
+  store.entries = { '2026-03-28': {}, '2026-03-30': {} };
+  assert.deepEqual(buildColumns().map(column => column.key), ['2026-03-28', '2026-03-29', '2026-03-30']);
+});

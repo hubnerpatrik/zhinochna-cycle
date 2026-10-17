@@ -14,13 +14,14 @@ const VALID_ENTRY_FIELDS = new Set([
   "temp", "tempFactors", "measurementTime", "bleeding", "sensation", "stretch", "visible",
   "consistency", "color", "colorOther", "sediment", "markers", "markerColor", "isPeak",
   "cervixFirmness", "cervixHeight", "cervixOpenness", "sex", "other", "isFertile",
-  "crossedRows", "crossedChartTemps",
+  "crossedRows", "crossedChartTemps", "tempFactorsOther", "bleedingIntensity",
   // Accepted only so backups created by earlier 0.10.x releases remain importable.
   "discharge", "marker", "markerPointType", "manualCoverline", "coverlineStart",
 ]);
 const ENTRY_ENUMS = Object.freeze({
   tempFactors: new Set(["", ...Object.keys(TEMP_FACTORS)]),
   bleeding: new Set(["none", "spotting", "menstruation"]),
+  bleedingIntensity: new Set(["", "heavy", "medium", "light", "spotting"]),
   sensation: new Set(["", "dry", "moist", "wet"]),
   consistency: new Set(["", "creamy", "slightlyStretchy", "stretchy"]),
   color: new Set(["", "white", "whiteTranslucent", "translucent", "other"]),
@@ -32,7 +33,7 @@ const ENTRY_ENUMS = Object.freeze({
 const ENTRY_BOOLEAN_FIELDS = Object.freeze([
   "stretch", "visible", "sediment", "isPeak", "sex", "isFertile",
 ]);
-const ENTRY_STRING_FIELDS = Object.freeze(["colorOther", "other"]);
+const ENTRY_STRING_FIELDS = Object.freeze(["colorOther", "other", "tempFactorsOther"]);
 const TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 const PROFILE_DEFAULTS = Object.freeze({
   name: "",

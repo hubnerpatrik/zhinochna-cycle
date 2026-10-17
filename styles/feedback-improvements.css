@@ -11,7 +11,46 @@
 .feedback-image-picker { display: grid; gap: 8px; margin-block: 16px; }
 .feedback-image-picker input { display: block; width: 100%; margin-top: 8px; font-size: 14px; }
 .feedback-image-picker small { color: #566b61; }
+.map-export-popover { position: fixed; inset: auto; margin: 0; display: none; grid-template-columns: 1fr; gap: 6px; width: 180px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 10px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card, #fffaf6); box-shadow: 0 12px 36px #32201833; }
+.map-export-popover:popover-open { display: grid; }
+.map-export-popover .btn { width: 100%; min-height: 44px; }
+.bleeding-intensity button { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.bleeding-intensity [data-bleeding-icon] { display: block; width: 42px; height: 26px; color: #b43c45; }
+.bleeding-intensity svg { width: 100%; height: 100%; }
+.bleeding-intensity button.active { background: #f9dfe1; border-color: #b43c45; color: #76232b; }
+.bleeding-cell svg { width: min(36px, 90%); height: 22px; color: #b43c45; }
+.observation-scale { --scale-accent: #355e91; --scale-fill: #e6edf8; }
+#cervixModal .observation-scale { --scale-accent: #287c7c; --scale-fill: #e1f2f1; }
+.observation-scale button, .bleeding-intensity button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 76px; padding: 10px 4px; font-size: 12px; line-height: 1.3; white-space: normal; overflow-wrap: anywhere; }
+.observation-scale-icon { display: block; width: 48px; height: 40px; color: var(--scale-accent); flex-shrink: 0; }
+.observation-scale-icon svg { display: block; width: 100%; height: 100%; }
+.observation-duotone { --observation-icon-fill: #b7d5e7; }
+.observation-duotone .observation-icon-fill { fill: var(--observation-icon-fill); stroke: none; }
+.observation-duotone .observation-icon-line { stroke: currentColor; }
+#cervixModal .observation-duotone, .map-cells-group-cervix .observation-duotone { --observation-icon-fill: #b9ded9; }
+.observation-scale button.active { background: var(--scale-fill); border-color: var(--scale-accent); box-shadow: inset 0 0 0 1px var(--scale-accent); }
+.observation-scale button:focus-visible, .bleeding-intensity button:focus-visible { outline: 2px solid var(--scale-accent, #b43c45); outline-offset: 3px; }
+.observation-scale-cell svg { width: min(36px, 90%); height: 24px; }
+.map-cells-group-mucus .observation-scale-cell { color: #355e91; }
+.map-cells-group-cervix .observation-scale-cell { color: #287c7c; }
+#mucusModal .checkbox-row, #bleedingModal .checkbox-row, #otherModal .checkbox-row { gap: 10px; min-height: 44px; }
+#mucusModal .checkbox-row input, #bleedingModal .checkbox-row input, #otherModal .checkbox-row input { width: 20px; height: 20px; flex: 0 0 20px; accent-color: #355e91; }
+.map-row-icon { display: grid; place-items: center; flex: 0 0 24px; margin-right: 4px; }
+.nav-icon { display: inline-block; width: 22px; height: 22px; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }
+.nav-icon, .menu-card-icon svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.menu-card-index { display: none; }
+.menu-card-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; margin-bottom: 14px; color: #58768b; }
+.menu-card-icon svg { width: 28px; height: 28px; }
+.menu-card:nth-child(1) .menu-card-icon { color: #866aa4; }
+.menu-card:nth-child(3) .menu-card-icon { color: #ae704d; }
+.menu-card:nth-child(4) .menu-card-icon { color: #50856c; }
+.icon-label-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.icon-label-button > svg { width: 20px; height: 20px; flex-shrink: 0; }
+.action-icon { display: grid; place-items: center; width: 32px; height: 32px; flex: 0 0 32px; padding: 0; line-height: 0; }
+.action-icon > svg.interface-duotone { display: block; width: 20px; height: 20px; margin: 0; }
 @media (max-width: 560px) {
+  .nav-icon { margin-right: 0; }
+  .menu-card-icon { margin-bottom: 0; }
   #mobileObservationsBtn { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; margin-top: 12px; border: 1px solid var(--hairline); border-radius: 14px; background: #fffaf6; font-size: 14px; font-weight: 600; color: var(--text); scroll-margin-top: 12px; }
   #mobileObservationsBtn::after { content: '+'; font-size: 22px; }
   #mobileObservationsBtn[aria-expanded="true"]::after { content: '−'; }
@@ -21,12 +60,12 @@
   #mobileObservationScroll { overflow-x: auto; overscroll-behavior-x: contain; touch-action: pan-x pan-y; border: 1px solid var(--hairline); border-radius: 14px; background: #fffaf6; }
   #mobileObservationGrid { width: max-content; min-width: 100%; }
   #mobileObservationGrid #mapRows { display: block; }
-  #activeMapScreen #mobileObservationGrid .map-row { grid-template-columns: 116px 0 max-content; height: 44px; overflow: visible; }
-  #activeMapScreen #mobileObservationGrid .map-side-label { position: sticky; left: 0; z-index: 2; display: flex; width: 116px; padding: 6px; background: #fffaf6; }
-  #activeMapScreen #mobileObservationGrid .map-row-caption { display: block; font-size: 10px; white-space: normal; }
-  #activeMapScreen #mobileObservationGrid .map-row-icon { display: none; }
+  #activeMapScreen #mobileObservationGrid .map-row { grid-template-columns: 48px 0 max-content; height: 44px; overflow: visible; }
+  #activeMapScreen #mobileObservationGrid .map-side-label { position: sticky; left: 0; z-index: 2; display: flex; justify-content: center; width: 48px; padding: 6px; background: #fffaf6; }
+  #activeMapScreen #mobileObservationGrid .map-row-caption { display: none; }
+  #activeMapScreen #mobileObservationGrid .map-row-icon { display: grid; }
   #mobileObservationGrid .map-cell { height: 44px; }
-  .mobile-observation-header { display: grid; grid-template-columns: 116px max-content; min-height: 44px; border-bottom: 1px solid var(--hairline); }
+  .mobile-observation-header { display: grid; grid-template-columns: 48px max-content; min-height: 44px; border-bottom: 1px solid var(--hairline); }
   .mobile-observation-header > span { position: sticky; left: 0; z-index: 3; display: flex; align-items: center; padding: 10px; background: #f4e9e1; font-size: 12px; }
   #mobileObservationDays { height: 44px; }
   #mobileObservationDays button { height: 44px; padding: 0; border: 0; border-right: 1px solid var(--hairline); border-radius: 0; background: #f4e9e1; font: inherit; font-size: 12px; color: var(--text); cursor: pointer; }
