@@ -8,6 +8,9 @@ export const currentRelease = {
     'Keep unrecorded days visible between saved observations.',
     'Create maps in a dialog without leaving the current page.',
     'Describe custom influence factors and clear observations with a tap.',
+    'See the map months above observations and spotting in the calendar.',
+    'Rename maps in a dialog and see influence factors below the selected temperature.',
+    'Record higher temperatures without stretching the chart scale.',
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';
