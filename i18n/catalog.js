@@ -177,7 +177,7 @@ export const messages = {
   'July': ['Červenec', 'Júl', 'Липень'], 'August': ['Srpen', 'August', 'Серпень'],
   'September': ['Září', 'September', 'Вересень'], 'October': ['Říjen', 'Október', 'Жовтень'],
   'November': ['Listopad', 'November', 'Листопад'], 'December': ['Prosinec', 'December', 'Грудень'],
-  'Alcohol': ['Alkohol', 'Alkohol', 'Алкоголь'], 'Travel': ['Cestování', 'Cestovanie', 'Подорож'],
+  'Alcohol': ['Alkohol', 'Alkohol', 'Алкоголь'], 'Travel': ['Cestování', 'Cestovanie', 'Дорога'],
   'Stress': ['Stres', 'Stres', 'Стрес'], 'Medication': ['Léky', 'Lieky', 'Ліки'],
   'Illness': ['Nemoc', 'Choroba', 'Хвороба'], 'Restless sleep': ['Neklidný spánek', 'Nepokojný spánok', 'Неспокійний сон'],
   'New thermometer': ['Nový teploměr', 'Nový teplomer', 'Новий термометр'],

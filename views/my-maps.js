@@ -1,6 +1,7 @@
 import { escapeHtml } from "./view-utils.js";
 import { t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
+import { openMapDialog } from '../ui/map-dialog.js';
 
 function getSortedEntryDates(entries) {
   return Object.keys(entries || {}).sort();
@@ -98,10 +99,15 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
       const map = filteredMaps.find(item => item.id === mapId);
       if (!map) return;
 
-      const nextName = prompt(t("Edit map name"), map.name || "");
-      if (nextName == null) return;
-
-      onRename?.(mapId, nextName);
+      openMapDialog({
+        title: 'Edit map name', submitLabel: 'Save changes', closeOnNavigation: true,
+        body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="80" value="${escapeHtml(map.name || '')}" autofocus></label>`,
+        onSubmit: dialog => {
+          const name = dialog.querySelector('input').value.trim();
+          if (!name) return;
+          if (onRename?.(mapId, name) !== false) dialog.close();
+        },
+      });
     });
   });
 

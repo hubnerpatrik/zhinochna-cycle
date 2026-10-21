@@ -1,4 +1,4 @@
-import { TEMPERATURE_RANGE, TEMP_FACTORS } from "./core.js";
+import { TEMPERATURE_RANGE, MEASUREMENT_TEMPERATURE_RANGE, TEMP_FACTORS } from "./core.js";
 import { isStoredProfilePhoto } from './profile-photo.js';
 
 export const CROSSABLE_ROW_IDS = Object.freeze([
@@ -154,8 +154,8 @@ function normalizeEntryTemperature(value, key, strict) {
   if (value == null) return null;
   const valid = typeof value === "number"
     && Number.isFinite(value)
-    && value >= TEMPERATURE_RANGE.min
-    && value <= TEMPERATURE_RANGE.max;
+    && value >= MEASUREMENT_TEMPERATURE_RANGE.min
+    && value <= MEASUREMENT_TEMPERATURE_RANGE.max;
   if (!valid && strict) throw invalidEntryField(key, "temp");
   return valid ? value : null;
 }

@@ -1,7 +1,28 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { csvCell, mapCsv, mapXlsx, exportFilename, jpegPagesPdf, observationText } from '../map-export.js';
+import { csvCell, mapCsv, mapXlsx, mapPdf, exportFilename, jpegPagesPdf, observationText } from '../map-export.js';
 import { setLanguage } from '../i18n.js';
+
+test('PDF keeps illness readings inside the chart and retains their actual value in observations', async () => {
+  const paths = [], dots = [], texts = [];
+  const context = {
+    fillRect() {}, rect() {}, clip() {}, beginPath() {}, stroke() {}, fill() {}, save() {}, restore() {}, translate() {}, rotate() {}, setLineDash() {},
+    moveTo(x,y) { paths.push([x,y]); }, lineTo(x,y) { paths.push([x,y]); },
+    arc(x,y) { dots.push([x,y]); }, fillText(text) { texts.push(String(text)); },
+    measureText(text) { return { width: String(text).length * 10 }; },
+  };
+  const previousDocument = globalThis.document;
+  globalThis.document = { createElement: () => ({ getContext: () => context, toBlob: done => done(new Blob([new Uint8Array([255,216,255,217])])) }) };
+  setLanguage('en');
+  try {
+    const result = await mapPdf({name:'Synthetic illness',entries:{'2026-10-20':{temp:36.5},'2026-10-21':{temp:38.65},'2026-10-22':{temp:36.7}}});
+    assert.ok(result.length > 0);
+    assert.equal(dots.length,2);
+    assert.ok(paths.every(([,y]) => y >= 190 - 1e-8 && y <= 790 + 1e-8));
+    assert.ok(texts.some(text => text.includes('↑ 38.65°')));
+    assert.ok(texts.some(text => text.includes('38.65 °C')));
+  } finally { globalThis.document = previousDocument; }
+});
 
 test('PDF observations format temperatures and translate enums without translating user notes', () => {
   setLanguage('cs');

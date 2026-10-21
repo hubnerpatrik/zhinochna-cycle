@@ -33,11 +33,13 @@ Unsaved form changes are discarded when leaving the editor or refreshing.
 On phones, switch between Graph and Calendar without losing the selected day
 or zoom. The graph initially fits the full map and temperature range; pinch to
 zoom, swipe to move, or use Show all in Tools to return to the overview. Save Map
-is available above the mobile graph. Day record
-combines the saved-day summary and editors. Tools contains Fertile range,
+is available above the mobile graph. Day record opens the observation editors;
+the selected day's influence factor appears below its temperature. Tools contains Fertile range,
 Coverlines, Markers and Cross cells, with actions below the chart. Tap a
 coverline to select it before dragging; tap away to return to scrolling.
-Show observations reveals the complete observation rows beneath the chart.
+Show observations reveals the complete observation rows beneath the chart, with
+the map's year and month range. The chart keeps its 36.00–37.40 °C scale; recorded
+temperatures up to 43.00 °C appear at its edge with their actual value.
 
 ## Core features
 

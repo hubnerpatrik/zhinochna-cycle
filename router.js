@@ -206,14 +206,15 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           },
           onRename: (mapId, name) => {
             const result = runStoreAction(() => store.renameMap(mapId, name));
-            if (!result.ok) return;
+            if (!result.ok) return false;
             const renamed = result.value;
             if (!renamed) {
               showMessage?.("Map name cannot be empty");
-              return;
+              return false;
             }
             showMessage?.("Map renamed ✓");
             navigate("my-maps");
+            return true;
           },
           onDelete: mapId => {
             const result = runStoreAction(() => store.deleteMap(mapId));

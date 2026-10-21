@@ -1,10 +1,10 @@
-import { setText, setDateText } from '../i18n.js';
+import { setText, setDateText, setMonthPeriod } from '../i18n.js';
 import { store } from "../store.js";
 import { openCycleSummary } from "../ui/cycle-summary.js";
 import { openProfileInfo } from "../ui/profile-info-modal.js";
 import { cycleStarts } from "../cycle-summary.js";
 import { buildColumns } from '../domain.js';
-import { LAYOUT, chartY, formatDateKey, formatTemp, parseDateKey, qs, syncCSSVariables } from "../core.js";
+import { LAYOUT, TEMP_FACTORS, chartY, formatDateKey, formatTemp, parseDateKey, qs, syncCSSVariables } from "../core.js";
 
 export function fittedColumnWidth(viewportWidth, count, axisWidth = 48) {
   return Math.max(1, viewportWidth - axisWidth - 2) / Math.max(1, count);
@@ -186,6 +186,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
     },
     update() {
       if (!active()) return;
+      setMonthPeriod(qs('mobileObservationPeriod'), getColumns().map(column => column.key));
       const mapName = qs("mobileMapName");
       if (store.getActiveMap()?.name) {
         mapName.removeAttribute("data-i18n");
@@ -206,6 +207,14 @@ export function createMobileMap({ render, getColumns, interactions }) {
       setText(qs("mobileSelectedCycle"), column?.cycleDay ? `Cycle day ${column.cycleDay}` : "");
       const temp = store.entries[key]?.temp;
       setText(qs("mobileSelectedTemp"), temp == null ? "No temperature" : `${formatTemp(temp)} °C`);
+      const entry = store.entries[key];
+      const factor = qs('mobileSelectedFactor');
+      if (factor) {
+        const custom = entry?.tempFactors === 'other' ? entry.tempFactorsOther?.trim() : '';
+        factor.classList.toggle('hidden', !entry?.tempFactors);
+        if (custom) { factor.removeAttribute('data-i18n'); factor.textContent = custom; }
+        else setText(factor, TEMP_FACTORS[entry?.tempFactors] || '');
+      }
       qs("mobileDayBtn").disabled = !key;
       const step = Math.ceil(28 / LAYOUT.columnWidth);
       [...qs("dayNumbers").children].forEach((cell, index) => { cell.style.color = index % step ? "transparent" : ""; });

@@ -5,7 +5,7 @@ import { setText } from './i18n.js';
 // Draw order: bg → overlays → grid → annotations → data
 
 import { store } from "./store.js";
-import { LAYOUT, qs, chartY, chartLineY, chartGridY, tempSlotCount, graphHeight, chartWidth, pixelYToTemp } from "./core.js";
+import { LAYOUT, qs, chartY, chartPointY, isChartTemperature, chartLineY, chartGridY, tempSlotCount, graphHeight, chartWidth, pixelYToTemp } from "./core.js";
 import { getCycleCoverlineValues, setCycleCoverlineValues } from "./domain.js";
 
 function coverlineColumnX(column, position = "start") {
@@ -268,6 +268,8 @@ export function drawTemperatureLine(ctx, cycleGroups) {
     valid.forEach((col, i) => {
       if (i === 0) return;
       const prev = valid[i - 1];
+      // An out-of-scale reading is explicitly labelled, never joined as a normal point.
+      if (!isChartTemperature(prev.temp) || !isChartTemperature(col.temp)) return;
       const prevY = chartY(prev.temp);
       const colY = chartY(col.temp);
 
@@ -290,9 +292,13 @@ export function drawTemperaturePoints(ctx, columns) {
   columns.forEach(col => {
     if (col.temp == null) return;
 
-    const pointY = chartY(col.temp);
+    const pointY = chartPointY(col.temp);
+    if (!isChartTemperature(col.temp)) {
+      drawOverflowTemperature(ctx, col, col.temp, '#b43c45');
+      return;
+    }
     const markerY = col.markers?.bbt?.pointType === "adjusted" && col.adjustedTemp != null
-      ? chartY(col.adjustedTemp)
+      ? chartPointY(col.adjustedTemp)
       : pointY;
 
     if (col.isPeak) {
@@ -322,10 +328,33 @@ export function drawTemperaturePoints(ctx, columns) {
   ctx.lineWidth = 1;
 }
 
+function drawOverflowTemperature(ctx, col, temp, color) {
+  const y = chartPointY(temp);
+  const direction = temp > LAYOUT.maxTemp ? 1 : -1;
+  ctx.beginPath();
+  ctx.moveTo(col.centerX, y);
+  ctx.lineTo(col.centerX - 5, y + direction * 8);
+  ctx.lineTo(col.centerX + 5, y + direction * 8);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  if (LAYOUT.columnWidth >= 24 || col.key === store.selectedKey) {
+    ctx.font = 'bold 10px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${temp.toFixed(2)}°`, col.centerX, y + direction * 23);
+  }
+}
+
 /** Draws a secondary dot for the time-adjusted temperature — connects it to the measured point with a dashed blue line. */
 export function drawAdjustedTemperaturePoints(ctx, columns) {
   columns.forEach(col => {
     if (col.adjustedTemp == null || col.temp == null) return;
+    // When the measurement itself overflows, its actual value takes precedence.
+    if (!isChartTemperature(col.temp)) return;
+    if (!isChartTemperature(col.adjustedTemp)) {
+      drawOverflowTemperature(ctx, col, col.adjustedTemp, '#2563eb');
+      return;
+    }
 
     const baseY = chartY(col.temp);
     const adjY = chartY(col.adjustedTemp);
@@ -353,6 +382,7 @@ export function drawMeasurementTimes(ctx, columns) {
   columns.forEach(col => {
     if (LAYOUT.columnWidth < 24 && col.key !== store.selectedKey) return;
     if (col.temp == null || !col.measurementTime) return;
+    if (!isChartTemperature(col.temp)) return;
     const pointY = chartY(col.temp);
     ctx.font = "10px Inter";
     ctx.fillStyle = "#8e8e93";
@@ -367,7 +397,7 @@ export function drawMarkers(ctx, columns) {
     if (col.temp == null || !marker?.value) return;
 
     const usingAdjusted = marker.pointType === "adjusted" && col.adjustedTemp != null;
-    const markerY = usingAdjusted ? chartY(col.adjustedTemp) : chartY(col.temp);
+    const markerY = usingAdjusted ? chartPointY(col.adjustedTemp) : chartPointY(col.temp);
 
     // flip label below the dot when the anchor sits lower than its counterpart, to avoid overlapping it
     let labelBelow = false;
@@ -380,7 +410,11 @@ export function drawMarkers(ctx, columns) {
     ctx.font = "bold 14px Inter";
     ctx.fillStyle = "#16a34a";
     ctx.textAlign = "center";
-    ctx.fillText(marker.value, col.centerX, labelBelow ? markerY + 20 : markerY - 14);
+    const markerTemp = usingAdjusted ? col.adjustedTemp : col.temp;
+    const labelY = !isChartTemperature(markerTemp)
+      ? markerY + (markerTemp > LAYOUT.maxTemp ? 38 : -38)
+      : markerY < 30 || labelBelow ? markerY + 20 : markerY - 14;
+    ctx.fillText(marker.value, col.centerX, labelY);
   });
 }
 

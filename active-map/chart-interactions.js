@@ -7,7 +7,7 @@ import {
   renderChart,
   updateCoverlineDrag,
 } from "../chart.js";
-import { chartY, pixelXToColumnKey, pixelYToChartCellTemp, qs } from "../core.js";
+import { chartPointY, pixelXToColumnKey, pixelYToChartCellTemp, qs } from "../core.js";
 
 export function canvasPointerPosition(event, canvas) {
   const rect = canvas.getBoundingClientRect();
@@ -25,7 +25,7 @@ export function pixelToPointColumnHit(x, y, columns) {
   columns.forEach(column => {
     [[column.temp, "temp"], [column.adjustedTemp, "adjusted"]].forEach(([temp, type]) => {
       if (temp == null) return;
-      const distance = Math.hypot(x - column.centerX, y - chartY(temp));
+      const distance = Math.hypot(x - column.centerX, y - chartPointY(temp));
       if (distance < minimumDistance) {
         minimumDistance = distance;
         closest = { key: column.key, type };

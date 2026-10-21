@@ -151,17 +151,18 @@
         </div>
         <button id="mobileObservationsBtn" class="mobile-only mobile-observations-btn" type="button" aria-expanded="false" aria-controls="mobileObservationPanel" data-i18n>Show observations</button>
         <section id="mobileObservationPanel" class="mobile-only" hidden aria-label="Observations table" data-i18n-aria-label="Observations table">
+          <h3 id="mobileObservationPeriod" class="mobile-observation-period"></h3>
           <p class="mobile-observation-hint" data-i18n>Swipe sideways to see more days. Tap a cell to select its day.</p>
           <div id="mobileObservationScroll" tabindex="0" role="region" aria-label="Observations table" data-i18n-aria-label="Observations table">
             <div id="mobileObservationGrid">
-              <div class="mobile-observation-header"><span data-i18n>Day</span><div id="mobileObservationDays" class="map-days"></div></div>
+              <div class="mobile-observation-header"><span data-i18n>Date</span><div id="mobileObservationDays" class="map-days"></div></div>
             </div>
           </div>
         </section>
       </section>
 
       <footer id="mobileMapDock" class="mobile-only">
-        <div class="mobile-selected-day"><div><strong id="mobileSelectedDate" data-i18n>Select a day</strong><span id="mobileSelectedCycle"></span></div><strong id="mobileSelectedTemp"></strong></div>
+        <div class="mobile-selected-day"><div><strong id="mobileSelectedDate" data-i18n>Select a day</strong><span id="mobileSelectedCycle"></span></div><div class="mobile-selected-measurement"><strong id="mobileSelectedTemp"></strong><span id="mobileSelectedFactor" class="hidden"></span></div></div>
         <div id="mobileToolFeedback"></div>
         <div id="mobileMapActions" class="mobile-map-actions">
           <button id="mobileDayBtn" class="btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4H5v16h14v-9M14 4l3-2 5 5-3 3M11 13l3-1 5-5-3-3-5 5v4Z"/></svg><span data-i18n>Day record</span></button>
@@ -191,7 +192,7 @@
 
       <div class="modal-section">
         <div class="section-title" data-i18n>Temperature</div>
-        <input id="tempInput" type="number" inputmode="decimal" step="0.01" min="36" max="37.4" placeholder="36.50">
+        <input id="tempInput" type="number" inputmode="decimal" step="0.01" min="36" max="43" placeholder="36.50">
 
         <label class="input-label" data-i18n>Influence factors</label>
         <select id="tempFactorsInput"></select>
@@ -216,7 +217,6 @@
   <div id="actionModal" class="modal hidden">
     <div class="modal-card">
       <h2 data-i18n>Edit Day</h2>
-      <div id="mobileDaySummary" class="mobile-only"></div>
       <div id="actionModalActions"></div>
       <button id="closeActionModalBtn" class="btn secondary" type="button" data-i18n>Close</button>
     </div>

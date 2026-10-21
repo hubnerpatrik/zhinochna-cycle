@@ -1,6 +1,6 @@
 import { setText } from '../i18n.js';
 import { normalizeDayMarkers, store } from "../store.js";
-import { TEMPERATURE_RANGE, getTimeAdjustment, qs, qsa } from "../core.js";
+import { MEASUREMENT_TEMPERATURE_RANGE, getTimeAdjustment, qs, qsa } from "../core.js";
 import { markerColorFromType, markerTypeFromColor, normalizeMarkerColor } from "./marker-utils.js";
 import {
   afterModalSave,
@@ -12,8 +12,6 @@ import {
   updateSelectedEntry,
 } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
-import { renderDayInfo } from "./day-info-modal.js";
-import { buildColumns } from "../domain.js";
 import { showFieldError, validationMessage } from './field-errors.js';
 
 export function returnsToActionMenuAfterSave(modalId) {
@@ -30,15 +28,6 @@ function finishSave(modalId, render) {
 }
 
 export function openActionModal() {
-  const summary = qs("mobileDaySummary");
-  if (summary && window.matchMedia("(max-width: 560px)").matches && store.selectedKey) {
-    renderDayInfo(buildColumns());
-    const title = document.createElement("p");
-    setText(title, qs("dayInfoTitle").getAttribute("data-i18n"));
-    const panel = qs("dayInfoModal").querySelector(".info-panel").cloneNode(true);
-    panel.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
-    summary.replaceChildren(title, panel);
-  }
   showModal("actionModal");
 }
 
@@ -78,7 +67,7 @@ export function validateTempInput() {
   const raw = qs("tempInput")?.value.trim().replace(",", ".");
   if (!raw) return true;
   const value = Number(raw);
-  return Number.isFinite(value) && value >= TEMPERATURE_RANGE.min && value <= TEMPERATURE_RANGE.max;
+  return Number.isFinite(value) && value >= MEASUREMENT_TEMPERATURE_RANGE.min && value <= MEASUREMENT_TEMPERATURE_RANGE.max;
 }
 
 export function saveModal(render) {
@@ -86,7 +75,7 @@ export function saveModal(render) {
   if (!validateTempInput()) {
     const input = qs('tempInput');
     const message = input.validity?.badInput || input.validity?.stepMismatch ? validationMessage(input)
-      : `Temperature must be between ${TEMPERATURE_RANGE.min}–${TEMPERATURE_RANGE.max} °C`;
+      : `Temperature must be between ${MEASUREMENT_TEMPERATURE_RANGE.min}–${MEASUREMENT_TEMPERATURE_RANGE.max} °C`;
     return showFieldError(input, message, { focus: true, constraint: true });
   }
   if (store.modal.measurementTimeEnabled && !qs("measurementTimeInput").reportValidity()) return;

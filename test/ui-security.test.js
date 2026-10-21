@@ -13,17 +13,17 @@ const {
   validateTempInput,
 } = await import("../ui.js");
 
-test("temperature entry accepts only values from 36.00 through 37.40 °C", () => {
+test("temperature entry accepts measurements above the chart scale, with bounded finite values", () => {
   const tempInput = { value: "" };
   globalThis.document = {
     getElementById: id => id === "tempInput" ? tempInput : null,
   };
 
-  for (const value of ["36", "36.55", "37.40", "37,40"]) {
+  for (const value of ["36", "36.55", "37.40", "37,40", "38.50", "43"]) {
     tempInput.value = value;
     assert.equal(validateTempInput(), true, `${value} should be accepted`);
   }
-  for (const value of ["35.99", "37.41", "not-a-number"]) {
+  for (const value of ["35.99", "43.01", "Infinity", "not-a-number"]) {
     tempInput.value = value;
     assert.equal(validateTempInput(), false, `${value} should be rejected`);
   }

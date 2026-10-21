@@ -139,6 +139,13 @@ export async function mapPdf(map) {
       ctx.strokeStyle = '#e0e8e3'; ctx.beginPath(); ctx.moveTo(left + index * step, top); ctx.lineTo(left + index * step, bottom); ctx.stroke();
       ctx.save(); ctx.translate(x + 5, bottom + 20); ctx.rotate(Math.PI / 2); line(date, 0, 0, 18); ctx.restore();
       if (!Number.isFinite(entry?.temp)) { previous = null; return; }
+      // Preserve the fixed PDF scale when exporting newly supported high readings.
+      if (entry.temp > 37.4 || entry.temp < 36) {
+        const high = entry.temp > 37.4;
+        line(`${high ? '↑' : '↓'} ${entry.temp.toFixed(2)}°`, x - 25, high ? top + 25 : bottom - 15, 18, '#b43c45');
+        previous = null;
+        return;
+      }
       const at = tempY(entry.temp);
       ctx.strokeStyle = '#315f4b'; ctx.lineWidth = 3;
       if (previous) { ctx.beginPath(); ctx.moveTo(...previous); ctx.lineTo(x, at); ctx.stroke(); }

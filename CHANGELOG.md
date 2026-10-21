@@ -14,6 +14,15 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Fixed
+
+- Show the map's localized year and month range above mobile observations, with a Date heading and smaller day numbers.
+- Rename maps through an accessible in-app dialog instead of a browser prompt.
+- Remove the duplicate mobile day summary and display the selected temperature's influence factor beneath the measurement.
+- Accept recorded temperatures up to 43 °C while keeping the chart scale fixed; label out-of-scale readings at the boundary without drawing misleading connecting lines.
+- Highlight spotting with a red gradient in the calendar, including manually marked fertile days.
+- Use the requested Ukrainian travel-factor label, Дорога.
+
 ## 0.14.0 — 2026-10-17
 
 ### Fixed

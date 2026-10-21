@@ -12,6 +12,10 @@ import { authErrorFields } from './auth/service.js';
 
 const root = document.getElementById("authRoot");
 const app = document.getElementById("trackerApp");
+// Vite removes this branch from production builds, even if the flag is set.
+const developmentAccess = import.meta.env.DEV
+  && import.meta.env.VITE_DEV_AUTH_BYPASS === "true"
+  && ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
 const callback = readAuthCallback(location.href);
 let resetToken = callback.token;
 let activeUserId = null;
@@ -31,8 +35,10 @@ let cloudUserId;
 initializeLanguage();
 initializeHelp();
 initializeFieldErrors();
-try { auth = configuredAuth(location.origin); } catch { auth = null; }
-try { channel = new BroadcastChannel("cycle-account-session"); } catch { /* Focus checks still work. */ }
+if (!developmentAccess) {
+  try { auth = configuredAuth(location.origin); } catch { auth = null; }
+  try { channel = new BroadcastChannel("cycle-account-session"); } catch { /* Focus checks still work. */ }
+}
 
 function concealApp() {
   concealFeedback();
@@ -209,7 +215,10 @@ setInterval(() => {
 }, 45000);
 setInterval(() => { if (activeUserId && document.visibilityState === "visible") void checkSession(); }, 60000);
 
-if (!auth) show("configuration");
+if (developmentAccess) {
+  import("./dev/local-preview.js").then(({ startLocalPreview }) => startLocalPreview({ app, root }))
+    .catch(error => { console.error("Local preview failed", error); show("error"); });
+} else if (!auth) show("configuration");
 else if (callback.reset) {
   // Retain the token only in memory, keeping it out of URLs and referrers afterwards.
   history.replaceState(null, "", "/#/reset-password");
