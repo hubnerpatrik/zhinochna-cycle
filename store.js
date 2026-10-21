@@ -89,9 +89,11 @@ export class Store {
     return {
       temp: null,
       tempFactors: "",
+      tempFactorsOther: "",
       measurementTime: "",
       measurementTimeEnabled: false,
       bleeding: "none",
+      bleedingIntensity: "",
       sensation: "",
 
       stretch: false,

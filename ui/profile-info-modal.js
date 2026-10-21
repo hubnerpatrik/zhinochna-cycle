@@ -8,7 +8,7 @@ export function profileInfoRows(profile) {
     ['Age', profile.age],
     ['Time', profile.usualMeasurementTime],
     ['Goal', { avoid: 'Avoid pregnancy', achieve: 'Achieve pregnancy', observation: 'Observation only' }[profile.goal]],
-    ['Method', { oral: 'Oral', vaginal: 'Vaginal', rectal: 'Rectal' }[profile.measurementMethod]],
+    ['Measurement method', { oral: 'Oral', vaginal: 'Vaginal', rectal: 'Rectal' }[profile.measurementMethod]],
   ];
 }
 
@@ -22,7 +22,7 @@ export function openProfileInfo(trigger) {
     const term = document.createElement('dt');
     const detail = document.createElement('dd');
     setText(term, label);
-    if (label === 'Goal' || label === 'Method') setText(detail, value || '—');
+    if (label === 'Goal' || label === 'Measurement method') setText(detail, value || '—');
     else detail.textContent = value || '—';
     list.append(term, detail);
   }

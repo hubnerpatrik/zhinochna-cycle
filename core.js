@@ -20,6 +20,11 @@ export const TEMPERATURE_RANGE = Object.freeze({
   max: LAYOUT.maxTemp,
 });
 
+// Stored measurements may exceed the fixed chart scale (for example during illness).
+export const MEASUREMENT_TEMPERATURE_RANGE = Object.freeze({ min: TEMPERATURE_RANGE.min, max: 43 });
+export const isChartTemperature = temp => temp >= LAYOUT.minTemp && temp <= LAYOUT.maxTemp;
+export const chartPointY = temp => chartY(Math.max(LAYOUT.minTemp, Math.min(LAYOUT.maxTemp, temp)));
+
 const MILLISECONDS_PER_DAY = 86_400_000;
 
 export const TEMP_FACTORS = {

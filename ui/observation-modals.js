@@ -1,6 +1,6 @@
 import { setText } from '../i18n.js';
 import { normalizeDayMarkers, store } from "../store.js";
-import { TEMPERATURE_RANGE, getTimeAdjustment, qs, qsa } from "../core.js";
+import { MEASUREMENT_TEMPERATURE_RANGE, getTimeAdjustment, qs, qsa } from "../core.js";
 import { markerColorFromType, markerTypeFromColor, normalizeMarkerColor } from "./marker-utils.js";
 import {
   afterModalSave,
@@ -12,8 +12,6 @@ import {
   updateSelectedEntry,
 } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
-import { renderDayInfo } from "./day-info-modal.js";
-import { buildColumns } from "../domain.js";
 import { showFieldError, validationMessage } from './field-errors.js';
 
 export function returnsToActionMenuAfterSave(modalId) {
@@ -30,15 +28,6 @@ function finishSave(modalId, render) {
 }
 
 export function openActionModal() {
-  const summary = qs("mobileDaySummary");
-  if (summary && window.matchMedia("(max-width: 560px)").matches && store.selectedKey) {
-    renderDayInfo(buildColumns());
-    const title = document.createElement("p");
-    setText(title, qs("dayInfoTitle").getAttribute("data-i18n"));
-    const panel = qs("dayInfoModal").querySelector(".info-panel").cloneNode(true);
-    panel.querySelectorAll("[id]").forEach(element => element.removeAttribute("id"));
-    summary.replaceChildren(title, panel);
-  }
   showModal("actionModal");
 }
 
@@ -55,12 +44,15 @@ export function openModal(currentColumns) {
   Object.assign(store.modal, {
     temp: data.temp ?? null,
     tempFactors: data.tempFactors ?? "",
+    tempFactorsOther: data.tempFactorsOther ?? "",
     measurementTime: data.measurementTime ?? "",
     measurementTimeEnabled: Boolean(data.measurementTime),
   });
   setText(qs("modalTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
   qs("tempInput").value = store.modal.temp == null ? "" : Number(store.modal.temp).toFixed(2);
   qs("tempFactorsInput").value = store.modal.tempFactors;
+  if (qs('tempFactorsOtherInput')) qs('tempFactorsOtherInput').value = store.modal.tempFactorsOther;
+  syncTempFactorsUI();
   qs("measurementTimeInput").value = store.modal.measurementTime;
   syncMeasurementTimeUI();
   showModal("modal");
@@ -75,7 +67,7 @@ export function validateTempInput() {
   const raw = qs("tempInput")?.value.trim().replace(",", ".");
   if (!raw) return true;
   const value = Number(raw);
-  return Number.isFinite(value) && value >= TEMPERATURE_RANGE.min && value <= TEMPERATURE_RANGE.max;
+  return Number.isFinite(value) && value >= MEASUREMENT_TEMPERATURE_RANGE.min && value <= MEASUREMENT_TEMPERATURE_RANGE.max;
 }
 
 export function saveModal(render) {
@@ -83,7 +75,7 @@ export function saveModal(render) {
   if (!validateTempInput()) {
     const input = qs('tempInput');
     const message = input.validity?.badInput || input.validity?.stepMismatch ? validationMessage(input)
-      : `Temperature must be between ${TEMPERATURE_RANGE.min}–${TEMPERATURE_RANGE.max} °C`;
+      : `Temperature must be between ${MEASUREMENT_TEMPERATURE_RANGE.min}–${MEASUREMENT_TEMPERATURE_RANGE.max} °C`;
     return showFieldError(input, message, { focus: true, constraint: true });
   }
   if (store.modal.measurementTimeEnabled && !qs("measurementTimeInput").reportValidity()) return;
@@ -91,9 +83,15 @@ export function saveModal(render) {
   updateSelectedEntry({
     temp: raw ? Number(raw) : null,
     tempFactors: qs("tempFactorsInput").value,
+    tempFactorsOther: qs('tempFactorsInput').value === 'other' ? (qs('tempFactorsOtherInput')?.value.trim() || '') : '',
     measurementTime: store.modal.measurementTimeEnabled ? qs("measurementTimeInput").value : "",
   });
   finishSave("modal", render);
+}
+
+export function syncTempFactorsUI() {
+  const other = qs('tempFactorsInput')?.value === 'other';
+  qs('tempFactorsOtherWrapper')?.classList.toggle('hidden', !other);
 }
 
 export function syncMeasurementTimeUI() {
@@ -169,6 +167,7 @@ export function openBleedingModal() {
   resetModalState();
   const data = store.entries[store.selectedKey] || {};
   store.modal.bleeding = data.bleeding;
+  store.modal.bleedingIntensity = data.bleedingIntensity || (data.bleeding === 'spotting' ? 'spotting' : undefined);
   store.modal.sediment = data.sediment;
   showModal("bleedingModal");
   syncModalUI();
@@ -180,7 +179,7 @@ export function closeBleedingModal() {
 
 export function saveBleedingModal(render) {
   if (!store.selectedKey) return;
-  updateSelectedEntry({ bleeding: store.modal.bleeding, sediment: store.modal.sediment });
+  updateSelectedEntry({ bleeding: store.modal.bleeding, bleedingIntensity: store.modal.bleedingIntensity, sediment: store.modal.sediment });
   finishSave("bleedingModal", render);
 }
 

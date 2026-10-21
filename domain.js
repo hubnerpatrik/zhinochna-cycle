@@ -86,11 +86,13 @@ function buildColumn(key, index, date, starts) {
 
     temp: raw.temp ?? null,
     tempFactors: raw.tempFactors ?? "",
+    tempFactorsOther: raw.tempFactorsOther ?? "",
     measurementTime: raw.measurementTime ?? "",
     timeAdjustment: getTimeAdjustment(raw.measurementTime, mapProfile.usualMeasurementTime),
     adjustedTemp: getAdjustedTemp(raw.temp, raw.measurementTime, mapProfile.usualMeasurementTime),
 
     bleeding: raw.bleeding ?? "none",
+    bleedingIntensity: raw.bleedingIntensity ?? "",
     sensation: raw.sensation ?? "",
     stretch: raw.stretch ?? false,
     visible: raw.visible ?? false,
@@ -122,7 +124,12 @@ export function buildColumns() {
 
   const starts = getCycleStartDates();
 
-  return keys.map((key, index) => {
+  const dates = [];
+  const end = Date.parse(`${keys.at(-1)}T12:00:00Z`);
+  for (let time = Date.parse(`${keys[0]}T12:00:00Z`); time <= end; time += 86400000) {
+    dates.push(new Date(time).toISOString().slice(0, 10));
+  }
+  return dates.map((key, index) => {
     const date = parseDateKey(key);
     return buildColumn(key, index, date, starts);
   });

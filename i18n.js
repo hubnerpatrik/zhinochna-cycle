@@ -1,4 +1,5 @@
 import { messages } from './i18n/catalog.js';
+import { formatMonthPeriod } from './month-period.js';
 
 export const languages = Object.freeze({ en: 'EN', uk: 'UA', cs: 'CZ', sk: 'SK' });
 export const LANGUAGE_KEY = 'cycle-app-language';
@@ -23,7 +24,7 @@ export function t(source) {
   if (translated) return text.replace(key, translated);
   const dayHelp = /^(\d{4}-\d{2}-\d{2} · )(.*)$/.exec(text);
   if (dayHelp) return dayHelp[1] + t(dayHelp[2]);
-  const info = /^(Bleeding|Clots|Sensation|Slippery|Discharge|Consistency|Color|Firmness|Height|Openness|Sex|Notes|Hours|Minutes): (.*)$/.exec(text);
+  const info = /^(Bleeding|Period intensity|Clots|Sensation|Slippery|Discharge|Consistency|Color|Firmness|Height|Openness|Sex|Notes|Hours|Minutes): (.*)$/.exec(text);
   if (info) {
     const [, label, value] = info;
     if (label === 'Notes') return `${t(label)}: ${value}`;
@@ -95,8 +96,20 @@ export function setDateText(element, date, format = 'month') {
     ? { month: 'long', year: 'numeric' } : { day: 'numeric', month: 'short' });
 }
 
-const selector = '[data-i18n], [data-i18n-date], [data-i18n-title], [data-i18n-aria-label], [data-i18n-placeholder], [data-i18n-alt]';
+export function setMonthPeriod(element, keys) {
+  if (!element) return;
+  const sorted = [...keys].sort();
+  element.setAttribute('data-i18n-period-start', sorted[0] || '');
+  element.setAttribute('data-i18n-period-end', sorted.at(-1) || '');
+  element.textContent = formatMonthPeriod(sorted[0], sorted.at(-1), getLocale());
+}
+
+const selector = '[data-i18n], [data-i18n-date], [data-i18n-period-start], [data-i18n-title], [data-i18n-aria-label], [data-i18n-placeholder], [data-i18n-alt]';
 function localizeElement(element) {
+  if (element.hasAttribute('data-i18n-period-start')) {
+    const value = formatMonthPeriod(element.getAttribute('data-i18n-period-start'), element.getAttribute('data-i18n-period-end'), getLocale());
+    if (element.textContent !== value) element.textContent = value;
+  }
   if (element.hasAttribute('data-i18n')) {
     const stored = element.getAttribute('data-i18n');
     if (stored) originals.set(element, stored);

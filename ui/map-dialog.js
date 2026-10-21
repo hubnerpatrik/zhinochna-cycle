@@ -2,7 +2,7 @@ import { t, translateDOM } from '../i18n.js';
 import { escapeHtml } from '../views/view-utils.js';
 
 // Native dialogs keep focus within the decision and restore it to its opener.
-export function openMapDialog({ title, body, submitLabel, onSubmit, onClose = () => {} }) {
+export function openMapDialog({ title, body, submitLabel, onSubmit, onClose = () => {}, closeOnNavigation = false }) {
   const opener = document.activeElement;
   const dialog = document.createElement('dialog');
   dialog.className = 'map-dialog';
@@ -15,7 +15,18 @@ export function openMapDialog({ title, body, submitLabel, onSubmit, onClose = ()
     event.preventDefault();
     onSubmit(dialog);
   };
-  dialog.addEventListener('close', () => { dialog.remove(); onClose(); if (opener?.isConnected) opener.focus(); }, { once: true });
+  const dismissOnNavigation = () => { if (dialog.open) dialog.close(); };
+  if (closeOnNavigation) {
+    window.addEventListener('hashchange', dismissOnNavigation);
+    window.addEventListener('popstate', dismissOnNavigation);
+  }
+  dialog.addEventListener('close', () => {
+    if (closeOnNavigation) {
+      window.removeEventListener('hashchange', dismissOnNavigation);
+      window.removeEventListener('popstate', dismissOnNavigation);
+    }
+    dialog.remove(); onClose(); if (opener?.isConnected) opener.focus();
+  }, { once: true });
   document.body.append(dialog);
   translateDOM(dialog);
   dialog.showModal();

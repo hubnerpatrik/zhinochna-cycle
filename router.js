@@ -4,10 +4,11 @@ import { renderMenuView } from "./views/menu.js";
 import { renderProfileScreen } from "./views/profile.js";
 import { renderMyMapsView } from "./views/my-maps.js";
 import { openMapDialog } from "./ui/map-dialog.js";
+import { closeExportMenu } from './ui/export-menu.js';
 import { escapeHtml } from "./views/view-utils.js";
 import { backupFilename } from "./backup.js";
 import { createNavigation } from "./navigation.js";
-import { downloadFile, exportFilename, mapCsv, mapPdf } from './map-export.js';
+import { downloadFile, exportFilename, mapCsv, mapPdf, mapXlsx } from './map-export.js';
 
 export const MODAL_ROUTES = Object.freeze({
   actionModal: "edit-day", modal: "temperature", bleedingModal: "bleeding",
@@ -29,6 +30,7 @@ function downloadBackup(contents, mapName) {
 
 export function createRouter({ root, showStandaloneScreen, openActiveMap, openMapPage, showMessage, browser = window }) {
   let rendering = false;
+  let createMapDialog = null;
 
   const navByScreen = {
     menu: "navMenuBtn",
@@ -75,6 +77,12 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
     const params = new URLSearchParams(typeof input === "string" ? "" : input.params);
     if (!store.hasProfile()) return { screen: "profile-setup", params: new URLSearchParams() };
     if (!Object.hasOwn(navByScreen, screen)) screen = "menu";
+    if (screen === 'create-map') {
+      const from = params.get('from');
+      const background = ['menu', 'my-maps'].includes(from) ? from
+        : navigation.current?.screen === 'menu' ? 'menu' : 'my-maps';
+      return { screen, params: new URLSearchParams({ from: background }) };
+    }
     if (screen !== "active-map") return { screen, params: new URLSearchParams() };
     const mapId = params.get("map") || store.getActiveMapId();
     if (!mapId || !store.getMap(mapId)) return { screen: "my-maps", params: new URLSearchParams() };
@@ -101,6 +109,11 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
   function renderRoute(route) {
     rendering = true;
     try {
+      // The dialog lives outside root, so replacing the page cannot dismiss it.
+      const previousDialog = createMapDialog;
+      createMapDialog = null;
+      previousDialog?.remove();
+      closeExportMenu();
       if (route.screen === "active-map" && route.params.has("page")) {
         store.selectedKey = route.params.get("day");
         store.selectedPointType = route.params.get("point") || "temp";
@@ -193,14 +206,15 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           },
           onRename: (mapId, name) => {
             const result = runStoreAction(() => store.renameMap(mapId, name));
-            if (!result.ok) return;
+            if (!result.ok) return false;
             const renamed = result.value;
             if (!renamed) {
               showMessage?.("Map name cannot be empty");
-              return;
+              return false;
             }
             showMessage?.("Map renamed ✓");
             navigate("my-maps");
+            return true;
           },
           onDelete: mapId => {
             const result = runStoreAction(() => store.deleteMap(mapId));
@@ -213,6 +227,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
               const map = store.getMap(mapId);
               if (!map) throw new Error("Map not found");
               if (format === 'csv') downloadFile(mapCsv(map), 'text/csv;charset=utf-8', exportFilename(map.name, 'csv'));
+              else if (format === 'xlsx') downloadFile(mapXlsx(map), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', exportFilename(map.name, 'xlsx'));
               else if (format === 'pdf') downloadFile(await mapPdf(map), 'application/pdf', exportFilename(map.name, 'pdf'));
               else downloadBackup(store.createMapBackup(mapId), map.name);
               showMessage?.(`“${map.name || "Untitled map"}” exported ✓`);
@@ -228,11 +243,16 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
         });
         break;
 
-      case "create-map":
-        render('my-maps');
-        openMapDialog({ title: 'Create map', submitLabel: 'Create',
+      case "create-map": {
+        const background = navigation.current.params.get('from') || 'my-maps';
+        render(background);
+        createMapDialog = openMapDialog({ title: 'Create map', submitLabel: 'Create',
           body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="80" autofocus></label>`,
-          onClose: () => { if (navigation.current?.screen === 'create-map') back(); },
+          onClose: () => {
+            if (createMapDialog !== dialog) return;
+            createMapDialog = null;
+            if (navigation.current?.screen === 'create-map') navigation.back(background);
+          },
           onSubmit: dialog => {
             const name = dialog.querySelector('input').value.trim();
             if (!name) return;
@@ -240,10 +260,12 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
             if (!result.ok) return;
             showMessage?.("Map created ✓");
             navigate("active-map", { replace: true });
-            dialog.close();
           },
         });
+        // Ignore delayed close events from dialogs dismissed by navigation.
+        const dialog = createMapDialog;
         break;
+      }
 
       case "active-map":
         openActiveMap(store.getActiveMapId());

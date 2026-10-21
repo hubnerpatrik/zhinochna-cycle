@@ -19,6 +19,25 @@ const icons = {
   sexRow: '<circle cx="8" cy="12" r="4"/><circle cx="14" cy="9" r="4"/><path d="M8 16v6m-3-3h6m6-13 4-4m-4 0h4v4"/>',
 };
 
+const fills = {
+  cycleDayRow: '<rect x="4" y="5" width="16" height="16" rx="3"/>',
+  bleedingRow: icons.bleedingRow,
+  spottingRow: icons.spottingRow,
+  sedimentRow: icons.sedimentRow,
+  sensationRow: icons.sensationRow,
+  stretchRow: '<path d="M3 8q4 4 9 0t9 0v8q-4-4-9 0t-9 0Z"/>',
+  visibleRow: '<path d="M12 3s-4 5-4 8a4 4 0 0 0 8 0c0-3-4-8-4-8Z"/>',
+  consistencyRow: '<path d="M6 14q6-3 12 0v5q-6-3-12 0Z"/>',
+  colorRow: icons.colorRow,
+  blueMarkerRow: '<path d="M8 4h5a5 5 0 0 1 0 10H8Z"/>',
+  cervixFirmnessRow: '<circle cx="12" cy="12" r="6"/>',
+  cervixHeightRow: '<circle cx="12" cy="12" r="4"/>',
+  cervixOpennessRow: '<circle cx="12" cy="12" r="8"/>',
+  orangeMarkerRow: '<path d="M8 4h5a5 5 0 0 1 0 10H8Z"/>',
+  otherRow: icons.otherRow,
+  sexRow: '<circle cx="8" cy="12" r="4"/><circle cx="14" cy="9" r="4"/>',
+};
+
 export function observationIcon(rowId) {
-  return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icons[rowId]}</svg>`;
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g fill="currentColor" fill-opacity=".2" stroke="none">${fills[rowId] || ''}</g>${icons[rowId] || ''}</svg>`;
 }

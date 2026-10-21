@@ -195,7 +195,7 @@ test("malformed observations, markers, and coverlines are rejected", () => {
   })), /coverline/i);
   assert.throws(() => parseBackup(wrapMap({ profileSnapshot: [] })), /profile snapshot/i);
   assert.throws(() => parseBackup(wrapMap({
-    entries: { "2026-08-18": { temp: 37.41 } },
+    entries: { "2026-08-18": { temp: 43.01 } },
   })), /temp/i);
   assert.throws(() => parseBackup(wrapMap({
     entries: { "2026-08-18": { temp: 35.99 } },

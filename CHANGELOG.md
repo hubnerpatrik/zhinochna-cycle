@@ -14,6 +14,44 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.14.0 — 2026-10-21
+
+### Fixed
+
+- Show the map's localized year and month range above mobile observations, with a Date heading and smaller day numbers.
+- Rename maps through an accessible in-app dialog instead of a browser prompt.
+- Remove the duplicate mobile day summary and display the selected temperature's influence factor beneath the measurement.
+- Accept recorded temperatures up to 43 °C while keeping the chart scale fixed; label out-of-scale readings at the boundary without drawing misleading connecting lines.
+- Highlight spotting with a red gradient in the calendar, including manually marked fertile days.
+- Use the requested Ukrainian travel-factor label, Дорога.
+- Dismiss the rename dialog when navigating away and keep higher readings inside the existing PDF chart bounds.
+- Open Create Map above the page that launched it, keeping Main Menu or My Maps visible behind the dialog.
+- Dismiss the map creation dialog when navigating away, so returning to My Maps shows the saved maps without forcing map creation.
+- Keep unrecorded calendar days between observations visible in charts and cycle-day numbering.
+- Keep export choices above map cards and inside the viewport on desktop and phones.
+- Preserve Cross cells icons during chart state updates and center the original action drawings inside their badges.
+- Distinguish explicit None / No color observations from unrecorded values in day details.
+
+### Changed
+
+- Use matching icon scales for mucus and cervix choices in editors and saved map cells, with consistent checkboxes for binary observations.
+- Apply the Soft duotone icon style to observation scales, row labels, navigation, menu cards, actions and chart tools.
+- Offer a native Excel workbook alongside PDF and JSON map exports.
+- Record period intensity using matching drop symbols in the editor and map; use checkboxes for clots and intercourse.
+- Support a custom influence factor, restore map row icons, and hide cervix and additional-symptom groups until recorded in the map.
+- Refine Ukrainian measurement, period, mucus and cervix labels from feedback.
+- Update menu guidance for creating maps in My Maps and use Present consistently for recorded discharge.
+
+### Development
+
+- Add an opt-in localhost development mode without sign-in, with isolated browser storage and no cloud access. Production builds always require authentication.
+
+### Validation and compatibility
+
+- Pass 156 automated tests, JavaScript syntax checks, and the production build.
+- Verify mobile observations, rename persistence, and out-of-scale temperatures in the browser.
+- No database migration is required. Deploy the frontend and API handlers together so higher temperature values use the same validation on the client and server.
+
 ## 0.13.0 — 2026-10-17
 
 ### Changed
@@ -92,6 +130,13 @@ vMAJOR.MINOR.PATCH
 - Route browser authentication through the app origin to avoid dependence on third-party cookies in Safari.
 - Show an explicit error when a successful sign-in is followed by a missing session instead of silently returning to the form.
 
+## 0.11.1 — 2026-10-05
+
+### Fixed
+
+- Route browser authentication through the app origin to avoid dependence on third-party cookies in Safari.
+- Show an explicit error when a successful sign-in is followed by a missing session instead of silently returning to the form.
+
 ## 0.11.0 — 2026-09-27
 
 ### Added
@@ -120,7 +165,7 @@ vMAJOR.MINOR.PATCH
 
 - Pass 109 automated tests, production build, real Neon persistence/isolation/concurrency checks, and browser cloud-save regression check.
 
-## 0.10.9 — In development
+## 0.10.9 — 2026-09-27
 
 ### Changed
 
@@ -135,7 +180,7 @@ vMAJOR.MINOR.PATCH
 - Add an upper-right EN / UA / CZ / SK language switch with English as the default and a saved local preference. Translate application labels, calendars, editors, and summaries without replacing form drafts or translating user data.
 - Draw cycle boundaries in solid red through the chart and observation rows, and make horizontal and vertical coverlines solid.
 
-## 0.10.8
+## 0.10.8 — 2026-09-10
 
 ### Changed
 
@@ -145,7 +190,7 @@ vMAJOR.MINOR.PATCH
 - Lock background scrolling for all modals and close native dialogs during navigation.
 - Reuse observation history while editing summary fields; BBT results still use chart markers rather than automatic temperature-rule detection.
 
-## 0.10.7
+## 0.10.7 — 2026-09-07
 
 ### Changed
 
@@ -161,7 +206,7 @@ vMAJOR.MINOR.PATCH
 - Require a tap to select coverlines before dragging them on touch screens.
 - Improve mobile touch targets, form text, narrow layouts, safe-area spacing, and chart gesture guidance.
 
-## 0.10.6
+## 0.10.6 — 2026-09-07
 
 ### Changed
 
@@ -298,3 +343,12 @@ vMAJOR.MINOR.PATCH
 ## [0.8.0]
 
 - Previous active-prototype milestone. Earlier changes remain available in Git history.
+
+## 0.5.0 — 2026-05-30
+
+### Changed
+
+- Split application code into store.js, domain.js, chart.js and ui.js.
+- Refactor canvas rendering, clean up code, and add explanatory comments.
+
+Historical notes reconstructed from the existing v0.5.0 tag annotation and tagged commit.

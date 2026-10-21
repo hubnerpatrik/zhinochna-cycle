@@ -15,6 +15,14 @@ once again because their previous cookies belong to the Neon domain.
 
 ## Local configuration
 
+For UI development without signing in, put `VITE_DEV_AUTH_BYPASS=true` in
+`.env.development.local`, run `npm run dev`, and open the localhost URL.
+Restart Vite after changing the flag. This mode works only in the Vite development
+server on localhost/127.0.0.1/IPv6 loopback; production builds always require auth.
+Maps and profiles persist in the separate `cycle-development:` browser storage namespace.
+Cloud sync and feedback are unavailable in this mode. Set the flag to `false` and
+restart Vite to test real authentication using the configuration below.
+
 Set the public `VITE_NEON_AUTH_URL` in `.env.local` (and `.env` when using Vercel CLI).
 Set the server-only `DATABASE_URL` in `.env` for the data API. `.env.example` shows the format.
 The Vite prefix is correct for the public Auth URL and must never be used for the database password.

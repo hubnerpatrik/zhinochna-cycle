@@ -2,7 +2,7 @@ import { setText, setDateText, setTranslatedAttribute } from '../i18n.js';
 import { store } from "../store.js";
 import {
   LAYOUT,
-  TEMPERATURE_RANGE,
+  MEASUREMENT_TEMPERATURE_RANGE,
   TEMP_FACTORS,
   calendarDayDifference,
   chartY,
@@ -69,6 +69,7 @@ export function renderCalendar(selectColumn) {
     cell.appendChild(dayNumber);
 
     if (entry?.bleeding === "menstruation") cell.classList.add("red");
+    if (entry?.bleeding === "spotting") cell.classList.add("spotting-day");
     if (isFertileDay(key)) cell.classList.add("fertile-day");
     if (store.selectedKey === key) cell.classList.add("selected");
 
@@ -82,8 +83,8 @@ export function renderTempFactorsOptions() {
   if (!select) return;
   const tempInput = qs("tempInput");
   if (tempInput) {
-    tempInput.min = String(TEMPERATURE_RANGE.min);
-    tempInput.max = String(TEMPERATURE_RANGE.max);
+    tempInput.min = String(MEASUREMENT_TEMPERATURE_RANGE.min);
+    tempInput.max = String(MEASUREMENT_TEMPERATURE_RANGE.max);
   }
 
   select.innerHTML = `<option value="" data-i18n>None</option>`

@@ -46,10 +46,12 @@ the inbox. Reports are independent of map deletion.
 
 ## Exports
 
-My Maps offers PDF, CSV and the original JSON backup. CSV is UTF-8 with BOM, comma
-delimited, quoted and protected against formula injection. It uses stable English
-field names and includes every recorded day's observation fields, including nested
-markers as JSON values. JSON remains the format for restoring a complete map.
+My Maps offers PDF, Excel (.xlsx) and the original JSON backup in a popover above
+the map cards. Excel preserves numeric and boolean cells and stores user text as
+literal strings, never formulas. It uses stable English field names and includes
+every recorded day's observation fields, including period intensity, custom
+influence factors and nested markers as JSON values. JSON remains the format for
+restoring a complete map. The CSV serializer remains available for integrations.
 
 PDF downloads directly, with landscape A4 temperature charts and complete daily
 observations on subsequent pages. Chart pages show up to 28 calendar days with gaps

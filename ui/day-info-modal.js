@@ -3,14 +3,15 @@ import { setText } from "../i18n.js";
 import { TEMP_FACTORS, formatTemp, getAdjustedTemp, qs } from "../core.js";
 import { hideModal, showModal } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
+import { BLEEDING_LABELS } from './bleeding-icons.js';
 
 const LABELS = {
   bleeding: { none: "None", spotting: "Spotting", menstruation: "Period" },
-  sensation: { "": "-", dry: "Dry", moist: "Moist", wet: "Wet" },
-  consistency: { "": "-", creamy: "Creamy", slightlyStretchy: "Slightly stretchy", stretchy: "Stretchy" },
-  color: { "": "-", white: "White", whiteTranslucent: "White-translucent", translucent: "Translucent", other: "Other" },
+  sensation: { "": "None", dry: "Dry", moist: "Moist", wet: "Wet" },
+  consistency: { "": "None", creamy: "Creamy", slightlyStretchy: "Slightly stretchy", stretchy: "Stretchy" },
+  color: { "": "No color", white: "White", whiteTranslucent: "White-translucent", translucent: "Translucent", other: "Other" },
   firmness: { "": "-", hard: "Hard", soft: "Soft" },
-  height: { "": "-", low: "Low", medium: "Medium", high: "High" },
+  height: { "": "-", low: "Low", medium: "Middle", high: "High" },
   openness: { "": "-", closed: "Closed", medium: "Medium", open: "Open" },
 };
 
@@ -28,6 +29,7 @@ export function renderDayInfo(currentColumns) {
   if (!store.selectedKey) return showMessage("Select a day first");
   const key = store.selectedKey;
   const data = store.entries[key] || {};
+  const observationLabel = (field, labels) => Object.hasOwn(data, field) ? (labels[data[field]] ?? '-') : '-';
   const column = currentColumns.find(item => item.key === key);
   setText(qs("dayInfoTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
 
@@ -39,17 +41,28 @@ export function renderDayInfo(currentColumns) {
   setText(qs("infoTemp"), data.temp == null
     ? "-"
     : `${formatTemp(data.temp)} °C${data.measurementTime ? ` at ${data.measurementTime}` : ""}${adjusted == null ? "" : ` (adjusted ${formatTemp(adjusted)} °C)`}`);
-  setText(qs("infoTempFactors"), data.tempFactors ? TEMP_FACTORS[data.tempFactors] : "-");
+  const factors = qs('infoTempFactors');
+  factors.removeAttribute?.('data-i18n');
+  factors.replaceChildren();
+  const factorLabel = document.createElement('span');
+  setText(factorLabel, data.tempFactors ? TEMP_FACTORS[data.tempFactors] : '-');
+  factors.appendChild(factorLabel);
+  if (data.tempFactors === 'other' && data.tempFactorsOther) {
+    const detail = document.createElement('span');
+    detail.textContent = `: ${data.tempFactorsOther}`;
+    factors.appendChild(detail);
+  }
   renderInfoLines(qs("infoBleeding"), [
     `Bleeding: ${LABELS.bleeding[data.bleeding] ?? "-"}`,
+    ...(BLEEDING_LABELS[data.bleedingIntensity] ? [`Period intensity: ${BLEEDING_LABELS[data.bleedingIntensity]}`] : []),
     `Clots: ${data.sediment == null ? "-" : data.sediment ? "Yes" : "No"}`,
   ]);
   renderInfoLines(qs("infoMucus"), [
-    `Sensation: ${LABELS.sensation[data.sensation ?? ""]}`,
+    `Sensation: ${observationLabel('sensation', LABELS.sensation)}`,
     `Slippery: ${data.stretch == null ? "-" : data.stretch ? "Yes" : "No"}`,
-    `Discharge: ${data.visible == null ? "-" : data.visible ? "Yes" : "None"}`,
-    `Consistency: ${LABELS.consistency[data.consistency ?? ""]}`,
-    `Color: ${LABELS.color[data.color ?? ""]}${data.colorOther ? ` (${data.colorOther})` : ""}`,
+    `Discharge: ${data.visible == null ? "-" : data.visible ? "Present" : "None"}`,
+    `Consistency: ${observationLabel('consistency', LABELS.consistency)}`,
+    `Color: ${observationLabel('color', LABELS.color)}${data.colorOther ? ` (${data.colorOther})` : ""}`,
   ]);
   renderInfoLines(qs("infoCervix"), [
     `Firmness: ${LABELS.firmness[data.cervixFirmness ?? ""]}`,

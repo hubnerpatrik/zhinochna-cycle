@@ -41,6 +41,7 @@ export function afterModalSave(modalId, render, reopen) {
 }
 
 export function syncModalUI() {
+  qsa('input[data-observation]').forEach(input => { input.checked = store.modal[input.dataset.observation] === true; });
   qsa(".segmented button").forEach(button => {
     if (button.closest(".modal")?.classList.contains("hidden")) return;
     let value = button.dataset.value;
@@ -54,6 +55,10 @@ export function syncModalUI() {
 
 export function toggleObservationChoice(group, value) {
   store.modal[group] = store.modal[group] === value ? undefined : value;
+  if (group === 'bleedingIntensity') {
+    store.modal.bleeding = store.modal.bleedingIntensity === 'spotting' ? 'spotting'
+      : store.modal.bleedingIntensity ? 'menstruation' : undefined;
+  }
   syncModalUI();
 }
 

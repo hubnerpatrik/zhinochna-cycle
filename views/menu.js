@@ -12,7 +12,7 @@ const MENU_ITEMS = [
     screen: "my-maps",
     icon: "maps",
     title: "My Maps",
-    description: "Browse saved cycle map.",
+    description: "Browse saved cycle maps.",
   },
   {
     screen: "create-map",
@@ -38,7 +38,7 @@ export function renderMenuView(container, { activeMap, onNavigate }) {
         <div class="screen-hero">
           <p class="screen-kicker" data-i18n>Main Menu</p>
           <h2 data-i18n>Start making maps</h2>
-          <p data-i18n>To create a map, go to the create map menu.</p>
+          <p data-i18n>Create a map in My Maps, or continue with your active map.</p>
         </div>
 
         <button type="button" class="screen-card menu-summary-card" data-screen="active-map" ${activeMap ? "" : "disabled"}>

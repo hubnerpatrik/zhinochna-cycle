@@ -6,6 +6,7 @@ export const feedbackImprovementMessages = {
   'Attach screenshots to feedback. Support can resolve reports beside their status.': ['K hlášení chyby přilož screenshot. Podpora může hlášení označit za vyřešené přímo u jeho stavu.', 'K hláseniu chyby prilož snímku obrazovky. Podpora môže hlásenie označiť za vyriešené priamo pri jeho stave.', 'Додавайте знімки екрана до повідомлень про проблеми. Підтримка може позначити проблему як вирішену поруч із її статусом.'],
   'Observations table': ['Tabulka pozorování', 'Tabuľka pozorovaní', 'Таблиця спостережень'],
   'Day': ['Den', 'Deň', 'День'],
+  'Date': ['Datum', 'Dátum', 'Дата'],
   'Swipe sideways to see more days. Tap a cell to select its day.': ['Posunutím do stran zobrazíš další dny. Klepnutím na buňku vybereš den.', 'Posunutím do strán zobrazíš ďalšie dni. Klepnutím na bunku vyberieš deň.', 'Гортайте вбік, щоб побачити інші дні. Торкніться клітинки, щоб вибрати день.'],
   'Tap the chart to place coverlines, then save or cancel.': ['Klepnutím do grafu umísti pomocné čáry. Potom ulož nebo zruš změny.', 'Klepnutím do grafu umiestni pomocné čiary. Potom ulož alebo zruš zmeny.', 'Торкніться графіка, щоб розмістити допоміжні лінії. Потім збережіть або скасуйте зміни.'],
   'Fit whole map': ['Zobrazit celou mapu', 'Zobraziť celú mapu', 'Показати всю карту'],

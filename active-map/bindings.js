@@ -1,4 +1,7 @@
 import { store } from "../store.js";
+import { bleedingIcon } from '../ui/bleeding-icons.js';
+import { enhanceObservationScales } from '../ui/observation-scales.js';
+import { enhanceInterfaceIcons } from '../ui/interface-icons.js';
 import { toggleObservationChoice } from "../ui/modal-shared.js";
 import { t } from "../i18n.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
@@ -38,6 +41,7 @@ import {
   selectMarkerType,
   showMessage,
   syncMeasurementTimeUI,
+  syncTempFactorsUI,
   syncModalUI,
   syncMucusModalUI,
 } from "../ui.js";
@@ -94,6 +98,9 @@ export function initializeActiveMapControls({
   syncCSSVariables();
   renderTempFactorsOptions();
   renderActionButtons();
+  qsa('[data-bleeding-icon]').forEach(icon => { icon.innerHTML = bleedingIcon(icon.dataset.bleedingIcon); });
+  enhanceObservationScales();
+  enhanceInterfaceIcons();
   enhanceTimeInputs(document);
 
   bindButton("prevMonth", () => {
@@ -235,6 +242,10 @@ export function initializeActiveMapControls({
   });
 
   const otherColor = qs("mucusColorOtherCheckbox");
+  qs('tempFactorsInput').onchange = syncTempFactorsUI;
+  qsa('input[data-observation]').forEach(input => {
+    input.onchange = () => { store.modal[input.dataset.observation] = input.checked ? true : undefined; };
+  });
   const otherColorInput = qs("mucusColorOtherInput");
   otherColor.onchange = () => {
     store.modal.color = otherColor.checked ? "other" : "";
