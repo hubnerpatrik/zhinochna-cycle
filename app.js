@@ -1,4 +1,5 @@
 import { setText } from './i18n.js';
+import { setChartWidth } from './ui/layout-classes.js';
 import { initializeFieldErrors } from './ui/field-errors.js';
 import { setupReleaseNotes } from './ui/release-notes.js';
 // Application bootstrap and top-level active-map rendering.
@@ -30,6 +31,7 @@ import {
 import { LAYOUT, chartWidth, columnX, columnCenterX, getCalendarFocusDate, qs } from "./core.js";
 
 const ZOOM_BASE = 50;
+const PERCENT_SCALE = 100;
 
 export let currentColumns = [];
 let router = null;
@@ -100,7 +102,7 @@ export function render() {
 }
 
 function renderZoomLabel() {
-  qs("zoomLabel").innerText = `${Math.round((LAYOUT.columnWidth / ZOOM_BASE) * 100)}%`;
+  qs("zoomLabel").innerText = `${Math.round((LAYOUT.columnWidth / ZOOM_BASE) * PERCENT_SCALE)}%`;
 }
 
 // Zoom changes geometry only. Keep row nodes, calendar and summary intact.
@@ -110,7 +112,7 @@ function renderZoom() {
     column.x = columnX(index);
     column.centerX = columnCenterX(index);
   });
-  qs("dayNumbers").style.width = `${chartWidth(currentColumns)}px`;
+  setChartWidth(qs("dayNumbers"), chartWidth(currentColumns));
   renderTempScale();
   chartInteractions.render();
   mobileMap.update();

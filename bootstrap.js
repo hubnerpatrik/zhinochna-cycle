@@ -1,14 +1,17 @@
 import { initializeLanguage } from "./i18n.js";
 import { initializeHelp } from './ui/help.js';
 import { configuredAuth } from "./auth/client.js";
-import { authErrorMessage, isEmailUnverified, readAuthCallback, verifiedUser } from "./auth/service.js";
+import { authErrorFields, authErrorMessage, isEmailUnverified, readAuthCallback, verifiedUser } from "./auth/service.js";
 import { configurePersistence, useAccountStorage } from "./storage/local-storage-adapter.js";
 import { CloudStorageAdapter, createCloudTransport } from "./storage/cloud-storage-adapter.js";
 import { setupCloudStatus } from "./views/cloud-status.js";
 import { renderAuthView } from "./views/auth.js";
 import { setupFeedback, concealFeedback } from './ui/feedback.js';
 import { initializeFieldErrors } from './ui/field-errors.js';
-import { authErrorFields } from './auth/service.js';
+
+const MAX_TIMER_DELAY_MS = 2_147_483_647;
+const CLOUD_CHECK_INTERVAL_MS = 45_000;
+const SESSION_CHECK_INTERVAL_MS = 60_000;
 
 const root = document.getElementById("authRoot");
 const app = document.getElementById("trackerApp");
@@ -118,7 +121,7 @@ async function enter(session, epoch = sessionEpoch) {
   }
   clearTimeout(expiryTimer);
   const untilExpiry = new Date(session.session.expiresAt).getTime() - Date.now();
-  expiryTimer = setTimeout(() => { concealApp(); void checkSession(); }, Math.min(untilExpiry, 2147483647));
+  expiryTimer = setTimeout(() => { concealApp(); void checkSession(); }, Math.min(untilExpiry, MAX_TIMER_DELAY_MS));
   root.classList.add("hidden");
   document.body.classList.remove("auth-locked");
   document.body.classList.toggle("mobile-map-active", mapModeBeforeLock);
@@ -212,8 +215,8 @@ window.addEventListener("beforeunload", event => {
 window.addEventListener("online", () => { if (activeUserId && !signingOut) void cloud?.check(); });
 setInterval(() => {
   if (activeUserId && !signingOut && document.visibilityState === "visible") void cloud?.check();
-}, 45000);
-setInterval(() => { if (activeUserId && document.visibilityState === "visible") void checkSession(); }, 60000);
+}, CLOUD_CHECK_INTERVAL_MS);
+setInterval(() => { if (activeUserId && document.visibilityState === "visible") void checkSession(); }, SESSION_CHECK_INTERVAL_MS);
 
 if (developmentAccess) {
   import("./dev/local-preview.js").then(({ startLocalPreview }) => startLocalPreview({ app, root }))

@@ -1,4 +1,5 @@
 import { setText } from './i18n.js';
+import { applyLayoutClass, setChartWidth } from './ui/layout-classes.js';
 // chart.js — Canvas rendering and coverline interaction
 // ─────────────────────────────────────────────
 // Owns all draw* functions, renderChart, and handleCanvasClick.
@@ -7,6 +8,55 @@ import { setText } from './i18n.js';
 import { store } from "./store.js";
 import { LAYOUT, qs, chartY, chartPointY, isChartTemperature, chartLineY, chartGridY, tempSlotCount, graphHeight, chartWidth, pixelYToTemp } from "./core.js";
 import { getCycleCoverlineValues, setCycleCoverlineValues } from "./domain.js";
+
+const GRID_MAJOR_INTERVAL = 5;
+const GRID_PIXEL_OFFSET = 0.5;
+const MILLISECONDS_PER_DAY = 86_400_000;
+const DASH_PATTERN = [4, 4];
+const FULL_CIRCLE_RADIANS = Math.PI * 2;
+const MIN_LABEL_COLUMN_WIDTH = 24;
+const COVERLINE_HIT_TOLERANCE = 10;
+const COVERLINE_ENDPOINT_HIT_TOLERANCE = 13;
+const ENDPOINT_OVERLAP_TOLERANCE = 0.5;
+const DEFAULT_LINE_WIDTH = 1;
+const EMPHASIZED_LINE_WIDTH = 2;
+const ANNOTATION_LINE_WIDTH = 1.5;
+const SELECTED_COVERLINE_WIDTH = 3;
+const COVERLINE_SHADOW_BLUR = 5;
+const COVERLINE_HANDLE_RADIUS = 5;
+const PEAK_POINT_RADIUS = 7;
+const INFLUENCE_POINT_RADIUS = 9;
+const TEMPERATURE_POINT_RADIUS = 4;
+const MAX_CROSS_INSET_X = 7;
+const CROSS_INSET_X_RATIO = 0.22;
+const MAX_CROSS_INSET_Y = 4;
+const CROSS_INSET_Y_RATIO = 0.3;
+const OVERFLOW_HALF_WIDTH = 5;
+const OVERFLOW_HEIGHT = 8;
+const OVERFLOW_LABEL_OFFSET = 23;
+const MEASUREMENT_TIME_OFFSET = 18;
+const OVERFLOW_MARKER_OFFSET = 38;
+const MARKER_TOP_THRESHOLD = 30;
+const MARKER_OFFSET_BELOW = 20;
+const MARKER_OFFSET_ABOVE = 14;
+const TEMPERATURE_PRECISION_FACTOR = 100;
+const TEMPERATURE_DECIMAL_PLACES = 2;
+
+function beginCoverlinePath(context, selected) {
+  context.beginPath();
+  context.setLineDash([]);
+  context.strokeStyle = selected ? 'rgba(180,20,20,1)' : 'rgba(180,20,20,0.8)';
+  context.lineWidth = selected ? SELECTED_COVERLINE_WIDTH : ANNOTATION_LINE_WIDTH;
+  context.shadowColor = selected ? 'rgba(180,20,20,0.35)' : 'transparent';
+  context.shadowBlur = selected ? COVERLINE_SHADOW_BLUR : 0;
+}
+
+function resetCoverlinePath(context) {
+  context.setLineDash([]);
+  context.shadowColor = 'transparent';
+  context.shadowBlur = 0;
+  context.lineWidth = DEFAULT_LINE_WIDTH;
+}
 
 function coverlineColumnX(column, position = "start") {
   if (position === "center") return column.centerX ?? column.x + LAYOUT.columnWidth / 2;
@@ -55,16 +105,16 @@ function getCoverlineGeometry(columns) {
   };
 }
 
-function drawCoverlineHandle(ctx, x, y) {
-  if (typeof ctx.arc !== "function" || typeof ctx.fill !== "function") return;
-  ctx.beginPath();
-  ctx.setLineDash([]);
-  ctx.fillStyle = "white";
-  ctx.strokeStyle = "rgba(180,20,20,1)";
-  ctx.lineWidth = 2;
-  ctx.arc(x, y, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
+function drawCoverlineHandle(context, x, y) {
+  if (typeof context.arc !== "function" || typeof context.fill !== "function") return;
+  context.beginPath();
+  context.setLineDash([]);
+  context.fillStyle = "white";
+  context.strokeStyle = "rgba(180,20,20,1)";
+  context.lineWidth = EMPHASIZED_LINE_WIDTH;
+  context.arc(x, y, COVERLINE_HANDLE_RADIUS, 0, FULL_CIRCLE_RADIANS);
+  context.fill();
+  context.stroke();
 }
 
 /* ─── cycle grouping ──────────────────────── */
@@ -85,104 +135,88 @@ export function groupColumnsByCycle(columns) {
 
 /* ─── grid ────────────────────────────────── */
 /** Draws vertical column separators. Every 5th line is darker. */
-export function drawVerticalGrid(ctx, columns) {
-  columns.forEach(col => {
-    const x = Math.round(col.x) + 0.5;
-    ctx.beginPath();
-    ctx.lineWidth   = 1;
-    ctx.strokeStyle = col.index % 5 === 0 ? "rgba(0,0,0,0.30)" : "rgba(0,0,0,0.10)";
-    ctx.moveTo(x, LAYOUT.chartPaddingTop);
-    ctx.lineTo(x, LAYOUT.chartHeight - LAYOUT.chartPaddingBottom);
-    ctx.stroke();
+export function drawVerticalGrid(context, columns) {
+  columns.forEach(column => {
+    const x = Math.round(column.x) + GRID_PIXEL_OFFSET;
+    context.beginPath();
+    context.lineWidth = DEFAULT_LINE_WIDTH;
+    context.strokeStyle = column.index % GRID_MAJOR_INTERVAL === 0 ? "rgba(0,0,0,0.30)" : "rgba(0,0,0,0.10)";
+    context.moveTo(x, LAYOUT.chartPaddingTop);
+    context.lineTo(x, LAYOUT.chartHeight - LAYOUT.chartPaddingBottom);
+    context.stroke();
   });
-  const lastX = chartWidth(columns) + 0.5;
-  ctx.beginPath();
-  ctx.lineWidth   = 1;
-  ctx.strokeStyle = "rgba(0,0,0,0.30)";
-  ctx.moveTo(lastX, LAYOUT.chartPaddingTop);
-  ctx.lineTo(lastX, LAYOUT.chartHeight - LAYOUT.chartPaddingBottom);
-  ctx.stroke();
-  ctx.lineWidth = 1;
+  const lastX = chartWidth(columns) + GRID_PIXEL_OFFSET;
+  context.beginPath();
+  context.lineWidth = DEFAULT_LINE_WIDTH;
+  context.strokeStyle = "rgba(0,0,0,0.30)";
+  context.moveTo(lastX, LAYOUT.chartPaddingTop);
+  context.lineTo(lastX, LAYOUT.chartHeight - LAYOUT.chartPaddingBottom);
+  context.stroke();
+  context.lineWidth = DEFAULT_LINE_WIDTH;
 }
 
 /** Draws horizontal temperature grid lines — one per 0.05°C cell boundary. Every 5th line is darker. */
-export function drawHorizontalGrid(ctx, canvasWidth) {
+export function drawHorizontalGrid(context, canvasWidth) {
   const slots = tempSlotCount();
-  for (let i = 0; i <= slots; i++) {
-    const y = Math.floor(chartGridY(i)) + 0.5;
-    ctx.beginPath();
-    ctx.lineWidth   = 1;
-    ctx.strokeStyle = i % 5 === 0 ? "rgba(0,0,0,0.30)" : "rgba(0,0,0,0.10)";
-    ctx.moveTo(0, y);
-    ctx.lineTo(canvasWidth, y);
-    ctx.stroke();
+  for (let index = 0; index <= slots; index++) {
+    const y = Math.floor(chartGridY(index)) + GRID_PIXEL_OFFSET;
+    context.beginPath();
+    context.lineWidth = DEFAULT_LINE_WIDTH;
+    context.strokeStyle = index % GRID_MAJOR_INTERVAL === 0 ? "rgba(0,0,0,0.30)" : "rgba(0,0,0,0.10)";
+    context.moveTo(0, y);
+    context.lineTo(canvasWidth, y);
+    context.stroke();
   }
-  ctx.lineWidth = 1;
+  context.lineWidth = DEFAULT_LINE_WIDTH;
 }
 
 /** Draws the manually placed vertical coverline with independently resizable endpoints. */
-export function drawVerticalCoverline(ctx, columns, selected = false) {
+export function drawVerticalCoverline(context, columns, selected = false) {
   const { vertical } = getCoverlineGeometry(columns);
   if (!vertical) return;
 
-  ctx.beginPath();
-  ctx.setLineDash([]);
-  ctx.strokeStyle = selected ? "rgba(180,20,20,1)" : "rgba(180,20,20,0.8)";
-  ctx.lineWidth = selected ? 3 : 1.5;
-  ctx.shadowColor = selected ? "rgba(180,20,20,0.35)" : "transparent";
-  ctx.shadowBlur = selected ? 5 : 0;
+  beginCoverlinePath(context, selected);
 
-  ctx.moveTo(vertical.x, vertical.topY);
-  ctx.lineTo(vertical.x, vertical.bottomY);
+  context.moveTo(vertical.x, vertical.topY);
+  context.lineTo(vertical.x, vertical.bottomY);
 
-  ctx.stroke();
+  context.stroke();
   if (selected) {
-    drawCoverlineHandle(ctx, vertical.x, vertical.topY);
-    drawCoverlineHandle(ctx, vertical.x, vertical.bottomY);
+    drawCoverlineHandle(context, vertical.x, vertical.topY);
+    drawCoverlineHandle(context, vertical.x, vertical.bottomY);
   }
 
-  ctx.setLineDash([]);
-  ctx.shadowColor = "transparent";
-  ctx.shadowBlur = 0;
-  ctx.lineWidth = 1;
+  resetCoverlinePath(context);
 }
 
 /** Draws the manually placed horizontal coverline with independently resizable endpoints. */
-export function drawHorizontalCoverline(ctx, columns, selected = false) {
+export function drawHorizontalCoverline(context, columns, selected = false) {
   const { horizontal } = getCoverlineGeometry(columns);
   if (!horizontal) return;
 
-  ctx.beginPath();
-  ctx.setLineDash([]);
-  ctx.strokeStyle = selected ? "rgba(180,20,20,1)" : "rgba(180,20,20,0.8)";
-  ctx.lineWidth = selected ? 3 : 1.5;
-  ctx.shadowColor = selected ? "rgba(180,20,20,0.35)" : "transparent";
-  ctx.shadowBlur = selected ? 5 : 0;
+  beginCoverlinePath(context, selected);
 
-  ctx.moveTo(horizontal.startX, horizontal.y);
-  ctx.lineTo(horizontal.endX, horizontal.y);
+  context.moveTo(horizontal.startX, horizontal.y);
+  context.lineTo(horizontal.endX, horizontal.y);
 
-  ctx.stroke();
+  context.stroke();
   if (selected) {
-    drawCoverlineHandle(ctx, horizontal.startX, horizontal.y);
-    drawCoverlineHandle(ctx, horizontal.endX, horizontal.y);
+    drawCoverlineHandle(context, horizontal.startX, horizontal.y);
+    drawCoverlineHandle(context, horizontal.endX, horizontal.y);
   }
 
-  ctx.setLineDash([]);
-  ctx.shadowColor = "transparent";
-  ctx.shadowBlur = 0;
-  ctx.lineWidth = 1;
+  resetCoverlinePath(context);
 }
 
 /* ─── overlays ────────────────────────────── */
 
 /** Fills day columns with optional color overlays. */
-export function drawOverlayBands(ctx, columns) {
-  columns.forEach(col => {
-    if (!col.isFertile) return;
-    ctx.fillStyle = "rgba(207,231,180,0.28)";
-    ctx.fillRect(
-      col.x,
+export function drawOverlayBands(context, columns) {
+  columns.forEach(column => {
+    if (!column.isFertile) return;
+    context.fillStyle = "rgba(207,231,180,0.28)";
+    context.fillRect(
+      column.x,
       LAYOUT.chartPaddingTop,
       LAYOUT.columnWidth,
       LAYOUT.chartHeight - LAYOUT.chartPaddingTop - LAYOUT.chartPaddingBottom,
@@ -191,230 +225,230 @@ export function drawOverlayBands(ctx, columns) {
 }
 
 /** Draws an ascending diagonal inside every chart grid cell marked by the user. */
-export function drawCrossedChartCells(ctx, columns) {
-  columns.forEach(col => {
+export function drawCrossedChartCells(context, columns) {
+  columns.forEach(column => {
     const temps = store.crossCellSelectionMode
-      ? store.crossCellDraft?.[col.key]
-      : store.entries[col.key]?.crossedChartTemps;
+      ? store.crossCellDraft?.[column.key]
+      : store.entries[column.key]?.crossedChartTemps;
     if (!Array.isArray(temps)) return;
 
     temps.forEach(temp => {
       const centerY = chartY(temp);
-      const insetX = Math.min(7, LAYOUT.columnWidth * 0.22);
+      const insetX = Math.min(MAX_CROSS_INSET_X, LAYOUT.columnWidth * CROSS_INSET_X_RATIO);
       const cellHalfHeight = graphHeight() / tempSlotCount() / 2;
-      const insetY = Math.min(4, cellHalfHeight * 0.3);
-      const left = col.x + insetX;
-      const right = col.x + LAYOUT.columnWidth - insetX;
+      const insetY = Math.min(MAX_CROSS_INSET_Y, cellHalfHeight * CROSS_INSET_Y_RATIO);
+      const left = column.x + insetX;
+      const right = column.x + LAYOUT.columnWidth - insetX;
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(22,163,74,0.78)";
-      ctx.lineWidth = 1.5;
-      ctx.moveTo(left, centerY + cellHalfHeight - insetY);
-      ctx.lineTo(right, centerY - cellHalfHeight + insetY);
-      ctx.stroke();
+      context.beginPath();
+      context.strokeStyle = "rgba(22,163,74,0.78)";
+      context.lineWidth = ANNOTATION_LINE_WIDTH;
+      context.moveTo(left, centerY + cellHalfHeight - insetY);
+      context.lineTo(right, centerY - cellHalfHeight + insetY);
+      context.stroke();
     });
   });
-  ctx.lineWidth = 1;
+  context.lineWidth = DEFAULT_LINE_WIDTH;
 }
 
 /** Highlights the currently selected column. */
-export function drawSelectedHighlight(ctx, columns) {
+export function drawSelectedHighlight(context, columns) {
   if (!store.selectedKey) return;
-  const col = columns.find(c => c.key === store.selectedKey);
-  if (!col) return;
-  ctx.fillStyle = "rgba(37,99,235,0.08)";
-  ctx.fillRect(col.x, 0, LAYOUT.columnWidth, LAYOUT.chartHeight);
+  const column = columns.find(candidate => candidate.key === store.selectedKey);
+  if (!column) return;
+  context.fillStyle = "rgba(37,99,235,0.08)";
+  context.fillRect(column.x, 0, LAYOUT.columnWidth, LAYOUT.chartHeight);
 }
 
 /** Draws a vertical hover line on the currently hovered column. */
-export function drawHoverLine(ctx, columns) {
+export function drawHoverLine(context, columns) {
   if (!store.hoveredKey) return;
-  const col = columns.find(c => c.key === store.hoveredKey);
-  if (!col) return;
-  ctx.beginPath();
-  ctx.strokeStyle = "rgba(37,99,235,0.45)";
-  ctx.moveTo(col.centerX, 0);
-  ctx.lineTo(col.centerX, LAYOUT.chartHeight);
-  ctx.stroke();
+  const column = columns.find(candidate => candidate.key === store.hoveredKey);
+  if (!column) return;
+  context.beginPath();
+  context.strokeStyle = "rgba(37,99,235,0.45)";
+  context.moveTo(column.centerX, 0);
+  context.lineTo(column.centerX, LAYOUT.chartHeight);
+  context.stroke();
 }
 
 /** Draws vertical separators between cycle groups. */
-export function drawCycleSeparators(ctx, cycleGroups) {
+export function drawCycleSeparators(context, cycleGroups) {
   cycleGroups.slice(1).forEach(group => {
-    const x = group.columns[0].x - 0.5;
-    ctx.beginPath();
-    ctx.setLineDash([]);
-    ctx.strokeStyle = "#b41414";
-    ctx.lineWidth = 2;
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, LAYOUT.chartHeight);
-    ctx.stroke();
+    const x = group.columns[0].x - GRID_PIXEL_OFFSET;
+    context.beginPath();
+    context.setLineDash([]);
+    context.strokeStyle = "#b41414";
+    context.lineWidth = EMPHASIZED_LINE_WIDTH;
+    context.moveTo(x, 0);
+    context.lineTo(x, LAYOUT.chartHeight);
+    context.stroke();
   });
 }
 
 /* ─── temperature data ────────────────────── */
 
 /** Draws the temperature line — one path per cycle group to avoid cross-cycle connections. */
-export function drawTemperatureLine(ctx, cycleGroups) {
+export function drawTemperatureLine(context, cycleGroups) {
   cycleGroups.forEach(group => {
-    const valid = group.columns.filter(c => c.temp != null);
+    const valid = group.columns.filter(candidate => candidate.temp != null);
     if (valid.length < 2) return;
 
-    ctx.strokeStyle = "#111";
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
+    context.strokeStyle = "#111";
+    context.lineWidth = EMPHASIZED_LINE_WIDTH;
+    context.lineCap = "round";
+    context.lineJoin = "round";
 
-    valid.forEach((col, i) => {
-      if (i === 0) return;
-      const prev = valid[i - 1];
+    valid.forEach((column, index) => {
+      if (index === 0) return;
+      const previousColumn = valid[index - 1];
       // An out-of-scale reading is explicitly labelled, never joined as a normal point.
-      if (!isChartTemperature(prev.temp) || !isChartTemperature(col.temp)) return;
-      const prevY = chartY(prev.temp);
-      const colY = chartY(col.temp);
+      if (!isChartTemperature(previousColumn.temp) || !isChartTemperature(column.temp)) return;
+      const previousY = chartY(previousColumn.temp);
+      const columnY = chartY(column.temp);
 
-      const daysBetween = (col.date - prev.date) / 86_400_000;
+      const daysBetween = (column.date - previousColumn.date) / MILLISECONDS_PER_DAY;
 
-      ctx.beginPath();
-      ctx.moveTo(prev.centerX, prevY);
-      ctx.lineTo(col.centerX, colY);
-      ctx.setLineDash(daysBetween > 1 ? [4, 4] : []);
-      ctx.stroke();
+      context.beginPath();
+      context.moveTo(previousColumn.centerX, previousY);
+      context.lineTo(column.centerX, columnY);
+      context.setLineDash(daysBetween > 1 ? DASH_PATTERN : []);
+      context.stroke();
     });
 
-    ctx.setLineDash([]);
+    context.setLineDash([]);
   });
-  ctx.lineWidth = 1;
+  context.lineWidth = DEFAULT_LINE_WIDTH;
 }
 
 /** Draws a dot at each temperature reading. Selected day dot is highlighted in blue. If influence factors are present, a larger red dot is drawn. */
-export function drawTemperaturePoints(ctx, columns) {
-  columns.forEach(col => {
-    if (col.temp == null) return;
+export function drawTemperaturePoints(context, columns) {
+  columns.forEach(column => {
+    if (column.temp == null) return;
 
-    const pointY = chartPointY(col.temp);
-    if (!isChartTemperature(col.temp)) {
-      drawOverflowTemperature(ctx, col, col.temp, '#b43c45');
+    const pointY = chartPointY(column.temp);
+    if (!isChartTemperature(column.temp)) {
+      drawOverflowTemperature(context, column, column.temp, '#b43c45');
       return;
     }
-    const markerY = col.markers?.bbt?.pointType === "adjusted" && col.adjustedTemp != null
-      ? chartPointY(col.adjustedTemp)
+    const markerY = column.markers?.bbt?.pointType === "adjusted" && column.adjustedTemp != null
+      ? chartPointY(column.adjustedTemp)
       : pointY;
 
-    if (col.isPeak) {
-      ctx.beginPath();
-      ctx.arc(col.centerX, markerY, 7, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(22,163,74,0.75)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
+    if (column.isPeak) {
+      context.beginPath();
+      context.arc(column.centerX, markerY, PEAK_POINT_RADIUS, 0, FULL_CIRCLE_RADIANS);
+      context.strokeStyle = "rgba(22,163,74,0.75)";
+      context.lineWidth = EMPHASIZED_LINE_WIDTH;
+      context.stroke();
     }
 
-    const hasFactors = Boolean(col.tempFactors?.trim());
+    const hasFactors = Boolean(column.tempFactors?.trim());
 
     if (hasFactors) {
-      ctx.beginPath();
-      ctx.arc(col.centerX, pointY, 9, 0, Math.PI * 2);
-      ctx.strokeStyle = "#ff0000";
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      context.beginPath();
+      context.arc(column.centerX, pointY, INFLUENCE_POINT_RADIUS, 0, FULL_CIRCLE_RADIANS);
+      context.strokeStyle = "#ff0000";
+      context.lineWidth = EMPHASIZED_LINE_WIDTH;
+      context.stroke();
     }
 
-    ctx.beginPath();
-    ctx.arc(col.centerX, pointY, 4, 0, Math.PI * 2);
-    ctx.fillStyle = "#111";
-    ctx.fill();
+    context.beginPath();
+    context.arc(column.centerX, pointY, TEMPERATURE_POINT_RADIUS, 0, FULL_CIRCLE_RADIANS);
+    context.fillStyle = "#111";
+    context.fill();
   });
 
-  ctx.lineWidth = 1;
+  context.lineWidth = DEFAULT_LINE_WIDTH;
 }
 
-function drawOverflowTemperature(ctx, col, temp, color) {
+function drawOverflowTemperature(context, column, temp, color) {
   const y = chartPointY(temp);
   const direction = temp > LAYOUT.maxTemp ? 1 : -1;
-  ctx.beginPath();
-  ctx.moveTo(col.centerX, y);
-  ctx.lineTo(col.centerX - 5, y + direction * 8);
-  ctx.lineTo(col.centerX + 5, y + direction * 8);
-  ctx.closePath();
-  ctx.fillStyle = color;
-  ctx.fill();
-  if (LAYOUT.columnWidth >= 24 || col.key === store.selectedKey) {
-    ctx.font = 'bold 10px Inter';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${temp.toFixed(2)}°`, col.centerX, y + direction * 23);
+  context.beginPath();
+  context.moveTo(column.centerX, y);
+  context.lineTo(column.centerX - OVERFLOW_HALF_WIDTH, y + direction * OVERFLOW_HEIGHT);
+  context.lineTo(column.centerX + OVERFLOW_HALF_WIDTH, y + direction * OVERFLOW_HEIGHT);
+  context.closePath();
+  context.fillStyle = color;
+  context.fill();
+  if (LAYOUT.columnWidth >= MIN_LABEL_COLUMN_WIDTH || column.key === store.selectedKey) {
+    context.font = 'bold 10px Inter';
+    context.textAlign = 'center';
+    context.fillText(`${temp.toFixed(TEMPERATURE_DECIMAL_PLACES)}°`, column.centerX, y + direction * OVERFLOW_LABEL_OFFSET);
   }
 }
 
 /** Draws a secondary dot for the time-adjusted temperature — connects it to the measured point with a dashed blue line. */
-export function drawAdjustedTemperaturePoints(ctx, columns) {
-  columns.forEach(col => {
-    if (col.adjustedTemp == null || col.temp == null) return;
+export function drawAdjustedTemperaturePoints(context, columns) {
+  columns.forEach(column => {
+    if (column.adjustedTemp == null || column.temp == null) return;
     // When the measurement itself overflows, its actual value takes precedence.
-    if (!isChartTemperature(col.temp)) return;
-    if (!isChartTemperature(col.adjustedTemp)) {
-      drawOverflowTemperature(ctx, col, col.adjustedTemp, '#2563eb');
+    if (!isChartTemperature(column.temp)) return;
+    if (!isChartTemperature(column.adjustedTemp)) {
+      drawOverflowTemperature(context, column, column.adjustedTemp, '#2563eb');
       return;
     }
 
-    const baseY = chartY(col.temp);
-    const adjY = chartY(col.adjustedTemp);
+    const baseY = chartY(column.temp);
+    const adjustedY = chartY(column.adjustedTemp);
 
-    ctx.beginPath();
-    ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = "#2563eb";
-    ctx.lineWidth = 1.5;
-    ctx.moveTo(col.centerX, baseY);
-    ctx.lineTo(col.centerX, adjY);
-    ctx.stroke();
+    context.beginPath();
+    context.setLineDash(DASH_PATTERN);
+    context.strokeStyle = "#2563eb";
+    context.lineWidth = ANNOTATION_LINE_WIDTH;
+    context.moveTo(column.centerX, baseY);
+    context.lineTo(column.centerX, adjustedY);
+    context.stroke();
 
-    ctx.setLineDash([]);
-    ctx.beginPath();
-    ctx.arc(col.centerX, adjY, 4, 0, Math.PI * 2);
-    ctx.fillStyle = "#2563eb";
-    ctx.fill();
+    context.setLineDash([]);
+    context.beginPath();
+    context.arc(column.centerX, adjustedY, TEMPERATURE_POINT_RADIUS, 0, FULL_CIRCLE_RADIANS);
+    context.fillStyle = "#2563eb";
+    context.fill();
   });
 
-  ctx.lineWidth = 1;
+  context.lineWidth = DEFAULT_LINE_WIDTH;
 }
 
 /** Draws the measurement time label under a temperature dot, when set. */
-export function drawMeasurementTimes(ctx, columns) {
-  columns.forEach(col => {
-    if (LAYOUT.columnWidth < 24 && col.key !== store.selectedKey) return;
-    if (col.temp == null || !col.measurementTime) return;
-    if (!isChartTemperature(col.temp)) return;
-    const pointY = chartY(col.temp);
-    ctx.font = "10px Inter";
-    ctx.fillStyle = "#8e8e93";
-    ctx.textAlign = "center";
-    ctx.fillText(col.measurementTime, col.centerX, pointY + 18);
+export function drawMeasurementTimes(context, columns) {
+  columns.forEach(column => {
+    if (LAYOUT.columnWidth < MIN_LABEL_COLUMN_WIDTH && column.key !== store.selectedKey) return;
+    if (column.temp == null || !column.measurementTime) return;
+    if (!isChartTemperature(column.temp)) return;
+    const pointY = chartY(column.temp);
+    context.font = "10px Inter";
+    context.fillStyle = "#8e8e93";
+    context.textAlign = "center";
+    context.fillText(column.measurementTime, column.centerX, pointY + MEASUREMENT_TIME_OFFSET);
   });
 }
 /** Draws anomaly marker labels above (or below, if that would overlap the other dot) the anchor temperature dot. */
-export function drawMarkers(ctx, columns) {
-  columns.forEach(col => {
-    const marker = col.markers?.bbt;
-    if (col.temp == null || !marker?.value) return;
+export function drawMarkers(context, columns) {
+  columns.forEach(column => {
+    const marker = column.markers?.bbt;
+    if (column.temp == null || !marker?.value) return;
 
-    const usingAdjusted = marker.pointType === "adjusted" && col.adjustedTemp != null;
-    const markerY = usingAdjusted ? chartPointY(col.adjustedTemp) : chartPointY(col.temp);
+    const usingAdjusted = marker.pointType === "adjusted" && column.adjustedTemp != null;
+    const markerY = usingAdjusted ? chartPointY(column.adjustedTemp) : chartPointY(column.temp);
 
     // flip label below the dot when the anchor sits lower than its counterpart, to avoid overlapping it
     let labelBelow = false;
-    if (col.adjustedTemp != null) {
-      const tempY = chartY(col.temp);
-      const adjY = chartY(col.adjustedTemp);
-      labelBelow = usingAdjusted ? adjY > tempY : tempY > adjY;
+    if (column.adjustedTemp != null) {
+      const tempY = chartY(column.temp);
+      const adjustedY = chartY(column.adjustedTemp);
+      labelBelow = usingAdjusted ? adjustedY > tempY : tempY > adjustedY;
     }
 
-    ctx.font = "bold 14px Inter";
-    ctx.fillStyle = "#16a34a";
-    ctx.textAlign = "center";
-    const markerTemp = usingAdjusted ? col.adjustedTemp : col.temp;
+    context.font = "bold 14px Inter";
+    context.fillStyle = "#16a34a";
+    context.textAlign = "center";
+    const markerTemp = usingAdjusted ? column.adjustedTemp : column.temp;
     const labelY = !isChartTemperature(markerTemp)
-      ? markerY + (markerTemp > LAYOUT.maxTemp ? 38 : -38)
-      : markerY < 30 || labelBelow ? markerY + 20 : markerY - 14;
-    ctx.fillText(marker.value, col.centerX, labelY);
+      ? markerY + (markerTemp > LAYOUT.maxTemp ? OVERFLOW_MARKER_OFFSET : -OVERFLOW_MARKER_OFFSET)
+      : markerY < MARKER_TOP_THRESHOLD || labelBelow ? markerY + MARKER_OFFSET_BELOW : markerY - MARKER_OFFSET_ABOVE;
+    context.fillText(marker.value, column.centerX, labelY);
   });
 }
 
@@ -425,43 +459,40 @@ export function renderChart(columns, { coverlineSelected = false } = {}) {
   const canvas = qs("tempChart");
   if (!canvas) return;
 
-  const width       = chartWidth(columns);
-  const dpr         = window.devicePixelRatio || 1;
-  const ctx         = canvas.getContext("2d");
+  const width = chartWidth(columns);
+  const pixelRatio = window.devicePixelRatio || 1;
+  const context = canvas.getContext("2d");
   const cycleGroups = groupColumnsByCycle(columns);
 
-  canvas.style.width  = `${width}px`;
-  canvas.style.height = `${LAYOUT.chartHeight}px`;
+  setChartWidth(canvas, width);
+  applyLayoutClass(canvas, 'chart-height', { '--rendered-chart-height': LAYOUT.chartHeight });
   canvas.classList.toggle("cross-cell-selection-mode", store.crossCellSelectionMode);
-  canvas.width        = width * dpr;
-  canvas.height       = LAYOUT.chartHeight * dpr;
+  canvas.width        = width * pixelRatio;
+  canvas.height       = LAYOUT.chartHeight * pixelRatio;
 
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.scale(dpr, dpr);
-  ctx.clearRect(0, 0, width, LAYOUT.chartHeight);
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  context.scale(pixelRatio, pixelRatio);
+  context.clearRect(0, 0, width, LAYOUT.chartHeight);
 
   // draw order matters: bg → overlays → grid → annotations → data
-  drawSelectedHighlight(ctx, columns);
-  drawOverlayBands(ctx, columns);
-  drawVerticalGrid(ctx, columns);
-  drawHorizontalGrid(ctx, width);
-  drawCrossedChartCells(ctx, columns);
-  drawCycleSeparators(ctx, cycleGroups);
-  drawHoverLine(ctx, columns);
-  drawHorizontalCoverline(ctx, columns, coverlineSelected);
-  drawVerticalCoverline(ctx, columns, coverlineSelected);
-  drawTemperatureLine(ctx, cycleGroups);
-  drawTemperaturePoints(ctx, columns);
-  drawAdjustedTemperaturePoints(ctx, columns);
+  drawSelectedHighlight(context, columns);
+  drawOverlayBands(context, columns);
+  drawVerticalGrid(context, columns);
+  drawHorizontalGrid(context, width);
+  drawCrossedChartCells(context, columns);
+  drawCycleSeparators(context, cycleGroups);
+  drawHoverLine(context, columns);
+  drawHorizontalCoverline(context, columns, coverlineSelected);
+  drawVerticalCoverline(context, columns, coverlineSelected);
+  drawTemperatureLine(context, cycleGroups);
+  drawTemperaturePoints(context, columns);
+  drawAdjustedTemperaturePoints(context, columns);
 
-  drawMeasurementTimes(ctx, columns);
-  drawMarkers(ctx, columns);
+  drawMeasurementTimes(context, columns);
+  drawMarkers(context, columns);
 }
 
 /* ─── coverline interaction ───────────────── */
-
-const COVERLINE_HIT_TOLERANCE = 10;
-const COVERLINE_ENDPOINT_HIT_TOLERANCE = 13;
 
 /** Returns a coverline body or endpoint at a chart position. Endpoints take priority. */
 export function getCoverlineDragTarget(x, y, columns, tolerance = COVERLINE_HIT_TOLERANCE) {
@@ -487,7 +518,7 @@ export function getCoverlineDragTarget(x, y, columns, tolerance = COVERLINE_HIT_
   if (endpointHits.length) {
     const nearest = endpointHits[0];
     const overlapping = endpointHits.filter(endpoint =>
-      Math.abs(endpoint.x - nearest.x) < 0.5 && Math.abs(endpoint.y - nearest.y) < 0.5);
+      Math.abs(endpoint.x - nearest.x) < ENDPOINT_OVERLAP_TOLERANCE && Math.abs(endpoint.y - nearest.y) < ENDPOINT_OVERLAP_TOLERANCE);
     if (overlapping.length > 1) {
       const preferredAxis = Math.abs(x - nearest.x) >= Math.abs(y - nearest.y)
         ? "horizontal"
@@ -536,8 +567,8 @@ function pixelXToCoverlineAnchor(x, columns) {
 
 function coverlineTempFromY(y, allowTopBoundary = false) {
   const maximum = Math.round(
-    (LAYOUT.maxTemp + (allowTopBoundary ? LAYOUT.tempStep : 0)) * 100,
-  ) / 100;
+    (LAYOUT.maxTemp + (allowTopBoundary ? LAYOUT.tempStep : 0)) * TEMPERATURE_PRECISION_FACTOR,
+  ) / TEMPERATURE_PRECISION_FACTOR;
   return Math.min(maximum, Math.max(LAYOUT.minTemp, pixelYToTemp(y)));
 }
 
@@ -591,7 +622,7 @@ export function placeCoverlinesAt(x, y, columns) {
     horizontalEndPosition: "end",
     verticalKey: anchor.key,
     verticalPosition: anchor.position,
-    verticalTopTemp: Math.round((LAYOUT.maxTemp + LAYOUT.tempStep) * 100) / 100,
+    verticalTopTemp: Math.round((LAYOUT.maxTemp + LAYOUT.tempStep) * TEMPERATURE_PRECISION_FACTOR) / TEMPERATURE_PRECISION_FACTOR,
     verticalBottomTemp: temp,
   });
   return true;
@@ -612,11 +643,11 @@ export function handleCanvasClick(x, y, columns) {
   store.horizontalCoverlineMode = false;
   store.verticalCoverlineMode = false;
 
-  const btn = qs("coverlineBtn");
-  if (btn) {
-    btn.classList.remove("active");
-    setText(btn, "Coverlines");
-    btn.setAttribute("aria-pressed", "false");
+  const coverlineButton = qs("coverlineBtn");
+  if (coverlineButton) {
+    coverlineButton.classList.remove("active");
+    setText(coverlineButton, "Coverlines");
+    coverlineButton.setAttribute("aria-pressed", "false");
   }
   return true;
 }

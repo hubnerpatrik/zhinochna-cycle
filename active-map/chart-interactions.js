@@ -9,6 +9,9 @@ import {
 } from "../chart.js";
 import { chartPointY, pixelXToColumnKey, pixelYToChartCellTemp, qs } from "../core.js";
 
+const POINT_HIT_RADIUS = 18;
+const MARKER_HINT_DELAY_MS = 300;
+
 export function canvasPointerPosition(event, canvas) {
   const rect = canvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return null;
@@ -21,7 +24,7 @@ export function canvasPointerPosition(event, canvas) {
 
 export function pixelToPointColumnHit(x, y, columns) {
   let closest = null;
-  let minimumDistance = 18;
+  let minimumDistance = POINT_HIT_RADIUS;
   columns.forEach(column => {
     [[column.temp, "temp"], [column.adjustedTemp, "adjusted"]].forEach(([temp, type]) => {
       if (temp == null) return;
@@ -252,7 +255,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       markerButton.classList.add("active");
       markerHintTimer = setTimeout(() => {
         if (store.markerSelectionMode) showPersistentHint("Click a day on the chart to choose a marker day.");
-      }, 300);
+      }, MARKER_HINT_DELAY_MS);
     };
 
     qs("crossCellsActionBtn").onclick = () => {

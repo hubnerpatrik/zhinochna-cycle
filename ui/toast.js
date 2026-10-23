@@ -1,6 +1,8 @@
 import { setText } from '../i18n.js';
 import { qs } from "../core.js";
 
+const DEFAULT_MESSAGE_DURATION_MS = 2200;
+
 let toastTimer = null;
 let toastFrame = null;
 
@@ -18,7 +20,7 @@ export function hideMessage() {
 }
 
 /** Shows a temporary message banner. Used for blocked actions and validation errors. */
-export function showMessage(text, duration = 2200) {
+export function showMessage(text, duration = DEFAULT_MESSAGE_DURATION_MS) {
   if (!String(text).trim()) { hideMessage(); return; }
   const toast = qs("toast");
   if (!toast) return;

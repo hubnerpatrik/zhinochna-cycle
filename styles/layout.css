@@ -1,0 +1,9 @@
+/* Runtime geometry is supplied by named stylesheet classes in layout-classes.js. */
+.layout-chart-width { width: var(--rendered-chart-width); }
+.layout-chart-height { height: var(--rendered-chart-height); }
+.temp-scale-label { top: var(--temperature-label-top); }
+.positioned-overlay { left: var(--overlay-left); top: var(--overlay-top); }
+
+/* Only the graph skips crowded labels; the observation table retains all days. */
+#dayNumbers .is-crowded-label { color: transparent; }
+.profile-photo-placeholder svg.has-profile-photo { display: none; }

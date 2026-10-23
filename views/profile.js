@@ -139,7 +139,7 @@ export function renderProfileScreen(container, {
     photoImage.hidden = !photo;
     if (photo) photoImage.src = photo;
     else photoImage.removeAttribute('src');
-    placeholder.style.display = photo ? 'none' : '';
+    placeholder.classList.toggle('has-profile-photo', Boolean(photo));
     removePhoto.disabled = !photo && !processingPhoto;
     submit.disabled = processingPhoto;
   };

@@ -4,24 +4,47 @@ import { openCycleSummary } from "../ui/cycle-summary.js";
 import { openProfileInfo } from "../ui/profile-info-modal.js";
 import { cycleStarts } from "../cycle-summary.js";
 import { buildColumns } from '../domain.js';
-import { LAYOUT, TEMP_FACTORS, chartY, formatDateKey, formatTemp, parseDateKey, qs, syncCSSVariables } from "../core.js";
+import { DEFAULT_LAYOUT, LAYOUT, TEMP_FACTORS, chartY, formatDateKey, formatTemp, parseDateKey, qs, syncCSSVariables } from "../core.js";
+import { applyLayoutClass } from '../ui/layout-classes.js';
+import { ZOOM_MIN, ZOOM_MAX, clampZoom } from './map-gestures.js';
 
-export function fittedColumnWidth(viewportWidth, count, axisWidth = 48) {
-  return Math.max(1, viewportWidth - axisWidth - 2) / Math.max(1, count);
+const MOBILE_BREAKPOINT = 560;
+const MOBILE_AXIS_WIDTH = 48;
+const CHART_BORDER_WIDTH = 2;
+const MIN_READABLE_COLUMN_WIDTH = 32;
+const MAX_READABLE_COLUMN_WIDTH = 56;
+const INITIAL_CHART_HEIGHT = 340;
+const MIN_EXPANDED_CHART_HEIGHT = 240;
+const EXPANDED_CHART_RESERVED_HEIGHT = 120;
+const MIN_CHART_HEIGHT = 320;
+const MAX_CHART_HEIGHT = 560;
+const CHART_RESERVED_HEIGHT = 110;
+const SCREEN_HORIZONTAL_PADDING = 16;
+const PLOT_EXTRA_HEIGHT = 30;
+const MIN_LABEL_SPACING = 28;
+const TOOL_MIN_COLUMN_WIDTH = 28;
+const TOOL_SCROLL_LEFT_PADDING = 70;
+const TOOL_SCROLL_TOP_PADDING = 28;
+const DEFAULT_TOOL_TEMPERATURE = 36.7;
+const MOBILE_ZOOM_FACTOR = 1.35;
+const DESKTOP_ZOOM_STEP = 8;
+
+export function fittedColumnWidth(viewportWidth, count, axisWidth = MOBILE_AXIS_WIDTH) {
+  return Math.max(1, viewportWidth - axisWidth - CHART_BORDER_WIDTH) / Math.max(1, count);
 }
 
 export function readableColumnWidth(viewportWidth, count) {
-  return Math.min(56, Math.max(32, fittedColumnWidth(viewportWidth, count)));
+  return Math.min(MAX_READABLE_COLUMN_WIDTH, Math.max(MIN_READABLE_COLUMN_WIDTH, fittedColumnWidth(viewportWidth, count)));
 }
 
 export function createMobileMap({ render, getColumns, interactions }) {
-  const media = window.matchMedia("(max-width: 560px)");
+  const media = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
   const views = new Map();
   let ready = false;
   let desktopWidth = LAYOUT.columnWidth;
-  let fitWidth = 50;
-  let fitHeight = 340;
-  let raf = null;
+  let fitWidth = DEFAULT_LAYOUT.columnWidth;
+  let fitHeight = INITIAL_CHART_HEIGHT;
+  let renderFrame = null;
   let toastHome;
   let rowsHome;
   const active = () => media.matches && !qs("activeMapScreen")?.classList.contains("hidden");
@@ -31,8 +54,8 @@ export function createMobileMap({ render, getColumns, interactions }) {
     return views.get(id);
   };
   const schedule = () => {
-    if (raf !== null || !active()) return;
-    raf = requestAnimationFrame(() => { raf = null; render(); });
+    if (renderFrame !== null || !active()) return;
+    renderFrame = requestAnimationFrame(() => { renderFrame = null; render(); });
   };
   function switchTab(tab) {
     const scroll = document.querySelector(".map-scroll");
@@ -71,7 +94,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
       const chartScroll = document.querySelector('.map-scroll');
       const tableScroll = qs('mobileObservationScroll');
       let scrollSource = null, scrollFrame = null;
-      for (const [source, target] of [[chartScroll, tableScroll], [tableScroll, chartScroll]]) {
+      [[chartScroll, tableScroll], [tableScroll, chartScroll]].forEach(([source, target]) => {
         source.addEventListener('scroll', () => {
           if (!active() || (scrollSource && scrollSource !== source)) return;
           scrollSource = source;
@@ -79,7 +102,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
           if (scrollFrame !== null) cancelAnimationFrame(scrollFrame);
           scrollFrame = requestAnimationFrame(() => { scrollSource = null; scrollFrame = null; });
         }, { passive: true });
-      }
+      });
       qs("mobileSaveBtn").onclick = () => qs("saveActiveMapBtn").click();
       qs("mobileDayBtn").onclick = () => qs("editBtn").click();
       qs("mobileTools").onclick = () => {
@@ -122,11 +145,11 @@ export function createMobileMap({ render, getColumns, interactions }) {
           const id = button.dataset.mobileTool;
           if (id !== "fertileRangeActionBtn") {
             switchTab("graph");
-            view().zoom = Math.max(view().zoom, 28 / fitWidth);
+            view().zoom = Math.max(view().zoom, TOOL_MIN_COLUMN_WIDTH / fitWidth);
             render();
             const index = getColumns().findIndex(column => column.key === store.selectedKey);
-            document.querySelector(".map-scroll").scrollLeft = Math.max(0, index * LAYOUT.columnWidth - 70);
-            document.querySelector(".map-scroll").scrollTop = Math.max(0, chartY(store.entries[store.selectedKey]?.temp ?? 36.7) - fitHeight / 2 + 28);
+            chartScroll.scrollLeft = Math.max(0, index * LAYOUT.columnWidth - TOOL_SCROLL_LEFT_PADDING);
+            chartScroll.scrollTop = Math.max(0, chartY(store.entries[store.selectedKey]?.temp ?? DEFAULT_TOOL_TEMPERATURE) - fitHeight / 2 + TOOL_SCROLL_TOP_PADDING);
           }
           qs(id).click();
         };
@@ -139,7 +162,9 @@ export function createMobileMap({ render, getColumns, interactions }) {
         if (media.matches) desktopWidth = LAYOUT.columnWidth;
         else {
           LAYOUT.columnWidth = desktopWidth;
-          LAYOUT.chartHeight = 840; LAYOUT.sideLabelWidth = 96; LAYOUT.tempScaleWidth = 72;
+          LAYOUT.chartHeight = DEFAULT_LAYOUT.chartHeight;
+          LAYOUT.sideLabelWidth = DEFAULT_LAYOUT.sideLabelWidth;
+          LAYOUT.tempScaleWidth = DEFAULT_LAYOUT.tempScaleWidth;
           syncCSSVariables();
         }
         render();
@@ -166,18 +191,19 @@ export function createMobileMap({ render, getColumns, interactions }) {
         if (state.tab === "graph") {
           const top = document.querySelector(".cycle-map").getBoundingClientRect().top + window.scrollY;
           fitHeight = screen.classList.contains('mobile-chart-expanded')
-            ? Math.max(240, window.innerHeight - 120)
-            : Math.max(320, Math.min(560, window.innerHeight - top - 110));
+            ? Math.max(MIN_EXPANDED_CHART_HEIGHT, window.innerHeight - EXPANDED_CHART_RESERVED_HEIGHT)
+            : Math.max(MIN_CHART_HEIGHT, Math.min(MAX_CHART_HEIGHT, window.innerHeight - top - CHART_RESERVED_HEIGHT));
         }
         const count = buildColumns().length;
-        fitWidth = fittedColumnWidth(screen.clientWidth - 16, count);
-        if (state.zoom === null) state.zoom = readableColumnWidth(screen.clientWidth - 16, count) / fitWidth;
+        const viewportWidth = screen.clientWidth - SCREEN_HORIZONTAL_PADDING;
+        fitWidth = fittedColumnWidth(viewportWidth, count);
+        if (state.zoom === null) state.zoom = readableColumnWidth(viewportWidth, count) / fitWidth;
         LAYOUT.sideLabelWidth = 0;
-        LAYOUT.tempScaleWidth = 48;
+        LAYOUT.tempScaleWidth = MOBILE_AXIS_WIDTH;
         LAYOUT.columnWidth = fitWidth * state.zoom;
         LAYOUT.chartHeight = fitHeight;
-        screen.style.setProperty("--mobile-plot-height", `${fitHeight + 30}px`);
-        screen.classList.toggle("mobile-map-overview", LAYOUT.columnWidth < 24);
+        applyLayoutClass(screen, 'mobile-plot', { '--mobile-plot-height': fitHeight + PLOT_EXTRA_HEIGHT });
+        screen.classList.toggle("mobile-map-overview", LAYOUT.columnWidth < ZOOM_MIN);
         if (!store.selectedKey) store.selectedKey = Object.keys(store.entries).sort().at(-1) || formatDateKey(new Date());
       } else if (toastHome && toast.parentElement === qs("mobileToolFeedback")) {
         toastHome.after(toast);
@@ -216,8 +242,10 @@ export function createMobileMap({ render, getColumns, interactions }) {
         else setText(factor, TEMP_FACTORS[entry?.tempFactors] || '');
       }
       qs("mobileDayBtn").disabled = !key;
-      const step = Math.ceil(28 / LAYOUT.columnWidth);
-      [...qs("dayNumbers").children].forEach((cell, index) => { cell.style.color = index % step ? "transparent" : ""; });
+      const labelInterval = Math.ceil(MIN_LABEL_SPACING / LAYOUT.columnWidth);
+      [...qs("dayNumbers").children].forEach((cell, index) => {
+        cell.classList.toggle('is-crowded-label', Boolean(index % labelInterval));
+      });
       const tableDays = qs('mobileObservationDays');
       tableDays.replaceChildren(...[...qs('dayNumbers').children].map((cell, index) => {
         const day = document.createElement('button');
@@ -229,11 +257,13 @@ export function createMobileMap({ render, getColumns, interactions }) {
       }));
       feedback();
     },
-    clampWidth(width) { return active() ? Math.max(fitWidth, Math.min(Math.max(90, fitWidth), width)) : Math.max(24, Math.min(90, width)); },
+    clampWidth(width) { return active() ? Math.max(fitWidth, Math.min(Math.max(ZOOM_MAX, fitWidth), width)) : clampZoom(width); },
     setWidth(width) {
       if (active()) view().zoom = this.clampWidth(width) / fitWidth;
       else { desktopWidth = width; LAYOUT.columnWidth = width; }
     },
-    zoomStep(direction, width = LAYOUT.columnWidth) { return active() ? width * (direction > 0 ? 1.35 : 1 / 1.35) : width + direction * 8; },
+    zoomStep(direction, width = LAYOUT.columnWidth) {
+      return active() ? width * (direction > 0 ? MOBILE_ZOOM_FACTOR : 1 / MOBILE_ZOOM_FACTOR) : width + direction * DESKTOP_ZOOM_STEP;
+    },
   };
 }

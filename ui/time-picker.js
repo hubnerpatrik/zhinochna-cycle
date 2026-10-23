@@ -1,4 +1,26 @@
 import { setText, setTranslatedAttribute } from '../i18n.js';
+
+const TIME_INPUT_LENGTH = 5;
+const TIME_PART_DIGITS = 2;
+const MINUTE_STEP = 5;
+const MAX_PICKER_MINUTE = 55;
+const OPTION_ROW_HEIGHT = 40;
+const SCROLL_SETTLE_DELAY_MS = 160;
+const PANEL_VIEWPORT_GAP = 8;
+const TIME_COLUMNS = [[0, 24, 1, 'Hours'], [1, 60, MINUTE_STEP, 'Minutes']];
+const DEFAULT_TIME_PARTS = ['08', '00'];
+
+function readTimeParts(value) {
+  const parts = /^([01]\d|2[0-3]):[0-5]\d$/.test(value) ? value.split(':') : [...DEFAULT_TIME_PARTS];
+  parts[1] = String(Math.min(MAX_PICKER_MINUTE, Math.round(Number(parts[1]) / MINUTE_STEP) * MINUTE_STEP))
+    .padStart(TIME_PART_DIGITS, '0');
+  return parts;
+}
+
+function dispatchTimeChange(input) {
+  ['input', 'change'].forEach(type => input.dispatchEvent(new Event(type, { bubbles: true })));
+}
+
 let activePicker = null;
 let nextId = 0;
 
@@ -13,7 +35,7 @@ export function enhanceTimeInputs(root) {
     input.inputMode = "numeric";
     input.placeholder = "HH:MM";
     input.pattern = "([01][0-9]|2[0-3]):[0-5][0-9]";
-    input.maxLength = 5;
+    input.maxLength = TIME_INPUT_LENGTH;
     setTranslatedAttribute(input, "aria-label", "Measurement time (HH:MM)");
 
     const toggle = document.createElement("button");
@@ -34,13 +56,8 @@ export function enhanceTimeInputs(root) {
     const columns = panel.querySelector(".time-picker-columns");
     const choices = [];
     const wheels = [];
-    const rowHeight = 40;
-    const readParts = () => {
-      const parts = /^([01]\d|2[0-3]):[0-5]\d$/.test(input.value) ? input.value.split(":") : ["08", "00"];
-      parts[1] = String(Math.min(55, Math.round(Number(parts[1]) / 5) * 5)).padStart(2, "0");
-      return parts;
-    };
-    for (const [part, count, step, label] of [[0, 24, 1, "Hours"], [1, 60, 5, "Minutes"]]) {
+    const readParts = () => readTimeParts(input.value);
+    TIME_COLUMNS.forEach(([part, count, step, label]) => {
       const column = document.createElement("div");
       column.className = "time-picker-column";
       const heading = document.createElement("div");
@@ -55,25 +72,24 @@ export function enhanceTimeInputs(root) {
       let interacting = false;
       const select = index => {
         const parts = readParts();
-        parts[part] = String(index * step).padStart(2, "0");
+        parts[part] = String(index * step).padStart(TIME_PART_DIGITS, "0");
         input.value = parts.join(":");
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        input.dispatchEvent(new Event("change", { bubbles: true }));
+        dispatchTimeChange(input);
         sync();
       };
       const settle = () => {
         clearTimeout(timer);
         if (!interacting || panel.hidden) return;
         interacting = false;
-        const index = Math.max(0, Math.min(count / step - 1, Math.round(list.scrollTop / rowHeight)));
+        const index = Math.max(0, Math.min(count / step - 1, Math.round(list.scrollTop / OPTION_ROW_HEIGHT)));
         select(index);
-        list.scrollTo({ top: index * rowHeight, behavior: "smooth" });
+        list.scrollTo({ top: index * OPTION_ROW_HEIGHT, behavior: "smooth" });
       };
       list.addEventListener("wheel", () => { interacting = true; }, { passive: true });
       list.addEventListener("pointerdown", () => { interacting = true; });
       list.addEventListener("scroll", () => {
         clearTimeout(timer);
-        if (interacting) timer = setTimeout(settle, 160);
+        if (interacting) timer = setTimeout(settle, SCROLL_SETTLE_DELAY_MS);
       });
       list.addEventListener("keydown", event => {
         if (!["ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
@@ -83,12 +99,12 @@ export function enhanceTimeInputs(root) {
           : Math.max(0, Math.min(count / step - 1, current + (event.key === "ArrowDown" ? 1 : -1)));
         interacting = false;
         select(index);
-        list.scrollTo({ top: index * rowHeight, behavior: "smooth" });
+        list.scrollTo({ top: index * OPTION_ROW_HEIGHT, behavior: "smooth" });
       });
       wheels.push({ list, part, step, reset: () => { clearTimeout(timer); interacting = false; }, settle });
-      for (let value = 0; value < count; value += step) {
+      Array.from({ length: count / step }, (_, index) => index * step).forEach(value => {
         const button = document.createElement("button");
-        const padded = String(value).padStart(2, "0");
+        const padded = String(value).padStart(TIME_PART_DIGITS, "0");
         button.type = "button";
         button.tabIndex = -1;
         button.id = `${panel.id}-${part}-${value}`;
@@ -99,17 +115,17 @@ export function enhanceTimeInputs(root) {
           interacting = false;
           clearTimeout(timer);
           select(value / step);
-          list.scrollTo({ top: value / step * rowHeight, behavior: "smooth" });
+          list.scrollTo({ top: value / step * OPTION_ROW_HEIGHT, behavior: "smooth" });
         };
         choices.push({ button, part, padded });
         list.append(button);
-      }
+      });
       const drum = document.createElement("div");
       drum.className = "time-picker-drum";
       drum.append(list);
       column.append(heading, drum);
       columns.append(column);
-    }
+    });
     function sync() {
       const parts = readParts();
       choices.forEach(({ button, part, padded }) => {
@@ -132,14 +148,14 @@ export function enhanceTimeInputs(root) {
       panel.classList.remove("is-above");
       const fieldRect = input.getBoundingClientRect();
       const panelHeight = panel.getBoundingClientRect().height;
-      if (fieldRect.bottom + panelHeight + 8 > window.innerHeight && fieldRect.top > panelHeight + 8) {
+      if (fieldRect.bottom + panelHeight + PANEL_VIEWPORT_GAP > window.innerHeight && fieldRect.top > panelHeight + PANEL_VIEWPORT_GAP) {
         panel.classList.add("is-above");
       }
       toggle.setAttribute("aria-expanded", "true");
       const parts = readParts();
       wheels.forEach(({ list, part, step, reset }) => {
         reset();
-        list.scrollTop = Number(parts[part]) / step * rowHeight;
+        list.scrollTop = Number(parts[part]) / step * OPTION_ROW_HEIGHT;
       });
     };
     wrapper.addEventListener("focusout", event => {
@@ -159,8 +175,7 @@ export function enhanceTimeInputs(root) {
     };
     panel.querySelector(".time-picker-clear").onclick = () => {
       input.value = "";
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-      input.dispatchEvent(new Event("change", { bubbles: true }));
+      dispatchTimeChange(input);
       close();
       input.focus();
     };
