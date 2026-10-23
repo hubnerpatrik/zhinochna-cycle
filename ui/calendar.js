@@ -1,5 +1,6 @@
 import { setText, setDateText, setTranslatedAttribute } from '../i18n.js';
 import { applyLayoutClass } from './layout-classes.js';
+import { appendCalendarHeader } from './calendar-shared.js';
 import { store } from "../store.js";
 import {
   LAYOUT,
@@ -9,12 +10,10 @@ import {
   chartY,
   formatDateKey,
   getDaysInMonth,
-  getMonthOffset,
-  qs,
+  getElementById,
 } from "../core.js";
 import { getCycleStartDates, isFertileDay } from "../domain.js";
 
-const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const COMPACT_SCALE_HEIGHT = 600;
 const COMPACT_LABEL_INTERVAL = 4;
 const TEMPERATURE_DECIMAL_PLACES = 2;
@@ -29,11 +28,11 @@ function temperatureScaleValues() {
 }
 
 export function renderMonth() {
-  setDateText(qs("monthLabel"), new Date(store.year, store.month));
+  setDateText(getElementById("monthLabel"), new Date(store.year, store.month));
 }
 
 export function renderTempScale() {
-  const scale = qs("tempScale");
+  const scale = getElementById("tempScale");
   if (!scale) return;
   scale.innerHTML = "";
   temperatureScaleValues().forEach((temperature, index) => {
@@ -47,22 +46,13 @@ export function renderTempScale() {
 }
 
 export function renderCalendar(selectColumn) {
-  const element = qs("calendar");
+  const element = getElementById("calendar");
   element.innerHTML = "";
 
-  WEEKDAYS.forEach(day => {
-    const weekday = document.createElement("div");
-    setText(weekday, day);
-    weekday.className = "calendar-weekday";
-    element.appendChild(weekday);
-  });
+  appendCalendarHeader(element, store.year, store.month);
 
   const totalDays = getDaysInMonth(store.year, store.month);
-  const offset = getMonthOffset(store.year, store.month);
   const descendingCycleStarts = getCycleStartDates().reverse();
-
-  Array.from({ length: offset }, () => document.createElement('div'))
-    .forEach(spacer => element.appendChild(spacer));
 
   Array.from({ length: totalDays }, (_, index) => index + 1).forEach(day => {
     const date = new Date(store.year, store.month, day);
@@ -95,9 +85,9 @@ export function renderCalendar(selectColumn) {
 }
 
 export function renderTempFactorsOptions() {
-  const select = qs("tempFactorsInput");
+  const select = getElementById("tempFactorsInput");
   if (!select) return;
-  const tempInput = qs("tempInput");
+  const tempInput = getElementById("tempInput");
   if (tempInput) {
     tempInput.min = String(MEASUREMENT_TEMPERATURE_RANGE.min);
     tempInput.max = String(MEASUREMENT_TEMPERATURE_RANGE.max);

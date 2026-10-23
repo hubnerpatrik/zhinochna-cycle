@@ -14,11 +14,12 @@ export const currentRelease = {
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';
+const VERSION_COMPONENT_COUNT = 3;
 export function isNewRelease(version, seen) {
   if (!/^\d+\.\d+\.\d+$/.test(seen || '')) return true;
   const current = version.split('.').map(Number), previous = seen.split('.').map(Number);
-  for (let i = 0; i < 3; i++) {
-    if (current[i] !== previous[i]) return current[i] > previous[i];
+  for (let index = 0; index < VERSION_COMPONENT_COUNT; index++) {
+    if (current[index] !== previous[index]) return current[index] > previous[index];
   }
   return false;
 }

@@ -1,7 +1,8 @@
 import { store } from "../store.js";
-import { qs, qsa } from "../core.js";
+import { getElementById, querySelectorAll } from "../core.js";
 import { showMessage } from "./toast.js";
 import { clearFieldErrors } from './field-errors.js';
+import { observationChoiceValue } from './observation-values.js';
 
 let navigation = null;
 export function configureModalNavigation(callbacks) {
@@ -9,15 +10,15 @@ export function configureModalNavigation(callbacks) {
 }
 
 export function hideAllModals() {
-  qsa('dialog:modal').forEach(dialog => dialog.close());
-  qsa(".modal").forEach(modal => {
+  querySelectorAll('dialog:modal').forEach(dialog => dialog.close());
+  querySelectorAll(".modal").forEach(modal => {
     modal.classList.remove("show");
     modal.classList.add("hidden");
   });
 }
 
 export function showModal(modalId) {
-  const modal = qs(modalId);
+  const modal = getElementById(modalId);
   if (!modal) return;
   hideAllModals();
   clearFieldErrors(modal);
@@ -27,7 +28,7 @@ export function showModal(modalId) {
 }
 
 export function hideModal(modalId) {
-  const modal = qs(modalId);
+  const modal = getElementById(modalId);
   if (!modal) return;
   const wasOpen = !modal.classList.contains("hidden");
   modal.classList.remove("show");
@@ -41,12 +42,10 @@ export function afterModalSave(modalId, render, reopen) {
 }
 
 export function syncModalUI() {
-  qsa('input[data-observation]').forEach(input => { input.checked = store.modal[input.dataset.observation] === true; });
-  qsa(".segmented button").forEach(button => {
+  querySelectorAll('input[data-observation]').forEach(input => { input.checked = store.modal[input.dataset.observation] === true; });
+  querySelectorAll(".segmented button").forEach(button => {
     if (button.closest(".modal")?.classList.contains("hidden")) return;
-    let value = button.dataset.value;
-    if (value === "true") value = true;
-    if (value === "false") value = false;
+    const value = observationChoiceValue(button.dataset.value);
     const active = store.modal[button.dataset.group] === value;
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));

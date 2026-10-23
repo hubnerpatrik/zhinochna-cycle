@@ -1,7 +1,10 @@
 import { DataValidationError, isPlainObject, normalizeApplicationData } from "./data-validation.js";
+import { ISO_DATE_KEY_LENGTH } from './date-utils.js';
 
 export const BACKUP_APP = "cycle-tracker";
 export const BACKUP_VERSION = "0.10.0";
+const BACKUP_JSON_INDENT = 2;
+const MAX_MAP_SLUG_LENGTH = 50;
 
 export class BackupFormatError extends Error {
   constructor(message, code = "malformed-data") {
@@ -22,7 +25,7 @@ export function createBackup(data, exportedAt = new Date().toISOString()) {
 }
 
 export function serializeBackup(data, exportedAt) {
-  return JSON.stringify(createBackup(data, exportedAt), null, 2);
+  return JSON.stringify(createBackup(data, exportedAt), null, BACKUP_JSON_INDENT);
 }
 
 export function parseBackup(json) {
@@ -57,7 +60,7 @@ export function backupFilename(date = new Date(), mapName = "") {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
-    .slice(0, 50);
+    .slice(0, MAX_MAP_SLUG_LENGTH);
   const mapPart = mapSlug ? `-${mapSlug}` : "";
-  return `cycle-tracker${mapPart}-backup-${date.toISOString().slice(0, 10)}.json`;
+  return `cycle-tracker${mapPart}-backup-${date.toISOString().slice(0, ISO_DATE_KEY_LENGTH)}.json`;
 }

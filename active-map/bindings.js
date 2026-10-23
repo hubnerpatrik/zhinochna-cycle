@@ -6,7 +6,9 @@ import { toggleObservationChoice } from "../ui/modal-shared.js";
 import { t } from "../i18n.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
-import { LAYOUT, qs, qsa, syncCSSVariables } from "../core.js";
+import { LAYOUT, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
+import { LAST_MONTH_INDEX } from '../date-utils.js';
+import { observationChoiceValue } from '../ui/observation-values.js';
 import {
   changeFertileRangeMonth,
   clearFertileRangeModal,
@@ -46,16 +48,20 @@ import {
   syncMucusModalUI,
 } from "../ui.js";
 
+const CHART_HEADER_HEIGHT = 28;
+const ZOOM_ANIMATION_DURATION_MS = 180;
+const ZOOM_EASING_EXPONENT = 3;
+
 let initialized = false;
 
 function bindButton(id, handler) {
-  const button = qs(id);
+  const button = getElementById(id);
   if (button) button.onclick = handler;
 }
 
 function bindOverlayClicks(definitions) {
   definitions.forEach(([id, close]) => {
-    qs(id)?.addEventListener("click", event => {
+    getElementById(id)?.addEventListener("click", event => {
       if (event.target.id === id) close();
     });
   });
@@ -98,7 +104,7 @@ export function initializeActiveMapControls({
   syncCSSVariables();
   renderTempFactorsOptions();
   renderActionButtons();
-  qsa('[data-bleeding-icon]').forEach(icon => { icon.innerHTML = bleedingIcon(icon.dataset.bleedingIcon); });
+  querySelectorAll('[data-bleeding-icon]').forEach(icon => { icon.innerHTML = bleedingIcon(icon.dataset.bleedingIcon); });
   enhanceObservationScales();
   enhanceInterfaceIcons();
   enhanceTimeInputs(document);
@@ -106,21 +112,21 @@ export function initializeActiveMapControls({
   bindButton("prevMonth", () => {
     store.month--;
     if (store.month < 0) {
-      store.month = 11;
+      store.month = LAST_MONTH_INDEX;
       store.year--;
     }
     render();
   });
   bindButton("nextMonth", () => {
     store.month++;
-    if (store.month > 11) {
+    if (store.month > LAST_MONTH_INDEX) {
       store.month = 0;
       store.year++;
     }
     render();
   });
 
-  qsa(".btn.primary").forEach(animatePrimaryButton);
+  querySelectorAll(".btn.primary").forEach(animatePrimaryButton);
   bindButton("editBtn", openActionModal);
   bindButton("closeBtn", closeModal);
   bindButton("saveBtn", () => saveModal(render));
@@ -189,7 +195,8 @@ export function initializeActiveMapControls({
       fixedWidth(), LAYOUT.columnWidth, width);
     setWidth(width);
     if (mapScroll) mapScroll.scrollLeft = left;
-    if (mapScroll && mobileMap.active()) mapScroll.scrollTop = Math.max(0, (top + anchorY - 28) * LAYOUT.chartHeight / oldHeight - anchorY + 28);
+    if (mapScroll && mobileMap.active()) mapScroll.scrollTop = Math.max(0,
+      (top + anchorY - CHART_HEADER_HEIGHT) * LAYOUT.chartHeight / oldHeight - anchorY + CHART_HEADER_HEIGHT);
   };
   const zoomBy = step => {
     const target = mobileMap.clampWidth(mobileMap.zoomStep(step, zoomTarget ?? LAYOUT.columnWidth));
@@ -199,8 +206,8 @@ export function initializeActiveMapControls({
     const start = performance.now();
     zoomTarget = target;
     const animate = now => {
-      const progress = Math.min(1, (now - start) / 180);
-      applyZoom(startWidth + (target - startWidth) * (1 - (1 - progress) ** 3));
+      const progress = Math.min(1, (now - start) / ZOOM_ANIMATION_DURATION_MS);
+      applyZoom(startWidth + (target - startWidth) * (1 - (1 - progress) ** ZOOM_EASING_EXPONENT));
       if (progress < 1) zoomFrame = requestAnimationFrame(animate);
       else { zoomFrame = null; zoomTarget = null; }
     };
@@ -229,24 +236,22 @@ export function initializeActiveMapControls({
   });
   bindButton("saveActiveMapBtn", () => saveActiveMap({ renderApp: render }));
 
-  qsa(".segmented button").forEach(button => {
+  querySelectorAll(".segmented button").forEach(button => {
     button.onclick = () => {
       if (button.closest(".modal")?.classList.contains("hidden")) return;
-      let value = button.dataset.value;
-      if (value === "true") value = true;
-      if (value === "false") value = false;
+      const value = observationChoiceValue(button.dataset.value);
       if (button.dataset.group === "markerColor") return selectMarkerType(value);
       const group = button.dataset.group;
       toggleObservationChoice(group, value);
     };
   });
 
-  const otherColor = qs("mucusColorOtherCheckbox");
-  qs('tempFactorsInput').onchange = syncTempFactorsUI;
-  qsa('input[data-observation]').forEach(input => {
+  const otherColor = getElementById("mucusColorOtherCheckbox");
+  getElementById('tempFactorsInput').onchange = syncTempFactorsUI;
+  querySelectorAll('input[data-observation]').forEach(input => {
     input.onchange = () => { store.modal[input.dataset.observation] = input.checked ? true : undefined; };
   });
-  const otherColorInput = qs("mucusColorOtherInput");
+  const otherColorInput = getElementById("mucusColorOtherInput");
   otherColor.onchange = () => {
     store.modal.color = otherColor.checked ? "other" : "";
     if (!otherColor.checked) store.modal.colorOther = "";
@@ -254,8 +259,8 @@ export function initializeActiveMapControls({
   };
   otherColorInput.oninput = () => { store.modal.colorOther = otherColorInput.value; };
 
-  const timeCheckbox = qs("measurementTimeCheckbox");
-  const timeInput = qs("measurementTimeInput");
+  const timeCheckbox = getElementById("measurementTimeCheckbox");
+  const timeInput = getElementById("measurementTimeInput");
   timeCheckbox.onchange = () => {
     store.modal.measurementTimeEnabled = timeCheckbox.checked;
     if (!timeCheckbox.checked) timeInput.value = "";

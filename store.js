@@ -25,6 +25,10 @@ import {
 } from "./data-validation.js";
 import { parseBackup, serializeBackup } from "./backup.js";
 
+const MAP_ID_RADIX = 36;
+const RANDOM_FRACTION_PREFIX_LENGTH = 2;
+const RANDOM_ID_SLICE_END = 8;
+
 function clonePersistentState(state) {
   return JSON.parse(JSON.stringify(state));
 }
@@ -155,7 +159,7 @@ export class Store {
   }
 
   _generateMapId() {
-    return `map-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    return `map-${Date.now()}-${Math.random().toString(MAP_ID_RADIX).slice(RANDOM_FRACTION_PREFIX_LENGTH, RANDOM_ID_SLICE_END)}`;
   }
 
   _persistAll() {

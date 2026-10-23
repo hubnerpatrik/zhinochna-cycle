@@ -1,7 +1,8 @@
 import { setText, translateDOM } from "../i18n.js";
 import { serializeBackup, backupFilename } from "../backup.js";
 
-const messages = {
+const BACKUP_URL_LIFETIME_MS = 1000;
+const STATUS_MESSAGES = {
   loading: "Loading your cloud maps…",
   saved: "Saved to your account",
   saving: "Saving to your account…",
@@ -24,10 +25,10 @@ export function setupCloudStatus(cloud) {
     link.href = url;
     link.download = backupFilename();
     link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setTimeout(() => URL.revokeObjectURL(url), BACKUP_URL_LIFETIME_MS);
   };
   const render = state => {
-    setText(message, messages[state] || messages.error);
+    setText(message, STATUS_MESSAGES[state] || STATUS_MESSAGES.error);
     panel.dataset.warning = ["error", "conflict", "local-conflict", "too-large"].includes(state);
     retry.hidden = !["error", "pending", "too-large"].includes(state);
     reload.hidden = !["conflict", "local-conflict"].includes(state);
@@ -44,7 +45,7 @@ export function setupCloudStatus(cloud) {
       download();
       await cloud.loadCloud();
       location.reload();
-    } catch { setText(message, messages.error); }
+    } catch { setText(message, STATUS_MESSAGES.error); }
     finally { reload.disabled = false; }
   };
 }

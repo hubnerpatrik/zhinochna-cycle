@@ -6,12 +6,12 @@ import { applyLayoutClass, setChartWidth } from './ui/layout-classes.js';
 // Draw order: bg → overlays → grid → annotations → data
 
 import { store } from "./store.js";
-import { LAYOUT, qs, chartY, chartPointY, isChartTemperature, chartLineY, chartGridY, tempSlotCount, graphHeight, chartWidth, pixelYToTemp } from "./core.js";
+import { LAYOUT, getElementById, chartY, chartPointY, isChartTemperature, chartLineY, chartGridY, tempSlotCount, graphHeight, chartWidth, pixelYToTemp } from "./core.js";
 import { getCycleCoverlineValues, setCycleCoverlineValues } from "./domain.js";
+import { MILLISECONDS_PER_DAY } from './date-utils.js';
 
 const GRID_MAJOR_INTERVAL = 5;
 const GRID_PIXEL_OFFSET = 0.5;
-const MILLISECONDS_PER_DAY = 86_400_000;
 const DASH_PATTERN = [4, 4];
 const FULL_CIRCLE_RADIANS = Math.PI * 2;
 const MIN_LABEL_COLUMN_WIDTH = 24;
@@ -456,7 +456,7 @@ export function drawMarkers(context, columns) {
 
 /** Main chart render — sets up canvas, scales for DPR, and runs the full draw pipeline. */
 export function renderChart(columns, { coverlineSelected = false } = {}) {
-  const canvas = qs("tempChart");
+  const canvas = getElementById("tempChart");
   if (!canvas) return;
 
   const width = chartWidth(columns);
@@ -643,7 +643,7 @@ export function handleCanvasClick(x, y, columns) {
   store.horizontalCoverlineMode = false;
   store.verticalCoverlineMode = false;
 
-  const coverlineButton = qs("coverlineBtn");
+  const coverlineButton = getElementById("coverlineBtn");
   if (coverlineButton) {
     coverlineButton.classList.remove("active");
     setText(coverlineButton, "Coverlines");

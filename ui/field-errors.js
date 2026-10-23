@@ -4,16 +4,16 @@ const installed = new WeakSet();
 let nextError = 0;
 
 export function validationMessage(input) {
-  const v = input.validity || {};
-  if (v.badInput) return 'Enter a valid number.';
-  if (v.valueMissing || (input.required && input.type !== 'password' && !input.value.trim())) return 'Fill in this field.';
-  if (v.typeMismatch && input.type === 'email') return 'Enter a valid email address, for example name@example.com.';
-  if (v.tooShort) return 'Use at least 8 characters for your password.';
-  if (v.tooLong) return 'This text is too long.';
-  if (v.rangeUnderflow || v.rangeOverflow) return input.name === 'age' ? 'Enter an age from 10 to 60.' : 'This value is outside the allowed range.';
-  if (v.patternMismatch) return input.name === 'otp' ? 'Enter the numeric verification code.' : input.inputMode === 'numeric' && input.placeholder === 'HH:MM' ? 'Enter a time from 00:00 to 23:59.' : 'Check the format of this value.';
-  if (v.stepMismatch) return input.id === 'tempInput' ? 'Use at most two decimal places.' : input.name === 'age' ? 'Enter a whole number.' : 'Enter a value using the allowed step.';
-  if (v.customError) return input.validationMessage;
+  const validity = input.validity || {};
+  if (validity.badInput) return 'Enter a valid number.';
+  if (validity.valueMissing || (input.required && input.type !== 'password' && !input.value.trim())) return 'Fill in this field.';
+  if (validity.typeMismatch && input.type === 'email') return 'Enter a valid email address, for example name@example.com.';
+  if (validity.tooShort) return 'Use at least 8 characters for your password.';
+  if (validity.tooLong) return 'This text is too long.';
+  if (validity.rangeUnderflow || validity.rangeOverflow) return input.name === 'age' ? 'Enter an age from 10 to 60.' : 'This value is outside the allowed range.';
+  if (validity.patternMismatch) return input.name === 'otp' ? 'Enter the numeric verification code.' : input.inputMode === 'numeric' && input.placeholder === 'HH:MM' ? 'Enter a time from 00:00 to 23:59.' : 'Check the format of this value.';
+  if (validity.stepMismatch) return input.id === 'tempInput' ? 'Use at most two decimal places.' : input.name === 'age' ? 'Enter a whole number.' : 'Enter a value using the allowed step.';
+  if (validity.customError) return input.validationMessage;
   return 'Check this value and try again.';
 }
 export function clearFieldError(input) {

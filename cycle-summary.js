@@ -1,5 +1,12 @@
-const DAY = 86400000;
-const dayNumber = key => Date.parse(`${key}T00:00:00Z`) / DAY;
+import { ISO_DATE_KEY_LENGTH, MILLISECONDS_PER_DAY } from './date-utils.js';
+
+export const DEFAULT_HISTORY_COUNT = 6;
+export const EXTENDED_HISTORY_COUNT = 12;
+const SHORT_HISTORY_OFFSET = 21;
+const EXTENDED_HISTORY_OFFSET = 20;
+const PEAK_DAY_OFFSET = 4;
+const VISIBLE_MANUAL_FIELD_COUNT = 4;
+const dayNumber = key => Date.parse(`${key}T00:00:00Z`) / MILLISECONDS_PER_DAY;
 export const manualFields = [
   ['firstMucus', 'First mucus'],
   ['qualityMucus', 'First high-quality mucus'],
@@ -11,7 +18,7 @@ export const manualFields = [
 export function cycleStarts(entries) {
   return Object.keys(entries).sort().filter(key => {
     if (entries[key].bleeding !== 'menstruation') return false;
-    const previous = new Date((dayNumber(key) - 1) * DAY).toISOString().slice(0, 10);
+    const previous = new Date((dayNumber(key) - 1) * MILLISECONDS_PER_DAY).toISOString().slice(0, ISO_DATE_KEY_LENGTH);
     return entries[previous]?.bleeding !== 'menstruation';
   });
 }
@@ -25,13 +32,13 @@ export function buildCycleHistory(maps, activeMapId) {
     ? [active]
     : Object.values(maps).filter(map => !map.profileSnapshotLocked);
   const observations = new Map();
-  for (const map of eligible) {
-    for (const [key, entry] of Object.entries(map.entries ?? {})) {
+  eligible.forEach(map => {
+    Object.entries(map.entries ?? {}).forEach(([key, entry]) => {
       if (!observations.has(key)) observations.set(key, new Set());
       // An empty calendar cell is not an explicit denial of menstruation.
       if (entry.bleeding != null) observations.get(key).add(entry.bleeding);
-    }
-  }
+    });
+  });
   const merged = Object.fromEntries([...observations].map(([key, values]) => [key, {
     bleeding: values.has('menstruation') ? 'menstruation' : 'none',
   }]));
@@ -41,7 +48,7 @@ export function buildCycleHistory(maps, activeMapId) {
     const length = dayNumber(end) - dayNumber(start);
     let issue = null;
     for (let day = dayNumber(start); day <= dayNumber(end); day++) {
-      const key = new Date(day * DAY).toISOString().slice(0, 10);
+      const key = new Date(day * MILLISECONDS_PER_DAY).toISOString().slice(0, ISO_DATE_KEY_LENGTH);
       const values = observations.get(key);
       if (!values) { issue = 'gap'; break; }
       if (values.has('menstruation') && values.size > 1) { issue = 'conflict'; break; }
@@ -57,26 +64,27 @@ export function calculateSummary(entries, start, manual = {}, cycleHistory = nul
   const next = historicalCycle?.end ?? starts[index + 1];
   const length = cycleHistory !== null ? historicalCycle?.length ?? null
     : index >= 0 && next ? dayNumber(next) - dayNumber(start) : null;
-  const count = manual.historyCount === 12 ? 12 : 6;
+  const count = manual.historyCount === EXTENDED_HISTORY_COUNT ? EXTENDED_HISTORY_COUNT : DEFAULT_HISTORY_COUNT;
   const previous = cycleHistory?.filter(cycle => cycle.end <= start).slice(-count);
   const history = previous ? previous.map(cycle => cycle.length).filter(value => value !== null)
     : index < 0 ? [] : starts.slice(Math.max(0, index - count), index)
     .map(key => dayNumber(starts[starts.indexOf(key) + 1]) - dayNumber(key));
-  const min = history.length ? Math.min(...history) : null;
-  const max = history.length ? Math.max(...history) : null;
+  const shortestCycle = history.length ? Math.min(...history) : null;
+  const longestCycle = history.length ? Math.max(...history) : null;
   const keys = Object.keys(entries).sort().filter(key => key >= start && (!next || key < next));
   const markerDay = value => {
     const matching = keys.filter(key => entries[key].markers?.bbt?.value === value);
     return matching.length === 1 ? dayNumber(matching[0]) - dayNumber(start) + 1 : null;
   };
   const firstHigh = markerDay('1');
-  const lastInfertile = history.length === count ? min - (count === 6 ? 21 : 20) : null;
+  const lastInfertile = history.length === count
+    ? shortestCycle - (count === DEFAULT_HISTORY_COUNT ? SHORT_HISTORY_OFFSET : EXTENDED_HISTORY_OFFSET) : null;
   return {
-    length, count, available: history.length, min, max,
+    length, count, available: history.length, min: shortestCycle, max: longestCycle,
     historyIncomplete: Boolean(previous?.some(cycle => cycle.issue)),
     bbtRise: markerDay('4') ?? markerDay('3'),
-    mucusPlus4: manual.mucusPeak ? manual.mucusPeak + 4 : null,
-    cervixPlus4: manual.cervixPeak ? manual.cervixPeak + 4 : null,
+    mucusPlus4: manual.mucusPeak ? manual.mucusPeak + PEAK_DAY_OFFSET : null,
+    cervixPlus4: manual.cervixPeak ? manual.cervixPeak + PEAK_DAY_OFFSET : null,
     bbtPhase: length && firstHigh && firstHigh <= length ? length - firstHigh + 1 : null,
     mucusPhase: length && manual.mucusPeak && manual.mucusPeak <= length ? length - manual.mucusPeak : null,
     lastInfertile,
@@ -87,7 +95,7 @@ export function summaryRows(manual, result) {
   const day = value => value == null ? '—' : `Day ${value}`;
   const days = value => value == null ? '—' : `${value} days`;
   return [
-    ...manualFields.slice(0, 4).map(([key, label]) => [label, key === 'qualityDays' ? days(manual[key]) : day(manual[key])]),
+    ...manualFields.slice(0, VISIBLE_MANUAL_FIELD_COUNT).map(([key, label]) => [label, key === 'qualityDays' ? days(manual[key]) : day(manual[key])]),
     ['BBT rise · 3rd / 4th day', day(result.bbtRise)],
     ['Mucus peak + 4', day(result.mucusPlus4)],
     ['Cervix peak + 4', day(result.cervixPlus4)],

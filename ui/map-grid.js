@@ -1,7 +1,7 @@
 import { setText, setTranslatedAttribute } from '../i18n.js';
 import { setChartWidth } from './layout-classes.js';
 import { store } from "../store.js";
-import { chartWidth, qs } from "../core.js";
+import { chartWidth, getElementById } from "../core.js";
 import { renderCycleSummary } from "./cycle-summary.js";
 import { profileInfoRows } from "./profile-info-modal.js";
 import { observationIcon } from "./observation-icons.js";
@@ -37,8 +37,8 @@ function createActionButton([id, label, iconClass, iconSvg]) {
 
 export function renderActionButtons() {
   const targets = [
-    [qs("sidebarActions"), SIDEBAR_ACTIONS],
-    [qs("actionModalActions"), MODAL_ACTIONS],
+    [getElementById("sidebarActions"), SIDEBAR_ACTIONS],
+    [getElementById("actionModalActions"), MODAL_ACTIONS],
   ];
   targets.forEach(([target, actions]) => {
     if (!target) return;
@@ -48,7 +48,7 @@ export function renderActionButtons() {
 }
 
 export function renderProfileInfo() {
-  const card = qs("profileInfoCard");
+  const card = getElementById("profileInfoCard");
   if (!card) return;
   const profile = store.getActiveMapProfile();
   const rows = profileInfoRows(profile).filter(([, value]) => value);
@@ -176,13 +176,13 @@ function createMapRow({ id, label, group, position }) {
   spacer.className = "map-temp-spacer";
   cells.className = ["map-cells", group ? `map-cells-group-${group}` : ""].filter(Boolean).join(" ");
   row.append(sideLabel, spacer, cells);
-  qs("mapRows").appendChild(row);
+  getElementById("mapRows").appendChild(row);
   return cells;
 }
 
 export function renderMapRows(columns, selectColumn, hoverColumn, clearHover) {
-  const dayNumbers = qs("dayNumbers");
-  const mapRows = qs("mapRows");
+  const dayNumbers = getElementById("dayNumbers");
+  const mapRows = getElementById("mapRows");
   if (!dayNumbers || !mapRows) return;
   dayNumbers.replaceChildren();
   setChartWidth(dayNumbers, chartWidth(columns));

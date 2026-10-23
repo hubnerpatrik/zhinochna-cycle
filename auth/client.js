@@ -1,6 +1,6 @@
 import { createAuthClient } from "@neondatabase/auth";
 import { BetterAuthVanillaAdapter } from "@neondatabase/auth/vanilla";
-import { createAuthService } from "./service.js";
+import { AUTH_REQUEST_TIMEOUT_MS, createAuthService } from "./service.js";
 
 export function configuredAuth(origin) {
   const url = import.meta.env.VITE_NEON_AUTH_URL;
@@ -10,6 +10,6 @@ export function configuredAuth(origin) {
     throw new Error("Invalid auth configuration");
   }
   return createAuthService(createAuthClient(new URL("/api/auth", origin).href, {
-    adapter: BetterAuthVanillaAdapter({ fetchOptions: { timeout: 15000, retry: 0, credentials: "include" } }),
+    adapter: BetterAuthVanillaAdapter({ fetchOptions: { timeout: AUTH_REQUEST_TIMEOUT_MS, retry: 0, credentials: "include" } }),
   }), origin);
 }

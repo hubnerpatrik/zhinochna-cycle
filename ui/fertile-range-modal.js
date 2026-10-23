@@ -1,6 +1,8 @@
 import { setText, setDateText, setTranslatedAttribute } from '../i18n.js';
 import { store } from "../store.js";
-import { calendarDayDifference, formatDateKey, getDaysInMonth, getMonthOffset, parseDateKey, qs } from "../core.js";
+import { calendarDayDifference, formatDateKey, getDaysInMonth, parseDateKey, getElementById } from "../core.js";
+import { LAST_MONTH_INDEX } from '../date-utils.js';
+import { appendCalendarHeader } from './calendar-shared.js';
 import { clearFertileRange, getFertileRange, getCycleStartDates } from "../domain.js";
 import { hideModal, persistStore, showModal } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
@@ -24,22 +26,15 @@ function toggleDay(key) {
   if (draft.selectedKeys.has(key)) draft.selectedKeys.delete(key);
   else draft.selectedKeys.add(key);
   renderPicker();
-  qs("fertileRangeCalendar").querySelector(`[data-date="${key}"]`)?.focus({ preventScroll: true });
+  getElementById("fertileRangeCalendar").querySelector(`[data-date="${key}"]`)?.focus({ preventScroll: true });
 }
 
 function renderPicker() {
-  setDateText(qs("fertileRangeMonthLabel"), new Date(draft.year, draft.month));
-  const calendar = qs("fertileRangeCalendar");
+  setDateText(getElementById("fertileRangeMonthLabel"), new Date(draft.year, draft.month));
+  const calendar = getElementById("fertileRangeCalendar");
   calendar.replaceChildren();
-  ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach(day => {
-    const weekday = document.createElement("div");
-    weekday.className = "calendar-weekday";
-    setText(weekday, day);
-    calendar.appendChild(weekday);
-  });
-  const offset = getMonthOffset(draft.year, draft.month);
+  appendCalendarHeader(calendar, draft.year, draft.month);
   const starts = getCycleStartDates().reverse();
-  for (let index = 0; index < offset; index++) calendar.appendChild(document.createElement("div"));
   for (let day = 1; day <= getDaysInMonth(draft.year, draft.month); day++) {
     const key = formatDateKey(new Date(draft.year, draft.month, day));
     const cell = document.createElement("button");
@@ -69,9 +64,9 @@ export function changeFertileRangeMonth(delta) {
   if (!draft) return;
   draft.month += delta;
   if (draft.month < 0) {
-    draft.month = 11;
+    draft.month = LAST_MONTH_INDEX;
     draft.year--;
-  } else if (draft.month > 11) {
+  } else if (draft.month > LAST_MONTH_INDEX) {
     draft.month = 0;
     draft.year++;
   }
