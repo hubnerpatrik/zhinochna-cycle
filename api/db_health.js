@@ -1,15 +1,16 @@
+import { HTTP_STATUS } from '../server/http.js';
 import { neon } from "@neondatabase/serverless";
 
-export default async function handler(req, res) {
-  res.setHeader("Cache-Control", "no-store");
+export default async function handler(request, response) {
+  response.setHeader("Cache-Control", "no-store");
 
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
-    return res.status(405).json({ error: "Method not allowed" });
+  if (request.method !== "GET") {
+    response.setHeader("Allow", "GET");
+    return response.status(HTTP_STATUS.METHOD_NOT_ALLOWED).json({ error: "Method not allowed" });
   }
 
   if (!process.env.DATABASE_URL?.trim()) {
-    return res.status(503).json({
+    return response.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({
       ok: false,
       error: "Chybí nastavení DATABASE_URL na serveru",
     });
@@ -19,9 +20,9 @@ export default async function handler(req, res) {
     const sql = neon(process.env.DATABASE_URL);
     await sql`SELECT 1`;
 
-    return res.status(200).json({ ok: true });
+    return response.status(HTTP_STATUS.OK).json({ ok: true });
   } catch {
-    return res.status(500).json({
+    return response.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       ok: false,
       error: "Databáze není dostupná",
     });

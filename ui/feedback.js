@@ -1,13 +1,10 @@
 import { t } from '../i18n.js';
 import { setOverlayPosition } from './layout-classes.js';
-import { escapeHtml } from '../views/view-utils.js';
-import { MAX_MESSAGE_LENGTH, MAX_SELECTOR_LENGTH, MAX_LABEL_LENGTH } from '../feedback-model.js';
+import { MAX_SELECTOR_LENGTH, MAX_LABEL_LENGTH } from '../feedback-model.js';
 import { createFeedbackRequest } from '../feedback-transport.js';
-import { feedbackMessageHtml, feedbackResolutionHtml } from './feedback-thread.js';
+import { feedbackPanelHtml } from './feedback-view.js';
 import metadata from '../package.json';
 import { prepareFeedbackImage } from '../feedback-image.js';
-
-const MESSAGE_PREVIEW_LENGTH = 130;
 
 let conceal = () => {};
 export const concealFeedback = () => conceal();
@@ -55,11 +52,6 @@ export function setupFeedback({ auth, app, transport, description }) {
   let threads = [], admin = false, picking = false, draft = null, selected = null, busy = false, filter = 'open';
   let draftText = '', replyText = '', replyId = null, error = '', loading = false, generation = 0;
   let draftImage = '', replyImage = '', imageLoading = false, imageGeneration = 0;
-  function imagePicker(image) {
-    return `<div class="feedback-image-picker"><label>${escapeHtml(t('Attach screenshot'))}<input type="file" data-image accept="image/jpeg,image/png,image/webp" ${busy || imageLoading ? 'disabled' : ''}></label>
-      <small>${escapeHtml(t('JPG, PNG or WebP · up to 10 MB. Check the preview before sending.'))}</small>
-      ${image ? `<img class="feedback-attachment" src="${escapeHtml(image)}" alt="${escapeHtml(t('Screenshot'))}"><button type="button" data-remove-image ${busy ? 'disabled' : ''}>${escapeHtml(t('Remove screenshot'))}</button>` : ''}</div>`;
-  }
   const request = createFeedbackRequest(auth, transport);
   const screen = () => location.hash.split('?')[0] || '#/menu';
   function cancelPick() {
@@ -68,6 +60,15 @@ export function setupFeedback({ auth, app, transport, description }) {
   }
   function open() { if (!panel.open) panel.showModal(); render(); }
   function close() { panel.close(); button.focus(); }
+  function showThread(threadId) {
+    selected = threadId;
+    replyText = '';
+    replyId = null;
+    replyImage = '';
+    imageGeneration++;
+    imageLoading = false;
+    render();
+  }
   conceal = () => {
     generation++; cancelPick(); panel.close(); pins.replaceChildren();
     threads = []; admin = false; selected = null; panel.replaceChildren();
@@ -101,27 +102,10 @@ export function setupFeedback({ auth, app, transport, description }) {
     if (!panel.open) return;
     const thread = threads.find(item => item.id === selected);
     const shown = threads.filter(item => filter === 'all' || (filter === 'resolved' ? item.resolved : !item.resolved));
-    panel.innerHTML = `<header><h2 id="feedbackTitle">${escapeHtml(t('Feedback'))}</h2><button type="button" data-close aria-label="${escapeHtml(t('Close'))}">×</button></header>
-      <p class="feedback-intro">${escapeHtml(t(description || (admin ? 'Shared inbox · latest 200 reports' : 'Your reports are shared with app support.')))}</p>
-      <div class="feedback-toolbar"><button type="button" data-new ${busy ? 'disabled' : ''}>${escapeHtml(t('Point to a problem'))}</button>
-      <button type="button" data-refresh ${loading || busy ? 'disabled' : ''}>${escapeHtml(t('Refresh'))}</button></div>
-      <p role="status" class="feedback-status">${escapeHtml(error || (loading ? t('Loading…') : ''))}</p>
-      ${draft ? `<form data-compose><h3>${escapeHtml(t('New comment'))}</h3><p>${escapeHtml(draft.anchor.label || draft.anchor.screen)}</p>
-        <label>${escapeHtml(t('Describe the problem'))}<textarea maxlength="${MAX_MESSAGE_LENGTH}" required ${busy ? 'disabled' : ''}>${escapeHtml(draftText)}</textarea></label>
-        ${imagePicker(draftImage)}
-        <button type="submit" ${busy || imageLoading ? 'disabled' : ''}>${escapeHtml(t(busy ? 'Sending…' : 'Send comment'))}</button>
-        <button type="button" data-discard ${busy ? 'disabled' : ''}>${escapeHtml(t('Cancel'))}</button></form>` : ''}
-      ${thread && !draft ? `<section class="feedback-thread"><button type="button" data-back>${escapeHtml(t(admin ? 'All reports' : 'My reports'))}</button>
-        <h3>${escapeHtml(thread.anchor.label || thread.anchor.screen)}</h3><p>${escapeHtml(thread.anchor.screen)} · v${escapeHtml(thread.anchor.version)} · ${escapeHtml(thread.anchor.viewport)}</p>
-        <p>${escapeHtml(t(thread.resolved ? 'Resolved' : 'Open'))}</p>
-        ${feedbackResolutionHtml(thread, admin, busy)}
-        ${thread.messages.map(feedbackMessageHtml).join('')}
-        <form data-reply><label>${escapeHtml(t('Reply'))}<textarea maxlength="${MAX_MESSAGE_LENGTH}" required ${busy ? 'disabled' : ''}>${escapeHtml(replyText)}</textarea></label>
-        ${imagePicker(replyImage)}
-        <button type="submit" ${busy || imageLoading ? 'disabled' : ''}>${escapeHtml(t(busy ? 'Sending…' : 'Send reply'))}</button></form>
-        </section>` : ''}
-      ${!draft && !thread ? `<label>${escapeHtml(t('Filter'))}<select data-filter><option value="open">${escapeHtml(t('Open'))}</option><option value="resolved">${escapeHtml(t('Resolved'))}</option><option value="all">${escapeHtml(t(admin ? 'All reports' : 'My reports'))}</option></select></label>
-        <div class="feedback-list">${shown.length ? shown.map(item => `<button type="button" data-thread="${escapeHtml(item.id)}"><strong>${escapeHtml(item.anchor.label || item.anchor.screen)}</strong><span>${escapeHtml(item.messages[0].text.slice(0, MESSAGE_PREVIEW_LENGTH))}</span><small>${escapeHtml(t(item.resolved ? 'Resolved' : 'Open'))} · ${item.messages.length}</small></button>`).join('') : `<p>${escapeHtml(t('No reports in this view.'))}</p>`}</div>` : ''}`;
+    panel.innerHTML = feedbackPanelHtml({
+      description, admin, busy, loading, error, draft, draftText, draftImage,
+      thread, replyText, replyImage, imageLoading, shown,
+    });
     bindPanelEvents(thread);
   }
 
@@ -134,7 +118,7 @@ export function setupFeedback({ auth, app, transport, description }) {
       button.querySelector('span').textContent = '×'; button.setAttribute('aria-label', t('Cancel'));
     };
     panel.querySelector('[data-discard]')?.addEventListener('click', () => { draft = null; draftText = ''; draftImage = ''; imageGeneration++; imageLoading = false; render(); });
-    panel.querySelector('[data-back]')?.addEventListener('click', () => { selected = null; replyText = ''; replyId = null; replyImage = ''; imageGeneration++; imageLoading = false; render(); });
+    panel.querySelector('[data-back]')?.addEventListener('click', () => showThread(null));
     const compose = panel.querySelector('[data-compose]');
     compose?.querySelector('textarea').addEventListener('input', event => { draftText = event.target.value; draft.id = crypto.randomUUID(); });
     compose?.addEventListener('submit', event => { event.preventDefault(); if (!imageLoading && draftText.trim()) void save({ ...draft, text: draftText, ...(draftImage ? { image: draftImage } : {}) }); });
@@ -164,7 +148,7 @@ export function setupFeedback({ auth, app, transport, description }) {
     panel.querySelector('[data-resolve]')?.addEventListener('click', () => { if (admin === true) void save({ action: 'resolve', id: selected, resolved: !thread.resolved }); });
     const select = panel.querySelector('[data-filter]');
     if (select) { select.value = filter; select.onchange = () => { filter = select.value; render(); }; }
-    panel.querySelectorAll('[data-thread]').forEach(node => { node.onclick = () => { selected = node.dataset.thread; replyText = ''; replyId = null; replyImage = ''; imageGeneration++; imageLoading = false; render(); }; });
+    panel.querySelectorAll('[data-thread]').forEach(node => { node.onclick = () => showThread(node.dataset.thread); });
   }
   function positionPins() {
     pins.replaceChildren();

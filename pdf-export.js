@@ -1,9 +1,9 @@
+import { jpegPagesPdf } from './pdf-document.js';
+export { jpegPagesPdf } from './pdf-document.js';
 import { t } from './i18n.js';
 import { EXPORT_FIELDS, EXPORT_LABELS, observationText, sortedMapEntries } from './export-data.js';
 import { ISO_DATE_KEY_LENGTH, MILLISECONDS_PER_DAY } from './date-utils.js';
 
-const PDF_PAGE_WIDTH = 842;
-const PDF_PAGE_HEIGHT = 595;
 const RASTER_PAGE_WIDTH = 1684;
 const RASTER_PAGE_HEIGHT = 1190;
 const MAX_CONTINUOUS_MAP_DAYS = 730;
@@ -27,37 +27,6 @@ const BODY_LINE_HEIGHT = 30;
 const ENTRY_SPACING = 20;
 const BODY_TEXT_WIDTH = 1520;
 const PAGE_JPEG_QUALITY = 0.94;
-const PDF_OBJECTS_PER_PAGE = 3;
-const FIRST_PAGE_OBJECT_ID = 3;
-const PDF_OFFSET_DIGITS = 10;
-
-// Each page is a high-resolution JPEG. Canvas preserves Czech/Ukrainian glyphs
-// without a remote font dependency. PDF object offsets are counted in bytes.
-export function jpegPagesPdf(pages, width = RASTER_PAGE_WIDTH, height = RASTER_PAGE_HEIGHT) {
-  const encode = text => new TextEncoder().encode(text);
-  const chunks = [], offsets = [0]; let length = 0;
-  const push = value => { const bytes = typeof value === 'string' ? encode(value) : value; chunks.push(bytes); length += bytes.length; };
-  const object = (id, content) => { offsets[id] = length; push(`${id} 0 obj\n`); push(content); push('\nendobj\n'); };
-  push('%PDF-1.4\n');
-  object(1, '<< /Type /Catalog /Pages 2 0 R >>');
-  object(2, `<< /Type /Pages /Count ${pages.length} /Kids [${pages.map((_, index) => `${FIRST_PAGE_OBJECT_ID + index * PDF_OBJECTS_PER_PAGE} 0 R`).join(' ')}] >>`);
-  pages.forEach((bytes, index) => {
-    const id = FIRST_PAGE_OBJECT_ID + index * PDF_OBJECTS_PER_PAGE;
-    object(id, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PDF_PAGE_WIDTH} ${PDF_PAGE_HEIGHT}] /Resources << /XObject << /Im ${id + 1} 0 R >> >> /Contents ${id + 2} 0 R >>`);
-    offsets[id + 1] = length;
-    push(`${id + 1} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${width} /Height ${height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${bytes.length} >>\nstream\n`);
-    push(bytes); push('\nendstream\nendobj\n');
-    const stream = `q ${PDF_PAGE_WIDTH} 0 0 ${PDF_PAGE_HEIGHT} 0 0 cm /Im Do Q`;
-    object(id + 2, `<< /Length ${encode(stream).length} >>\nstream\n${stream}\nendstream`);
-  });
-  const start = length;
-  push(`xref\n0 ${offsets.length}\n0000000000 65535 f \n`);
-  offsets.slice(1).forEach(offset => push(`${String(offset).padStart(PDF_OFFSET_DIGITS, '0')} 00000 n \n`));
-  push(`trailer\n<< /Size ${offsets.length} /Root 1 0 R >>\nstartxref\n${start}\n%%EOF\n`);
-  const output = new Uint8Array(length); let outputOffset = 0;
-  chunks.forEach(chunk => { output.set(chunk, outputOffset); outputOffset += chunk.length; });
-  return output;
-}
 
 export async function mapPdf(map) {
   const canvas = document.createElement('canvas'); canvas.width = RASTER_PAGE_WIDTH; canvas.height = RASTER_PAGE_HEIGHT;
