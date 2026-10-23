@@ -1,3 +1,4 @@
+import { downloadFile } from '../browser-download.js';
 import { setText, translateDOM } from "../i18n.js";
 import { serializeBackup, backupFilename } from "../backup.js";
 
@@ -20,12 +21,10 @@ export function setupCloudStatus(cloud) {
   const reload = panel.querySelector("[data-cloud-reload]");
   const backup = panel.querySelector("[data-cloud-backup]");
   const download = () => {
-    const url = URL.createObjectURL(new Blob([serializeBackup(cloud.snapshot())], { type: "application/json" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = backupFilename();
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), BACKUP_URL_LIFETIME_MS);
+    downloadFile(serializeBackup(cloud.snapshot()), 'application/json', backupFilename(), {
+      urlLifetimeMs: BACKUP_URL_LIFETIME_MS,
+      attachToDocument: false,
+    });
   };
   const render = state => {
     setText(message, STATUS_MESSAGES[state] || STATUS_MESSAGES.error);

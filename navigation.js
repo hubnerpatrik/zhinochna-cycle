@@ -1,17 +1,18 @@
+const NAVIGATION_SESSION = "cycle-tracker-v1";
+
 // URL/history coordination, independent of rendering and stored observations.
 export function createNavigation({ browser = window, normalize, render }) {
   let current = null;
   let started = false;
-  const session = "cycle-tracker-v1";
-  const owned = () => browser.history.state?.cycleNavigation?.session === session;
+  const ownsCurrentHistoryEntry = () => browser.history.state?.cycleNavigation?.session === NAVIGATION_SESSION;
 
   function navigate(route, { replace = false, silent = false } = {}) {
     const next = normalize(route);
     const hash = `#/${next.screen}${next.params.size ? `?${next.params}` : ""}`;
     const same = browser.location.hash === hash;
-    const previous = owned() ? browser.history.state.cycleNavigation : null;
+    const previous = ownsCurrentHistoryEntry() ? browser.history.state.cycleNavigation : null;
     const depth = previous?.depth ?? 0;
-    const metadata = { session, depth: replace || same ? depth : depth + 1 };
+    const metadata = { session: NAVIGATION_SESSION, depth: replace || same ? depth : depth + 1 };
     browser.history[replace || same ? "replaceState" : "pushState"](
       { cycleNavigation: metadata }, "", hash,
     );
@@ -25,7 +26,7 @@ export function createNavigation({ browser = window, normalize, render }) {
   }
 
   function back(fallback = "menu") {
-    if (owned() && browser.history.state.cycleNavigation.depth > 0) browser.history.back();
+    if (ownsCurrentHistoryEntry() && browser.history.state.cycleNavigation.depth > 0) browser.history.back();
     else navigate(fallback, { replace: true });
   }
 

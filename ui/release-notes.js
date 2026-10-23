@@ -18,20 +18,20 @@ export function setupReleaseNotes(app) {
   const dialog = document.createElement('dialog'); dialog.className = 'release-notes-dialog';
   dialog.setAttribute('aria-labelledby', 'releaseNotesTitle');
   dialog.innerHTML = `<header><div><p class="screen-kicker"><span data-i18n>Version</span> <span data-release-version></span></p><h2 id="releaseNotesTitle" data-i18n>What's new</h2></div><button type="button" class="btn secondary" data-release-close data-i18n>Close</button></header><ul></ul><a data-release-github target="_blank" rel="noopener noreferrer" data-i18n>Full release notes on GitHub</a>`;
-  for (const change of currentRelease.changes) {
+  currentRelease.changes.forEach(change => {
     const item = document.createElement('li'); item.textContent = change; item.setAttribute('data-i18n', change);
     dialog.querySelector('ul').append(item);
-  }
+  });
   app.append(dialog);
-  for (const root of [control, dialog]) {
+  [control, dialog].forEach(root => {
     root.querySelectorAll('[data-release-version]').forEach(node => { node.textContent = currentRelease.version; });
     root.querySelectorAll('[data-release-github]').forEach(node => { node.href = currentRelease.githubUrl; });
     translateDOM(root);
-  }
+  });
   const bubble = control.querySelector('.release-announcement'), dot = control.querySelector('.release-unread-dot');
   const trigger = control.querySelector('.release-notes-trigger');
-  function unread(value) { bubble.hidden = !value; dot.hidden = !value; }
-  const dismiss = () => { preference.dismiss(); unread(false); };
+  function setUnread(value) { bubble.hidden = !value; dot.hidden = !value; }
+  const dismiss = () => { preference.dismiss(); setUnread(false); };
   const open = () => { dismiss(); if (!dialog.open) dialog.showModal(); };
   trigger.onclick = open;
   control.querySelector('[data-release-open]').onclick = open;
@@ -42,7 +42,7 @@ export function setupReleaseNotes(app) {
   dialog.addEventListener('close', () => trigger.focus({ preventScroll: true }));
   control.addEventListener('keydown', event => { if (event.key === 'Escape') { dismiss(); trigger.focus(); } });
   window.addEventListener('storage', event => {
-    if (event.key === RELEASE_SEEN_KEY && !isNewRelease(currentRelease.version, event.newValue)) unread(false);
+    if (event.key === RELEASE_SEEN_KEY && !isNewRelease(currentRelease.version, event.newValue)) setUnread(false);
   });
-  unread(preference.isUnread());
+  setUnread(preference.isUnread());
 }

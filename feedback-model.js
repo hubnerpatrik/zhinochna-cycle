@@ -1,8 +1,8 @@
 import { isFeedbackImage } from './feedback-image.js';
 const UUID_PATTERN = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
-const MAX_MESSAGE_LENGTH = 4000;
-const MAX_SELECTOR_LENGTH = 1000;
-const MAX_LABEL_LENGTH = 100;
+export const MAX_MESSAGE_LENGTH = 4000;
+export const MAX_SELECTOR_LENGTH = 1000;
+export const MAX_LABEL_LENGTH = 100;
 const MAX_VERSION_LENGTH = 40;
 
 function validateText(value, maximumLength) {

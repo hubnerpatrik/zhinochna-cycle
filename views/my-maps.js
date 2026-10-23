@@ -1,40 +1,10 @@
+import { MAP_NAME_MAX_LENGTH } from '../form-limits.js';
+import { buildMapMeta, matchesFilter } from '../map-list-model.js';
+import { ISO_DATE_KEY_LENGTH } from '../date-utils.js';
 import { escapeHtml } from "./view-utils.js";
 import { t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
-
-function getSortedEntryDates(entries) {
-  return Object.keys(entries || {}).sort();
-}
-
-function buildMapMeta(map) {
-  const dates = getSortedEntryDates(map.entries);
-  const years = [...new Set(dates.map(date => date.slice(0, 4)))].sort();
-  const months = [...new Set(dates.map(date => date.slice(5, 7)))].sort();
-  const values = Object.values(map.entries || {});
-  const tempCount = values.filter(entry => entry?.temp != null).length;
-  const periodCount = values.filter(entry => entry?.bleeding === "menstruation").length;
-  const notesCount = values.filter(entry => Boolean(entry?.other?.trim())).length;
-
-  return {
-    ...map,
-    dates,
-    years,
-    months,
-    preview: `${dates.length} day${dates.length === 1 ? "" : "s"} · ${tempCount} temps · ${periodCount} period days · ${notesCount} notes`,
-    dateRange: dates.length ? `${dates[0]} to ${dates[dates.length - 1]}` : "No entries yet",
-    lastActivity: map.closedAt || dates[dates.length - 1] || map.createdAt,
-  };
-}
-
-function matchesFilter(map, year, month) {
-  if (!year && !month) return true;
-  return map.dates.some(date => {
-    const sameYear = !year || date.startsWith(`${year}-`);
-    const sameMonth = !month || date.slice(5, 7) === month;
-    return sameYear && sameMonth;
-  });
-}
 
 function renderMapList(container, maps, activeMapId, year, month, onOpen, onRename, onDelete, onExport) {
   const filteredMaps = maps.filter(map => matchesFilter(map, year, month));
@@ -64,7 +34,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
           </div>
           <p class="map-list-meta"> <span data-i18n>${escapeHtml(map.dateRange)}</span></p>
           <p class="map-list-preview"><span data-i18n>Preview:</span> <span data-i18n>${escapeHtml(map.preview)}</span></p>
-          <p class="map-list-meta"><span data-i18n>Last activity:</span> ${escapeHtml(String(map.lastActivity).slice(0, 10))}</p>
+          <p class="map-list-meta"><span data-i18n>Last activity:</span> ${escapeHtml(String(map.lastActivity).slice(0, ISO_DATE_KEY_LENGTH))}</p>
         </div>
         <div class="map-list-actions">
           <div class="map-export-picker">
@@ -101,7 +71,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
 
       openMapDialog({
         title: 'Edit map name', submitLabel: 'Save changes', closeOnNavigation: true,
-        body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="80" value="${escapeHtml(map.name || '')}" autofocus></label>`,
+        body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="${MAP_NAME_MAX_LENGTH}" value="${escapeHtml(map.name || '')}" autofocus></label>`,
         onSubmit: dialog => {
           const name = dialog.querySelector('input').value.trim();
           if (!name) return;

@@ -1,7 +1,7 @@
 import { setTranslatedAttribute } from '../i18n.js';
 
 // Native hover help follows the same translation mechanism as other UI copy.
-const help = {
+const HELP_MESSAGES = {
   'Main Menu': 'Open the overview and choose what to do next.',
   Menu: 'Open the overview and choose what to do next.',
   'My Profile': 'Set your profile and usual measurement time.',
@@ -54,7 +54,7 @@ export function initializeHelp() {
       || element.querySelector('[data-i18n]')?.getAttribute('data-i18n')
       || element.getAttribute('aria-label') || element.textContent.trim();
     const special = { prevMonth: 'Show the previous month.', nextMonth: 'Show the next month.' }[element.id];
-    const description = special || help[source];
+    const description = special || HELP_MESSAGES[source];
     // Unknown headings retain their own label; never scan or rewrite input values.
     const value = description || source;
     if (value && managed.get(element) !== value) {
