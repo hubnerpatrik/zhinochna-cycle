@@ -1,4 +1,7 @@
 export const exportMessages = {
+  'Export observation cards to PDF and Excel in your app language.': ['Exportuj karty pozorování do PDF a Excelu v jazyce aplikace.', 'Exportuj karty pozorovaní do PDF a Excelu v jazyku aplikácie.', 'Експортуйте карти спостережень у PDF та Excel мовою застосунку.'],
+  'Import your original PDF, Excel or JSON map exports.': ['Importuj původní exporty map ve formátu PDF, Excel nebo JSON.', 'Importuj pôvodné exporty máp vo formáte PDF, Excel alebo JSON.', 'Імпортуйте початкові експорти карт у форматі PDF, Excel або JSON.'],
+  'Excel exports open without file recovery and include a temperature chart.': ['Exporty Excelu se otevírají bez obnovy souboru a obsahují teplotní graf.', 'Exporty Excelu sa otvárajú bez obnovy súboru a obsahujú teplotný graf.', 'Експорти Excel відкриваються без відновлення файлу та містять графік температури.'],
   'Date': ['Datum', 'Dátum', 'Дата'],
   'Cycle day': ['Den cyklu', 'Deň cyklu', 'День циклу'],
   'Cycle map': ['Mapa cyklu', 'Mapa cyklu', 'Карта циклу'],
