@@ -12,6 +12,41 @@ const map = { id: 'sample', name: 'Žluťoučký цикл', entries: {
   '2026-10-03': { temp: 36.7, isFertile: true },
 }, coverlines: { default: { horizontalTemp: 36.4 } }, cycleSummaries: { '2026-10-01': { mucusPeak: 13 } } };
 
+function storedZipParts(bytes) {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const parts = new Map();
+  let offset = 0;
+  while (view.getUint32(offset, true) === 0x04034b50) {
+    assert.equal(view.getUint16(offset + 8, true), 0);
+    const size = view.getUint32(offset + 18, true);
+    const nameLength = view.getUint16(offset + 26, true), extraLength = view.getUint16(offset + 28, true);
+    const start = offset + 30 + nameLength + extraLength;
+    parts.set(new TextDecoder().decode(bytes.slice(offset + 30, offset + 30 + nameLength)), new TextDecoder().decode(bytes.slice(start, start + size)));
+    offset = start + size;
+  }
+  return parts;
+}
+
+test('Excel package declares the content type of every part, including the embedded backup', () => {
+  const parts = storedZipParts(mapXlsx(map));
+  const types = parts.get('[Content_Types].xml');
+  const defaults = new Map([...types.matchAll(/<Default Extension="([^"]+)" ContentType="([^"]+)"\s*\/>/g)].map(match => [match[1], match[2]]));
+  const overrides = new Set([...types.matchAll(/<Override PartName="([^"]+)"/g)].map(match => match[1]));
+  assert.equal(defaults.get('json'), 'application/json');
+  for (const name of parts.keys()) {
+    if (name === '[Content_Types].xml') continue;
+    assert.ok(overrides.has('/' + name) || defaults.has(name.split('.').at(-1)), `Missing content type: ${name}`);
+  }
+  const workbook = parts.get('xl/workbook.xml');
+  const views = [...workbook.matchAll(/<workbookView(?:\s[^>]*)?\s*\/>/g)];
+  assert.ok(views.length > 0);
+  assert.ok(workbook.indexOf('<bookViews>') < workbook.indexOf('<sheets>'));
+  for (const [name, content] of parts) {
+    if (!/^xl\/worksheets\/sheet\d+\.xml$/.test(name)) continue;
+    for (const [, index] of content.matchAll(/workbookViewId="(\d+)"/g)) assert.ok(Number(index) < views.length, `Invalid view in ${name}`);
+  }
+});
+
 test('Excel imports all data, metadata and annotations without changing JSON backup format', async () => {
   const backup = mapBackupPayload(map);
   const bytes = mapXlsx(map, backup);
@@ -21,6 +56,9 @@ test('Excel imports all data, metadata and annotations without changing JSON bac
   assert.match(text, /scatterChart/);
   assert.match(text, /<c:min val="36"/);
   assert.match(text, /<c:dispBlanksAs val="gap"/);
+  assert.match(text, /<c:delete val="0"/);
+  assert.match(text, /<c:tickLblPos val="nextTo"/);
+  assert.match(text, /<c:varyColors val="0"/);
   assert.match(text, /name="Cycle map 1"/);
   assert.match(text, /name="Data"/);
 });

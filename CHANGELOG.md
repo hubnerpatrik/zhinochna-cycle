@@ -14,6 +14,11 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Fixed
+
+- Prevent Excel from requiring file recovery when opening exported workbooks: declare the embedded JSON backup's package content type and include the workbook view referenced by worksheet views.
+- Keep temperature values readable in Excel, show chart axis labels and preserve borders around merged summary cells.
+
 ### Added
 
 - Export a 43-day A4 observation card based on the supplied reference, with a temperature chart, observations and cycle summaries. Excel includes native temperature charts and a complete data sheet.
