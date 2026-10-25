@@ -80,7 +80,8 @@ test('repository scopes list and reply to owner or server-approved admin; only a
   assert.equal(queries.length, 2); // Owner resolution never reaches the database.
   queries.forEach(({ query, values }) => { assert.match(query, /owner_id = \? OR \?/); assert.ok(values.includes('a')); assert.ok(values.includes(false)); });
   assert.match(queries[1].query, /messages @>/); // retries do not duplicate replies
-  assert.match(queries[1].query, /jsonb_array_length\(messages\) < 100/);
+  assert.match(queries[1].query, /jsonb_array_length\(messages\) < \?/);
+  assert.ok(queries[1].values.includes(100));
   await repository.write('support', true, { action: 'resolve', id: crypto.randomUUID(), resolved: false });
   assert.match(queries[2].query, /WHERE id = \?::uuid AND \?/);
   assert.equal(queries[2].values.at(-1), true);

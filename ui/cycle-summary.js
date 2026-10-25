@@ -1,6 +1,6 @@
 import { setText } from '../i18n.js';
 import { store } from '../store.js';
-import { buildCycleHistory, calculateSummary, cycleStarts, manualFields, summaryRows } from '../cycle-summary.js';
+import { DEFAULT_HISTORY_COUNT, buildCycleHistory, calculateSummary, cycleStarts, manualFields, summaryRows } from '../cycle-summary.js';
 
 function currentSummary(start, manual) {
   const { maps, activeMapId } = store.getPersistentState();
@@ -119,7 +119,7 @@ function openSummary(container, initialStart, trigger) {
       if (length) form.elements[key].max = String(length);
       else form.elements[key].removeAttribute('max');
     });
-    form.elements.historyCount.value = manual.historyCount ?? 6;
+    form.elements.historyCount.value = manual.historyCount ?? DEFAULT_HISTORY_COUNT;
     preview();
   };
   cycleSelect.onchange = () => {

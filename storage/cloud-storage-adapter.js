@@ -1,14 +1,21 @@
 import { LocalStorageAdapter } from "./local-storage-adapter.js";
 import { normalizeApplicationData } from "../data-validation.js";
 
-const blank = () => normalizeApplicationData({ profile: { setupCompleted: false }, maps: {}, activeMapId: null }, { strict: true });
-const copy = value => JSON.parse(JSON.stringify(value));
+const REQUEST_TIMEOUT_MS = 20_000;
+const SAVE_DEBOUNCE_MS = 600;
+const HTTP_CONFLICT = 409;
+const HTTP_PAYLOAD_TOO_LARGE = 413;
+
+const createBlankState = () => normalizeApplicationData({ profile: { setupCompleted: false }, maps: {}, activeMapId: null }, { strict: true });
+const cloneJsonData = value => JSON.parse(JSON.stringify(value));
 
 export function createCloudTransport(auth, fetcher = fetch) {
   return async (method, body) => {
     const token = await auth.token();
     const response = await fetcher("/api/state", {
-      method, cache: "no-store", credentials: "omit", signal: AbortSignal.timeout(20000),
+      // Protected previews also need the hosting provider's same-origin cookie.
+      // The API still authenticates the account exclusively through the JWT.
+      method, cache: "no-store", credentials: "same-origin", signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       headers: { Authorization: `Bearer ${token}`, ...(body ? { "Content-Type": "application/json" } : {}) },
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
@@ -73,7 +80,7 @@ export class CloudStorageAdapter {
       else {
         if (this.envelope && remote.version < this.envelope.version) { this.blocked = true; this.status("conflict"); return; }
         this.commit({ version: remote.version, dirty: false, pending: null,
-          data: remote.data ? normalizeApplicationData(remote.data, { strict: true }) : blank() });
+          data: remote.data ? normalizeApplicationData(remote.data, { strict: true }) : createBlankState() });
         this.status("saved");
       }
     } catch (error) {
@@ -92,15 +99,15 @@ export class CloudStorageAdapter {
 
   saveState(data) {
     if (this.stopped || this.blocked) throw new Error("Reload cloud data before editing.");
-    this.commit({ ...this.envelope, data: copy(data), dirty: true });
+    this.commit({ ...this.envelope, data: cloneJsonData(data), dirty: true });
     this.status("pending");
     clearTimeout(this.timer);
-    this.timer = this.schedule(() => { void this.flush(); }, 600);
+    this.timer = this.schedule(() => { void this.flush(); }, SAVE_DEBOUNCE_MS);
   }
 
-  clear() { this.saveState(blank()); }
+  clear() { this.saveState(createBlankState()); }
   hasPending() { return Boolean(this.envelope?.dirty || this.envelope?.pending); }
-  snapshot() { return copy(this.envelope.data); }
+  snapshot() { return cloneJsonData(this.envelope.data); }
 
   flush() {
     if (this.running) return this.running;
@@ -113,28 +120,28 @@ export class CloudStorageAdapter {
       while (!this.stopped && !this.blocked && this.hasPending()) {
         if (!this.envelope.pending) {
           this.commit({ ...this.envelope, pending: {
-            version: this.envelope.version, mutationId: crypto.randomUUID(), data: copy(this.envelope.data),
+            version: this.envelope.version, mutationId: crypto.randomUUID(), data: cloneJsonData(this.envelope.data),
           } });
         }
         const sent = this.envelope.pending;
         this.status("saving");
-        const ack = await this.request("PUT", sent);
+        const acknowledgement = await this.request("PUT", sent);
         if (this.stopped) return;
-        if (ack.mutationId !== sent.mutationId || ack.version !== sent.version + 1) throw new Error("Invalid acknowledgement");
-        this.commit({ ...this.envelope, version: ack.version, pending: null,
+        if (acknowledgement.mutationId !== sent.mutationId || acknowledgement.version !== sent.version + 1) throw new Error("Invalid acknowledgement");
+        this.commit({ ...this.envelope, version: acknowledgement.version, pending: null,
           dirty: JSON.stringify(this.envelope.data) !== JSON.stringify(sent.data) });
       }
       if (!this.stopped && !this.blocked) this.status("saved");
     } catch (error) {
-      if (error.status === 409) { this.blocked = true; this.status("conflict"); }
+      if (error.status === HTTP_CONFLICT) { this.blocked = true; this.status("conflict"); }
       else if (!this.stopped && !this.blocked) {
-        if (error.status === 413) {
+        if (error.status === HTTP_PAYLOAD_TOO_LARGE) {
           // A rejected oversized request was not committed. Let a smaller edit
           // replace it; ambiguous network failures must retain the original ID.
           try { this.commit({ ...this.envelope, pending: null, dirty: true }); }
           catch { if (!this.blocked) this.status("error"); return; }
         }
-        this.status(error.status === 413 ? "too-large" : "error");
+        this.status(error.status === HTTP_PAYLOAD_TOO_LARGE ? "too-large" : "error");
       }
     }
   }
@@ -158,7 +165,7 @@ export class CloudStorageAdapter {
     // Retain a recovery copy before the explicit switch to the cloud version.
     this.storage.setItem(`${this.key}:recovery:${crypto.randomUUID()}`, this.raw);
     this.commit({ version: remote.version, dirty: false, pending: null,
-      data: remote.data ? normalizeApplicationData(remote.data, { strict: true }) : blank() });
+      data: remote.data ? normalizeApplicationData(remote.data, { strict: true }) : createBlankState() });
   }
 
   stop() { this.stopped = true; clearTimeout(this.timer); }

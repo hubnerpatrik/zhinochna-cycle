@@ -1,18 +1,19 @@
 import { store } from "../store.js";
 import { setText } from "../i18n.js";
-import { TEMP_FACTORS, formatTemp, getAdjustedTemp, qs } from "../core.js";
+import { TEMP_FACTORS, formatTemp, getAdjustedTemp, getElementById } from "../core.js";
 import { hideModal, showModal } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
 import { BLEEDING_LABELS } from './bleeding-icons.js';
+import { OBSERVATION_LABELS } from './observation-labels.js';
 
 const LABELS = {
   bleeding: { none: "None", spotting: "Spotting", menstruation: "Period" },
-  sensation: { "": "None", dry: "Dry", moist: "Moist", wet: "Wet" },
-  consistency: { "": "None", creamy: "Creamy", slightlyStretchy: "Slightly stretchy", stretchy: "Stretchy" },
-  color: { "": "No color", white: "White", whiteTranslucent: "White-translucent", translucent: "Translucent", other: "Other" },
-  firmness: { "": "-", hard: "Hard", soft: "Soft" },
-  height: { "": "-", low: "Low", medium: "Middle", high: "High" },
-  openness: { "": "-", closed: "Closed", medium: "Medium", open: "Open" },
+  sensation: OBSERVATION_LABELS.sensation,
+  consistency: OBSERVATION_LABELS.consistency,
+  color: OBSERVATION_LABELS.color,
+  firmness: { "": "-", ...OBSERVATION_LABELS.cervixFirmness },
+  height: { "": "-", ...OBSERVATION_LABELS.cervixHeight },
+  openness: { "": "-", ...OBSERVATION_LABELS.cervixOpenness },
 };
 
 export function renderInfoLines(element, lines) {
@@ -31,17 +32,17 @@ export function renderDayInfo(currentColumns) {
   const data = store.entries[key] || {};
   const observationLabel = (field, labels) => Object.hasOwn(data, field) ? (labels[data[field]] ?? '-') : '-';
   const column = currentColumns.find(item => item.key === key);
-  setText(qs("dayInfoTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
+  setText(getElementById("dayInfoTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
 
   const adjusted = getAdjustedTemp(
     data.temp,
     data.measurementTime,
     store.getActiveMapProfile().usualMeasurementTime,
   );
-  setText(qs("infoTemp"), data.temp == null
+  setText(getElementById("infoTemp"), data.temp == null
     ? "-"
     : `${formatTemp(data.temp)} °C${data.measurementTime ? ` at ${data.measurementTime}` : ""}${adjusted == null ? "" : ` (adjusted ${formatTemp(adjusted)} °C)`}`);
-  const factors = qs('infoTempFactors');
+  const factors = getElementById('infoTempFactors');
   factors.removeAttribute?.('data-i18n');
   factors.replaceChildren();
   const factorLabel = document.createElement('span');
@@ -52,26 +53,26 @@ export function renderDayInfo(currentColumns) {
     detail.textContent = `: ${data.tempFactorsOther}`;
     factors.appendChild(detail);
   }
-  renderInfoLines(qs("infoBleeding"), [
+  renderInfoLines(getElementById("infoBleeding"), [
     `Bleeding: ${LABELS.bleeding[data.bleeding] ?? "-"}`,
     ...(BLEEDING_LABELS[data.bleedingIntensity] ? [`Period intensity: ${BLEEDING_LABELS[data.bleedingIntensity]}`] : []),
     `Clots: ${data.sediment == null ? "-" : data.sediment ? "Yes" : "No"}`,
   ]);
-  renderInfoLines(qs("infoMucus"), [
+  renderInfoLines(getElementById("infoMucus"), [
     `Sensation: ${observationLabel('sensation', LABELS.sensation)}`,
     `Slippery: ${data.stretch == null ? "-" : data.stretch ? "Yes" : "No"}`,
     `Discharge: ${data.visible == null ? "-" : data.visible ? "Present" : "None"}`,
     `Consistency: ${observationLabel('consistency', LABELS.consistency)}`,
     `Color: ${observationLabel('color', LABELS.color)}${data.colorOther ? ` (${data.colorOther})` : ""}`,
   ]);
-  renderInfoLines(qs("infoCervix"), [
+  renderInfoLines(getElementById("infoCervix"), [
     `Firmness: ${LABELS.firmness[data.cervixFirmness ?? ""]}`,
     `Height: ${LABELS.height[data.cervixHeight ?? ""]}`,
     `Openness: ${LABELS.openness[data.cervixOpenness ?? ""]}`,
   ]);
   const sex = data.sex === true ? "Yes" : data.sex === false ? "No" : "-";
   const notes = typeof data.other === "string" && data.other.trim() ? data.other : "-";
-  renderInfoLines(qs("infoOther"), [`Sex: ${sex}`, `Notes: ${notes}`]);
+  renderInfoLines(getElementById("infoOther"), [`Sex: ${sex}`, `Notes: ${notes}`]);
 }
 
 export function openDayInfoModal(currentColumns) {

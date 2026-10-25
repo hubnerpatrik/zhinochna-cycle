@@ -1,7 +1,9 @@
+import { downloadFile } from '../browser-download.js';
 import { setText, translateDOM } from "../i18n.js";
 import { serializeBackup, backupFilename } from "../backup.js";
 
-const messages = {
+const BACKUP_URL_LIFETIME_MS = 1000;
+const STATUS_MESSAGES = {
   loading: "Loading your cloud maps…",
   saved: "Saved to your account",
   saving: "Saving to your account…",
@@ -19,15 +21,13 @@ export function setupCloudStatus(cloud) {
   const reload = panel.querySelector("[data-cloud-reload]");
   const backup = panel.querySelector("[data-cloud-backup]");
   const download = () => {
-    const url = URL.createObjectURL(new Blob([serializeBackup(cloud.snapshot())], { type: "application/json" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = backupFilename();
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    downloadFile(serializeBackup(cloud.snapshot()), 'application/json', backupFilename(), {
+      urlLifetimeMs: BACKUP_URL_LIFETIME_MS,
+      attachToDocument: false,
+    });
   };
   const render = state => {
-    setText(message, messages[state] || messages.error);
+    setText(message, STATUS_MESSAGES[state] || STATUS_MESSAGES.error);
     panel.dataset.warning = ["error", "conflict", "local-conflict", "too-large"].includes(state);
     retry.hidden = !["error", "pending", "too-large"].includes(state);
     reload.hidden = !["conflict", "local-conflict"].includes(state);
@@ -44,7 +44,7 @@ export function setupCloudStatus(cloud) {
       download();
       await cloud.loadCloud();
       location.reload();
-    } catch { setText(message, messages.error); }
+    } catch { setText(message, STATUS_MESSAGES.error); }
     finally { reload.disabled = false; }
   };
 }

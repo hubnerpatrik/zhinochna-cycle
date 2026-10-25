@@ -50,7 +50,7 @@ export function renderMenuView(container, { activeMap, onNavigate }) {
         </button>
 
         <div class="menu-grid">
-          ${MENU_ITEMS.map(item => {
+          ${MENU_ITEMS.map((item, index) => {
             const disabled = item.screen === "active-map" && !activeMap;
             return `
               <button
@@ -59,7 +59,7 @@ export function renderMenuView(container, { activeMap, onNavigate }) {
                 data-screen="${item.screen}"
                 ${disabled ? "disabled" : ""}
               >
-                <span class="menu-card-index">${MENU_ITEMS.indexOf(item) + 1}</span>
+                <span class="menu-card-index">${index + 1}</span>
                 <span class="menu-card-icon" aria-hidden="true"><svg><use href="/icons.svg#nav-${item.icon}"/></svg></span>
                 <span class="menu-card-title"> <span data-i18n>${escapeHtml(item.title)}</span></span>
                 <span class="menu-card-description"> <span data-i18n>${escapeHtml(item.description)}</span></span>

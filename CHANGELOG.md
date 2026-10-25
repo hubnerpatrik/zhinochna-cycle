@@ -14,6 +14,28 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.14.1 — 2026-10-25
+
+### Fixed
+
+- Restore cloud loading, saving and feedback requests in Vercel previews protected by Vercel Authentication. Same-origin API requests now retain the hosting provider's access cookie while account authorization still requires a verified JWT.
+
+### Changed
+
+- Separate UI rendering, event handling, validation and authenticated transport into focused modules.
+- Replace JavaScript inline-style updates with CSS classes and shared layout helpers.
+- Centralize form limits, observation labels, image processing and browser download utilities.
+- Separate HTTP contracts and state validation from server handlers and feedback persistence.
+- Split Excel workbook, ZIP archive and PDF document assembly into dedicated modules while preserving existing export output.
+- Improve names and remove duplicated logic without introducing new application features.
+
+### Validation and compatibility
+
+- Pass 171 automated tests, JavaScript syntax checks and the production build.
+- Verify email sign-in, cloud writes, page reload, sign-out, sign-in again and test feedback submission in an isolated develop preview.
+- Confirm the synthetic map entry directly in the preview database. Earlier differential fixtures preserve XLSX/PDF bytes and feedback rendering behavior.
+- No database migration is required for this release. Existing maps, observations and export formats remain compatible.
+
 ## 0.14.0 — 2026-10-21
 
 ### Fixed

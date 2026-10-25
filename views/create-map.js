@@ -1,3 +1,4 @@
+import { MAP_NAME_MAX_LENGTH } from '../form-limits.js';
 import { showFieldError } from '../ui/field-errors.js';
 export function renderCreateMapView(container, { onBack, onCreate }) {
   container.innerHTML = `
@@ -12,7 +13,7 @@ export function renderCreateMapView(container, { onBack, onCreate }) {
         <form class="screen-card screen-form-card" id="createMapForm">
           <div class="modal-section">
             <div class="input-label" data-i18n>Map name</div>
-            <input id="createMapNameInput" type="text" required maxlength="80">
+            <input id="createMapNameInput" type="text" required maxlength="${MAP_NAME_MAX_LENGTH}">
           </div>
 
           <div class="modal-actions screen-actions">

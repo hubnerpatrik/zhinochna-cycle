@@ -1,3 +1,5 @@
+import { MAP_NAME_MAX_LENGTH } from './form-limits.js';
+import { ISO_DATE_KEY_LENGTH } from './date-utils.js';
 import { store } from "./store.js";
 import { t } from "./i18n.js";
 import { renderMenuView } from "./views/menu.js";
@@ -10,6 +12,8 @@ import { backupFilename } from "./backup.js";
 import { createNavigation } from "./navigation.js";
 import { downloadFile, exportFilename, mapCsv, mapPdf, mapXlsx } from './map-export.js';
 
+const BACKUP_URL_LIFETIME_MS = 0;
+
 export const MODAL_ROUTES = Object.freeze({
   actionModal: "edit-day", modal: "temperature", bleedingModal: "bleeding",
   mucusModal: "mucus", cervixModal: "cervix", otherModal: "other",
@@ -17,15 +21,9 @@ export const MODAL_ROUTES = Object.freeze({
 });
 
 function downloadBackup(contents, mapName) {
-  const blob = new Blob([contents], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = backupFilename(new Date(), mapName);
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 0);
+  downloadFile(contents, 'application/json', backupFilename(new Date(), mapName), {
+    urlLifetimeMs: BACKUP_URL_LIFETIME_MS,
+  });
 }
 
 export function createRouter({ root, showStandaloneScreen, openActiveMap, openMapPage, showMessage, browser = window }) {
@@ -96,7 +94,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
     const day = params.get("day");
     const date = day && new Date(`${day}T12:00:00Z`);
     const validDay = /^\d{4}-\d{2}-\d{2}$/.test(day || "")
-      && Number.isFinite(date?.getTime()) && date.toISOString().slice(0, 10) === day;
+      && Number.isFinite(date?.getTime()) && date.toISOString().slice(0, ISO_DATE_KEY_LENGTH) === day;
     if (Object.values(MODAL_ROUTES).includes(page)
       && (["edit-day", "fertile-range"].includes(page) || validDay)) {
       clean.set("page", page);
@@ -247,7 +245,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
         const background = navigation.current.params.get('from') || 'my-maps';
         render(background);
         createMapDialog = openMapDialog({ title: 'Create map', submitLabel: 'Create',
-          body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="80" autofocus></label>`,
+          body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="${MAP_NAME_MAX_LENGTH}" autofocus></label>`,
           onClose: () => {
             if (createMapDialog !== dialog) return;
             createMapDialog = null;

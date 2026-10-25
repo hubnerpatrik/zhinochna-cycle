@@ -1,4 +1,12 @@
 // UI-independent auth actions. Passwords and reset tokens are never persisted.
+export const AUTH_REQUEST_TIMEOUT_MS = 15_000;
+const HTTP_TOO_MANY_REQUESTS = 429;
+const INVALID_CREDENTIAL_CODES = ['INVALID_EMAIL_OR_PASSWORD', 'INVALID_PASSWORD', 'invalid_credentials'];
+const INVALID_OTP_CODES = ['INVALID_OTP', 'OTP_EXPIRED'];
+const INVALID_OTP_MESSAGES = ['Invalid OTP', 'OTP expired'];
+
+const isInvalidOtp = error => INVALID_OTP_CODES.includes(error?.code) || INVALID_OTP_MESSAGES.includes(error?.message);
+
 export function verifiedUser(session) {
   const user = session?.user;
   const expiresAt = new Date(session?.session?.expiresAt).getTime();
@@ -23,12 +31,11 @@ export function authErrorMessage(error) {
     || ["Invalid callbackURL", "Invalid origin", "Invalid redirectURL", "Invalid redirectTo"].includes(error?.message)) {
     return "This app address is not allowed by the sign-in service. Please contact the app administrator.";
   }
-  if (["INVALID_OTP", "OTP_EXPIRED"].includes(error?.code)
-    || ["Invalid OTP", "OTP expired"].includes(error?.message)) return "The verification code is incorrect or expired. Try again or request a new code.";
+  if (isInvalidOtp(error)) return "The verification code is incorrect or expired. Try again or request a new code.";
   if (error?.code === "TOO_MANY_ATTEMPTS" || error?.message === "Too many attempts") return "Too many incorrect codes. Request a new code.";
-  if (error?.status === 429) return "Too many attempts. Please wait and try again.";
+  if (error?.status === HTTP_TOO_MANY_REQUESTS) return "Too many attempts. Please wait and try again.";
   if (isEmailUnverified(error)) return "Verify your email before signing in.";
-  if (["INVALID_EMAIL_OR_PASSWORD", "INVALID_PASSWORD", "invalid_credentials"].includes(error?.code)) return "The email or password is incorrect.";
+  if (INVALID_CREDENTIAL_CODES.includes(error?.code)) return "The email or password is incorrect.";
   if (["INVALID_TOKEN", "TOKEN_EXPIRED"].includes(error?.code)) return "This link is invalid or expired. Request a new one.";
   if (error?.code === "PASSWORD_TOO_SHORT") return "Use at least 8 characters for your password.";
   // Do not display raw provider responses, credentials, or user enumeration errors.
@@ -40,9 +47,9 @@ export function isEmailUnverified(error) {
 }
 
 export function authErrorFields(error) {
-  if (['INVALID_EMAIL_OR_PASSWORD', 'INVALID_PASSWORD', 'invalid_credentials'].includes(error?.code)) return ['email', 'password'];
+  if (INVALID_CREDENTIAL_CODES.includes(error?.code)) return ['email', 'password'];
   if (error?.code === 'PASSWORD_TOO_SHORT') return ['password'];
-  if (['INVALID_OTP', 'OTP_EXPIRED'].includes(error?.code) || ['Invalid OTP', 'OTP expired'].includes(error?.message)) return ['otp'];
+  if (isInvalidOtp(error)) return ['otp'];
   return [];
 }
 
@@ -58,14 +65,14 @@ export function createAuthService(client, origin) {
     token: async () => {
       // SDK 0.5 shares the get-session cache with /token. Force the token
       // request so a cached session object cannot masquerade as a JWT response.
-      const result = await unwrap(client.token({ fetchOptions: { headers: { "X-Force-Fetch": "true" }, timeout: 15000 } }));
+      const result = await unwrap(client.token({ fetchOptions: { headers: { "X-Force-Fetch": "true" }, timeout: AUTH_REQUEST_TIMEOUT_MS } }));
       if (typeof result?.token !== "string" || !result.token) throw new Error("Unauthorized");
       return result.token;
     },
     session: async ({ required = false } = {}) => {
       const session = await unwrap(client.getSession({
         query: { disableCookieCache: true },
-        fetchOptions: { headers: { "X-Force-Fetch": "true" }, timeout: 15000 },
+        fetchOptions: { headers: { "X-Force-Fetch": "true" }, timeout: AUTH_REQUEST_TIMEOUT_MS },
       }));
       // A successful sign-in response does not prove the browser retained its cookie.
       if (required && !verifiedUser(session) && session?.user?.emailVerified !== false) {

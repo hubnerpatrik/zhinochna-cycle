@@ -1,20 +1,11 @@
+import { escapeHtml } from "./view-utils.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { prepareProfilePhoto, isStoredProfilePhoto } from '../profile-photo.js';
 import { setText } from '../i18n.js';
+import { PROFILE_GOALS, MEASUREMENT_METHODS } from '../profile-options.js';
 
-const GOAL_OPTIONS = [
-  ["", "Not set"],
-  ["avoid", "Avoid pregnancy"],
-  ["achieve", "Achieve pregnancy"],
-  ["observation", "Observation only"],
-];
-
-const METHOD_OPTIONS = [
-  ["", "Not set"],
-  ["oral", "Oral"],
-  ["vaginal", "Vaginal"],
-  ["rectal", "Rectal"],
-];
+const GOAL_OPTIONS = [['', 'Not set'], ...Object.entries(PROFILE_GOALS)];
+const METHOD_OPTIONS = [['', 'Not set'], ...Object.entries(MEASUREMENT_METHODS)];
 
 function renderOptions(options, selectedValue) {
   return options
@@ -139,7 +130,7 @@ export function renderProfileScreen(container, {
     photoImage.hidden = !photo;
     if (photo) photoImage.src = photo;
     else photoImage.removeAttribute('src');
-    placeholder.style.display = photo ? 'none' : '';
+    placeholder.classList.toggle('has-profile-photo', Boolean(photo));
     removePhoto.disabled = !photo && !processingPhoto;
     submit.disabled = processingPhoto;
   };
@@ -184,4 +175,3 @@ export function renderProfileScreen(container, {
 
   container.querySelector("#profileScreenCancelBtn")?.addEventListener("click", () => onCancel?.());
 }
-import { escapeHtml } from "./view-utils.js";

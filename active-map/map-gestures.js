@@ -1,5 +1,7 @@
 export const ZOOM_MIN = 24;
 export const ZOOM_MAX = 90;
+const CHART_HEADER_HEIGHT = 28;
+const TOUCH_DRAG_THRESHOLD = 8;
 export const clampZoom = width => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, width));
 
 // Labels stay fixed in size; only the day columns change width.
@@ -30,7 +32,7 @@ export function bindMapGestures(element, { getWidth, setWidth, fixedWidth, onPin
     pending = null;
     setWidth(width);
     element.scrollLeft = left;
-    if (height) element.scrollTop = Math.max(0, (top + anchorY - 28) * getHeight() / height - currentY + 28);
+    if (height) element.scrollTop = Math.max(0, (top + anchorY - CHART_HEADER_HEIGHT) * getHeight() / height - currentY + CHART_HEADER_HEIGHT);
   }
 
   element.addEventListener("touchstart", event => {
@@ -57,7 +59,7 @@ export function bindMapGestures(element, { getWidth, setWidth, fixedWidth, onPin
   element.addEventListener("touchmove", event => {
     if (firstTouch && event.touches.length === 1
       && Math.hypot(event.touches[0].clientX - firstTouch.x,
-        event.touches[0].clientY - firstTouch.y) > 8) suppressClick = true;
+        event.touches[0].clientY - firstTouch.y) > TOUCH_DRAG_THRESHOLD) suppressClick = true;
     if (!pinch || event.touches.length !== 2) return;
     event.preventDefault();
     const width = clampWidth(pinch.width * distance(event.touches) / pinch.distance);

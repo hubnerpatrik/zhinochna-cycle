@@ -5,6 +5,7 @@
 // and building the column array consumed by render.
 
 import { normalizeDayMarkers, store } from "./store.js";
+import { ISO_DATE_KEY_LENGTH, MILLISECONDS_PER_DAY } from './date-utils.js';
 import {
   normalize,
   parseDateKey,
@@ -14,6 +15,18 @@ import {
   getAdjustedTemp,
   calendarDayDifference,
 } from "./core.js";
+
+const LEGACY_CYCLE_PREFIX = 'cycle-';
+const COVERLINE_TEMPERATURE_FIELDS = ['horizontalTemp', 'verticalTopTemp', 'verticalBottomTemp'];
+const COVERLINE_ANCHOR_PREFIXES = ['vertical', 'horizontalStart', 'horizontalEnd'];
+const COVERLINE_POSITIONS = ['start', 'center', 'end'];
+
+function latestLegacyCoverlineKey(coverlines) {
+  return Object.keys(coverlines || {})
+    .filter(key => /^cycle-\d+$/.test(key))
+    .sort((first, second) => Number(first.slice(LEGACY_CYCLE_PREFIX.length)) - Number(second.slice(LEGACY_CYCLE_PREFIX.length)))
+    .at(-1);
+}
 
 /* ─── cycle detection ─────────────────────── */
 
@@ -25,16 +38,16 @@ export function getCycleStartDates() {
   const keys   = Object.keys(store.entries).sort();
   const starts = [];
 
-  keys.forEach((key, i) => {
+  keys.forEach((key, index) => {
     if (store.entries[key]?.bleeding !== "menstruation") return;
-    const previousKey = keys[i - 1];
+    const previousKey = keys[index - 1];
     const previousDate = previousKey ? parseDateKey(previousKey) : null;
     const isPreviousCalendarDay = previousDate
       ? calendarDayDifference(parseDateKey(key), previousDate) === 1
       : false;
-    const prevIsPeriod = isPreviousCalendarDay
+    const previousDayIsPeriod = isPreviousCalendarDay
       && store.entries[previousKey]?.bleeding === "menstruation";
-    if (!prevIsPeriod) starts.push(normalize(parseDateKey(key)));
+    if (!previousDayIsPeriod) starts.push(normalize(parseDateKey(key)));
   });
 
   return starts;
@@ -47,13 +60,8 @@ export function getCycleStartDates() {
  */
 export function resolveCycleDay(date, starts, fallbackIndex) {
   const normalizedDate = normalize(date);
-  for (let i = starts.length - 1; i >= 0; i--) {
-    const start = normalize(starts[i]);
-    if (start <= normalizedDate) {
-      return calendarDayDifference(normalizedDate, start) + 1;
-    }
-  }
-  return fallbackIndex + 1;
+  const latestStart = starts.findLast(start => normalize(start) <= normalizedDate);
+  return latestStart === undefined ? fallbackIndex + 1 : calendarDayDifference(normalizedDate, normalize(latestStart)) + 1;
 }
 
 /**
@@ -62,10 +70,7 @@ export function resolveCycleDay(date, starts, fallbackIndex) {
  */
 export function resolveCycleId(date, starts = getCycleStartDates()) {
   const normalizedDate = normalize(date);
-  let cycleIndex = 0;
-  for (let i = 0; i < starts.length; i++) {
-    if (normalize(starts[i]) <= normalizedDate) cycleIndex = i + 1;
-  }
+  const cycleIndex = starts.findLastIndex(start => normalize(start) <= normalizedDate) + 1;
   return `cycle-${cycleIndex || 1}`;
 }
 
@@ -126,8 +131,8 @@ export function buildColumns() {
 
   const dates = [];
   const end = Date.parse(`${keys.at(-1)}T12:00:00Z`);
-  for (let time = Date.parse(`${keys[0]}T12:00:00Z`); time <= end; time += 86400000) {
-    dates.push(new Date(time).toISOString().slice(0, 10));
+  for (let time = Date.parse(`${keys[0]}T12:00:00Z`); time <= end; time += MILLISECONDS_PER_DAY) {
+    dates.push(new Date(time).toISOString().slice(0, ISO_DATE_KEY_LENGTH));
   }
   return dates.map((key, index) => {
     const date = parseDateKey(key);
@@ -158,10 +163,7 @@ export function getCycleCoverlineValues(cycleIndex = null) {
   if (cycleIndex != null) return {};
 
   // Maps saved before cycle navigation was removed stored coverlines per cycle.
-  const legacyKey = Object.keys(store.coverlines || {})
-    .filter(value => /^cycle-\d+$/.test(value))
-    .sort((a, b) => Number(a.slice(6)) - Number(b.slice(6)))
-    .at(-1);
+  const legacyKey = latestLegacyCoverlineKey(store.coverlines);
   return legacyKey ? store.coverlines[legacyKey] : {};
 }
 
@@ -170,13 +172,13 @@ export function setCycleCoverlineValues(values, cycleIndex = null) {
   if (!store.coverlines[key]) store.coverlines[key] = {};
   const data = store.coverlines[key];
 
-  ["horizontalTemp", "verticalTopTemp", "verticalBottomTemp"].forEach(field => {
+  COVERLINE_TEMPERATURE_FIELDS.forEach(field => {
     if (!(field in values)) return;
     if (values[field] != null) data[field] = values[field];
     else delete data[field];
   });
 
-  ["vertical", "horizontalStart", "horizontalEnd"].forEach(prefix => {
+  COVERLINE_ANCHOR_PREFIXES.forEach(prefix => {
     const keyField = `${prefix}Key`;
     const positionField = `${prefix}Position`;
     if (keyField in values) {
@@ -187,7 +189,7 @@ export function setCycleCoverlineValues(values, cycleIndex = null) {
       }
     }
     if (!(positionField in values)) return;
-    if (data[keyField] && ["start", "center", "end"].includes(values[positionField])) {
+    if (data[keyField] && COVERLINE_POSITIONS.includes(values[positionField])) {
       data[positionField] = values[positionField];
     } else {
       delete data[positionField];
@@ -205,10 +207,7 @@ export function clearCycleCoverlineValues(cycleIndex = null) {
   }
   if (cycleIndex != null) return false;
 
-  const legacyKey = Object.keys(store.coverlines || {})
-    .filter(value => /^cycle-\d+$/.test(value))
-    .sort((a, b) => Number(a.slice(6)) - Number(b.slice(6)))
-    .at(-1);
+  const legacyKey = latestLegacyCoverlineKey(store.coverlines);
   if (!legacyKey) return false;
   delete store.coverlines[legacyKey];
   return true;

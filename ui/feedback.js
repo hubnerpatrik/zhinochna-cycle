@@ -1,7 +1,8 @@
 import { t } from '../i18n.js';
-import { escapeHtml as esc } from '../views/view-utils.js';
-import { validateFeedback } from '../feedback-model.js';
-import { feedbackMessageHtml, feedbackResolutionHtml } from './feedback-thread.js';
+import { setOverlayPosition } from './layout-classes.js';
+import { MAX_SELECTOR_LENGTH, MAX_LABEL_LENGTH } from '../feedback-model.js';
+import { createFeedbackRequest } from '../feedback-transport.js';
+import { feedbackPanelHtml } from './feedback-view.js';
 import metadata from '../package.json';
 import { prepareFeedbackImage } from '../feedback-image.js';
 
@@ -16,7 +17,7 @@ export function feedbackSelector(element) {
     const index = [...node.parentElement.children].indexOf(node) + 1;
     parts.unshift(`${node.tagName.toLowerCase()}:nth-child(${index})`);
   }
-  return parts.join(' > ').slice(0, 1000);
+  return parts.join(' > ').slice(0, MAX_SELECTOR_LENGTH);
 }
 
 export function setupFeedback({ auth, app, transport, description }) {
@@ -40,9 +41,9 @@ export function setupFeedback({ auth, app, transport, description }) {
   function placeControls() {
     const dialogs = [...document.querySelectorAll('dialog[open]')].filter(dialog => dialog !== panel);
     const host = dialogs.at(-1) || document.body;
-    for (const control of [button, hint, pins]) {
+    [button, hint, pins].forEach(control => {
       if (control.parentElement !== host) host.append(control);
-    }
+    });
   }
   new MutationObserver(placeControls).observe(document.body, {
     childList: true, subtree: true, attributes: true, attributeFilter: ['open'],
@@ -51,29 +52,23 @@ export function setupFeedback({ auth, app, transport, description }) {
   let threads = [], admin = false, picking = false, draft = null, selected = null, busy = false, filter = 'open';
   let draftText = '', replyText = '', replyId = null, error = '', loading = false, generation = 0;
   let draftImage = '', replyImage = '', imageLoading = false, imageGeneration = 0;
-  function imagePicker(image) {
-    return `<div class="feedback-image-picker"><label>${esc(t('Attach screenshot'))}<input type="file" data-image accept="image/jpeg,image/png,image/webp" ${busy || imageLoading ? 'disabled' : ''}></label>
-      <small>${esc(t('JPG, PNG or WebP · up to 10 MB. Check the preview before sending.'))}</small>
-      ${image ? `<img class="feedback-attachment" src="${esc(image)}" alt="${esc(t('Screenshot'))}"><button type="button" data-remove-image ${busy ? 'disabled' : ''}>${esc(t('Remove screenshot'))}</button>` : ''}</div>`;
-  }
+  const request = createFeedbackRequest(auth, transport);
   const screen = () => location.hash.split('?')[0] || '#/menu';
-  async function request(method, body) {
-    if (transport) return transport(method, body ? validateFeedback(body) : undefined);
-    const token = await auth.token();
-    const response = await fetch('/api/feedback', {
-      method, cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(20000),
-      headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
-      ...(body ? { body: JSON.stringify(validateFeedback(body)) } : {}),
-    });
-    if (!response.ok) throw new Error('Request failed');
-    return response.json();
-  }
   function cancelPick() {
     picking = false; hint.hidden = true; document.body.classList.remove('feedback-picking');
     button.querySelector('span').textContent = '🐞'; button.setAttribute('aria-label', t('Report a bug'));
   }
   function open() { if (!panel.open) panel.showModal(); render(); }
   function close() { panel.close(); button.focus(); }
+  function showThread(threadId) {
+    selected = threadId;
+    replyText = '';
+    replyId = null;
+    replyImage = '';
+    imageGeneration++;
+    imageLoading = false;
+    render();
+  }
   conceal = () => {
     generation++; cancelPick(); panel.close(); pins.replaceChildren();
     threads = []; admin = false; selected = null; panel.replaceChildren();
@@ -107,27 +102,14 @@ export function setupFeedback({ auth, app, transport, description }) {
     if (!panel.open) return;
     const thread = threads.find(item => item.id === selected);
     const shown = threads.filter(item => filter === 'all' || (filter === 'resolved' ? item.resolved : !item.resolved));
-    panel.innerHTML = `<header><h2 id="feedbackTitle">${esc(t('Feedback'))}</h2><button type="button" data-close aria-label="${esc(t('Close'))}">×</button></header>
-      <p class="feedback-intro">${esc(t(description || (admin ? 'Shared inbox · latest 200 reports' : 'Your reports are shared with app support.')))}</p>
-      <div class="feedback-toolbar"><button type="button" data-new ${busy ? 'disabled' : ''}>${esc(t('Point to a problem'))}</button>
-      <button type="button" data-refresh ${loading || busy ? 'disabled' : ''}>${esc(t('Refresh'))}</button></div>
-      <p role="status" class="feedback-status">${esc(error || (loading ? t('Loading…') : ''))}</p>
-      ${draft ? `<form data-compose><h3>${esc(t('New comment'))}</h3><p>${esc(draft.anchor.label || draft.anchor.screen)}</p>
-        <label>${esc(t('Describe the problem'))}<textarea maxlength="4000" required ${busy ? 'disabled' : ''}>${esc(draftText)}</textarea></label>
-        ${imagePicker(draftImage)}
-        <button type="submit" ${busy || imageLoading ? 'disabled' : ''}>${esc(t(busy ? 'Sending…' : 'Send comment'))}</button>
-        <button type="button" data-discard ${busy ? 'disabled' : ''}>${esc(t('Cancel'))}</button></form>` : ''}
-      ${thread && !draft ? `<section class="feedback-thread"><button type="button" data-back>${esc(t(admin ? 'All reports' : 'My reports'))}</button>
-        <h3>${esc(thread.anchor.label || thread.anchor.screen)}</h3><p>${esc(thread.anchor.screen)} · v${esc(thread.anchor.version)} · ${esc(thread.anchor.viewport)}</p>
-        <p>${esc(t(thread.resolved ? 'Resolved' : 'Open'))}</p>
-        ${feedbackResolutionHtml(thread, admin, busy)}
-        ${thread.messages.map(feedbackMessageHtml).join('')}
-        <form data-reply><label>${esc(t('Reply'))}<textarea maxlength="4000" required ${busy ? 'disabled' : ''}>${esc(replyText)}</textarea></label>
-        ${imagePicker(replyImage)}
-        <button type="submit" ${busy || imageLoading ? 'disabled' : ''}>${esc(t(busy ? 'Sending…' : 'Send reply'))}</button></form>
-        </section>` : ''}
-      ${!draft && !thread ? `<label>${esc(t('Filter'))}<select data-filter><option value="open">${esc(t('Open'))}</option><option value="resolved">${esc(t('Resolved'))}</option><option value="all">${esc(t(admin ? 'All reports' : 'My reports'))}</option></select></label>
-        <div class="feedback-list">${shown.length ? shown.map(item => `<button type="button" data-thread="${esc(item.id)}"><strong>${esc(item.anchor.label || item.anchor.screen)}</strong><span>${esc(item.messages[0].text.slice(0, 130))}</span><small>${esc(t(item.resolved ? 'Resolved' : 'Open'))} · ${item.messages.length}</small></button>`).join('') : `<p>${esc(t('No reports in this view.'))}</p>`}</div>` : ''}`;
+    panel.innerHTML = feedbackPanelHtml({
+      description, admin, busy, loading, error, draft, draftText, draftImage,
+      thread, replyText, replyImage, imageLoading, shown,
+    });
+    bindPanelEvents(thread);
+  }
+
+  function bindPanelEvents(thread) {
     panel.querySelector('[data-close]').onclick = close;
     panel.querySelector('[data-refresh]').onclick = refresh;
     panel.querySelector('[data-new]').onclick = () => {
@@ -136,14 +118,14 @@ export function setupFeedback({ auth, app, transport, description }) {
       button.querySelector('span').textContent = '×'; button.setAttribute('aria-label', t('Cancel'));
     };
     panel.querySelector('[data-discard]')?.addEventListener('click', () => { draft = null; draftText = ''; draftImage = ''; imageGeneration++; imageLoading = false; render(); });
-    panel.querySelector('[data-back]')?.addEventListener('click', () => { selected = null; replyText = ''; replyId = null; replyImage = ''; imageGeneration++; imageLoading = false; render(); });
+    panel.querySelector('[data-back]')?.addEventListener('click', () => showThread(null));
     const compose = panel.querySelector('[data-compose]');
-    compose?.querySelector('textarea').addEventListener('input', e => { draftText = e.target.value; draft.id = crypto.randomUUID(); });
-    compose?.addEventListener('submit', e => { e.preventDefault(); if (!imageLoading && draftText.trim()) void save({ ...draft, text: draftText, ...(draftImage ? { image: draftImage } : {}) }); });
+    compose?.querySelector('textarea').addEventListener('input', event => { draftText = event.target.value; draft.id = crypto.randomUUID(); });
+    compose?.addEventListener('submit', event => { event.preventDefault(); if (!imageLoading && draftText.trim()) void save({ ...draft, text: draftText, ...(draftImage ? { image: draftImage } : {}) }); });
     const reply = panel.querySelector('[data-reply]');
-    reply?.querySelector('textarea').addEventListener('input', e => { replyText = e.target.value; replyId = null; });
-    reply?.addEventListener('submit', e => {
-      e.preventDefault(); if (imageLoading || !replyText.trim()) return;
+    reply?.querySelector('textarea').addEventListener('input', event => { replyText = event.target.value; replyId = null; });
+    reply?.addEventListener('submit', event => {
+      event.preventDefault(); if (imageLoading || !replyText.trim()) return;
       replyId ||= crypto.randomUUID(); void save({ action: 'reply', id: selected, messageId: replyId, text: replyText, ...(replyImage ? { image: replyImage } : {}) });
     });
     panel.querySelector('[data-image]')?.addEventListener('change', async event => {
@@ -166,7 +148,7 @@ export function setupFeedback({ auth, app, transport, description }) {
     panel.querySelector('[data-resolve]')?.addEventListener('click', () => { if (admin === true) void save({ action: 'resolve', id: selected, resolved: !thread.resolved }); });
     const select = panel.querySelector('[data-filter]');
     if (select) { select.value = filter; select.onchange = () => { filter = select.value; render(); }; }
-    panel.querySelectorAll('[data-thread]').forEach(node => { node.onclick = () => { selected = node.dataset.thread; replyText = ''; replyId = null; replyImage = ''; imageGeneration++; imageLoading = false; render(); }; });
+    panel.querySelectorAll('[data-thread]').forEach(node => { node.onclick = () => showThread(node.dataset.thread); });
   }
   function positionPins() {
     pins.replaceChildren();
@@ -176,35 +158,36 @@ export function setupFeedback({ auth, app, transport, description }) {
       try { target = document.querySelector(thread.anchor.selector); } catch { return; }
       if (!target || !target.getClientRects().length) return;
       const rect = target.getBoundingClientRect();
-      const x = rect.left + rect.width * thread.anchor.x, y = rect.top + rect.height * thread.anchor.y;
-      if (x < 0 || x > innerWidth || y < 0 || y > innerHeight) return;
+      const pinLeft = rect.left + rect.width * thread.anchor.x;
+      const pinTop = rect.top + rect.height * thread.anchor.y;
+      if (pinLeft < 0 || pinLeft > innerWidth || pinTop < 0 || pinTop > innerHeight) return;
       const pin = document.createElement('button'); pin.type = 'button'; pin.className = 'feedback-pin';
       pin.textContent = String(index + 1); pin.setAttribute('aria-label', `${t('Feedback')}: ${thread.anchor.label}`);
-      pin.style.left = `${x}px`; pin.style.top = `${y}px`;
+      setOverlayPosition(pin, `feedback-pin-${index}`, { left: pinLeft, top: pinTop });
       pin.onclick = () => { selected = thread.id; draft = null; open(); };
       pins.append(pin);
     });
   }
   button.onclick = () => { if (picking) cancelPick(); open(); void refresh(); };
-  document.addEventListener('keydown', e => {
-    if (picking && e.key === 'Escape') {
-      e.preventDefault(); e.stopImmediatePropagation(); cancelPick(); open();
+  document.addEventListener('keydown', event => {
+    if (picking && event.key === 'Escape') {
+      event.preventDefault(); event.stopImmediatePropagation(); cancelPick(); open();
     }
   }, true);
-  document.addEventListener('pointerdown', e => {
-    if (picking && !button.contains(e.target)) { e.preventDefault(); e.stopImmediatePropagation(); }
+  document.addEventListener('pointerdown', event => {
+    if (picking && !button.contains(event.target)) { event.preventDefault(); event.stopImmediatePropagation(); }
   }, true);
-  document.addEventListener('click', e => {
-    if (!picking || button.contains(e.target)) return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    const element = e.target.closest('button, input, select, textarea, canvas, label, h1, h2, h3, p, [id]') || e.target;
+  document.addEventListener('click', event => {
+    if (!picking || button.contains(event.target)) return;
+    event.preventDefault(); event.stopImmediatePropagation();
+    const element = event.target.closest('button, input, select, textarea, canvas, label, h1, h2, h3, p, [id]') || event.target;
     const rect = element.getBoundingClientRect();
     const label = (element.hasAttribute('data-i18n') ? element.textContent.trim() : '') || element.getAttribute('data-i18n-aria-label') || element.id || element.tagName;
     draftImage = ''; draftText = '';
     draft = { action: 'create', id: crypto.randomUUID(), anchor: {
-      screen: screen(), selector: feedbackSelector(element), label: label.slice(0, 100),
-      x: Math.max(0, Math.min(1, (e.clientX - rect.left) / (rect.width || 1))),
-      y: Math.max(0, Math.min(1, (e.clientY - rect.top) / (rect.height || 1))),
+      screen: screen(), selector: feedbackSelector(element), label: label.slice(0, MAX_LABEL_LENGTH),
+      x: Math.max(0, Math.min(1, (event.clientX - rect.left) / (rect.width || 1))),
+      y: Math.max(0, Math.min(1, (event.clientY - rect.top) / (rect.height || 1))),
       version: metadata.version, viewport: `${innerWidth}x${innerHeight}`,
     } };
     selected = null; cancelPick(); open(); panel.querySelector('textarea')?.focus();

@@ -1,6 +1,7 @@
 import { setText, setTranslatedAttribute } from '../i18n.js';
+import { setChartWidth } from './layout-classes.js';
 import { store } from "../store.js";
-import { chartWidth, qs } from "../core.js";
+import { chartWidth, getElementById } from "../core.js";
 import { renderCycleSummary } from "./cycle-summary.js";
 import { profileInfoRows } from "./profile-info-modal.js";
 import { observationIcon } from "./observation-icons.js";
@@ -36,8 +37,8 @@ function createActionButton([id, label, iconClass, iconSvg]) {
 
 export function renderActionButtons() {
   const targets = [
-    [qs("sidebarActions"), SIDEBAR_ACTIONS],
-    [qs("actionModalActions"), MODAL_ACTIONS],
+    [getElementById("sidebarActions"), SIDEBAR_ACTIONS],
+    [getElementById("actionModalActions"), MODAL_ACTIONS],
   ];
   targets.forEach(([target, actions]) => {
     if (!target) return;
@@ -47,7 +48,7 @@ export function renderActionButtons() {
 }
 
 export function renderProfileInfo() {
-  const card = qs("profileInfoCard");
+  const card = getElementById("profileInfoCard");
   if (!card) return;
   const profile = store.getActiveMapProfile();
   const rows = profileInfoRows(profile).filter(([, value]) => value);
@@ -92,22 +93,22 @@ function makeCell(text = "", selected = "", group = "", ...classes) {
 
 function createRowDefinitions() {
   return [
-    ["cycleDayRow", "Cycle days", "", col => makeCell(col.cycleDay)],
-    ["bleedingRow", "Period", "red", col => bleedingCell(col, 'menstruation')],
-    ["spottingRow", "Spotting", "red", col => bleedingCell(col, 'spotting')],
-    ["sedimentRow", "Clots", "red", col => makeCell(col.sediment ? "✓" : "", "", "red")],
-    ["sensationRow", "Sensation", "mucus", col => scaleCell(col, 'sensation', 'Sensation', 'mucus')],
-    ["stretchRow", "Slippery ", "mucus", col => makeCell(col.stretch ? "✓" : "", "", "mucus")],
-    ["visibleRow", "Discharge", "mucus", col => makeCell(col.visible ? "✓" : "", "", "mucus")],
-    ["consistencyRow", "Consistency", "mucus", col => scaleCell(col, 'consistency', 'Consistency', 'mucus')],
-    ["colorRow", "Color", "mucus", col => scaleCell(col, 'color', 'Color', 'mucus')],
-    ["blueMarkerRow", "Peak Mucus", "mucus", col => makeCell(col.markers?.mucus?.value || "", "", "mucus", col.markers?.mucus?.value ? "marker-blue" : "")],
-    ["cervixFirmnessRow", "Firmness", "cervix", col => scaleCell(col, 'cervixFirmness', 'Firmness', 'cervix')],
-    ["cervixHeightRow", "Height", "cervix", col => scaleCell(col, 'cervixHeight', 'Height', 'cervix')],
-    ["cervixOpennessRow", "Openness", "cervix", col => scaleCell(col, 'cervixOpenness', 'Openness', 'cervix')],
-    ["orangeMarkerRow", "Peak Cervix", "cervix", col => makeCell(col.markers?.cervix?.value || "", "", "cervix", col.markers?.cervix?.value ? "marker-orange" : "")],
-    ["otherRow", "Additional symptoms", "symptoms", col => makeCell(col.other ? "✓" : "", "", "symptoms")],
-    ["sexRow", "Sex", "symptoms", col => makeCell(col.sex === true ? "✓" : "", "", "symptoms")],
+    ["cycleDayRow", "Cycle days", "", column => makeCell(column.cycleDay)],
+    ["bleedingRow", "Period", "red", column => bleedingCell(column, 'menstruation')],
+    ["spottingRow", "Spotting", "red", column => bleedingCell(column, 'spotting')],
+    ["sedimentRow", "Clots", "red", column => makeCell(column.sediment ? "✓" : "", "", "red")],
+    ["sensationRow", "Sensation", "mucus", column => scaleCell(column, 'sensation', 'Sensation', 'mucus')],
+    ["stretchRow", "Slippery ", "mucus", column => makeCell(column.stretch ? "✓" : "", "", "mucus")],
+    ["visibleRow", "Discharge", "mucus", column => makeCell(column.visible ? "✓" : "", "", "mucus")],
+    ["consistencyRow", "Consistency", "mucus", column => scaleCell(column, 'consistency', 'Consistency', 'mucus')],
+    ["colorRow", "Color", "mucus", column => scaleCell(column, 'color', 'Color', 'mucus')],
+    ["blueMarkerRow", "Peak Mucus", "mucus", column => makeCell(column.markers?.mucus?.value || "", "", "mucus", column.markers?.mucus?.value ? "marker-blue" : "")],
+    ["cervixFirmnessRow", "Firmness", "cervix", column => scaleCell(column, 'cervixFirmness', 'Firmness', 'cervix')],
+    ["cervixHeightRow", "Height", "cervix", column => scaleCell(column, 'cervixHeight', 'Height', 'cervix')],
+    ["cervixOpennessRow", "Openness", "cervix", column => scaleCell(column, 'cervixOpenness', 'Openness', 'cervix')],
+    ["orangeMarkerRow", "Peak Cervix", "cervix", column => makeCell(column.markers?.cervix?.value || "", "", "cervix", column.markers?.cervix?.value ? "marker-orange" : "")],
+    ["otherRow", "Additional symptoms", "symptoms", column => makeCell(column.other ? "✓" : "", "", "symptoms")],
+    ["sexRow", "Sex", "symptoms", column => makeCell(column.sex === true ? "✓" : "", "", "symptoms")],
   ].map(([id, label, group, render], index, definitions) => {
     if (!group) return { id, label, group, render, position: "none" };
     const previousGroup = definitions[index - 1]?.[2];
@@ -175,16 +176,16 @@ function createMapRow({ id, label, group, position }) {
   spacer.className = "map-temp-spacer";
   cells.className = ["map-cells", group ? `map-cells-group-${group}` : ""].filter(Boolean).join(" ");
   row.append(sideLabel, spacer, cells);
-  qs("mapRows").appendChild(row);
+  getElementById("mapRows").appendChild(row);
   return cells;
 }
 
 export function renderMapRows(columns, selectColumn, hoverColumn, clearHover) {
-  const dayNumbers = qs("dayNumbers");
-  const mapRows = qs("mapRows");
+  const dayNumbers = getElementById("dayNumbers");
+  const mapRows = getElementById("mapRows");
   if (!dayNumbers || !mapRows) return;
   dayNumbers.replaceChildren();
-  dayNumbers.style.width = `${chartWidth(columns)}px`;
+  setChartWidth(dayNumbers, chartWidth(columns));
   mapRows.replaceChildren();
 
   const visible = visibleObservationRows(store.entries);

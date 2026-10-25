@@ -1,8 +1,9 @@
+import { AUTH_NAME_MAX_LENGTH, EMAIL_MAX_LENGTH, VERIFICATION_CODE_MAX_LENGTH, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } from '../form-limits.js';
 import { escapeHtml } from "./view-utils.js";
 import { getLanguage, setLanguage, setText, translateDOM } from "../i18n.js";
 import { showFieldError, initializeFieldErrors } from '../ui/field-errors.js';
 
-const screens = {
+const AUTH_SCREENS = {
   "sign-in": ["Welcome back", "Sign in to your account.", "Sign in"],
   "sign-up": ["Create your account", "Use your email address to get started.", "Create account"],
   "forgot-password": ["Forgot your password?", "We will send you a link to choose a new password.", "Send reset link"],
@@ -16,7 +17,7 @@ const screens = {
 
 export function renderAuthView(root, { mode, email = "", message = "", error = false, fieldErrors = [], onSubmit, onMode, onRetry }) {
   initializeFieldErrors();
-  const [title, description, action] = screens[mode] || screens["sign-in"];
+  const [title, description, action] = AUTH_SCREENS[mode] || AUTH_SCREENS["sign-in"];
   const hasForm = ["sign-in", "sign-up", "forgot-password", "reset-password", "verify-email", "resend-code"].includes(mode);
   const emailField = hasForm && mode !== "reset-password";
   const passwordField = ["sign-in", "sign-up", "reset-password"].includes(mode);
@@ -31,11 +32,11 @@ export function renderAuthView(root, { mode, email = "", message = "", error = f
       <h1 id="authTitle" tabindex="-1" data-i18n>${escapeHtml(title)}</h1>
       <p class="auth-description" data-i18n>${escapeHtml(description)}</p>
       ${hasForm ? `<form class="auth-form">
-        ${mode === "sign-up" ? `<label class="auth-field"><span data-i18n>Name</span><input name="name" autocomplete="name" maxlength="100" required></label>` : ""}
-        ${emailField ? `<label class="auth-field"><span data-i18n>Email</span><input name="email" type="email" autocomplete="email" maxlength="254" value="${escapeHtml(email)}" required></label>` : ""}
-        ${mode === "verify-email" ? '<label class="auth-field"><span data-i18n>Verification code</span><input name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]+" maxlength="16" spellcheck="false" required></label>' : ""}
-        ${passwordField ? `<label class="auth-field"><span data-i18n>Password</span><input name="password" type="password" autocomplete="${mode === "sign-in" ? "current-password" : "new-password"}" ${mode === "sign-in" ? "" : 'minlength="8"'} maxlength="128" required></label>` : ""}
-        ${mode === "sign-up" || mode === "reset-password" ? `<label class="auth-field"><span data-i18n>Confirm password</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label>` : ""}
+        ${mode === "sign-up" ? `<label class="auth-field"><span data-i18n>Name</span><input name="name" autocomplete="name" maxlength="${AUTH_NAME_MAX_LENGTH}" required></label>` : ""}
+        ${emailField ? `<label class="auth-field"><span data-i18n>Email</span><input name="email" type="email" autocomplete="email" maxlength="${EMAIL_MAX_LENGTH}" value="${escapeHtml(email)}" required></label>` : ""}
+        ${mode === "verify-email" ? `<label class="auth-field"><span data-i18n>Verification code</span><input name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]+" maxlength="${VERIFICATION_CODE_MAX_LENGTH}" spellcheck="false" required></label>` : ""}
+        ${passwordField ? `<label class="auth-field"><span data-i18n>Password</span><input name="password" type="password" autocomplete="${mode === "sign-in" ? "current-password" : "new-password"}" ${mode === "sign-in" ? "" : `minlength="${PASSWORD_MIN_LENGTH}"`} maxlength="${PASSWORD_MAX_LENGTH}" required></label>` : ""}
+        ${mode === "sign-up" || mode === "reset-password" ? `<label class="auth-field"><span data-i18n>Confirm password</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="${PASSWORD_MIN_LENGTH}" maxlength="${PASSWORD_MAX_LENGTH}" required></label>` : ""}
         <button type="submit" class="btn primary" data-i18n>${escapeHtml(action)}</button>
       </form>` : ""}
       ${mode === "error" ? '<button class="btn primary" type="button" data-retry data-i18n>Try again</button>' : ""}

@@ -1,12 +1,14 @@
 import { setText } from '../i18n.js';
-import { qs } from "../core.js";
+import { getElementById } from "../core.js";
+
+const DEFAULT_MESSAGE_DURATION_MS = 2200;
 
 let toastTimer = null;
 let toastFrame = null;
 
 /** Hides the current message immediately, including persistent tool hints. */
 export function hideMessage() {
-  const toast = qs("toast");
+  const toast = getElementById("toast");
   if (!toast) return;
 
   clearTimeout(toastTimer);
@@ -18,9 +20,9 @@ export function hideMessage() {
 }
 
 /** Shows a temporary message banner. Used for blocked actions and validation errors. */
-export function showMessage(text, duration = 2200) {
+export function showMessage(text, duration = DEFAULT_MESSAGE_DURATION_MS) {
   if (!String(text).trim()) { hideMessage(); return; }
-  const toast = qs("toast");
+  const toast = getElementById("toast");
   if (!toast) return;
 
   clearTimeout(toastTimer);

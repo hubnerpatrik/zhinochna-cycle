@@ -1,37 +1,51 @@
 import { t } from '../i18n.js';
+import { setOverlayPosition } from './layout-classes.js';
 
-let active = null;
-export function closeExportMenu() { active?.(); }
+const VIEWPORT_GAP = 8;
+const EXPORT_FORMATS = [['pdf', 'PDF'], ['xlsx', 'Excel (.xlsx)'], ['json', 'JSON']];
+
+export function exportMenuPosition(triggerBounds, menuSize, viewportSize) {
+  const { width, height } = menuSize;
+  return {
+    left: Math.max(VIEWPORT_GAP, Math.min(triggerBounds.left, viewportSize.width - width - VIEWPORT_GAP)),
+    top: Math.max(VIEWPORT_GAP, triggerBounds.bottom + height + VIEWPORT_GAP <= viewportSize.height
+      ? triggerBounds.bottom + VIEWPORT_GAP : triggerBounds.top - height - VIEWPORT_GAP),
+  };
+}
+
+let dismissActiveMenu = null;
+export function closeExportMenu() { dismissActiveMenu?.(); }
 
 export function openExportMenu(trigger, onExport) {
-  const same = trigger.getAttribute('aria-expanded') === 'true';
+  const isAlreadyOpen = trigger.getAttribute('aria-expanded') === 'true';
   closeExportMenu();
-  if (same) return;
+  if (isAlreadyOpen) return;
   const menu = document.createElement('div');
   menu.className = 'map-export-popover';
   menu.setAttribute('popover', 'auto');
   menu.setAttribute('role', 'group');
   menu.setAttribute('aria-label', t('Export'));
-  const place = () => {
-    const rect = trigger.getBoundingClientRect();
-    const width = menu.offsetWidth, height = menu.offsetHeight;
+  const positionMenu = () => {
     const viewport = document.documentElement;
-    menu.style.left = `${Math.max(8, Math.min(rect.left, viewport.clientWidth - width - 8))}px`;
-    menu.style.top = `${Math.max(8, rect.bottom + height + 8 <= viewport.clientHeight ? rect.bottom + 8 : rect.top - height - 8)}px`;
+    setOverlayPosition(menu, 'export-menu', exportMenuPosition(
+      trigger.getBoundingClientRect(),
+      { width: menu.offsetWidth, height: menu.offsetHeight },
+      { width: viewport.clientWidth, height: viewport.clientHeight },
+    ));
   };
   const dismiss = () => {
-    window.removeEventListener('resize', place);
-    window.removeEventListener('scroll', place, true);
+    window.removeEventListener('resize', positionMenu);
+    window.removeEventListener('scroll', positionMenu, true);
     trigger.setAttribute('aria-expanded', 'false');
     trigger.removeAttribute('aria-controls');
     menu.remove();
-    if (active === dismiss) active = null;
+    if (dismissActiveMenu === dismiss) dismissActiveMenu = null;
   };
-  active = dismiss;
+  dismissActiveMenu = dismiss;
   menu.id = 'mapExportMenu';
   trigger.setAttribute('aria-controls', menu.id);
   trigger.setAttribute('aria-expanded', 'true');
-  for (const [format, label] of [['pdf', 'PDF'], ['xlsx', 'Excel (.xlsx)'], ['json', 'JSON']]) {
+  EXPORT_FORMATS.forEach(([format, label]) => {
     const button = document.createElement('button');
     button.type = 'button'; button.className = 'btn secondary'; button.textContent = label;
     button.onclick = async () => {
@@ -41,14 +55,14 @@ export function openExportMenu(trigger, onExport) {
       finally { trigger.disabled = false; if (trigger.isConnected) trigger.focus(); }
     };
     menu.append(button);
-  }
+  });
   menu.addEventListener('toggle', event => {
-    if (event.newState === 'closed' && active === dismiss) { dismiss(); if (trigger.isConnected) trigger.focus(); }
+    if (event.newState === 'closed' && dismissActiveMenu === dismiss) { dismiss(); if (trigger.isConnected) trigger.focus(); }
   });
   document.body.append(menu);
   menu.showPopover();
-  place();
-  window.addEventListener('resize', place);
-  window.addEventListener('scroll', place, true);
+  positionMenu();
+  window.addEventListener('resize', positionMenu);
+  window.addEventListener('scroll', positionMenu, true);
   menu.querySelector('button').focus();
 }

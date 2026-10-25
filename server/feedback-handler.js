@@ -1,34 +1,35 @@
 import { validateFeedback } from '../feedback-model.js';
+import { HTTP_STATUS, setPrivateResponseHeaders, hasJsonContentType, serializeRequestBody } from './http.js';
+
+const MAX_FEEDBACK_BODY_BYTES = 164_000;
 
 export function createFeedbackHandler({ identify, repository, adminIds = [], adminEmails = [] }) {
-  return async (req, res) => {
-    res.setHeader('Cache-Control', 'no-store');
-    res.setHeader('Vary', 'Authorization');
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    if (!['GET', 'POST'].includes(req.method)) {
-      res.setHeader('Allow', 'GET, POST');
-      return res.status(405).json({ error: 'method_not_allowed' });
+  return async (request, response) => {
+    setPrivateResponseHeaders(response);
+    if (!['GET', 'POST'].includes(request.method)) {
+      response.setHeader('Allow', 'GET, POST');
+      return response.status(HTTP_STATUS.METHOD_NOT_ALLOWED).json({ error: 'method_not_allowed' });
     }
     let identity;
-    try { identity = await identify(req.headers.authorization); }
-    catch { return res.status(401).json({ error: 'unauthorized' }); }
+    try { identity = await identify(request.headers.authorization); }
+    catch { return response.status(HTTP_STATUS.UNAUTHORIZED).json({ error: 'unauthorized' }); }
     const userId = typeof identity === 'string' ? identity : identity.userId;
     const admin = adminIds.includes(userId) || (Boolean(identity.email) && adminEmails.includes(identity.email));
-    if (req.method === 'GET') {
-      try { return res.status(200).json({ admin, threads: await repository.list(userId, admin) }); }
-      catch { return res.status(503).json({ error: 'storage_unavailable' }); }
+    if (request.method === 'GET') {
+      try { return response.status(HTTP_STATUS.OK).json({ admin, threads: await repository.list(userId, admin) }); }
+      catch { return response.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({ error: 'storage_unavailable' }); }
     }
-    if (!/^application\/json(?:;|$)/i.test(req.headers['content-type'] || '')) return res.status(415).json({ error: 'json_required' });
+    if (!hasJsonContentType(request)) return response.status(HTTP_STATUS.UNSUPPORTED_MEDIA_TYPE).json({ error: 'json_required' });
     let input;
     try {
-      const raw = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
-      if (!raw || Buffer.byteLength(raw) > 164000) return res.status(413).json({ error: 'too_large' });
+      const raw = serializeRequestBody(request.body);
+      if (!raw || Buffer.byteLength(raw) > MAX_FEEDBACK_BODY_BYTES) return response.status(HTTP_STATUS.PAYLOAD_TOO_LARGE).json({ error: 'too_large' });
       input = validateFeedback(JSON.parse(raw));
-    } catch { return res.status(400).json({ error: 'invalid_feedback' }); }
-    if (input.action === 'resolve' && !admin) return res.status(403).json({ error: 'admin_required' });
+    } catch { return response.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'invalid_feedback' }); }
+    if (input.action === 'resolve' && !admin) return response.status(HTTP_STATUS.FORBIDDEN).json({ error: 'admin_required' });
     try {
       const result = await repository.write(userId, admin, input);
-      return result ? res.status(200).json({ thread: result }) : res.status(404).json({ error: 'not_found_or_full' });
-    } catch { return res.status(503).json({ error: 'storage_unavailable' }); }
+      return result ? response.status(HTTP_STATUS.OK).json({ thread: result }) : response.status(HTTP_STATUS.NOT_FOUND).json({ error: 'not_found_or_full' });
+    } catch { return response.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({ error: 'storage_unavailable' }); }
   };
 }

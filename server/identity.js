@@ -1,18 +1,28 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
+const JWKS_TIMEOUT_MS = 5_000;
+const MAX_BEARER_TOKEN_LENGTH = 16_384;
+const MAX_USER_ID_LENGTH = 256;
+const MAX_TOKEN_AGE = '16m';
+const BEARER_TOKEN_PATTERN = /^Bearer ([A-Za-z0-9_.-]+)$/;
+
+function isVerifiedAccount(payload) {
+  return typeof payload.sub === 'string' && Boolean(payload.sub.trim()) && payload.sub.length <= MAX_USER_ID_LENGTH
+    && payload.emailVerified === true && payload.banned !== true && payload.role !== 'anonymous';
+}
+
 export function createIdentityVerifier(authUrl, keys, { includeEmail = false } = {}) {
   const url = new URL(authUrl);
   if (url.protocol !== "https:" || url.username || url.password) throw new Error("Invalid auth configuration");
-  const jwks = keys || createRemoteJWKSet(new URL(`${url.href.replace(/\/$/, "")}/.well-known/jwks.json`), { timeoutDuration: 5000 });
+  const verificationKeys = keys || createRemoteJWKSet(new URL(`${url.href.replace(/\/$/, "")}/.well-known/jwks.json`), { timeoutDuration: JWKS_TIMEOUT_MS });
   return async authorization => {
-    const match = typeof authorization === "string" && /^Bearer ([A-Za-z0-9_.-]+)$/.exec(authorization);
-    if (!match || match[1].length > 16384) throw new Error("Unauthorized");
-    const { payload } = await jwtVerify(match[1], jwks, {
+    const tokenMatch = typeof authorization === "string" && BEARER_TOKEN_PATTERN.exec(authorization);
+    if (!tokenMatch || tokenMatch[1].length > MAX_BEARER_TOKEN_LENGTH) throw new Error("Unauthorized");
+    const { payload } = await jwtVerify(tokenMatch[1], verificationKeys, {
       issuer: url.origin, audience: url.origin, algorithms: ["EdDSA"],
-      requiredClaims: ["sub", "exp", "iat"], maxTokenAge: "16m",
+      requiredClaims: ["sub", "exp", "iat"], maxTokenAge: MAX_TOKEN_AGE,
     });
-    if (typeof payload.sub !== "string" || !payload.sub.trim() || payload.sub.length > 256
-      || payload.emailVerified !== true || payload.banned === true || payload.role === "anonymous") throw new Error("Unauthorized");
+    if (!isVerifiedAccount(payload)) throw new Error("Unauthorized");
     return includeEmail ? { userId: payload.sub, email: typeof payload.email === 'string' ? payload.email.trim().toLowerCase() : '' } : payload.sub;
   };
 }

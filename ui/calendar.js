@@ -1,4 +1,6 @@
 import { setText, setDateText, setTranslatedAttribute } from '../i18n.js';
+import { applyLayoutClass } from './layout-classes.js';
+import { appendCalendarHeader } from './calendar-shared.js';
 import { store } from "../store.js";
 import {
   LAYOUT,
@@ -8,47 +10,51 @@ import {
   chartY,
   formatDateKey,
   getDaysInMonth,
-  getMonthOffset,
-  qs,
+  getElementById,
 } from "../core.js";
 import { getCycleStartDates, isFertileDay } from "../domain.js";
 
+const COMPACT_SCALE_HEIGHT = 600;
+const COMPACT_LABEL_INTERVAL = 4;
+const TEMPERATURE_DECIMAL_PLACES = 2;
+
+function temperatureScaleValues() {
+  const temperatures = [];
+  // Preserve repeated subtraction (and its rounding) from the original scale.
+  for (let temperature = LAYOUT.maxTemp; temperature >= LAYOUT.minTemp - LAYOUT.tempStep / 2; temperature -= LAYOUT.tempStep) {
+    temperatures.push(temperature);
+  }
+  return temperatures;
+}
+
 export function renderMonth() {
-  setDateText(qs("monthLabel"), new Date(store.year, store.month));
+  setDateText(getElementById("monthLabel"), new Date(store.year, store.month));
 }
 
 export function renderTempScale() {
-  const scale = qs("tempScale");
+  const scale = getElementById("tempScale");
   if (!scale) return;
   scale.innerHTML = "";
-  for (let temp = LAYOUT.maxTemp; temp >= LAYOUT.minTemp - LAYOUT.tempStep / 2; temp -= LAYOUT.tempStep) {
-    if (LAYOUT.chartHeight < 600 && Math.round((LAYOUT.maxTemp - temp) / LAYOUT.tempStep) % 4 !== 0) continue;
+  temperatureScaleValues().forEach((temperature, index) => {
+    if (LAYOUT.chartHeight < COMPACT_SCALE_HEIGHT && index % COMPACT_LABEL_INTERVAL !== 0) return;
     const label = document.createElement("div");
     label.className = "temp-scale-label";
-    label.textContent = Number(temp).toFixed(2);
-    label.style.top = `${chartY(temp)}px`;
+    label.textContent = Number(temperature).toFixed(TEMPERATURE_DECIMAL_PLACES);
+    applyLayoutClass(label, `temperature-label-${index}`, { '--temperature-label-top': chartY(temperature) });
     scale.appendChild(label);
-  }
+  });
 }
 
 export function renderCalendar(selectColumn) {
-  const element = qs("calendar");
+  const element = getElementById("calendar");
   element.innerHTML = "";
 
-  ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach(day => {
-    const weekday = document.createElement("div");
-    setText(weekday, day);
-    weekday.className = "calendar-weekday";
-    element.appendChild(weekday);
-  });
+  appendCalendarHeader(element, store.year, store.month);
 
   const totalDays = getDaysInMonth(store.year, store.month);
-  const offset = getMonthOffset(store.year, store.month);
-  const cycleStarts = getCycleStartDates();
+  const descendingCycleStarts = getCycleStartDates().reverse();
 
-  for (let index = 0; index < offset; index++) element.appendChild(document.createElement("div"));
-
-  for (let day = 1; day <= totalDays; day++) {
+  Array.from({ length: totalDays }, (_, index) => index + 1).forEach(day => {
     const date = new Date(store.year, store.month, day);
     const key = formatDateKey(date);
     const entry = store.entries[key];
@@ -56,7 +62,7 @@ export function renderCalendar(selectColumn) {
     cell.className = "day";
     setTranslatedAttribute(cell, 'title', `${key} · Select this day to review or edit its observations.`);
 
-    const latestCycleStart = [...cycleStarts].reverse().find(start => start <= date);
+    const latestCycleStart = descendingCycleStarts.find(start => start <= date);
     if (latestCycleStart) {
       const cycleNumber = document.createElement("span");
       cycleNumber.className = "day-cycle-num";
@@ -75,13 +81,13 @@ export function renderCalendar(selectColumn) {
 
     cell.onclick = () => selectColumn(key);
     element.appendChild(cell);
-  }
+  });
 }
 
 export function renderTempFactorsOptions() {
-  const select = qs("tempFactorsInput");
+  const select = getElementById("tempFactorsInput");
   if (!select) return;
-  const tempInput = qs("tempInput");
+  const tempInput = getElementById("tempInput");
   if (tempInput) {
     tempInput.min = String(MEASUREMENT_TEMPERATURE_RANGE.min);
     tempInput.max = String(MEASUREMENT_TEMPERATURE_RANGE.max);

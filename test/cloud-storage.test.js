@@ -145,5 +145,5 @@ test("cloud transport fetches an in-memory JWT and never trusts an owner supplie
   await request("GET");
   assert.equal(calls[0][0], "/api/state");
   assert.equal(calls[0][1].headers.Authorization, "Bearer test-jwt");
-  assert.equal(calls[0][1].credentials, "omit");
+  assert.equal(calls[0][1].credentials, "same-origin");
 });

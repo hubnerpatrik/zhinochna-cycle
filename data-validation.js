@@ -1,5 +1,9 @@
 import { TEMPERATURE_RANGE, MEASUREMENT_TEMPERATURE_RANGE, TEMP_FACTORS } from "./core.js";
 import { isStoredProfilePhoto } from './profile-photo.js';
+import { DEFAULT_HISTORY_COUNT, EXTENDED_HISTORY_COUNT } from './cycle-summary.js';
+
+const TEMPERATURE_PRECISION_FACTOR = 100;
+const COVERLINE_TOP_CELL_STEP = 0.05;
 
 export const CROSSABLE_ROW_IDS = Object.freeze([
   "cycleDayRow", "bleedingRow", "spottingRow", "sedimentRow", "sensationRow",
@@ -72,7 +76,7 @@ export function normalizeCrossedChartTemps(temps) {
       && temp >= TEMPERATURE_RANGE.min
       && temp <= TEMPERATURE_RANGE.max
     ))
-    .map(temp => Math.round(temp * 100) / 100))];
+    .map(temp => Math.round(temp * TEMPERATURE_PRECISION_FACTOR) / TEMPERATURE_PRECISION_FACTOR))];
 }
 
 function normalizeMarkerValue(value) {
@@ -291,7 +295,7 @@ function normalizeCoverlines(coverlines, strict) {
       typeof value[field] === "number"
       && Number.isFinite(value[field])
       && value[field] >= TEMPERATURE_RANGE.min
-      && value[field] <= Math.round((TEMPERATURE_RANGE.max + 0.05) * 100) / 100
+      && value[field] <= Math.round((TEMPERATURE_RANGE.max + COVERLINE_TOP_CELL_STEP) * TEMPERATURE_PRECISION_FACTOR) / TEMPERATURE_PRECISION_FACTOR
     );
     const validValue = isPlainObject(value)
       && (value.horizontalTemp == null || (
@@ -348,10 +352,10 @@ export function normalizeCycleSummaries(value, strict = false) {
       if (!valid && strict) throw new DataValidationError(`Invalid cycle summary field: ${field}.`);
       normalized[field] = valid ? number ?? null : null;
     }
-    if (summary.historyCount != null && ![6, 12].includes(summary.historyCount) && strict) {
+    if (summary.historyCount != null && ![DEFAULT_HISTORY_COUNT, EXTENDED_HISTORY_COUNT].includes(summary.historyCount) && strict) {
       throw new DataValidationError('History must use 6 or 12 cycles.');
     }
-    normalized.historyCount = summary.historyCount === 12 ? 12 : 6;
+    normalized.historyCount = summary.historyCount === EXTENDED_HISTORY_COUNT ? EXTENDED_HISTORY_COUNT : DEFAULT_HISTORY_COUNT;
     result[start] = normalized;
   }
   return result;

@@ -1,4 +1,5 @@
 import { setText } from './i18n.js';
+import { setChartWidth } from './ui/layout-classes.js';
 import { initializeFieldErrors } from './ui/field-errors.js';
 import { setupReleaseNotes } from './ui/release-notes.js';
 // Application bootstrap and top-level active-map rendering.
@@ -27,9 +28,10 @@ import {
   renderTempScale,
   showMessage,
 } from "./ui.js";
-import { LAYOUT, chartWidth, columnX, columnCenterX, getCalendarFocusDate, qs } from "./core.js";
+import { LAYOUT, chartWidth, columnX, columnCenterX, getCalendarFocusDate, getElementById } from "./core.js";
 
 const ZOOM_BASE = 50;
+const PERCENT_SCALE = 100;
 
 export let currentColumns = [];
 let router = null;
@@ -66,9 +68,9 @@ const mobileMap = createMobileMap({ render, getColumns: () => currentColumns, in
 
 function renderActiveMapMeta() {
   const activeMap = store.getActiveMap();
-  const name = qs("activeMapName");
-  const status = qs("activeMapStatusPill");
-  const save = qs("saveActiveMapBtn");
+  const name = getElementById("activeMapName");
+  const status = getElementById("activeMapStatusPill");
+  const save = getElementById("saveActiveMapBtn");
   if (!name || !status || !save) return;
   if (!activeMap) {
     setText(name, "No active map");
@@ -100,7 +102,7 @@ export function render() {
 }
 
 function renderZoomLabel() {
-  qs("zoomLabel").innerText = `${Math.round((LAYOUT.columnWidth / ZOOM_BASE) * 100)}%`;
+  getElementById("zoomLabel").innerText = `${Math.round((LAYOUT.columnWidth / ZOOM_BASE) * PERCENT_SCALE)}%`;
 }
 
 // Zoom changes geometry only. Keep row nodes, calendar and summary intact.
@@ -110,7 +112,7 @@ function renderZoom() {
     column.x = columnX(index);
     column.centerX = columnCenterX(index);
   });
-  qs("dayNumbers").style.width = `${chartWidth(currentColumns)}px`;
+  setChartWidth(getElementById("dayNumbers"), chartWidth(currentColumns));
   renderTempScale();
   chartInteractions.render();
   mobileMap.update();
@@ -120,8 +122,8 @@ function renderZoom() {
 function showStandaloneScreen() {
   chartInteractions.deactivate();
   hideAllModals();
-  qs("screenRoot")?.classList.remove("hidden");
-  qs("activeMapScreen")?.classList.add("hidden");
+  getElementById("screenRoot")?.classList.remove("hidden");
+  getElementById("activeMapScreen")?.classList.add("hidden");
   mobileMap.prepare();
 }
 
@@ -137,14 +139,14 @@ function openActiveMapScreen() {
   });
   chartInteractions.deactivate();
   hideAllModals();
-  if (displayedMapId !== store.getActiveMapId() || qs("activeMapScreen")?.classList.contains("hidden")) {
+  if (displayedMapId !== store.getActiveMapId() || getElementById("activeMapScreen")?.classList.contains("hidden")) {
     const focusDate = getCalendarFocusDate(store.entries);
     store.month = focusDate.getMonth();
     store.year = focusDate.getFullYear();
   }
   displayedMapId = store.getActiveMapId();
-  qs("screenRoot")?.classList.add("hidden");
-  qs("activeMapScreen")?.classList.remove("hidden");
+  getElementById("screenRoot")?.classList.add("hidden");
+  getElementById("activeMapScreen")?.classList.remove("hidden");
   mobileMap.init();
   render();
   renderZoomLabel();
@@ -158,7 +160,7 @@ function bindNavigation() {
     ["navCreateMapBtn", "create-map"],
     ["navActiveMapBtn", "active-map"],
   ].forEach(([id, screen]) => {
-    const button = qs(id);
+    const button = getElementById(id);
     if (button) button.onclick = () => router?.navigate(screen);
   });
 }
@@ -167,7 +169,7 @@ export function startApplication() {
   if (router) return;
   initializeFieldErrors();
   router = createRouter({
-    root: qs("screenRoot"),
+    root: getElementById("screenRoot"),
     showStandaloneScreen,
     openActiveMap: openActiveMapScreen,
     openMapPage: page => {
@@ -189,5 +191,5 @@ export function startApplication() {
   bindNavigation();
   configureModalNavigation(router);
   router.start();
-  setupReleaseNotes(qs('trackerApp'));
+  setupReleaseNotes(getElementById('trackerApp'));
 }

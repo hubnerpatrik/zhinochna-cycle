@@ -4,35 +4,58 @@ import { openCycleSummary } from "../ui/cycle-summary.js";
 import { openProfileInfo } from "../ui/profile-info-modal.js";
 import { cycleStarts } from "../cycle-summary.js";
 import { buildColumns } from '../domain.js';
-import { LAYOUT, TEMP_FACTORS, chartY, formatDateKey, formatTemp, parseDateKey, qs, syncCSSVariables } from "../core.js";
+import { DEFAULT_LAYOUT, LAYOUT, TEMP_FACTORS, chartY, formatDateKey, formatTemp, parseDateKey, getElementById, syncCSSVariables } from "../core.js";
+import { applyLayoutClass } from '../ui/layout-classes.js';
+import { ZOOM_MIN, ZOOM_MAX, clampZoom } from './map-gestures.js';
 
-export function fittedColumnWidth(viewportWidth, count, axisWidth = 48) {
-  return Math.max(1, viewportWidth - axisWidth - 2) / Math.max(1, count);
+const MOBILE_BREAKPOINT = 560;
+const MOBILE_AXIS_WIDTH = 48;
+const CHART_BORDER_WIDTH = 2;
+const MIN_READABLE_COLUMN_WIDTH = 32;
+const MAX_READABLE_COLUMN_WIDTH = 56;
+const INITIAL_CHART_HEIGHT = 340;
+const MIN_EXPANDED_CHART_HEIGHT = 240;
+const EXPANDED_CHART_RESERVED_HEIGHT = 120;
+const MIN_CHART_HEIGHT = 320;
+const MAX_CHART_HEIGHT = 560;
+const CHART_RESERVED_HEIGHT = 110;
+const SCREEN_HORIZONTAL_PADDING = 16;
+const PLOT_EXTRA_HEIGHT = 30;
+const MIN_LABEL_SPACING = 28;
+const TOOL_MIN_COLUMN_WIDTH = 28;
+const TOOL_SCROLL_LEFT_PADDING = 70;
+const TOOL_SCROLL_TOP_PADDING = 28;
+const DEFAULT_TOOL_TEMPERATURE = 36.7;
+const MOBILE_ZOOM_FACTOR = 1.35;
+const DESKTOP_ZOOM_STEP = 8;
+
+export function fittedColumnWidth(viewportWidth, count, axisWidth = MOBILE_AXIS_WIDTH) {
+  return Math.max(1, viewportWidth - axisWidth - CHART_BORDER_WIDTH) / Math.max(1, count);
 }
 
 export function readableColumnWidth(viewportWidth, count) {
-  return Math.min(56, Math.max(32, fittedColumnWidth(viewportWidth, count)));
+  return Math.min(MAX_READABLE_COLUMN_WIDTH, Math.max(MIN_READABLE_COLUMN_WIDTH, fittedColumnWidth(viewportWidth, count)));
 }
 
 export function createMobileMap({ render, getColumns, interactions }) {
-  const media = window.matchMedia("(max-width: 560px)");
+  const media = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
   const views = new Map();
   let ready = false;
   let desktopWidth = LAYOUT.columnWidth;
-  let fitWidth = 50;
-  let fitHeight = 340;
-  let raf = null;
+  let fitWidth = DEFAULT_LAYOUT.columnWidth;
+  let fitHeight = INITIAL_CHART_HEIGHT;
+  let renderFrame = null;
   let toastHome;
   let rowsHome;
-  const active = () => media.matches && !qs("activeMapScreen")?.classList.contains("hidden");
+  const active = () => media.matches && !getElementById("activeMapScreen")?.classList.contains("hidden");
   const view = () => {
     const id = store.getActiveMapId();
     if (!views.has(id)) views.set(id, { tab: "graph", zoom: null, left: 0, top: 0 });
     return views.get(id);
   };
   const schedule = () => {
-    if (raf !== null || !active()) return;
-    raf = requestAnimationFrame(() => { raf = null; render(); });
+    if (renderFrame !== null || !active()) return;
+    renderFrame = requestAnimationFrame(() => { renderFrame = null; render(); });
   };
   function switchTab(tab) {
     const scroll = document.querySelector(".map-scroll");
@@ -53,11 +76,11 @@ export function createMobileMap({ render, getColumns, interactions }) {
     }
   }
   function feedback() {
-    const toast = qs("toast");
+    const toast = getElementById("toast");
     const persistent = active() && toast?.classList.contains("persistent-toast")
       && toast.classList.contains("show") && Boolean(toast.textContent.trim());
-    qs("mobileMapActions")?.classList.toggle("hidden", persistent);
-    qs("mobileCancelToolBtn")?.classList.toggle("hidden", !persistent || toast?.classList.contains("action-toast"));
+    getElementById("mobileMapActions")?.classList.toggle("hidden", persistent);
+    getElementById("mobileCancelToolBtn")?.classList.toggle("hidden", !persistent || toast?.classList.contains("action-toast"));
   }
   return {
     active,
@@ -65,13 +88,13 @@ export function createMobileMap({ render, getColumns, interactions }) {
       if (ready) return;
       ready = true;
       toastHome = document.createComment("Desktop notifications");
-      qs("toast").before(toastHome);
+      getElementById("toast").before(toastHome);
       rowsHome = document.createComment('Desktop observations');
-      qs('mapRows').before(rowsHome);
+      getElementById('mapRows').before(rowsHome);
       const chartScroll = document.querySelector('.map-scroll');
-      const tableScroll = qs('mobileObservationScroll');
+      const tableScroll = getElementById('mobileObservationScroll');
       let scrollSource = null, scrollFrame = null;
-      for (const [source, target] of [[chartScroll, tableScroll], [tableScroll, chartScroll]]) {
+      [[chartScroll, tableScroll], [tableScroll, chartScroll]].forEach(([source, target]) => {
         source.addEventListener('scroll', () => {
           if (!active() || (scrollSource && scrollSource !== source)) return;
           scrollSource = source;
@@ -79,67 +102,69 @@ export function createMobileMap({ render, getColumns, interactions }) {
           if (scrollFrame !== null) cancelAnimationFrame(scrollFrame);
           scrollFrame = requestAnimationFrame(() => { scrollSource = null; scrollFrame = null; });
         }, { passive: true });
-      }
-      qs("mobileSaveBtn").onclick = () => qs("saveActiveMapBtn").click();
-      qs("mobileDayBtn").onclick = () => qs("editBtn").click();
-      qs("mobileTools").onclick = () => {
-        const list = qs("mobileToolsList");
+      });
+      getElementById("mobileSaveBtn").onclick = () => getElementById("saveActiveMapBtn").click();
+      getElementById("mobileDayBtn").onclick = () => getElementById("editBtn").click();
+      getElementById("mobileTools").onclick = () => {
+        const list = getElementById("mobileToolsList");
         list.showModal();
-        qs("mobileTools").setAttribute("aria-expanded", "true");
+        getElementById("mobileTools").setAttribute("aria-expanded", "true");
       };
-      qs("mobileCloseToolsBtn").onclick = () => qs("mobileToolsList").close();
-      qs("mobileToolsList").addEventListener('close', () => qs("mobileTools").setAttribute("aria-expanded", "false"));
-      qs("mobileExpandBtn").onclick = () => {
-        const expanded = qs("activeMapScreen").classList.toggle('mobile-chart-expanded');
-        qs("mobileExpandBtn").setAttribute('aria-pressed', String(expanded));
-        setText(qs("mobileExpandBtn"), expanded ? 'Close full screen' : 'Expand chart');
+      getElementById("mobileCloseToolsBtn").onclick = () => getElementById("mobileToolsList").close();
+      getElementById("mobileToolsList").addEventListener('close', () => getElementById("mobileTools").setAttribute("aria-expanded", "false"));
+      getElementById("mobileExpandBtn").onclick = () => {
+        const expanded = getElementById("activeMapScreen").classList.toggle('mobile-chart-expanded');
+        getElementById("mobileExpandBtn").setAttribute('aria-pressed', String(expanded));
+        setText(getElementById("mobileExpandBtn"), expanded ? 'Close full screen' : 'Expand chart');
         render();
       };
-      qs("mobileGraphTab").onclick = () => switchTab("graph");
-      qs("mobileCalendarTab").onclick = () => switchTab("calendar");
-      qs("mobileProfileBtn").onclick = () => openProfileInfo(qs("mobileProfileBtn"));
-      qs("mobileSummaryBtn").onclick = () => openCycleSummary(qs("mobileSummaryBtn"));
-      const tabs = [qs("mobileGraphTab"), qs("mobileCalendarTab")];
+      getElementById("mobileGraphTab").onclick = () => switchTab("graph");
+      getElementById("mobileCalendarTab").onclick = () => switchTab("calendar");
+      getElementById("mobileProfileBtn").onclick = () => openProfileInfo(getElementById("mobileProfileBtn"));
+      getElementById("mobileSummaryBtn").onclick = () => openCycleSummary(getElementById("mobileSummaryBtn"));
+      const tabs = [getElementById("mobileGraphTab"), getElementById("mobileCalendarTab")];
       tabs.forEach((tab, index) => tab.onkeydown = event => {
         if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
         event.preventDefault();
         tabs[1 - index].click(); tabs[1 - index].focus();
       });
-      qs("mobileObservationsBtn").onclick = () => {
-        const expanded = qs("activeMapScreen").classList.toggle("mobile-observations");
-        qs("mobileObservationsBtn").setAttribute("aria-expanded", String(expanded));
-        setText(qs("mobileObservationsBtn"), expanded ? "Hide observations" : "Show observations");
-        qs('mobileObservationPanel').hidden = !expanded;
+      getElementById("mobileObservationsBtn").onclick = () => {
+        const expanded = getElementById("activeMapScreen").classList.toggle("mobile-observations");
+        getElementById("mobileObservationsBtn").setAttribute("aria-expanded", String(expanded));
+        setText(getElementById("mobileObservationsBtn"), expanded ? "Hide observations" : "Show observations");
+        getElementById('mobileObservationPanel').hidden = !expanded;
         if (expanded) {
           tableScroll.scrollLeft = chartScroll.scrollLeft;
-          qs('mobileObservationsBtn').scrollIntoView({ block: 'start', behavior: 'auto' });
+          getElementById('mobileObservationsBtn').scrollIntoView({ block: 'start', behavior: 'auto' });
         }
       };
       document.querySelectorAll("[data-mobile-tool]").forEach(button => {
         button.onclick = () => {
-          qs("mobileToolsList").close();
-          qs("mobileTools").setAttribute("aria-expanded", "false");
+          getElementById("mobileToolsList").close();
+          getElementById("mobileTools").setAttribute("aria-expanded", "false");
           const id = button.dataset.mobileTool;
           if (id !== "fertileRangeActionBtn") {
             switchTab("graph");
-            view().zoom = Math.max(view().zoom, 28 / fitWidth);
+            view().zoom = Math.max(view().zoom, TOOL_MIN_COLUMN_WIDTH / fitWidth);
             render();
             const index = getColumns().findIndex(column => column.key === store.selectedKey);
-            document.querySelector(".map-scroll").scrollLeft = Math.max(0, index * LAYOUT.columnWidth - 70);
-            document.querySelector(".map-scroll").scrollTop = Math.max(0, chartY(store.entries[store.selectedKey]?.temp ?? 36.7) - fitHeight / 2 + 28);
+            chartScroll.scrollLeft = Math.max(0, index * LAYOUT.columnWidth - TOOL_SCROLL_LEFT_PADDING);
+            chartScroll.scrollTop = Math.max(0, chartY(store.entries[store.selectedKey]?.temp ?? DEFAULT_TOOL_TEMPERATURE) - fitHeight / 2 + TOOL_SCROLL_TOP_PADDING);
           }
-          qs(id).click();
+          getElementById(id).click();
         };
       });
-      qs("mobileCancelToolBtn").onclick = () => { interactions.deactivate(); render(); };
-      new MutationObserver(feedback).observe(qs("mobileToolFeedback"), { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
-      new ResizeObserver(schedule).observe(qs("mobileMapDock"));
+      getElementById("mobileCancelToolBtn").onclick = () => { interactions.deactivate(); render(); };
+      new MutationObserver(feedback).observe(getElementById("mobileToolFeedback"), { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
+      new ResizeObserver(schedule).observe(getElementById("mobileMapDock"));
       window.addEventListener("resize", schedule);
       media.addEventListener("change", () => {
         if (media.matches) desktopWidth = LAYOUT.columnWidth;
         else {
           LAYOUT.columnWidth = desktopWidth;
-          LAYOUT.chartHeight = 840; LAYOUT.sideLabelWidth = 96; LAYOUT.tempScaleWidth = 72;
+          LAYOUT.chartHeight = DEFAULT_LAYOUT.chartHeight;
+          LAYOUT.sideLabelWidth = DEFAULT_LAYOUT.sideLabelWidth;
+          LAYOUT.tempScaleWidth = DEFAULT_LAYOUT.tempScaleWidth;
           syncCSSVariables();
         }
         render();
@@ -147,93 +172,98 @@ export function createMobileMap({ render, getColumns, interactions }) {
     },
     prepare() {
       if (!ready) return;
-      const rows = qs('mapRows');
+      const rows = getElementById('mapRows');
       if (media.matches) {
-        if (rows.parentElement !== qs('mobileObservationGrid')) qs('mobileObservationGrid').append(rows);
+        if (rows.parentElement !== getElementById('mobileObservationGrid')) getElementById('mobileObservationGrid').append(rows);
       } else if (rows.parentElement !== rowsHome.parentElement) rowsHome.after(rows);
       document.body.classList.toggle("mobile-map-active", active());
-      const toast = qs("toast");
+      const toast = getElementById("toast");
       if (active()) {
-        if (toast.parentElement !== qs("mobileToolFeedback")) qs("mobileToolFeedback").append(toast);
-        const screen = qs("activeMapScreen");
+        if (toast.parentElement !== getElementById("mobileToolFeedback")) getElementById("mobileToolFeedback").append(toast);
+        const screen = getElementById("activeMapScreen");
         const state = view();
         screen.classList.toggle("mobile-calendar-view", state.tab === "calendar");
-        qs("mobileGraphTab").setAttribute("aria-selected", String(state.tab === "graph"));
-        qs("mobileCalendarTab").setAttribute("aria-selected", String(state.tab === "calendar"));
-        qs("mobileGraphTab").tabIndex = state.tab === "graph" ? 0 : -1;
-        qs("mobileCalendarTab").tabIndex = state.tab === "calendar" ? 0 : -1;
+        getElementById("mobileGraphTab").setAttribute("aria-selected", String(state.tab === "graph"));
+        getElementById("mobileCalendarTab").setAttribute("aria-selected", String(state.tab === "calendar"));
+        getElementById("mobileGraphTab").tabIndex = state.tab === "graph" ? 0 : -1;
+        getElementById("mobileCalendarTab").tabIndex = state.tab === "calendar" ? 0 : -1;
         // Keep the plot readable; the page scrolls to records and tools below it.
         if (state.tab === "graph") {
           const top = document.querySelector(".cycle-map").getBoundingClientRect().top + window.scrollY;
           fitHeight = screen.classList.contains('mobile-chart-expanded')
-            ? Math.max(240, window.innerHeight - 120)
-            : Math.max(320, Math.min(560, window.innerHeight - top - 110));
+            ? Math.max(MIN_EXPANDED_CHART_HEIGHT, window.innerHeight - EXPANDED_CHART_RESERVED_HEIGHT)
+            : Math.max(MIN_CHART_HEIGHT, Math.min(MAX_CHART_HEIGHT, window.innerHeight - top - CHART_RESERVED_HEIGHT));
         }
         const count = buildColumns().length;
-        fitWidth = fittedColumnWidth(screen.clientWidth - 16, count);
-        if (state.zoom === null) state.zoom = readableColumnWidth(screen.clientWidth - 16, count) / fitWidth;
+        const viewportWidth = screen.clientWidth - SCREEN_HORIZONTAL_PADDING;
+        fitWidth = fittedColumnWidth(viewportWidth, count);
+        if (state.zoom === null) state.zoom = readableColumnWidth(viewportWidth, count) / fitWidth;
         LAYOUT.sideLabelWidth = 0;
-        LAYOUT.tempScaleWidth = 48;
+        LAYOUT.tempScaleWidth = MOBILE_AXIS_WIDTH;
         LAYOUT.columnWidth = fitWidth * state.zoom;
         LAYOUT.chartHeight = fitHeight;
-        screen.style.setProperty("--mobile-plot-height", `${fitHeight + 30}px`);
-        screen.classList.toggle("mobile-map-overview", LAYOUT.columnWidth < 24);
+        applyLayoutClass(screen, 'mobile-plot', { '--mobile-plot-height': fitHeight + PLOT_EXTRA_HEIGHT });
+        screen.classList.toggle("mobile-map-overview", LAYOUT.columnWidth < ZOOM_MIN);
         if (!store.selectedKey) store.selectedKey = Object.keys(store.entries).sort().at(-1) || formatDateKey(new Date());
-      } else if (toastHome && toast.parentElement === qs("mobileToolFeedback")) {
+      } else if (toastHome && toast.parentElement === getElementById("mobileToolFeedback")) {
         toastHome.after(toast);
       }
       syncCSSVariables();
     },
     update() {
       if (!active()) return;
-      setMonthPeriod(qs('mobileObservationPeriod'), getColumns().map(column => column.key));
-      const mapName = qs("mobileMapName");
+      setMonthPeriod(getElementById('mobileObservationPeriod'), getColumns().map(column => column.key));
+      const mapName = getElementById("mobileMapName");
       if (store.getActiveMap()?.name) {
         mapName.removeAttribute("data-i18n");
         mapName.textContent = store.getActiveMap().name;
       } else setText(mapName, "Active map");
-      qs("mobileSummaryBtn").disabled = cycleStarts(store.entries).length === 0;
-      qs("mobileSummaryBtn").setAttribute("data-i18n-title", qs("mobileSummaryBtn").disabled ? "Record menstruation to start a cycle" : "Open cycle summary");
-      qs("mobileSaveBtn").disabled = qs("saveActiveMapBtn").disabled;
+      getElementById("mobileSummaryBtn").disabled = cycleStarts(store.entries).length === 0;
+      getElementById("mobileSummaryBtn").setAttribute("data-i18n-title", getElementById("mobileSummaryBtn").disabled ? "Record menstruation to start a cycle" : "Open cycle summary");
+      getElementById("mobileSaveBtn").disabled = getElementById("saveActiveMapBtn").disabled;
       const key = store.selectedKey;
       if (key) {
-        qs("mobileSelectedDate").removeAttribute("data-i18n");
-        setDateText(qs("mobileSelectedDate"), parseDateKey(key), "short");
+        getElementById("mobileSelectedDate").removeAttribute("data-i18n");
+        setDateText(getElementById("mobileSelectedDate"), parseDateKey(key), "short");
       } else {
-        qs("mobileSelectedDate").removeAttribute("data-i18n-date");
-        setText(qs("mobileSelectedDate"), "Select a day");
+        getElementById("mobileSelectedDate").removeAttribute("data-i18n-date");
+        setText(getElementById("mobileSelectedDate"), "Select a day");
       }
       const column = getColumns().find(item => item.key === key);
-      setText(qs("mobileSelectedCycle"), column?.cycleDay ? `Cycle day ${column.cycleDay}` : "");
+      setText(getElementById("mobileSelectedCycle"), column?.cycleDay ? `Cycle day ${column.cycleDay}` : "");
       const temp = store.entries[key]?.temp;
-      setText(qs("mobileSelectedTemp"), temp == null ? "No temperature" : `${formatTemp(temp)} °C`);
+      setText(getElementById("mobileSelectedTemp"), temp == null ? "No temperature" : `${formatTemp(temp)} °C`);
       const entry = store.entries[key];
-      const factor = qs('mobileSelectedFactor');
+      const factor = getElementById('mobileSelectedFactor');
       if (factor) {
         const custom = entry?.tempFactors === 'other' ? entry.tempFactorsOther?.trim() : '';
         factor.classList.toggle('hidden', !entry?.tempFactors);
         if (custom) { factor.removeAttribute('data-i18n'); factor.textContent = custom; }
         else setText(factor, TEMP_FACTORS[entry?.tempFactors] || '');
       }
-      qs("mobileDayBtn").disabled = !key;
-      const step = Math.ceil(28 / LAYOUT.columnWidth);
-      [...qs("dayNumbers").children].forEach((cell, index) => { cell.style.color = index % step ? "transparent" : ""; });
-      const tableDays = qs('mobileObservationDays');
-      tableDays.replaceChildren(...[...qs('dayNumbers').children].map((cell, index) => {
+      getElementById("mobileDayBtn").disabled = !key;
+      const labelInterval = Math.ceil(MIN_LABEL_SPACING / LAYOUT.columnWidth);
+      [...getElementById("dayNumbers").children].forEach((cell, index) => {
+        cell.classList.toggle('is-crowded-label', Boolean(index % labelInterval));
+      });
+      const tableDays = getElementById('mobileObservationDays');
+      tableDays.replaceChildren(...[...getElementById('dayNumbers').children].map((cell, index) => {
         const day = document.createElement('button');
         day.type = 'button'; day.className = cell.className;
         day.textContent = cell.textContent;
         day.setAttribute('aria-label', getColumns()[index].key);
-        day.onclick = () => qs('dayNumbers').children[index]?.click();
+        day.onclick = () => getElementById('dayNumbers').children[index]?.click();
         return day;
       }));
       feedback();
     },
-    clampWidth(width) { return active() ? Math.max(fitWidth, Math.min(Math.max(90, fitWidth), width)) : Math.max(24, Math.min(90, width)); },
+    clampWidth(width) { return active() ? Math.max(fitWidth, Math.min(Math.max(ZOOM_MAX, fitWidth), width)) : clampZoom(width); },
     setWidth(width) {
       if (active()) view().zoom = this.clampWidth(width) / fitWidth;
       else { desktopWidth = width; LAYOUT.columnWidth = width; }
     },
-    zoomStep(direction, width = LAYOUT.columnWidth) { return active() ? width * (direction > 0 ? 1.35 : 1 / 1.35) : width + direction * 8; },
+    zoomStep(direction, width = LAYOUT.columnWidth) {
+      return active() ? width * (direction > 0 ? MOBILE_ZOOM_FACTOR : 1 / MOBILE_ZOOM_FACTOR) : width + direction * DESKTOP_ZOOM_STEP;
+    },
   };
 }

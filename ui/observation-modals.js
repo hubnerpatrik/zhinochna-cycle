@@ -1,6 +1,6 @@
 import { setText } from '../i18n.js';
 import { normalizeDayMarkers, store } from "../store.js";
-import { MEASUREMENT_TEMPERATURE_RANGE, getTimeAdjustment, qs, qsa } from "../core.js";
+import { MEASUREMENT_TEMPERATURE_RANGE, getTimeAdjustment, getElementById, querySelectorAll } from "../core.js";
 import { markerColorFromType, markerTypeFromColor, normalizeMarkerColor } from "./marker-utils.js";
 import {
   afterModalSave,
@@ -48,12 +48,12 @@ export function openModal(currentColumns) {
     measurementTime: data.measurementTime ?? "",
     measurementTimeEnabled: Boolean(data.measurementTime),
   });
-  setText(qs("modalTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
-  qs("tempInput").value = store.modal.temp == null ? "" : Number(store.modal.temp).toFixed(2);
-  qs("tempFactorsInput").value = store.modal.tempFactors;
-  if (qs('tempFactorsOtherInput')) qs('tempFactorsOtherInput').value = store.modal.tempFactorsOther;
+  setText(getElementById("modalTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
+  getElementById("tempInput").value = store.modal.temp == null ? "" : Number(store.modal.temp).toFixed(2);
+  getElementById("tempFactorsInput").value = store.modal.tempFactors;
+  if (getElementById('tempFactorsOtherInput')) getElementById('tempFactorsOtherInput').value = store.modal.tempFactorsOther;
   syncTempFactorsUI();
-  qs("measurementTimeInput").value = store.modal.measurementTime;
+  getElementById("measurementTimeInput").value = store.modal.measurementTime;
   syncMeasurementTimeUI();
   showModal("modal");
 }
@@ -63,8 +63,8 @@ export function closeModal() {
 }
 
 export function validateTempInput() {
-  if (qs('tempInput')?.validity?.badInput || qs('tempInput')?.validity?.stepMismatch) return false;
-  const raw = qs("tempInput")?.value.trim().replace(",", ".");
+  if (getElementById('tempInput')?.validity?.badInput || getElementById('tempInput')?.validity?.stepMismatch) return false;
+  const raw = getElementById("tempInput")?.value.trim().replace(",", ".");
   if (!raw) return true;
   const value = Number(raw);
   return Number.isFinite(value) && value >= MEASUREMENT_TEMPERATURE_RANGE.min && value <= MEASUREMENT_TEMPERATURE_RANGE.max;
@@ -73,37 +73,37 @@ export function validateTempInput() {
 export function saveModal(render) {
   if (!store.selectedKey) return showMessage("Select a day first");
   if (!validateTempInput()) {
-    const input = qs('tempInput');
+    const input = getElementById('tempInput');
     const message = input.validity?.badInput || input.validity?.stepMismatch ? validationMessage(input)
       : `Temperature must be between ${MEASUREMENT_TEMPERATURE_RANGE.min}–${MEASUREMENT_TEMPERATURE_RANGE.max} °C`;
     return showFieldError(input, message, { focus: true, constraint: true });
   }
-  if (store.modal.measurementTimeEnabled && !qs("measurementTimeInput").reportValidity()) return;
-  const raw = qs("tempInput").value.trim().replace(",", ".");
+  if (store.modal.measurementTimeEnabled && !getElementById("measurementTimeInput").reportValidity()) return;
+  const raw = getElementById("tempInput").value.trim().replace(",", ".");
   updateSelectedEntry({
     temp: raw ? Number(raw) : null,
-    tempFactors: qs("tempFactorsInput").value,
-    tempFactorsOther: qs('tempFactorsInput').value === 'other' ? (qs('tempFactorsOtherInput')?.value.trim() || '') : '',
-    measurementTime: store.modal.measurementTimeEnabled ? qs("measurementTimeInput").value : "",
+    tempFactors: getElementById("tempFactorsInput").value,
+    tempFactorsOther: getElementById('tempFactorsInput').value === 'other' ? (getElementById('tempFactorsOtherInput')?.value.trim() || '') : '',
+    measurementTime: store.modal.measurementTimeEnabled ? getElementById("measurementTimeInput").value : "",
   });
   finishSave("modal", render);
 }
 
 export function syncTempFactorsUI() {
-  const other = qs('tempFactorsInput')?.value === 'other';
-  qs('tempFactorsOtherWrapper')?.classList.toggle('hidden', !other);
+  const other = getElementById('tempFactorsInput')?.value === 'other';
+  getElementById('tempFactorsOtherWrapper')?.classList.toggle('hidden', !other);
 }
 
 export function syncMeasurementTimeUI() {
   const enabled = Boolean(store.modal.measurementTimeEnabled);
-  const checkbox = qs("measurementTimeCheckbox");
-  const wrapper = qs("measurementTimeWrapper");
+  const checkbox = getElementById("measurementTimeCheckbox");
+  const wrapper = getElementById("measurementTimeWrapper");
   if (checkbox) checkbox.checked = enabled;
   wrapper?.classList.toggle("hidden", !enabled);
   const adjustment = enabled
     ? getTimeAdjustment(store.modal.measurementTime, store.getActiveMapProfile().usualMeasurementTime)
     : 0;
-  const hint = qs("timeAdjustmentHint");
+  const hint = getElementById("timeAdjustmentHint");
   if (hint) {
     setText(hint, adjustment
       ? `≈ ${adjustment > 0 ? "+" : ""}${adjustment.toFixed(2)} °C vs usual time`
@@ -112,11 +112,11 @@ export function syncMeasurementTimeUI() {
 }
 
 export function syncMucusModalUI() {
-  const otherCheckbox = qs("mucusColorOtherCheckbox");
-  const otherInput = qs("mucusColorOtherInput");
+  const otherCheckbox = getElementById("mucusColorOtherCheckbox");
+  const otherInput = getElementById("mucusColorOtherInput");
   const isOther = store.modal.color === "other" || Boolean(store.modal.colorOther?.trim());
   if (otherCheckbox) otherCheckbox.checked = isOther;
-  qsa('.segmented button[data-group="color"]').forEach(button => {
+  querySelectorAll('.segmented button[data-group="color"]').forEach(button => {
     button.disabled = isOther;
     button.classList.toggle("disabled", isOther);
   });
@@ -212,7 +212,7 @@ export function saveCervixModal(render) {
 
 function saveVisibleMarkerDraft() {
   const type = markerTypeFromColor(store.modal.markerColor);
-  const value = qs("markersMarker")?.value || "";
+  const value = getElementById("markersMarker")?.value || "";
   store.modal.markers[type] = {
     value,
     pointType: type === "bbt"
@@ -228,7 +228,7 @@ export function markerHeadingFromColor(color) {
 }
 
 function syncMarkerHeading() {
-  const heading = qs("markersMarkerLabel");
+  const heading = getElementById("markersMarkerLabel");
   if (heading) setText(heading, markerHeadingFromColor(store.modal.markerColor));
 }
 
@@ -246,7 +246,7 @@ export function openMarkersModal() {
   }
   store.modal.markerPointType = store.modal.markers[selectedType].pointType;
   store.modal.marker = store.modal.markers[selectedType].value;
-  qs("markersMarker").value = store.modal.marker;
+  getElementById("markersMarker").value = store.modal.marker;
   syncMarkerHeading();
   showModal("markersModal");
   syncModalUI();
@@ -258,7 +258,7 @@ export function closeMarkersModal() {
 
 export function clearMarkersModalInput() {
   store.modal.marker = "";
-  const input = qs("markersMarker");
+  const input = getElementById("markersMarker");
   if (input) input.value = "";
 }
 
@@ -268,7 +268,7 @@ export function selectMarkerType(color) {
   const marker = store.modal.markers[markerTypeFromColor(store.modal.markerColor)];
   store.modal.marker = marker.value;
   store.modal.markerPointType = marker.pointType;
-  const input = qs("markersMarker");
+  const input = getElementById("markersMarker");
   if (input) input.value = marker.value;
   syncMarkerHeading();
   syncModalUI();
@@ -290,7 +290,7 @@ export function openOtherModal() {
   resetModalState();
   const data = store.entries[store.selectedKey] || {};
   store.modal.sex = data.sex;
-  qs("otherModalInput").value = data.other ?? "";
+  getElementById("otherModalInput").value = data.other ?? "";
   showModal("otherModal");
   syncModalUI();
 }
@@ -301,7 +301,7 @@ export function closeOtherModal() {
 
 export function saveOtherModal(render) {
   if (!store.selectedKey) return;
-  updateSelectedEntry({ other: qs("otherModalInput").value.trim(), sex: store.modal.sex });
+  updateSelectedEntry({ other: getElementById("otherModalInput").value.trim(), sex: store.modal.sex });
   finishSave("otherModal", render);
 }
 

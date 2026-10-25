@@ -1,5 +1,6 @@
 import { setText } from '../i18n.js';
 import { store } from '../store.js';
+import { PROFILE_GOALS, MEASUREMENT_METHODS } from '../profile-options.js';
 
 export function profileInfoRows(profile) {
   return [
@@ -7,8 +8,8 @@ export function profileInfoRows(profile) {
     ['Consultant', profile.consultantName],
     ['Age', profile.age],
     ['Time', profile.usualMeasurementTime],
-    ['Goal', { avoid: 'Avoid pregnancy', achieve: 'Achieve pregnancy', observation: 'Observation only' }[profile.goal]],
-    ['Measurement method', { oral: 'Oral', vaginal: 'Vaginal', rectal: 'Rectal' }[profile.measurementMethod]],
+    ['Goal', PROFILE_GOALS[profile.goal]],
+    ['Measurement method', MEASUREMENT_METHODS[profile.measurementMethod]],
   ];
 }
 
@@ -18,14 +19,14 @@ export function openProfileInfo(trigger) {
   dialog.setAttribute('aria-labelledby', 'profileDetailsTitle');
   dialog.innerHTML = '<h2 id="profileDetailsTitle" data-i18n>Profile</h2><dl></dl><button type="button" class="btn" data-i18n>Close</button>';
   const list = dialog.querySelector('dl');
-  for (const [label, value] of profileInfoRows(store.getActiveMapProfile())) {
+  profileInfoRows(store.getActiveMapProfile()).forEach(([label, value]) => {
     const term = document.createElement('dt');
     const detail = document.createElement('dd');
     setText(term, label);
     if (label === 'Goal' || label === 'Measurement method') setText(detail, value || '—');
     else detail.textContent = value || '—';
     list.append(term, detail);
-  }
+  });
   dialog.querySelector('button').onclick = () => dialog.close();
   dialog.addEventListener('close', () => {
     dialog.remove();
