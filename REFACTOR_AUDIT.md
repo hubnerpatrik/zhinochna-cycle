@@ -76,3 +76,44 @@ The project uses native JavaScript modules; no React dependency is present.
 - No production database, live auth provider or live feedback submission was used.
   Database assertions use injected repositories/SQL mocks; browser visuals were not
   rechecked in this pass. The HTML and binary comparisons cover the fixtures above.
+
+## Final preview verification — 2026-10-25
+
+Code baseline: `7b2e0a2` on `develop`. These checks extend the earlier mocked
+checks to the isolated Cycle App Preview Neon project and the stable Vercel
+develop preview. They do not exercise the production database or deployment.
+
+- JavaScript syntax checks, all 171 automated tests and the production Vite build
+  passed again. `git diff --check` passed. No direct inline-style writes were found
+  in application JavaScript/HTML.
+- The live test exposed a protected-preview compatibility issue: cloud and feedback
+  requests used `credentials: omit`, excluding the Vercel protection cookie.
+  Commit `7b2e0a2` uses `same-origin` for these relative API requests. Server handlers
+  still authorize accounts through verified JWTs, not cookies. Vercel protection
+  and production settings were not changed.
+- Email verification, password sign-in and session restoration were exercised with
+  the user-created test account. Its verified session opened the tracker after reload.
+- Created a separate map named `TEST final 25.10.2026`, saved a synthetic temperature
+  of 36.65 and a Czech note containing angle brackets, an ampersand and quotation
+  marks. Both values survived a full page reload and rendered as plain text.
+- Independently read only that test map's entry in Neon SQL Editor. It contained the
+  same temperature and note in account-state version 8, confirming an actual cloud
+  write rather than just browser-local persistence.
+- Submitted one explicitly labelled test Feedback report without an attachment.
+  The report appeared in its thread after the request completed.
+- Sign-out concealed the tracker and returned to the sign-in form.
+- After the user signed in again, the test map reopened with the same temperature
+  and note, the existing profile was present and cloud status was saved.
+
+### Scope and remaining checks
+
+- The user performed password entry for the final sign-in check; no password or
+  verification code is collected in the audit or repository.
+- The test map and labelled Feedback report remain in the isolated preview account.
+- Earlier export comparisons and local download checks remain applicable; exports
+  were not downloaded again during this live cloud check.
+- These checks do not cover a physical mobile device, a second live account/device,
+  password reset delivery or an admin response to Feedback. They are not a guarantee
+  that every input or interaction is defect-free.
+- The GitHub Actions workflow runs on pull requests and pushes to `main`. The
+  checks reported here were run locally; a successful Vercel build is not a CI result.
