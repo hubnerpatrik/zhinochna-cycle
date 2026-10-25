@@ -14,6 +14,15 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Added
+
+- Export a 43-day A4 observation card based on the supplied reference, with a temperature chart, observations and cycle summaries. Excel includes native temperature charts and a complete data sheet.
+- Import original PDF and Excel exports using their embedded map backup, preserving notes, profile snapshots, manual annotations and cycle summaries. JSON backup behavior is unchanged.
+
+### Changed
+
+- PDF and Excel labels, observation values and worksheet names follow the application's selected language (English, Czech, Slovak or Ukrainian).
+
 ## 0.14.1 — 2026-10-25
 
 ### Fixed

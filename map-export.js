@@ -1,5 +1,7 @@
 import { workbookBytes } from './xlsx-export.js';
-import { mapExportRows, valueText } from './export-data.js';
+import { mapExportRows, valueText, EXPORT_FIELDS, EXPORT_LABELS, observationText, sortedMapEntries } from './export-data.js';
+import { mapBackupPayload } from './map-transfer.js';
+import { t } from './i18n.js';
 
 export { EXPORT_FIELDS, observationText } from './export-data.js';
 export { jpegPagesPdf, mapPdf } from './pdf-export.js';
@@ -18,8 +20,12 @@ export function mapCsv(map) {
   const rows = mapExportRows(map);
   return '\uFEFF' + rows.map(row => row.map(csvCell).join(',')).join('\r\n') + '\r\n';
 }
-export function mapXlsx(map) {
-  return workbookBytes(mapExportRows(map));
+export function mapXlsx(map, backup = mapBackupPayload(map)) {
+  const rows = [[t('Date'), ...EXPORT_LABELS.map(t)], ...sortedMapEntries(map).map(([date, entry]) => [date, ...EXPORT_FIELDS.map(key => {
+    const value = entry[key];
+    return typeof value === 'string' ? observationText(key, value) : value;
+  })])];
+  return workbookBytes(rows, map, backup);
 }
 export function exportFilename(name, extension) {
   return `${(name || 'cycle-map').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '-').replace(/[. ]+$/g, '').slice(0, MAX_EXPORT_FILENAME_LENGTH) || 'cycle-map'}.${extension}`;
