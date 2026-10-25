@@ -1,6 +1,7 @@
 // English source copy → Czech, Slovak, Ukrainian. UA is the UI label;
 // uk is the standard language code used by HTML and Intl.
 import { authMessages } from './auth.js';
+import { exportMessages } from './exports.js';
 import { feedbackMessages } from './feedback.js';
 import { formFeedbackMessages } from './form-feedback.js';
 import { helpMessages } from './help.js';
@@ -8,6 +9,7 @@ import { profilePhotoMessages } from './profile-photo.js';
 import { feedbackImprovementMessages } from './feedback-improvements.js';
 
 export const messages = {
+  ...exportMessages,
   ...feedbackImprovementMessages,
   ...profilePhotoMessages,
   ...helpMessages,

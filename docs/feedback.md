@@ -48,14 +48,24 @@ the inbox. Reports are independent of map deletion.
 
 My Maps offers PDF, Excel (.xlsx) and the original JSON backup in a popover above
 the map cards. Excel preserves numeric and boolean cells and stores user text as
-literal strings, never formulas. It uses stable English field names and includes
+literal strings, never formulas. Its labels and observation values follow the
+application language (English, Czech, Slovak or Ukrainian), and it includes
 every recorded day's observation fields, including period intensity, custom
-influence factors and nested markers as JSON values. JSON remains the format for
-restoring a complete map. The CSV serializer remains available for integrations.
+influence factors and nested markers as JSON values. The first worksheets contain
+43-day observation cards, native temperature charts and cycle summaries; the last
+sheet contains complete daily records. The CSV serializer remains available for integrations.
 
-PDF downloads directly, with landscape A4 temperature charts and complete daily
-observations on subsequent pages. Chart pages show up to 28 calendar days with gaps
-for missing temperatures. Maps spanning over 730 days show recorded dates only.
-Pages are rasterized at twice the PDF page resolution to preserve all supported
-language glyphs without downloading fonts; PDF text is not selectable. Manual
-annotations also appear in the observation appendix. Export never changes map data.
+PDF downloads directly, with portrait A4 cards based on the supplied blank reference.
+Printed labels are replaced with the application language. Cards show up to 43 calendar
+days, preserve gaps, split at cycle starts and continue long cycles on subsequent cards.
+Complete daily observations follow in a landscape appendix. Pages are rasterized to
+preserve supported language glyphs without downloading fonts; PDF text is not selectable.
+Manual annotations also appear in the observation appendix. Export never changes map data.
+
+PDF and Excel contain the same validated single-map JSON backup as the JSON export.
+Import map accepts all three original export formats and uses the existing validation,
+confirmation and non-destructive shared-map import. It restores the original exported
+data, including the author's profile snapshot. Edits made to worksheet cells are not
+imported, and spreadsheet software may remove the embedded backup when re-saving a file.
+Foreign PDF forms, scans and unrelated workbooks are rejected with an explanation;
+their measurements and missing calendar dates are not guessed. JSON stays unchanged.

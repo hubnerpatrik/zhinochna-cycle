@@ -14,6 +14,29 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.15.0 — 2026-10-25
+
+### Fixed
+
+- Prevent Excel from requiring file recovery when opening exported workbooks: declare the embedded JSON backup's package content type and include the workbook view referenced by worksheet views.
+- Keep temperature values readable in Excel, show chart axis labels and preserve borders around merged summary cells.
+
+### Added
+
+- Export a 43-day A4 observation card based on the supplied reference, with a temperature chart, observations and cycle summaries. Excel includes native temperature charts and a complete data sheet.
+- Import original PDF and Excel exports using their embedded map backup, preserving notes, profile snapshots, manual annotations and cycle summaries. JSON backup behavior is unchanged.
+
+### Changed
+
+- PDF and Excel labels, observation values and worksheet names follow the application's selected language (English, Czech, Slovak or Ukrainian).
+
+### Validation and compatibility
+
+- Pass 178 automated tests, JavaScript syntax checks and the production build.
+- Open exports directly in desktop Excel in all four supported languages, verify the native chart and numeric measurements, and inspect the printed Czech observation card.
+- Include a synthetic single-cycle, 32-day map for import and export testing.
+- No database migration is required. JSON backup format remains unchanged. PDF and Excel import restores original embedded export data; external forms, scans and worksheet edits are not imported.
+
 ## 0.14.1 — 2026-10-25
 
 ### Fixed

@@ -1,5 +1,6 @@
 // Minimal OOXML workbook: typed cells, Unicode text, no formulas or external links.
 import { zipTextFiles } from './zip-archive.js';
+import { addObservationSheets } from './xlsx-template.js';
 
 const ALPHABET_SIZE = 26;
 const FIRST_COLUMN_CHARACTER = 65;
@@ -34,13 +35,14 @@ function worksheetRowsXml(rows) {
   }).join('');
 }
 
-export function workbookBytes(rows) {
+export function workbookBytes(rows, map = null, backup = '') {
   const rowXml = worksheetRowsXml(rows);
-  return zipTextFiles({
+  const files = {
     '[Content_Types].xml': '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>',
     '_rels/.rels': `<Relationships xmlns="${RELATIONSHIPS_NAMESPACE}"><Relationship Id="rId1" Type="${OFFICE_RELATIONSHIPS_NAMESPACE}/officeDocument" Target="xl/workbook.xml"/></Relationships>`,
-    'xl/workbook.xml': `<workbook xmlns="${SPREADSHEET_NAMESPACE}" xmlns:r="${OFFICE_RELATIONSHIPS_NAMESPACE}"><sheets><sheet name="Cycle map" sheetId="1" r:id="rId1"/></sheets></workbook>`,
+    'xl/workbook.xml': `<workbook xmlns="${SPREADSHEET_NAMESPACE}" xmlns:r="${OFFICE_RELATIONSHIPS_NAMESPACE}"><bookViews><workbookView/></bookViews><sheets><sheet name="Cycle map" sheetId="1" r:id="rId1"/></sheets></workbook>`,
     'xl/_rels/workbook.xml.rels': `<Relationships xmlns="${RELATIONSHIPS_NAMESPACE}"><Relationship Id="rId1" Type="${OFFICE_RELATIONSHIPS_NAMESPACE}/worksheet" Target="worksheets/sheet1.xml"/></Relationships>`,
     'xl/worksheets/sheet1.xml': `<worksheet xmlns="${SPREADSHEET_NAMESPACE}"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetData>${rowXml}</sheetData><autoFilter ref="A1:${columnName(rows[0].length - 1)}${rows.length}"/></worksheet>`,
-  });
+  };
+  return zipTextFiles(map ? addObservationSheets(files, map, backup) : files);
 }

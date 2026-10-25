@@ -1,10 +1,11 @@
 // Update together with package.json when preparing a release. Keep copy user-facing.
 export const currentRelease = {
-  version: '0.14.1',
+  version: '0.15.0',
   githubUrl: 'https://github.com/hubnerpatrik/zhinochna-cycle/releases',
   changes: [
-    'Keep cloud sync and feedback available in protected previews.',
-    'This maintenance update preserves your maps, observations and export formats.',
+    'Export observation cards to PDF and Excel in your app language.',
+    'Import your original PDF, Excel or JSON map exports.',
+    'Excel exports open without file recovery and include a temperature chart.',
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';
