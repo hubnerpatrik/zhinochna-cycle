@@ -8,7 +8,8 @@ export function createFeedbackRequest(auth, transport) {
     if (transport) return transport(method, body ? validateFeedback(body) : undefined);
     const token = await auth.token();
     const response = await fetch('/api/feedback', {
-      method, cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      // Retain the hosting provider's cookie when accessing protected previews.
+      method, cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
       ...(body ? { body: JSON.stringify(validateFeedback(body)) } : {}),
     });

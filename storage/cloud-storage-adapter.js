@@ -13,7 +13,9 @@ export function createCloudTransport(auth, fetcher = fetch) {
   return async (method, body) => {
     const token = await auth.token();
     const response = await fetcher("/api/state", {
-      method, cache: "no-store", credentials: "omit", signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      // Protected previews also need the hosting provider's same-origin cookie.
+      // The API still authenticates the account exclusively through the JWT.
+      method, cache: "no-store", credentials: "same-origin", signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       headers: { Authorization: `Bearer ${token}`, ...(body ? { "Content-Type": "application/json" } : {}) },
       ...(body ? { body: JSON.stringify(body) } : {}),
     });

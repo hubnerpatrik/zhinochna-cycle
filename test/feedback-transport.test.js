@@ -17,7 +17,7 @@ test('feedback transport authenticates requests and validates before sending', a
   assert.equal(requests[0].url, '/api/feedback');
   assert.equal(requests[0].options.body, undefined);
   assert.equal(requests[0].options.headers.Authorization, 'Bearer test-token');
-  assert.equal(requests[0].options.credentials, 'omit');
+  assert.equal(requests[0].options.credentials, 'same-origin');
   assert.equal(requests[0].options.cache, 'no-store');
   assert.ok(requests[0].options.signal instanceof AbortSignal);
   assert.deepEqual(JSON.parse(requests[1].options.body), { ...message, text: 'Test reply' });
