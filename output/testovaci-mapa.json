@@ -1,7 +1,7 @@
 {
   "app": "cycle-tracker",
   "version": "0.10.0",
-  "exportedAt": "2026-10-25T20:42:38.036Z",
+  "exportedAt": "2026-10-25T20:59:42.797Z",
   "data": {
     "profile": {
       "name": "Testovací profil",
@@ -16,10 +16,10 @@
     "maps": {
       "testovaci-mapa-2026-09": {
         "id": "testovaci-mapa-2026-09",
-        "name": "TEST – ukázkový cyklus",
+        "name": "TEST – jeden cyklus (32 dní)",
         "createdAt": "2026-09-01T10:00:00.000Z",
         "status": "closed",
-        "closedAt": "2026-10-06T10:00:00.000Z",
+        "closedAt": "2026-10-02T10:00:00.000Z",
         "entries": {
           "2026-09-01": {
             "crossedRows": [],
@@ -1195,154 +1195,6 @@
             "tempFactors": "",
             "bleeding": "none",
             "bleedingIntensity": "",
-            "sensation": "dry",
-            "consistency": "",
-            "color": "",
-            "cervixFirmness": "hard",
-            "cervixHeight": "low",
-            "cervixOpenness": "closed",
-            "stretch": false,
-            "visible": false,
-            "sediment": false,
-            "isPeak": false,
-            "sex": false,
-            "isFertile": false,
-            "colorOther": "",
-            "other": ""
-          },
-          "2026-10-03": {
-            "crossedRows": [],
-            "crossedChartTemps": [],
-            "markers": {
-              "bbt": {
-                "value": "",
-                "pointType": "temp"
-              },
-              "mucus": {
-                "value": "",
-                "pointType": "temp"
-              },
-              "cervix": {
-                "value": "",
-                "pointType": "temp"
-              }
-            },
-            "temp": 36.38,
-            "measurementTime": "06:30",
-            "tempFactors": "",
-            "bleeding": "menstruation",
-            "bleedingIntensity": "heavy",
-            "sensation": "dry",
-            "consistency": "",
-            "color": "",
-            "cervixFirmness": "hard",
-            "cervixHeight": "low",
-            "cervixOpenness": "closed",
-            "stretch": false,
-            "visible": false,
-            "sediment": false,
-            "isPeak": false,
-            "sex": false,
-            "isFertile": false,
-            "colorOther": "",
-            "other": "TESTOVACÍ MAPA – všechna pozorování jsou smyšlená."
-          },
-          "2026-10-04": {
-            "crossedRows": [],
-            "crossedChartTemps": [],
-            "markers": {
-              "bbt": {
-                "value": "",
-                "pointType": "temp"
-              },
-              "mucus": {
-                "value": "",
-                "pointType": "temp"
-              },
-              "cervix": {
-                "value": "",
-                "pointType": "temp"
-              }
-            },
-            "temp": 36.33,
-            "measurementTime": "06:30",
-            "tempFactors": "",
-            "bleeding": "menstruation",
-            "bleedingIntensity": "heavy",
-            "sensation": "dry",
-            "consistency": "",
-            "color": "",
-            "cervixFirmness": "hard",
-            "cervixHeight": "low",
-            "cervixOpenness": "closed",
-            "stretch": false,
-            "visible": false,
-            "sediment": true,
-            "isPeak": false,
-            "sex": false,
-            "isFertile": false,
-            "colorOther": "",
-            "other": ""
-          },
-          "2026-10-05": {
-            "crossedRows": [],
-            "crossedChartTemps": [],
-            "markers": {
-              "bbt": {
-                "value": "",
-                "pointType": "temp"
-              },
-              "mucus": {
-                "value": "",
-                "pointType": "temp"
-              },
-              "cervix": {
-                "value": "",
-                "pointType": "temp"
-              }
-            },
-            "temp": 36.21,
-            "measurementTime": "06:30",
-            "tempFactors": "",
-            "bleeding": "menstruation",
-            "bleedingIntensity": "light",
-            "sensation": "dry",
-            "consistency": "",
-            "color": "",
-            "cervixFirmness": "hard",
-            "cervixHeight": "low",
-            "cervixOpenness": "closed",
-            "stretch": false,
-            "visible": false,
-            "sediment": false,
-            "isPeak": false,
-            "sex": false,
-            "isFertile": false,
-            "colorOther": "",
-            "other": ""
-          },
-          "2026-10-06": {
-            "crossedRows": [],
-            "crossedChartTemps": [],
-            "markers": {
-              "bbt": {
-                "value": "",
-                "pointType": "temp"
-              },
-              "mucus": {
-                "value": "",
-                "pointType": "temp"
-              },
-              "cervix": {
-                "value": "",
-                "pointType": "temp"
-              }
-            },
-            "temp": 36.32,
-            "measurementTime": "06:30",
-            "tempFactors": "",
-            "bleeding": "menstruation",
-            "bleedingIntensity": "light",
             "sensation": "dry",
             "consistency": "",
             "color": "",
