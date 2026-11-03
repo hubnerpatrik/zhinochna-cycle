@@ -32,17 +32,18 @@
     z-index: 100;
     inset: auto max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 2px;
     width: auto;
-    margin: 0;
+    max-width: 360px;
+    margin: 0 auto;
     padding: 5px;
     border-radius: 38px;
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     overflow: visible;
   }
-  .header-nav.hidden { display: none; }
+  .header-nav.hidden, #navMenuBtn { display: none; }
   .header-nav-btn, .header-nav-btn:last-child {
     display: flex;
     flex-direction: column;

@@ -79,7 +79,7 @@
   #mobileObservationDays { height: 44px; }
   #mobileObservationDays button { height: 44px; padding: 0; border: 0; border-right: 1px solid var(--hairline); border-radius: 0; background: #f4e9e1; font: inherit; font-size: 10px; color: var(--text); cursor: pointer; }
   /* Glass treatment belongs only to the phone navigation dock. */
-  .header-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid #ffffffc9; background: linear-gradient(145deg, #ffffffa3, #fff8f075); -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%); box-shadow: inset 0 1px 1px #fff, inset 0 -1px 1px #ffffff66, 0 10px 36px #57483c26; }
+  .header-nav { border: 1px solid #ffffffc9; background: linear-gradient(145deg, #ffffffa3, #fff8f075); -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%); box-shadow: inset 0 1px 1px #fff, inset 0 -1px 1px #ffffff66, 0 10px 36px #57483c26; }
   .header-nav-btn.is-active { border-color: #ffffffdb; background: linear-gradient(135deg, #ffffffc7, #ffe5d795); box-shadow: inset 0 1px 1px #fff, 0 3px 12px #79503b12; color: #854023; }
   .feedback-launch.btn { display: grid; place-items: center; flex: none; width: 48px; min-width: 48px; max-width: 48px; height: 48px; min-height: 48px; padding: 0; border-radius: 50%; font-size: 22px; line-height: 1; bottom: calc(92px + env(safe-area-inset-bottom)); }
   .feedback-launch > span:first-child { display: block; }
