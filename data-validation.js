@@ -13,7 +13,7 @@ export const CROSSABLE_ROW_IDS = Object.freeze([
 ]);
 
 export const MARKER_TYPES = Object.freeze(["bbt", "mucus", "cervix"]);
-const VALID_MARKER_VALUES = new Set(["", "P", "1", "2", "3", "4", "5", "6", "↑", "↓1"]);
+const VALID_MARKER_VALUES = new Set(["", "P", "1", "2", "3", "4", "5", "6", "↑", "↓", "↓1"]);
 const VALID_ENTRY_FIELDS = new Set([
   "temp", "tempFactors", "measurementTime", "bleeding", "sensation", "stretch", "visible",
   "consistency", "color", "colorOther", "sediment", "markers", "markerColor", "isPeak",
@@ -81,6 +81,7 @@ export function normalizeCrossedChartTemps(temps) {
 
 function normalizeMarkerValue(value) {
   const normalized = String(value ?? "");
+  if (normalized === "↓1") return "↓";
   return VALID_MARKER_VALUES.has(normalized) ? normalized : "";
 }
 
