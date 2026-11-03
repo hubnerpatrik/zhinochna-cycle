@@ -2,203 +2,96 @@
 
 # Cycle Tracker
 
-### Symptothermal cycle tracking, built around observation rather than prediction.
+A browser app for recording daily observations and reviewing them on a symptothermal cycle chart. You decide how to interpret what you record.
 
-A browser-based application for recording daily cycle observations and reviewing them on a clear, traditional-style symptothermal map.
+[Live Demo](https://cycle-6mf61zw3o-hubnerpatriks-projects.vercel.app/) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
 
-[**Live Demo**](https://cycle-6mf61zw3o-hubnerpatriks-projects.vercel.app/) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
-
-<br>
-
-![Active cycle map](assets/readme/active-map.jpeg)
+**Active prototype · v0.16.0**
 
 </div>
 
-## About
+## Active map
 
-Cycle Tracker brings the structure of a paper symptothermal chart into a digital interface.
+The active map brings the calendar, temperature chart, cycle summary and daily observations together. The chart plots basal body temperature on a fixed 0.05 °C grid. A time-adjusted temperature can appear alongside the original measurement.
 
-The app combines **basal body temperature, bleeding, cervical mucus, cervix observations, fertile days, markers and additional symptoms** in one synchronized view. It is designed as a **manual interpretation tool**: the application organizes and visualizes the data, while the user remains responsible for interpreting it.
+![Desktop active map with calendar, cycle summary, temperature chart and observation rows](assets/readme/active-map.png)
 
-It does **not** predict ovulation, assign fertility scores or automatically decide what the cycle data means.
+## On your phone
 
-> **Current status:** Active prototype · v0.14.0
-
-Each main screen has its own URL (`#/menu`, `#/my-profile`, `#/my-maps`,
-`#/create-map`, and `#/active-map?map=…`). Day editors also have history entries,
-so browser Back/Forward and the in-app Back buttons return through the screens
-you visited. Refreshing an editor restores its map, date, and saved values.
-Unsaved form changes are discarded when leaving the editor or refreshing.
-
-On phones, switch between Graph and Calendar without losing the selected day
-or zoom. The graph initially fits the full map and temperature range; pinch to
-zoom, swipe to move, or use Show all in Tools to return to the overview. Save Map
-is available above the mobile graph. Day record opens the observation editors;
-the selected day's influence factor appears below its temperature. Tools contains Fertile range,
-Coverlines, Markers and Cross cells, with actions below the chart. Tap a
-coverline to select it before dragging; tap away to return to scrolling.
-Show observations reveals the complete observation rows beneath the chart, with
-the map's year and month range. The chart keeps its 36.00–37.40 °C scale; recorded
-temperatures up to 43.00 °C appear at its edge with their actual value.
-
-## Core features
-
-| | |
-|---|---|
-| **Temperature chart** | Basal body temperature plotted on a fixed 0.05 °C grid, with influence factors and optional measurement-time adjustment. |
-| **Daily observations** | Track bleeding, spotting, clots, mucus, cervix observations, sex and additional symptoms. |
-| **Manual interpretation** | Place fertile days, coverlines, peak markers and BBT / mucus / cervix markers yourself. |
-| **Cycle map** | Review temperature and observations together on one day-by-day timeline. |
-| **Calendar** | Navigate through days and see menstruation and fertile-day highlighting at a glance. |
-| **Multiple maps** | Create, rename, close, reopen and filter separate cycle maps. |
-| **Day summary** | Open a read-only overview of everything recorded for a selected day. |
-| **Local storage** | Data currently stays in the browser using `localStorage`. |
-| **Map sharing and restore** | Export individual maps with their saved profile and import shared maps without replacing existing data. |
-
-## Daily tracking
-
-Instead of one large form, observations are divided into focused editors. This keeps data entry clear while all information remains attached to the same day.
+The active map opens in Calendar. Switching to Graph keeps the selected day and zoom. Pinch to zoom, swipe to move across the chart or use **Show all** in **Tools** to reset the view. Below the chart, you can reveal the observation rows, expand the selected day's details or open **Day record**.
 
 <table>
   <tr>
-    <td width="50%"><img src="assets/readme/edit-day.jpeg" alt="Edit day menu"></td>
-    <td width="50%"><img src="assets/readme/mucus.jpeg" alt="Mucus observation editor"></td>
+    <td valign="top" align="center"><img src="assets/readme/mobile-calendar.png" width="280" alt="Mobile calendar with the selected day and recording controls"></td>
+    <td valign="top" align="center"><img src="assets/readme/mobile-graph.png" width="280" alt="Mobile temperature chart with observation rows and recording controls"></td>
   </tr>
   <tr>
-    <td align="center"><sub>Edit individual observation categories</sub></td>
-    <td align="center"><sub>Structured mucus observations</sub></td>
+    <td align="center"><sub>Calendar</sub></td>
+    <td align="center"><sub>Graph and observations</sub></td>
   </tr>
 </table>
 
-Temperature entries can include an influence factor and a different measurement time. The app can show a rough time-based adjustment while preserving the original measurement.
+## Record and review a day
 
-Cervix observations cover **firmness, height and openness**. Mucus observations include **sensation, slipperiness, discharge, consistency and color**, including a free-text option when a fixed category is not enough.
-
-## Manual fertile range
-
-Fertile days are selected directly from a calendar and do not need to form one continuous range. The selected days are then highlighted across the interface as visual context.
-
-![Fertile range selection](assets/readme/fertile-range.jpeg)
-
-## Day overview
-
-Any selected date can be opened as a read-only summary, making it possible to review the complete daily record without reopening every editor.
-
-![Day information](assets/readme/day-info.jpeg)
-
-## Maps and profile
-
-Cycle data is organized into named maps. Only one map is active at a time, while previous maps remain available for later review.
-
-In My Profile, choose a JPG, PNG or WebP photo up to 10 MB. The browser crops it to
-a square and stores a compact 256 × 256 JPEG with the account profile; Save profile
-confirms the change, and Back discards the draft. Remove photo also takes effect
-when the profile is saved. JSON backups and map profile snapshots include the photo.
+Choose a date and open **Edit Day** to record temperature, measurement time, influence factors, bleeding, mucus, cervix observations, sex or other symptoms. **Day Info** brings the saved observations together in a read-only summary.
 
 <table>
   <tr>
-    <td width="50%"><img src="assets/readme/my-maps.jpeg" alt="Saved cycle maps"></td>
-    <td width="50%"><img src="assets/readme/profile.jpeg" alt="User profile"></td>
+    <td width="50%" valign="top"><img src="assets/readme/edit-day.png" alt="Edit Day menu with observation categories"></td>
+    <td width="50%" valign="top"><img src="assets/readme/day-info.png" alt="Day Info summary with original and adjusted temperatures"></td>
   </tr>
   <tr>
-    <td align="center"><sub>Saved maps with filtering and map management</sub></td>
-    <td align="center"><sub>Profile and measurement settings</sub></td>
+    <td align="center"><sub>Choose what to record</sub></td>
+    <td align="center"><sub>Review the saved day</sub></td>
   </tr>
 </table>
 
-The main menu provides direct access to the profile, saved maps, map creation and the currently active map.
+The browser's Back and Forward buttons work across the main screens and day editors. Reloading an editor restores its map, date and saved values. Leaving or reloading the editor discards unsaved changes.
 
-![Main menu](assets/readme/main-menu.jpeg)
+## Mark up the chart
 
-## Design principles
+Use **Fertile range** to select individual days on the calendar. They can be nonconsecutive, and the app highlights them in the calendar and on the chart.
 
-**Interpretation over automation.** The app provides the working surface; it does not replace the user's judgment.
+![Fertile range calendar with selected days](assets/readme/fertile-range.png)
 
-**Visualization over prediction.** There are no predicted ovulation dates, fertility scores or algorithmic confidence levels.
+Place coverlines, peak markers, arrows and cross-cell marks directly on the chart. To adjust a coverline, select it, drag the line or an endpoint, then save.
 
-**Transparency over hidden calculations.** Values shown on the map come from data entered by the user. Manual elements such as coverlines and fertile days stay explicitly user-controlled.
+![Horizontal and vertical coverlines being edited on the temperature chart](assets/readme/coverlines.png)
 
-**Account privacy.** Neon Auth manages sign-in. Profiles and maps sync through an authenticated server API to Neon Postgres, with an account-specific local copy for recovery and pending changes.
+## Manage and share maps
 
-## Tech stack
+**My Maps** lists saved maps and lets you filter them by year or month. Create, rename, close or reopen a map as needed. One map is active at a time. After sign-in, the app opens that map if one exists. Otherwise it opens **My Maps** after profile setup.
 
-`JavaScript` · `HTML5 Canvas` · `CSS` · `Vite` · `Neon Auth / Postgres` · `localStorage`
+![My Maps with filters, import, download, share and map management controls](assets/readme/my-maps.png)
 
-The frontend is built with **vanilla JavaScript and ES modules** without a framework.
+- **Share** creates a read-only copy of a map's observations. Anyone with the link can view it for seven days. This feature requires the `003-shared-maps.sql` migration.
+- **Download** exports a PDF observation card. Excel and JSON appear as disabled options in v0.16.0.
+- **Import map** accepts original PDF, Excel (.xlsx) and JSON exports from Cycle Tracker. It checks the embedded data and asks for confirmation before adding the map. Existing maps and the recipient's profile are preserved. Imported maps retain the author's saved profile snapshot.
 
-<details>
-<summary><strong>Project structure</strong></summary>
+## Accounts and storage
 
-```text
-app.js          Application entry point and top-level rendering
-core.js         Shared date, temperature, DOM and chart utilities
-store.js        Application state and persistence coordination
-backup.js       JSON backup serialization and parsing
-data-validation.js  Persisted and imported data normalization
-storage/        Local cache, durable sync queue and cloud adapter
-api/            Vercel authenticated persistence endpoint and health check
-server/         Token verification and account-scoped database queries
-migrations/     Database schema migrations
-domain.js       Cycle detection and chart-column generation
-chart.js        Canvas temperature chart and markers
-active-map/     Active-map bindings and chart interactions
-ui.js           Public UI facade
-ui/             Calendar, map grid and observation modals
-router.js       Screen navigation
-views/          Main menu, profile, maps and map creation screens
-styles/         Base and theme styles with one CSS entry point
-```
+[Neon Auth setup](docs/auth-setup.md) covers email/password registration, email verification and password reset. **My Profile** stores measurement preferences and supports an optional JPG, PNG or WebP photo up to 10 MB.
 
-</details>
+Profiles, maps and manual annotations sync to Neon Postgres through the authenticated `/api/state` endpoint. Each account has a separate browser cache and a queue for changes awaiting upload. If two devices make conflicting edits, the app offers a local backup before switching to the cloud version. See [cloud storage and recovery](docs/cloud-storage.md).
+
+The **Feedback** button opens a thread attached to a UI element. The designated support administrator can review reports across accounts and see numbered pins. See [feedback setup and export details](docs/feedback.md).
 
 ## Local development
 
-Requires **Node.js 20.19+** and npm.
+The frontend uses vanilla JavaScript, HTML Canvas, CSS and Vite. The Vercel API handles authenticated access to Neon Postgres.
+
+Requires Node.js 20.19+ and npm. Copy `.env.example` to `.env` and configure `DATABASE_URL` and `VITE_NEON_AUTH_URL` before migrating the database.
 
 ```bash
 npm ci
-# Set DATABASE_URL and VITE_NEON_AUTH_URL in .env first (see .env.example).
 npm run db:migrate
 npx vercel dev
 ```
 
-Run the project checks before committing:
+For localhost UI development, set `VITE_DEV_AUTH_BYPASS=true` in `.env.development.local` and run `npm run dev`. This mode uses isolated browser storage. Cloud sync, sharing and feedback require the server setup.
 
-```bash
-npm run check
-```
-
-Development uses two branches:
-
-- `main` — stable releases
-- `develop` — ongoing development
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the repository workflow and [CHANGELOG.md](CHANGELOG.md) for release history.
-
-## Data storage
-
-My Maps also offers **PDF** and **Excel (.xlsx)** downloads. The **bug button** opens anchored
-feedback threads with replies and resolution. Support administrators can review
-reports across accounts. See [feedback setup and exports](docs/feedback.md) for the
-required database migration, administrator configuration and export details.
-
-New versions show a one-time **What's new** bubble; the main menu's **Changelog**
-link opens GitHub Releases. Forms explain invalid values next to the input. See
-[release announcements and form feedback](docs/release-notes.md) for behavior and maintenance.
-
-Profiles, maps, daily observations, coverlines, fertile days and the active map identifier sync to Neon Postgres through `/api/state`. A verified Neon Auth account is required. The API verifies signed tokens and derives ownership on the server. Each account also has a separate local cache and durable queue for changes awaiting upload.
-
-Each saved map captures a profile snapshot and has an **Export** action in **My Maps**, allowing maps to be shared separately as identifiable JSON backup files. **Import map** validates a shared backup and asks for confirmation before adding it to My Maps. The recipient's profile, existing maps and active map are preserved, while opening the imported map displays the profile saved by its author. If reading, validation, or persistence fails, existing data is preserved.
-
-The sync indicator distinguishes local pending changes from confirmed cloud saves. New devices load the account's cloud state on sign-in. Conflicting edits do not overwrite each other: the app offers a local JSON backup and an explicit switch to the cloud version. This is document-level synchronization, not collaborative live editing. See [cloud storage](docs/cloud-storage.md) for limits and recovery.
-
-## Account sign-in
-
-Neon Auth now provides email/password registration, verification, sign-in, sign-out, and password
-reset. Configure the public Auth URL before running the app; see [Auth setup](docs/auth-setup.md).
-Existing maps created before accounts are preserved without being automatically assigned.
-Local maps already assigned to a verified account are queued for their first cloud upload. Explicit migration of older, unassigned maps is still pending.
+Run `npm run check` for lint, tests and the production build. See [CONTRIBUTING.md](CONTRIBUTING.md) for the branch and release workflow.
 
 ## Disclaimer
 
-Cycle Tracker is an educational tracking and visualization project. It is **not a medical device** and does not provide medical advice, contraception guidance or an automated assessment of fertility.
+Cycle Tracker is an educational tool for recording and visualizing observations. It does not provide medical advice, contraception guidance or an automated fertility assessment.

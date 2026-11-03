@@ -46,8 +46,9 @@ the inbox. Reports are independent of map deletion.
 
 ## Exports
 
-My Maps offers PDF, Excel (.xlsx) and the original JSON backup in a popover above
-the map cards. Excel preserves numeric and boolean cells and stores user text as
+The download icon on each map card opens an export menu. PDF download is enabled.
+Excel (.xlsx) and JSON are visible as disabled options in v0.16.0. Previously exported
+Excel and JSON files remain importable. The Excel serializer preserves numeric and boolean cells and stores user text as
 literal strings, never formulas. Its labels and observation values follow the
 application language (English, Czech, Slovak or Ukrainian), and it includes
 every recorded day's observation fields, including period intensity, custom
