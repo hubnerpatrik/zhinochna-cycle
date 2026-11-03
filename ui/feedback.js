@@ -49,7 +49,7 @@ export function setupFeedback({ auth, app, transport, description }) {
     childList: true, subtree: true, attributes: true, attributeFilter: ['open'],
   });
   placeControls();
-  let threads = [], admin = false, picking = false, draft = null, selected = null, busy = false, filter = 'open';
+  let threads = [], admin = false, showPins = false, picking = false, draft = null, selected = null, busy = false, filter = 'open';
   let draftText = '', replyText = '', replyId = null, error = '', loading = false, generation = 0;
   let draftImage = '', replyImage = '', imageLoading = false, imageGeneration = 0;
   const request = createFeedbackRequest(auth, transport);
@@ -71,17 +71,17 @@ export function setupFeedback({ auth, app, transport, description }) {
   }
   conceal = () => {
     generation++; cancelPick(); panel.close(); pins.replaceChildren();
-    threads = []; admin = false; selected = null; panel.replaceChildren();
+    threads = []; admin = false; showPins = false; selected = null; panel.replaceChildren();
     draft = null; draftText = ''; replyText = ''; draftImage = ''; replyImage = ''; imageGeneration++; imageLoading = false;
   };
   async function refresh() {
     if (loading || busy) return;
-    loading = true; error = ''; threads = []; admin = false; pins.replaceChildren(); render();
+    loading = true; error = ''; threads = []; admin = false; showPins = false; pins.replaceChildren(); render();
     const epoch = generation;
     try {
       const result = await request('GET');
       if (epoch !== generation) return;
-      threads = result.threads; admin = result.admin === true;
+      threads = result.threads; admin = result.admin === true; showPins = result.showPins === true;
     } catch { if (epoch === generation) error = t('Feedback could not be loaded. Try again.'); }
     finally { loading = false; if (epoch === generation) { render(); positionPins(); } }
   }
@@ -152,7 +152,7 @@ export function setupFeedback({ auth, app, transport, description }) {
   }
   function positionPins() {
     pins.replaceChildren();
-    if (document.body.classList.contains('auth-locked')) return;
+    if (!showPins || document.body.classList.contains('auth-locked')) return;
     threads.filter(thread => !thread.resolved && thread.anchor.screen === screen()).forEach((thread, index) => {
       let target;
       try { target = document.querySelector(thread.anchor.selector); } catch { return; }

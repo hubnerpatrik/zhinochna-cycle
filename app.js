@@ -154,7 +154,7 @@ function openActiveMapScreen() {
 
 function bindNavigation() {
   [
-    ["navMenuBtn", "menu"],
+    ["navMenuBtn", "home"],
     ["navProfileBtn", "my-profile"],
     ["navMapsBtn", "my-maps"],
     ["navCreateMapBtn", "create-map"],
@@ -165,11 +165,12 @@ function bindNavigation() {
   });
 }
 
-export function startApplication() {
+export function startApplication(auth) {
   if (router) return;
   initializeFieldErrors();
   router = createRouter({
     root: getElementById("screenRoot"),
+    auth,
     showStandaloneScreen,
     openActiveMap: openActiveMapScreen,
     openMapPage: page => {

@@ -122,7 +122,7 @@ test("direct page entry has a safe Back fallback and setup cannot be bypassed", 
   router.start();
   assert.equal(router.currentScreen, "my-profile");
   router.back();
-  assert.equal(router.currentScreen, "menu");
+  assert.equal(router.currentScreen, "my-maps");
   assert.equal(browser.history.length, 1);
   store.reset();
   router.navigate("active-map");

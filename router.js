@@ -8,7 +8,7 @@ import { renderMyMapsView } from "./views/my-maps.js";
 import { openMapDialog } from "./ui/map-dialog.js";
 import { closeExportMenu } from './ui/export-menu.js';
 import { escapeHtml } from "./views/view-utils.js";
-import { backupFilename } from "./backup.js";
+import { backupFilename, serializeBackup } from "./backup.js";
 import { createNavigation } from "./navigation.js";
 import { downloadFile, exportFilename, mapCsv, mapPdf, mapXlsx } from './map-export.js';
 import { readMapImport } from './map-transfer.js';
@@ -27,7 +27,7 @@ function downloadBackup(contents, mapName) {
   });
 }
 
-export function createRouter({ root, showStandaloneScreen, openActiveMap, openMapPage, showMessage, browser = window }) {
+export function createRouter({ root, showStandaloneScreen, openActiveMap, openMapPage, showMessage, auth, browser = window }) {
   let rendering = false;
   let createMapDialog = null;
 
@@ -69,12 +69,13 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
 
   const navigation = createNavigation({ browser, normalize: normalizeRoute, render: renderRoute });
   const navigate = (screen, options) => navigation.navigate(screen, options);
-  const back = () => navigation.back("menu");
+  const back = () => navigation.back("home");
 
   function normalizeRoute(input) {
     let screen = typeof input === "string" ? input : input.screen;
     const params = new URLSearchParams(typeof input === "string" ? "" : input.params);
     if (!store.hasProfile()) return { screen: "profile-setup", params: new URLSearchParams() };
+    if (!screen || screen === "home") screen = store.getActiveMapId() ? "active-map" : "my-maps";
     if (!Object.hasOwn(navByScreen, screen)) screen = "menu";
     if (screen === 'create-map') {
       const from = params.get('from');
@@ -144,7 +145,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           onSave: profile => {
             if (!runStoreAction(() => store.saveProfile(profile)).ok) return;
             showMessage?.("Profile saved ✓");
-            navigate("menu", { replace: true });
+            navigate("home", { replace: true });
           },
         });
         break;
@@ -220,6 +221,34 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
             if (!result.ok || !result.value) return;
             showMessage?.("Map deleted");
             navigate("my-maps");
+          },
+          onShare: async mapId => {
+            const map = store.getMap(mapId);
+            if (!map || !auth || !browser.confirm(t("Anyone with this link can view a copy of this map for 7 days. Create link?"))) return;
+            try {
+              const backup = serializeBackup({
+                profile: {},
+                maps: { [mapId]: { id: mapId, name: map.name, entries: map.entries } },
+                activeMapId: mapId,
+              });
+              const response = await browser.fetch('/api/share-map', {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${await auth.token()}`, 'Content-Type': 'application/json' },
+                body: backup, signal: AbortSignal.timeout(20000),
+              });
+              if (!response.ok) throw new Error("Share failed");
+              const { id } = await response.json();
+              const url = new URL('/api/share-map', browser.location.origin);
+              url.searchParams.set('id', id);
+              try {
+                await browser.navigator.clipboard.writeText(url.href);
+                showMessage?.("Share link copied");
+              } catch {
+                browser.prompt(t("Copy share link"), url.href);
+              }
+            } catch {
+              showMessage?.("The share link could not be created.");
+            }
           },
           onExport: async (mapId, format = 'json') => {
             try {

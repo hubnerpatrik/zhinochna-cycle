@@ -6,7 +6,7 @@ import { t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
 
-function renderMapList(container, maps, activeMapId, year, month, onOpen, onRename, onDelete, onExport) {
+function renderMapList(container, maps, activeMapId, year, month, onOpen, onRename, onDelete, onExport, onShare) {
   const filteredMaps = maps.filter(map => matchesFilter(map, year, month));
   const list = container.querySelector("#mapsList");
 
@@ -38,8 +38,9 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
         </div>
         <div class="map-list-actions">
           <div class="map-export-picker">
-            <button type="button" class="btn secondary map-export-btn" data-export-toggle data-export-map="${escapeHtml(map.id)}" aria-expanded="false"><span data-i18n>Export</span><span class="export-chevron" aria-hidden="true">⌄</span></button>
+            <button type="button" class="btn secondary map-export-btn" data-export-toggle data-export-map="${escapeHtml(map.id)}" aria-expanded="false"><span data-i18n>Export</span></button>
           </div>
+          <button type="button" class="btn secondary" data-share-map="${escapeHtml(map.id)}" data-i18n>Share map</button>
           <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
           <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
           <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
@@ -61,6 +62,14 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
 
   list.querySelectorAll('[data-export-toggle]').forEach(toggle => {
     toggle.addEventListener('click', () => openExportMenu(toggle, format => onExport?.(toggle.dataset.exportMap, format)));
+  });
+
+  list.querySelectorAll('[data-share-map]').forEach(button => {
+    button.onclick = async () => {
+      button.disabled = true;
+      try { await onShare?.(button.dataset.shareMap); }
+      finally { button.disabled = false; }
+    };
   });
 
   list.querySelectorAll("[data-map-rename-id]").forEach(button => {
@@ -100,7 +109,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
   });
 }
 
-export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImport, onOpen, onRename, onDelete, onExport }) {
+export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImport, onOpen, onRename, onDelete, onExport, onShare }) {
   const mapMeta = maps.map(buildMapMeta);
   const allYears = [...new Set(mapMeta.flatMap(map => map.years))].sort();
   let selectedYear = "";
@@ -161,7 +170,7 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
   const refresh = () => {
     selectedYear = yearFilter?.value ?? "";
     selectedMonth = monthFilter?.value ?? "";
-    renderMapList(container, mapMeta, activeMapId, selectedYear, selectedMonth, onOpen, onRename, onDelete, onExport);
+    renderMapList(container, mapMeta, activeMapId, selectedYear, selectedMonth, onOpen, onRename, onDelete, onExport, onShare);
   };
 
   yearFilter?.addEventListener("change", refresh);

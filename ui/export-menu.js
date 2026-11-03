@@ -48,6 +48,7 @@ export function openExportMenu(trigger, onExport) {
   EXPORT_FORMATS.forEach(([format, label]) => {
     const button = document.createElement('button');
     button.type = 'button'; button.className = 'btn secondary'; button.textContent = label;
+    button.disabled = format !== 'pdf';
     button.onclick = async () => {
       dismiss();
       trigger.disabled = true;

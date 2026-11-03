@@ -16,7 +16,8 @@ export function createFeedbackHandler({ identify, repository, adminIds = [], adm
     const userId = typeof identity === 'string' ? identity : identity.userId;
     const admin = adminIds.includes(userId) || (Boolean(identity.email) && adminEmails.includes(identity.email));
     if (request.method === 'GET') {
-      try { return response.status(HTTP_STATUS.OK).json({ admin, threads: await repository.list(userId, admin) }); }
+      const showPins = admin && identity.email === 'hiba.p@seznam.cz';
+      try { return response.status(HTTP_STATUS.OK).json({ admin, showPins, threads: await repository.list(userId, admin) }); }
       catch { return response.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({ error: 'storage_unavailable' }); }
     }
     if (!hasJsonContentType(request)) return response.status(HTTP_STATUS.UNSUPPORTED_MEDIA_TYPE).json({ error: 'json_required' });
