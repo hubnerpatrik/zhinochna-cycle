@@ -6,7 +6,7 @@ import { t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
 
-function renderMapList(container, maps, activeMapId, year, month, onOpen, onRename, onDelete, onExport, onShare) {
+function renderMapList(container, maps, activeMapId, year, month, onOpen, onRename, onDelete, onExport) {
   const filteredMaps = maps.filter(map => matchesFilter(map, year, month));
   const list = container.querySelector("#mapsList");
 
@@ -40,7 +40,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
           <div class="map-export-picker">
             <button type="button" class="btn secondary map-export-btn" data-i18n-aria-label="Export" aria-label="Export" data-i18n-title="Export" title="Export" data-export-toggle data-export-map="${escapeHtml(map.id)}" aria-expanded="false"><svg aria-hidden="true"><use href="/icons.svg#map-export"/></svg></button>
           </div>
-          <button type="button" class="btn secondary map-share-btn" data-share-map="${escapeHtml(map.id)}" aria-label="Share map" data-i18n-aria-label="Share map" title="Share map" data-i18n-title="Share map"><svg aria-hidden="true"><use href="/icons.svg#map-share"/></svg></button>
+          <button type="button" class="btn secondary map-share-btn" aria-disabled="true" aria-label="Share map" data-i18n-aria-label="Share map" title="Map sharing is being fixed." data-i18n-title="Map sharing is being fixed."><svg aria-hidden="true"><use href="/icons.svg#map-share"/></svg></button>
           <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
           <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
           <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
@@ -62,14 +62,6 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
 
   list.querySelectorAll('[data-export-toggle]').forEach(toggle => {
     toggle.addEventListener('click', () => openExportMenu(toggle, format => onExport?.(toggle.dataset.exportMap, format)));
-  });
-
-  list.querySelectorAll('[data-share-map]').forEach(button => {
-    button.onclick = async () => {
-      button.disabled = true;
-      try { await onShare?.(button.dataset.shareMap); }
-      finally { button.disabled = false; }
-    };
   });
 
   list.querySelectorAll("[data-map-rename-id]").forEach(button => {
@@ -109,7 +101,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
   });
 }
 
-export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImport, onOpen, onRename, onDelete, onExport, onShare }) {
+export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImport, onOpen, onRename, onDelete, onExport }) {
   const mapMeta = maps.map(buildMapMeta);
   const allYears = [...new Set(mapMeta.flatMap(map => map.years))].sort();
   let selectedYear = "";
@@ -170,7 +162,7 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
   const refresh = () => {
     selectedYear = yearFilter?.value ?? "";
     selectedMonth = monthFilter?.value ?? "";
-    renderMapList(container, mapMeta, activeMapId, selectedYear, selectedMonth, onOpen, onRename, onDelete, onExport, onShare);
+    renderMapList(container, mapMeta, activeMapId, selectedYear, selectedMonth, onOpen, onRename, onDelete, onExport);
   };
 
   yearFilter?.addEventListener("change", refresh);

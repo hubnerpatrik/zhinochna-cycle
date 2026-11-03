@@ -111,6 +111,7 @@
   min-width: 44px;
   padding-inline: 10px;
 }
+.map-list-actions .map-share-btn[aria-disabled="true"] { opacity: .5; cursor: default; }
 .map-list-actions :is(.map-export-btn, .map-share-btn) svg {
   width: 20px;
   height: 20px;
