@@ -23,7 +23,7 @@ The active map opens in Calendar. Switching to Graph keeps the selected day and 
 <table>
   <tr>
     <td valign="top" align="center"><img src="assets/readme/mobile-calendar.png" width="280" alt="Mobile calendar with the selected day and recording controls"></td>
-    <td valign="top" align="center"><img src="assets/readme/mobile-graph.png" width="280" alt="Mobile temperature chart with collapsed observations and recording controls"></td>
+    <td valign="top" align="center"><img src="assets/readme/mobile-graph-compact.png" width="280" alt="Mobile temperature chart with collapsed observations and recording controls"></td>
   </tr>
   <tr>
     <td align="center"><sub>Calendar</sub></td>
