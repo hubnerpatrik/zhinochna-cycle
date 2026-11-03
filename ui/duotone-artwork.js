@@ -19,6 +19,8 @@ artwork.hard = '<circle class="observation-icon-fill" cx="24" cy="20" r="12"/><c
 const height = y => '<path class="observation-icon-line" d="M13 5v29m-4-4 4 4 4-4M9 9l4-4 4 4M24 6h15m-15 28h15" opacity=".6"/><circle class="observation-icon-fill" cx="31" cy="'+y+'" r="6"/><circle class="observation-icon-line" cx="31" cy="'+y+'" r="6"/>';
 const opening = radius => '<circle class="observation-icon-fill" cx="24" cy="20" r="15"/><circle class="observation-icon-line" cx="24" cy="20" r="15"/><circle class="observation-icon-line" cx="24" cy="20" r="'+radius+'" fill="var(--observation-icon-paper, #fffaf6)"/>';
 const groups = {
+  sex: { true: '<path class="observation-icon-fill" d="M24 34 10 21C0 10 15 1 24 12 33 1 48 10 38 21Z"/><path class="observation-icon-line" d="M24 34 10 21C0 10 15 1 24 12 33 1 48 10 38 21Z"/>' },
+  otherEnabled: { true: '<rect class="observation-icon-fill" x="11" y="5" width="26" height="30" rx="5"/><rect class="observation-icon-line" x="11" y="5" width="26" height="30" rx="5"/><path class="observation-icon-line" d="M18 15h12m-12 6h12m-12 6h7"/>' },
   sensation: { '': artwork.none, dry: artwork.dry, moist: artwork.moist, wet: artwork.wet },
   consistency: { '': artwork.none, creamy: artwork.creamy, slightlyStretchy: artwork.slightly, stretchy: artwork.stretchy },
   color: { '': artwork.none, white: artwork.white, whiteTranslucent: artwork.half, translucent: artwork.clear,

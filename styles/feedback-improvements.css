@@ -101,3 +101,28 @@
 @media (max-width: 560px) and (prefers-reduced-transparency: reduce) {
   .header-nav { background: #fffaf6; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
+
+#mucusModal .modal-card, #otherModal .modal-card { gap: 12px; }
+#otherModalDetails[hidden] { display: none; }
+#mucusModal .segmented.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#mucusModal .checkbox-row { min-height: 36px; }
+
+.map-list-actions .map-export-btn, .map-list-actions .map-share-btn {
+  min-width: 44px;
+  padding-inline: 10px;
+}
+.map-list-actions :is(.map-export-btn, .map-share-btn) svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.btn.map-import-btn {
+  color: #234972;
+  background: #e1edfb;
+  border-color: #abc7e7;
+}
+.btn.map-import-btn:hover { background: #d2e4f9; }

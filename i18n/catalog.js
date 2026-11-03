@@ -16,6 +16,7 @@ export const messages = {
   ...formFeedbackMessages,
   ...feedbackMessages,
   ...authMessages,
+  'Create your profile to get started.': ['Začni vytvořením profilu.', 'Začni vytvorením profilu.', 'Створіть профіль, щоб почати.'],
   'Language': ['Jazyk', 'Jazyk', 'Мова'],
   'Share map': ['Sdílet mapu', 'Zdieľať mapu', 'Поділитися картою'],
   'Anyone with this link can view a copy of this map for 7 days. Create link?': ['Kdokoli s odkazem může 7 dní zobrazit kopii mapy. Vytvořit odkaz?', 'Ktokoľvek s odkazom môže 7 dní zobraziť kópiu mapy. Vytvoriť odkaz?', 'Будь-хто з посиланням може переглядати копію карти протягом 7 днів. Створити посилання?'],

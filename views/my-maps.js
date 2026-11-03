@@ -38,9 +38,9 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
         </div>
         <div class="map-list-actions">
           <div class="map-export-picker">
-            <button type="button" class="btn secondary map-export-btn" data-export-toggle data-export-map="${escapeHtml(map.id)}" aria-expanded="false"><span data-i18n>Export</span></button>
+            <button type="button" class="btn secondary map-export-btn" data-i18n-aria-label="Export" aria-label="Export" data-i18n-title="Export" title="Export" data-export-toggle data-export-map="${escapeHtml(map.id)}" aria-expanded="false"><svg aria-hidden="true"><use href="/icons.svg#map-export"/></svg></button>
           </div>
-          <button type="button" class="btn secondary" data-share-map="${escapeHtml(map.id)}" data-i18n>Share map</button>
+          <button type="button" class="btn secondary map-share-btn" data-share-map="${escapeHtml(map.id)}" aria-label="Share map" data-i18n-aria-label="Share map" title="Share map" data-i18n-title="Share map"><svg aria-hidden="true"><use href="/icons.svg#map-share"/></svg></button>
           <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
           <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
           <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
@@ -153,7 +153,7 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
             </label>
           </div>
           <div class="screen-inline-actions">
-            <button type="button" class="btn secondary" id="myMapsImportBtn" data-i18n>Import map</button>
+            <button type="button" class="btn secondary map-import-btn" id="myMapsImportBtn" data-i18n>Import map</button>
             <button type="button" class="btn primary map-create-plus" id="myMapsCreateBtn"><span aria-hidden="true">＋</span><span data-i18n>Create map</span></button>
             <input class="visually-hidden" id="myMapsImportFile" type="file" accept="application/json,.json,application/pdf,.pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx" tabindex="-1">
           </div>

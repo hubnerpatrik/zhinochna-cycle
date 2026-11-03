@@ -75,7 +75,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
     let screen = typeof input === "string" ? input : input.screen;
     const params = new URLSearchParams(typeof input === "string" ? "" : input.params);
     if (!store.hasProfile()) return { screen: "profile-setup", params: new URLSearchParams() };
-    if (!screen || screen === "home") screen = store.getActiveMapId() ? "active-map" : "my-maps";
+    if (!screen || ["home", "sign-in", "sign-up", "verify-email", "resend-code", "forgot-password", "reset-password"].includes(screen)) screen = store.getActiveMapId() ? "active-map" : "my-maps";
     if (!Object.hasOwn(navByScreen, screen)) screen = "menu";
     if (screen === 'create-map') {
       const from = params.get('from');
@@ -138,7 +138,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
       case "profile-setup":
         renderProfileScreen(root, {
           title: "Profile Setup",
-          subtitle: "Create your profile before opening the main menu.",
+          subtitle: "Create your profile to get started.",
           profile: store.getProfile(),
           submitLabel: "Save and continue",
           showCancel: false,

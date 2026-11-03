@@ -129,6 +129,25 @@ test("direct page entry has a safe Back fallback and setup cannot be bypassed", 
   assert.equal(router.currentScreen, "profile-setup");
 });
 
+test("sign-in opens the setup or map home and the main menu remains reachable", () => {
+  const { router } = setup("#/sign-in");
+  store.reset();
+  router.start();
+  assert.equal(router.currentScreen, "profile-setup");
+  store.saveProfile({ name: "New user" });
+  router.navigate("home", { replace: true });
+  assert.equal(router.currentScreen, "my-maps");
+
+  const map = store.createMap("First cycle");
+  router.navigate("sign-in");
+  assert.equal(router.currentScreen, "active-map");
+  assert.equal(store.getActiveMapId(), map.id);
+  router.navigate("menu");
+  assert.equal(router.currentScreen, "menu");
+  router.back();
+  assert.equal(router.currentScreen, "active-map");
+});
+
 function setupMapDialogs(hash = "") {
   const context = setup(hash);
   const dialogs = [];
