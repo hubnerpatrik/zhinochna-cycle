@@ -1,11 +1,11 @@
 // Update together with package.json when preparing a release. Keep copy user-facing.
 export const currentRelease = {
-  version: '0.15.0',
+  version: '0.16.0',
   githubUrl: 'https://github.com/hubnerpatrik/zhinochna-cycle/releases',
   changes: [
-    'Export observation cards to PDF and Excel in your app language.',
-    'Import your original PDF, Excel or JSON map exports.',
-    'Excel exports open without file recovery and include a temperature chart.',
+    'Share a read-only copy of a map by link for seven days.',
+    'Open the calendar first on mobile and expand the selected day’s observations.',
+    'See adjusted temperatures in blue on exported PDF cards.',
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';

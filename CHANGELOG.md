@@ -14,6 +14,30 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.16.0 — 2026-11-03
+
+### Added
+
+- Share a read-only copy of a map's observations with a link that expires after seven days.
+- Expand the selected day's observations above the mobile editing controls.
+- Add up-arrow and down-arrow-with-1 observation markers.
+
+### Changed
+
+- Open the active map after sign-in and show the calendar first on mobile. New profiles start in My Maps, and the main menu remains accessible from navigation.
+- Use icons for map sharing and export, highlight Import map, and keep Excel and JSON export options visible and disabled.
+- Use selectable tiles in the Other dialog, show the notes field when Other is selected, and distribute mucus choices evenly across each row.
+- Show numbered feedback pins only to the designated support administrator.
+
+### Fixed
+
+- Plot the adjusted temperature in blue on PDF observation cards.
+- Select a day when opening a new map so recording can start immediately.
+
+### Deployment
+
+- Apply `003-shared-maps.sql` before using share links.
+
 ## 0.15.0 — 2026-10-25
 
 ### Fixed
