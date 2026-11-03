@@ -7,7 +7,6 @@ import { t } from "../i18n.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
 import { LAYOUT, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
-import { LAST_MONTH_INDEX } from '../date-utils.js';
 import { observationChoiceValue } from '../ui/observation-values.js';
 import {
   changeFertileRangeMonth,
@@ -57,6 +56,31 @@ let initialized = false;
 function bindButton(id, handler) {
   const button = getElementById(id);
   if (button) button.onclick = handler;
+}
+
+function bindCalendarSwipe(changeMonth) {
+  const calendar = getElementById("calendar");
+  if (!calendar) return;
+  const phone = window.matchMedia("(max-width: 560px)");
+  const minDistance = 45;
+  let start;
+
+  calendar.addEventListener("touchstart", event => {
+    start = phone.matches && event.touches.length === 1 ? event.touches[0] : null;
+  }, { passive: true });
+  calendar.addEventListener("touchcancel", () => { start = null; });
+  calendar.addEventListener("touchend", event => {
+    const origin = start;
+    start = null;
+    if (!origin || !phone.matches || event.touches.length || !event.cancelable) return;
+    const end = event.changedTouches[0];
+    if (!end || origin.identifier !== end.identifier) return;
+    const x = end.clientX - origin.clientX;
+    const y = end.clientY - origin.clientY;
+    if (Math.abs(x) < minDistance || Math.abs(x) < Math.abs(y) * 1.5) return;
+    event.preventDefault();
+    changeMonth(x < 0 ? 1 : -1);
+  }, { passive: false });
 }
 
 function bindOverlayClicks(definitions) {
@@ -109,22 +133,15 @@ export function initializeActiveMapControls({
   enhanceInterfaceIcons();
   enhanceTimeInputs(document);
 
-  bindButton("prevMonth", () => {
-    store.month--;
-    if (store.month < 0) {
-      store.month = LAST_MONTH_INDEX;
-      store.year--;
-    }
+  const changeMonth = offset => {
+    const date = new Date(store.year, store.month + offset);
+    store.year = date.getFullYear();
+    store.month = date.getMonth();
     render();
-  });
-  bindButton("nextMonth", () => {
-    store.month++;
-    if (store.month > LAST_MONTH_INDEX) {
-      store.month = 0;
-      store.year++;
-    }
-    render();
-  });
+  };
+  bindButton("prevMonth", () => changeMonth(-1));
+  bindButton("nextMonth", () => changeMonth(1));
+  bindCalendarSwipe(changeMonth);
 
   querySelectorAll(".btn.primary").forEach(animatePrimaryButton);
   bindButton("editBtn", openActionModal);
