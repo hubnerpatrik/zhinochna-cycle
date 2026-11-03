@@ -20,7 +20,7 @@ vMAJOR.MINOR.PATCH
 
 - Share a read-only copy of a map's observations with a link that expires after seven days.
 - Expand the selected day's observations above the mobile editing controls.
-- Add up-arrow and down-arrow-with-1 observation markers.
+- Add up-arrow and down-arrow observation markers.
 
 ### Changed
 

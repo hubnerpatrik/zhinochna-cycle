@@ -8,7 +8,7 @@ export const currentRelease = {
     "After saving a new profile, go straight to My Maps. Your first map opens with a day selected so you can start recording.",
     "On mobile, expand Day info above Edit day and Tools to review the selected day’s observations.",
     "Tap a selected tile again to clear it. Mucus tiles fill each row, and the Sex and Other tiles match that style. Selecting Other opens a notes field.",
-    "Mark observations with the new ↑ and ↓1 symbols.",
+    "Mark observations with the new ↑ and ↓ symbols.",
     "Import is highlighted and Export uses a download icon. PDF cards show adjusted temperature in blue. Excel and JSON stay visible as disabled options.",
     "Only the designated administrator sees numbered feedback pins. Main menu buttons have simpler labels.",
   ],
