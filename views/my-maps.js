@@ -22,7 +22,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
     return;
   }
 
-  list.innerHTML = filteredMaps.map(map => `
+  list.innerHTML = filteredMaps.map((map, index) => `
     <article class="screen-card map-list-card${map.id === activeMapId ? " is-active" : ""}">
       <div class="map-list-main">
         <div>
@@ -40,7 +40,10 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
           <div class="map-export-picker">
             <button type="button" class="btn secondary map-export-btn" data-i18n-aria-label="Export" aria-label="Export" data-i18n-title="Export" title="Export" data-export-toggle data-export-map="${escapeHtml(map.id)}" aria-expanded="false"><svg aria-hidden="true"><use href="/icons.svg#map-export"/></svg></button>
           </div>
-          <button type="button" class="btn secondary map-share-btn" aria-disabled="true" aria-label="Share map" data-i18n-aria-label="Share map" title="Map sharing is being fixed." data-i18n-title="Map sharing is being fixed."><svg aria-hidden="true"><use href="/icons.svg#map-share"/></svg></button>
+          <div class="map-share-control">
+            <button type="button" class="btn secondary map-share-btn" aria-disabled="true" aria-label="Share map" data-i18n-aria-label="Share map" aria-describedby="map-share-info-${index}"><svg aria-hidden="true"><use href="/icons.svg#map-share"/></svg></button>
+            <span class="map-share-tooltip" id="map-share-info-${index}" role="tooltip"><span data-i18n>Map sharing is being fixed.</span></span>
+          </div>
           <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
           <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
           <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
