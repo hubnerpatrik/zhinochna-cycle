@@ -291,6 +291,7 @@ export function openOtherModal() {
   const data = store.entries[store.selectedKey] || {};
   store.modal.sex = data.sex;
   getElementById("otherModalInput").value = data.other ?? "";
+  store.modal.otherEnabled = Boolean(data.other?.trim());
   showModal("otherModal");
   syncModalUI();
 }
@@ -301,7 +302,7 @@ export function closeOtherModal() {
 
 export function saveOtherModal(render) {
   if (!store.selectedKey) return;
-  updateSelectedEntry({ other: getElementById("otherModalInput").value.trim(), sex: store.modal.sex });
+  updateSelectedEntry({ other: store.modal.otherEnabled ? getElementById("otherModalInput").value.trim() : "", sex: store.modal.sex });
   finishSave("otherModal", render);
 }
 

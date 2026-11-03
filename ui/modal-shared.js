@@ -42,6 +42,8 @@ export function afterModalSave(modalId, render, reopen) {
 }
 
 export function syncModalUI() {
+  const otherDetails = getElementById("otherModalDetails");
+  if (otherDetails) otherDetails.hidden = !store.modal.otherEnabled;
   querySelectorAll('input[data-observation]').forEach(input => { input.checked = store.modal[input.dataset.observation] === true; });
   querySelectorAll(".segmented button").forEach(button => {
     if (button.closest(".modal")?.classList.contains("hidden")) return;
@@ -59,6 +61,7 @@ export function toggleObservationChoice(group, value) {
       : store.modal.bleedingIntensity ? 'menstruation' : undefined;
   }
   syncModalUI();
+  if (group === "otherEnabled" && store.modal.otherEnabled) getElementById("otherModalInput")?.focus();
 }
 
 export function resetModalState() {

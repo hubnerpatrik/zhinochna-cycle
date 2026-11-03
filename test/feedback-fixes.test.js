@@ -16,7 +16,7 @@ test('optional observation groups depend on the entire map, including explicit n
 });
 
 test('intensity and custom factors survive save/reload and strict JSON backup import', () => {
-  globalThis.document = { querySelectorAll: () => [] };
+  globalThis.document = { getElementById: () => null, querySelectorAll: () => [] };
   store.reset();
   const map = store.createMap('Intensity');
   store.updateEntry('2026-10-17', { bleeding: 'menstruation', bleedingIntensity: 'heavy', tempFactors: 'other', tempFactorsOther: 'Žluťoučký & <text>' });

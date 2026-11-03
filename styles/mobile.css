@@ -209,3 +209,11 @@
   .mobile-map-actions > .btn:active,
   .mobile-tools-list button:active { transform: none; }
 }
+
+@media (max-width: 560px) {
+  #mobileDayDetails { margin: 8px 0; }
+  #mobileDayDetails summary { cursor: pointer; padding: 8px 0; font-weight: 600; }
+  #mobileDayDetailsList { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 12px; margin: 0 0 8px; }
+  #mobileDayDetailsList dt { font-weight: 600; }
+  #mobileDayDetailsList dd { margin: 0; overflow-wrap: anywhere; }
+}

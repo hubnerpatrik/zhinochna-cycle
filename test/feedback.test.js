@@ -61,13 +61,25 @@ test('feedback handler derives admin solely from verified identity and configure
   const repository = { list: async (...args) => { calls.push(args); return []; }, write: async (...args) => { calls.push(args); return {}; } };
   const handler = createFeedbackHandler({ identify: async () => ({ userId: 'a', email: 'owner@example.test' }), repository, adminEmails: ['owner@example.test'] });
   const result = response(); await handler(req('GET'), result);
-  assert.equal(result.body.admin, true); assert.deepEqual(calls[0], ['a', true]);
+  assert.equal(result.body.admin, true); assert.equal(result.body.showPins, false);
+  assert.deepEqual(calls[0], ['a', true]);
   const ordinary = createFeedbackHandler({ identify: async () => ({ userId: 'b', email: 'user@example.test' }), repository, adminEmails: ['owner@example.test'] });
   await ordinary(req('POST', make()), response()); assert.deepEqual(calls[1].slice(0, 2), ['b', false]);
   const forged = response(); await ordinary(req('POST', { ...make(), admin: true }), forged); assert.equal(forged.code, 400);
   const denied = createFeedbackHandler({ identify: async () => { throw Error(); }, repository });
   const unauthorized = response(); await denied(req('GET'), unauthorized); assert.equal(unauthorized.code, 401);
   assert.equal(calls.length, 2);
+});
+
+test('only the designated support administrator receives numbered pins', async () => {
+  const identity = { userId: 'owner', email: 'hiba.p@seznam.cz' };
+  const identify = async () => identity;
+  const repository = { list: async () => [] };
+  for (const adminEmails of [[], [identity.email]]) {
+    const result = response();
+    await createFeedbackHandler({ identify, repository, adminEmails })(req('GET'), result);
+    assert.equal(result.body.showPins, adminEmails.length > 0);
+  }
 });
 
 test('repository scopes list and reply to owner or server-approved admin; only admin changes status', async () => {

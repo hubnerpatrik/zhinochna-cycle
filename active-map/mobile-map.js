@@ -1,10 +1,11 @@
+import { EXPORT_FIELDS, EXPORT_LABELS, observationText } from '../export-data.js';
 import { setText, setDateText, setMonthPeriod } from '../i18n.js';
 import { store } from "../store.js";
 import { openCycleSummary } from "../ui/cycle-summary.js";
 import { openProfileInfo } from "../ui/profile-info-modal.js";
 import { cycleStarts } from "../cycle-summary.js";
 import { buildColumns } from '../domain.js';
-import { DEFAULT_LAYOUT, LAYOUT, TEMP_FACTORS, chartY, formatDateKey, formatTemp, parseDateKey, getElementById, syncCSSVariables } from "../core.js";
+import { DEFAULT_LAYOUT, LAYOUT, TEMP_FACTORS, chartY, formatDateKey, formatTemp, getAdjustedTemp, parseDateKey, getElementById, syncCSSVariables } from "../core.js";
 import { applyLayoutClass } from '../ui/layout-classes.js';
 import { ZOOM_MIN, ZOOM_MAX, clampZoom } from './map-gestures.js';
 
@@ -50,7 +51,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
   const active = () => media.matches && !getElementById("activeMapScreen")?.classList.contains("hidden");
   const view = () => {
     const id = store.getActiveMapId();
-    if (!views.has(id)) views.set(id, { tab: "graph", zoom: null, left: 0, top: 0 });
+    if (!views.has(id)) views.set(id, { tab: "calendar", zoom: null, left: 0, top: 0 });
     return views.get(id);
   };
   const schedule = () => {
@@ -122,7 +123,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
       getElementById("mobileCalendarTab").onclick = () => switchTab("calendar");
       getElementById("mobileProfileBtn").onclick = () => openProfileInfo(getElementById("mobileProfileBtn"));
       getElementById("mobileSummaryBtn").onclick = () => openCycleSummary(getElementById("mobileSummaryBtn"));
-      const tabs = [getElementById("mobileGraphTab"), getElementById("mobileCalendarTab")];
+      const tabs = [getElementById("mobileCalendarTab"), getElementById("mobileGraphTab")];
       tabs.forEach((tab, index) => tab.onkeydown = event => {
         if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
         event.preventDefault();
@@ -241,6 +242,27 @@ export function createMobileMap({ render, getColumns, interactions }) {
         if (custom) { factor.removeAttribute('data-i18n'); factor.textContent = custom; }
         else setText(factor, TEMP_FACTORS[entry?.tempFactors] || '');
       }
+      const details = getElementById("mobileDayDetails");
+      const list = getElementById("mobileDayDetailsList");
+      if (details.dataset.day !== key) {
+        details.open = false;
+        details.dataset.day = key || "";
+      }
+      const observations = EXPORT_FIELDS.flatMap((field, index) => {
+        const value = entry?.[field];
+        if (value == null || value === "" || (Array.isArray(value) && !value.length)) return [];
+        const text = observationText(field, value);
+        if (!text || text === "—") return [];
+        const label = document.createElement("dt");
+        const description = document.createElement("dd");
+        setText(label, EXPORT_LABELS[index]);
+        const adjusted = field === "temp" ? getAdjustedTemp(value, entry.measurementTime, store.getActiveMapProfile().usualMeasurementTime) : null;
+        if (adjusted == null) description.textContent = text;
+        else setText(description, `${text} (adjusted ${formatTemp(adjusted)} °C)`);
+        return [label, description];
+      });
+      details.hidden = !observations.length;
+      list.replaceChildren(...observations);
       getElementById("mobileDayBtn").disabled = !key;
       const labelInterval = Math.ceil(MIN_LABEL_SPACING / LAYOUT.columnWidth);
       [...getElementById("dayNumbers").children].forEach((cell, index) => {

@@ -1,3 +1,4 @@
+import { getAdjustedTemp } from './core.js';
 import { jpegPagesPdf } from './pdf-document.js';
 export { jpegPagesPdf } from './pdf-document.js';
 import { t } from './i18n.js';
@@ -61,6 +62,16 @@ export async function mapPdf(map, backup = mapBackupPayload(map)) {
       ctx.strokeStyle = '#111'; ctx.lineWidth = 1;
       if (previous) { ctx.beginPath(); ctx.moveTo(...previous); ctx.lineTo(x, y); ctx.stroke(); }
       ctx.beginPath(); ctx.arc(x, y, 1.8, 0, Math.PI * 2); ctx.fillStyle = '#111'; ctx.fill(); previous = [x, y];
+      const adjusted = getAdjustedTemp(e.temp, e.measurementTime, profile.usualMeasurementTime);
+      if (adjusted != null) {
+        const adjustedY = tempY(Math.min(37.4, Math.max(36, adjusted)));
+        ctx.save();
+        ctx.strokeStyle = '#2563eb'; ctx.fillStyle = '#2563eb';
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, adjustedY); ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, adjustedY, 1.8, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
       const marker = e.markers?.bbt?.value;
       if (marker) text(marker, x + 2, y - 4, 6);
     });

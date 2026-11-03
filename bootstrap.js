@@ -113,7 +113,7 @@ async function enter(session, epoch = sessionEpoch) {
     app.classList.remove("hidden");
     app.inert = false;
     document.body.classList.remove("auth-locked");
-    startApplication();
+    startApplication(auth);
     setupFeedback({ auth, app });
     mapModeBeforeLock = document.body.classList.contains("mobile-map-active");
     document.getElementById("accountEmail").textContent = user.email || "";

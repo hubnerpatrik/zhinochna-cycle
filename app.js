@@ -28,7 +28,7 @@ import {
   renderTempScale,
   showMessage,
 } from "./ui.js";
-import { LAYOUT, chartWidth, columnX, columnCenterX, getCalendarFocusDate, getElementById } from "./core.js";
+import { LAYOUT, chartWidth, columnX, columnCenterX, formatDateKey, getCalendarFocusDate, getElementById } from "./core.js";
 
 const ZOOM_BASE = 50;
 const PERCENT_SCALE = 100;
@@ -141,6 +141,7 @@ function openActiveMapScreen() {
   hideAllModals();
   if (displayedMapId !== store.getActiveMapId() || getElementById("activeMapScreen")?.classList.contains("hidden")) {
     const focusDate = getCalendarFocusDate(store.entries);
+    if (!store.selectedKey) store.selectedKey = formatDateKey(focusDate);
     store.month = focusDate.getMonth();
     store.year = focusDate.getFullYear();
   }
@@ -165,11 +166,12 @@ function bindNavigation() {
   });
 }
 
-export function startApplication() {
+export function startApplication(auth) {
   if (router) return;
   initializeFieldErrors();
   router = createRouter({
     root: getElementById("screenRoot"),
+    auth,
     showStandaloneScreen,
     openActiveMap: openActiveMapScreen,
     openMapPage: page => {
