@@ -351,9 +351,15 @@
 
       <div class="modal-section">
         <div class="section-title" id="cervixFirmnessTitle" data-i18n>Firmness</div>
-        <div class="cervix-firmness-choices" role="group" aria-labelledby="cervixFirmnessTitle">
-          <label class="checkbox-row"><input type="checkbox" data-observation="cervixFirmness" data-observation-value="hard"><span data-i18n>Hard</span></label>
-          <label class="checkbox-row"><input type="checkbox" data-observation="cervixFirmness" data-observation-value="soft"><span data-i18n>Soft</span></label>
+        <div class="segmented three observation-scale" role="group" aria-labelledby="cervixFirmnessTitle">
+          <label class="cervix-firmness-choice">
+            <span class="observation-scale-icon"><input type="checkbox" data-observation="cervixFirmness" data-observation-value="hard"></span>
+            <span data-i18n>Hard</span>
+          </label>
+          <label class="cervix-firmness-choice">
+            <span class="observation-scale-icon"><input type="checkbox" data-observation="cervixFirmness" data-observation-value="soft"></span>
+            <span data-i18n>Soft</span>
+          </label>
         </div>
       </div>
 

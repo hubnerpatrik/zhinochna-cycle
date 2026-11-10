@@ -12,7 +12,7 @@ white:`<path d="${droplet}" fill="#fff"/><path class="observation-icon-line" d="
 half:`<path class="observation-icon-fill" d="M24 4C20 10 12 17 12 24a12 12 0 0 0 12 12Z"/><path class="observation-icon-line" d="${droplet}"/><path class="observation-icon-line" d="M24 5v30" opacity=".5"/>`,
 clear:`<path class="observation-icon-line" d="${droplet}" stroke-dasharray="2 4"/><path class="observation-icon-line" d="m19 27 9-9m-7 12 8-8" opacity=".4"/>`,
 high:'<path class="observation-icon-line" d="M13 5v29m-4-4 4 4 4-4M9 9l4-4 4 4M24 6h15m-15 28h15" opacity=".6"/><circle class="observation-icon-fill" cx="31" cy="13" r="6"/><circle class="observation-icon-line" cx="31" cy="13" r="6"/>',
-closed:'<circle cx="24" cy="20" r="7" fill="#205b49"/>',
+closed:'<circle cx="24" cy="20" r="5" fill="#205b49" stroke="none"/>',
 open:'<circle class="observation-icon-fill" cx="24" cy="20" r="15"/><circle class="observation-icon-line" cx="24" cy="20" r="15"/><circle cx="24" cy="20" r="8" fill="var(--observation-icon-paper, #fffaf6)"/><circle class="observation-icon-line" cx="24" cy="20" r="8"/>',
 };
 const height = y => '<path class="observation-icon-line" d="M13 5v29m-4-4 4 4 4-4M9 9l4-4 4 4M24 6h15m-15 28h15" opacity=".6"/><circle class="observation-icon-fill" cx="31" cy="'+y+'" r="6"/><circle class="observation-icon-line" cx="31" cy="'+y+'" r="6"/>';

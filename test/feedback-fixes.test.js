@@ -50,7 +50,7 @@ test('combined cervix symbols distinguish all nine positions and display partial
   const symbols = ['low', 'medium', 'high'].flatMap(height =>
     ['closed', 'medium', 'open'].map(openness => cervixPositionIcon(height, openness)));
   assert.equal(new Set(symbols).size, 9);
-  assert.match(cervixPositionIcon('low', 'closed'), /r="7" fill="#205b49"/);
+  assert.match(cervixPositionIcon('low', 'closed'), /r="5" fill="#205b49" stroke="none"/);
   assert.match(cervixPositionIcon('low', ''), /<svg/);
   assert.match(cervixPositionIcon('', 'closed'), /<svg/);
   assert.equal(cervixPositionIcon('', ''), '');
