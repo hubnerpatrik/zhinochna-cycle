@@ -14,6 +14,15 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.17.0 — 2026-11-10
+
+- On mobile, swipe to change months and use the compact three-item navigation. Canceling a chart tool returns to Tools on the original calendar or chart.
+- The calendar uses a pastel fill for menstruation and an inset outline for spotting. Fertile-day markings remain visible when they overlap.
+- Cervix height and openness share one observation row. Firmness uses localized letter buttons.
+- The down-arrow marker displays as ↓1, including on older maps. The Ukrainian temperature-rise label has been updated.
+- Flags identify the four languages in the language picker.
+- Map sharing is temporarily unavailable. Existing map files can still be imported.
+
 ## 0.16.0 — 2026-11-03
 
 ### Added

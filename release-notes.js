@@ -1,16 +1,13 @@
 // Update together with package.json when preparing a release. Keep copy user-facing.
 export const currentRelease = {
-  version: '0.16.0',
+  version: '0.17.0',
   githubUrl: 'https://github.com/hubnerpatrik/zhinochna-cycle/releases',
   changes: [
-    "Share a map from My Maps using the link icon. Anyone with the link can view a read-only copy of the observations for seven days without signing in.",
-    "Sign-in opens your active map, with the calendar first on mobile. The main menu is still available from navigation.",
-    "After saving a new profile, go straight to My Maps. Your first map opens with a day selected so you can start recording.",
-    "On mobile, expand Day info above Edit day and Tools to review the selected day’s observations.",
-    "Tap a selected tile again to clear it. Mucus tiles fill each row, and the Sex and Other tiles match that style. Selecting Other opens a notes field.",
-    "Mark observations with the new ↑ and ↓ symbols.",
-    "Import is highlighted and Export uses a download icon. PDF cards show adjusted temperature in blue. Excel and JSON stay visible as disabled options.",
-    "Only the designated administrator sees numbered feedback pins. Main menu buttons have simpler labels.",
+    "Swipe between months on mobile. The calendar uses pastel pink for periods and an outline for spotting.",
+    "Mobile navigation fits smaller screens. Cancel reopens Tools on the calendar or chart you started from.",
+    "Cervix height and openness share one row. Firmness uses letter buttons.",
+    "The down-arrow marker now reads ↓1.",
+    "Choose the app language using flags.",
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';
