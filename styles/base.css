@@ -25,7 +25,9 @@
   --green:var(--calendar-green);
   --red:#ef4444;
   --calendar-green:#cfe7b4;
-  --calendar-red:#b43c45;
+  --calendar-red:#f4c7cf;
+  --calendar-red-text:#793744;
+  --calendar-red-line:#b76878;
   --calendar-green-text:#4d6246;
   --purple:#8b5cf6;
   --orange:#fb923c;
@@ -686,7 +688,7 @@ h1::before{
 }
 
 .dot.spotting{
-  border:2px solid var(--calendar-red);
+  border:2px solid var(--calendar-red-line);
 }
 
 .dot.green{

@@ -83,8 +83,16 @@ export function createMobileMap({ render, getColumns, interactions }) {
     getElementById("mobileMapActions")?.classList.toggle("hidden", persistent);
     getElementById("mobileCancelToolBtn")?.classList.toggle("hidden", !persistent || toast?.classList.contains("action-toast"));
   }
+  function openTools() {
+    if (!active()) return;
+    const list = getElementById("mobileToolsList");
+    if (list.open) return;
+    list.showModal();
+    getElementById("mobileTools").setAttribute("aria-expanded", "true");
+  }
   return {
     active,
+    openTools,
     init() {
       if (ready) return;
       ready = true;
@@ -106,13 +114,10 @@ export function createMobileMap({ render, getColumns, interactions }) {
       });
       getElementById("mobileSaveBtn").onclick = () => getElementById("saveActiveMapBtn").click();
       getElementById("mobileDayBtn").onclick = () => getElementById("editBtn").click();
-      getElementById("mobileTools").onclick = () => {
-        const list = getElementById("mobileToolsList");
-        list.showModal();
-        getElementById("mobileTools").setAttribute("aria-expanded", "true");
-      };
-      getElementById("mobileCloseToolsBtn").onclick = () => getElementById("mobileToolsList").close();
-      getElementById("mobileToolsList").addEventListener('close', () => getElementById("mobileTools").setAttribute("aria-expanded", "false"));
+      const toolsList = getElementById("mobileToolsList");
+      getElementById("mobileTools").onclick = openTools;
+      getElementById("mobileCloseToolsBtn").onclick = () => toolsList.close();
+      toolsList.addEventListener("close", () => getElementById("mobileTools").setAttribute("aria-expanded", String(toolsList.open)));
       getElementById("mobileExpandBtn").onclick = () => {
         const expanded = getElementById("activeMapScreen").classList.toggle('mobile-chart-expanded');
         getElementById("mobileExpandBtn").setAttribute('aria-pressed', String(expanded));
@@ -141,7 +146,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
       };
       document.querySelectorAll("[data-mobile-tool]").forEach(button => {
         button.onclick = () => {
-          getElementById("mobileToolsList").close();
+          toolsList.close();
           getElementById("mobileTools").setAttribute("aria-expanded", "false");
           const id = button.dataset.mobileTool;
           if (id !== "fertileRangeActionBtn") {
@@ -155,7 +160,11 @@ export function createMobileMap({ render, getColumns, interactions }) {
           getElementById(id).click();
         };
       });
-      getElementById("mobileCancelToolBtn").onclick = () => { interactions.deactivate(); render(); };
+      getElementById("mobileCancelToolBtn").onclick = () => {
+        interactions.deactivate();
+        render();
+        openTools();
+      };
       new MutationObserver(feedback).observe(getElementById("mobileToolFeedback"), { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
       new ResizeObserver(schedule).observe(getElementById("mobileMapDock"));
       window.addEventListener("resize", schedule);

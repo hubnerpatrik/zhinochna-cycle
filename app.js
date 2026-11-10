@@ -62,6 +62,7 @@ const chartInteractions = createChartInteractions({
   renderApp: () => render(),
   selectColumn,
   showMessage,
+  onToolCancel: () => mobileMap.openTools(),
 });
 
 const mobileMap = createMobileMap({ render, getColumns: () => currentColumns, interactions: chartInteractions });

@@ -6,7 +6,7 @@ globalThis.localStorage = new MemoryStorage();
 const { store, Store } = await import('../store.js');
 const { createChartInteractions } = await import('../active-map/chart-interactions.js');
 
-function editor() {
+function editor(onToolCancel) {
   const nodes = new Map();
   const element = () => {
     const classes = new Set();
@@ -22,7 +22,7 @@ function editor() {
   globalThis.document = { getElementById: id => nodes.get(id), createElement: element };
   globalThis.requestAnimationFrame = callback => { callback(); return 1; };
   globalThis.cancelAnimationFrame = () => {};
-  const interactions = createChartInteractions({ getColumns: () => [], renderApp() {}, selectColumn() {}, showMessage() {} });
+  const interactions = createChartInteractions({ getColumns: () => [], renderApp() {}, selectColumn() {}, showMessage() {}, onToolCancel });
   interactions.init();
   return { interactions, start: () => nodes.get('coverlineBtn').onclick(),
     cancel: () => nodes.get('toast').children.find(button => button.textContent === 'Cancel').onclick(),
@@ -33,14 +33,17 @@ function editor() {
 test('coverline cancellation restores saved geometry, including after another action persisted the draft', () => {
   store.reset(); const map = store.createMap('Draft');
   store.coverlines.default = { horizontalTemp: 36.5 }; store.save();
-  const controls = editor(); controls.start();
+  let canceled = 0;
+  const controls = editor(() => { canceled += 1; }); controls.start();
   store.coverlines.default.horizontalTemp = 37;
   store.save(); // A separate save must not defeat Cancel.
   controls.cancel();
   assert.equal(store.coverlines.default.horizontalTemp, 36.5);
   assert.equal(new Store().getMap(map.id).coverlines.default.horizontalTemp, 36.5);
+  assert.equal(canceled, 1);
   controls.start(); store.coverlines.default.horizontalTemp = 36.8; controls.save();
   assert.equal(new Store().getMap(map.id).coverlines.default.horizontalTemp, 36.8);
+  assert.equal(canceled, 1);
 });
 
 test('leaving a coverline draft restores its own map without overwriting the newly selected map', () => {
@@ -49,7 +52,7 @@ test('leaving a coverline draft restores its own map without overwriting the new
   const second = store.createMap('Second');
   store.coverlines.default = { horizontalTemp: 36.9 }; store.save();
   store.setActiveMapId(first.id);
-  const controls = editor(); controls.start();
+  const controls = editor(() => assert.fail('Leaving a map must not reopen its tool menu')); controls.start();
   store.coverlines.default.horizontalTemp = 37.1;
   store.setActiveMapId(second.id);
   controls.interactions.deactivate();

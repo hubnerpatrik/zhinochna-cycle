@@ -176,7 +176,9 @@
 
       <footer id="mobileMapDock" class="mobile-only">
         <div class="mobile-selected-day"><div><strong id="mobileSelectedDate" data-i18n>Select a day</strong><span id="mobileSelectedCycle"></span></div><div class="mobile-selected-measurement"><strong id="mobileSelectedTemp"></strong><span id="mobileSelectedFactor" class="hidden"></span></div></div>
-        <div id="mobileToolFeedback"></div>
+        <div id="mobileToolFeedback">
+          <button id="mobileCancelToolBtn" type="button" class="hidden" data-i18n>Cancel</button>
+        </div>
         <details id="mobileDayDetails" hidden>
           <summary data-i18n>Day info</summary>
           <dl id="mobileDayDetailsList"></dl>
@@ -192,7 +194,6 @@
             <button type="button" data-mobile-tool="crossCellsActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 18 16-12" stroke="currentColor" stroke-width="2"/></svg></span><span data-i18n>Cross cells</span></button>
           </dialog>
         </div>
-        <button id="mobileCancelToolBtn" type="button" class="hidden" data-i18n>Cancel</button>
       </footer>
 
       <div class="dev-panel">

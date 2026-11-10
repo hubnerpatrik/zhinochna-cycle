@@ -38,7 +38,7 @@ export function pixelToPointColumnHit(x, y, columns) {
   return closest;
 }
 
-export function createChartInteractions({ getColumns, renderApp, selectColumn, showMessage }) {
+export function createChartInteractions({ getColumns, renderApp, selectColumn, showMessage, onToolCancel }) {
   let activeDrag = null;
   let coverlineSelected = false;
   let suppressNextClick = false;
@@ -54,9 +54,9 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     if (cancel && coverlineDraft) {
       Object.keys(coverlineDraft.target).forEach(key => delete coverlineDraft.target[key]);
       Object.assign(coverlineDraft.target, coverlineDraft.values);
-      if (!persist()) return;
+      if (!persist()) return false;
     }
-    if (!cancel && !persist()) return;
+    if (!cancel && !persist()) return false;
     coverlineDraft = null;
     coverlineSelected = false;
     activeDrag = null;
@@ -67,6 +67,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     if (canvas) setCursor(canvas, null);
     hideToolPill();
     renderApp();
+    return true;
   }
 
   const renderCurrentChart = () => {
@@ -164,7 +165,10 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     cancel.type = "button";
     cancel.className = "toast-action toast-action-cancel";
     setText(cancel, "Cancel");
-    cancel.onclick = cancelCrossCells;
+    cancel.onclick = () => {
+      cancelCrossCells();
+      onToolCancel?.();
+    };
     save.type = "button";
     save.className = "toast-action toast-action-primary";
     setText(save, "Save");
@@ -183,7 +187,10 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       : "Drag a line or endpoint, then save or cancel.");
     const cancel = document.createElement("button");
     cancel.type = "button"; cancel.className = "toast-action toast-action-cancel";
-    setText(cancel, "Cancel"); cancel.onclick = () => finishCoverlineEdit(true);
+    setText(cancel, "Cancel");
+    cancel.onclick = () => {
+      if (finishCoverlineEdit(true)) onToolCancel?.();
+    };
     const save = document.createElement("button");
     save.type = "button"; save.className = "toast-action toast-action-primary";
     setText(save, "Save"); save.onclick = () => finishCoverlineEdit();
