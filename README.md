@@ -6,7 +6,7 @@ A browser app for recording daily observations and reviewing them on a symptothe
 
 [Live Demo](https://cycle-6mf61zw3o-hubnerpatriks-projects.vercel.app/) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
 
-**Active prototype · v0.16.0**
+**Active prototype · v0.17.0**
 
 </div>
 
@@ -58,14 +58,14 @@ Place coverlines, peak markers, arrows and cross-cell marks directly on the char
 
 ![Horizontal and vertical coverlines being edited on the temperature chart](assets/readme/coverlines.png)
 
-## Manage and share maps
+## Manage maps
 
 **My Maps** lists saved maps and lets you filter them by year or month. Create, rename, close or reopen a map as needed. One map is active at a time. After sign-in, the app opens that map if one exists. Otherwise it opens **My Maps** after profile setup.
 
 ![My Maps with filters, import, download, share and map management controls](assets/readme/my-maps.png)
 
-- **Share** creates a read-only copy of a map's observations. Anyone with the link can view it for seven days. This feature requires the `003-shared-maps.sql` migration.
-- **Download** exports a PDF observation card. Excel and JSON appear as disabled options in v0.16.0.
+- **Share** is temporarily unavailable.
+- **Download** exports a PDF observation card. Excel and JSON appear as disabled options.
 - **Import map** accepts original PDF, Excel (.xlsx) and JSON exports from Cycle Tracker. It checks the embedded data and asks for confirmation before adding the map. Existing maps and the recipient's profile are preserved. Imported maps retain the author's saved profile snapshot.
 
 ## Accounts and storage

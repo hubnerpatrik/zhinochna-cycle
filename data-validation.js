@@ -81,7 +81,7 @@ export function normalizeCrossedChartTemps(temps) {
 
 function normalizeMarkerValue(value) {
   const normalized = String(value ?? "");
-  if (normalized === "↓1") return "↓";
+  if (normalized === "↓") return "↓1";
   return VALID_MARKER_VALUES.has(normalized) ? normalized : "";
 }
 

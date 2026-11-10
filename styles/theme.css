@@ -243,14 +243,44 @@ body::before {
     0 8px 20px rgba(34, 197, 94, 0.12);
 }
 
+.day.red,
 .day.red.selected,
-.day.red.fertile-day.selected {
-  background: linear-gradient(145deg, rgba(255, 82, 112, 0.3), rgba(220, 38, 38, 0.3));
-  color: #8f1f2d;
-  border-color: rgba(220, 38, 38, 0.3);
-  box-shadow:
-    0 0 0 2px rgba(239, 68, 68, 0.12),
-    0 8px 20px rgba(220, 38, 38, 0.12);
+.day.red.fertile-day {
+  background: var(--calendar-red);
+  color: var(--calendar-red-text);
+  border-color: #e6aeb9;
+}
+
+.day.red.selected {
+  outline: 2px solid var(--calendar-red-line);
+  outline-offset: 1px;
+}
+
+.day.red .day-cycle-num {
+  color: var(--calendar-red-text);
+  background: #fff6f8;
+}
+
+.day.red.fertile-day::after {
+  content: '';
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid #698451;
+  border-radius: 50%;
+  background: var(--calendar-green);
+  pointer-events: none;
+}
+
+.day.spotting-day::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 2px solid var(--calendar-red-line);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .day-cycle-num {

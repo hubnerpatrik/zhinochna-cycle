@@ -25,9 +25,10 @@
   --green:var(--calendar-green);
   --red:#ef4444;
   --calendar-green:#cfe7b4;
-  --calendar-red:#f3b9c2;
+  --calendar-red:#f4c7cf;
+  --calendar-red-text:#793744;
+  --calendar-red-line:#b76878;
   --calendar-green-text:#4d6246;
-  --calendar-red-text:#9d3f4f;
   --purple:#8b5cf6;
   --orange:#fb923c;
   --teal:#14b8a6;
@@ -611,15 +612,6 @@ h1::before{
     0 2px 6px rgba(10,132,255,0.12);
 }
 
-.day.red{
-  background:var(--calendar-red);
-  color:var(--calendar-red-text);
-  border-color:rgba(157, 63, 79, 0.16);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.65),
-    0 1px 3px rgba(157, 63, 79, 0.12);
-}
-
 .day.fertile-day{
   background:var(--calendar-green);
   color:var(--calendar-green-text);
@@ -636,16 +628,6 @@ h1::before{
   box-shadow:
     0 0 0 2px rgba(74,222,128,0.12),
     0 8px 20px rgba(34,197,94,0.12);
-}
-
-.day.red.selected,
-.day.red.fertile-day.selected{
-  background:linear-gradient(145deg, rgba(255,82,112,0.3), rgba(220,38,38,0.3));
-  color:#8f1f2d;
-  border-color:rgba(220,38,38,0.3);
-  box-shadow:
-    0 0 0 2px rgba(239,68,68,0.12),
-    0 8px 20px rgba(220,38,38,0.12);
 }
 
 /* ─── cycle day number in calendar cell ──── */
@@ -668,7 +650,6 @@ h1::before{
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
-.day.red .day-cycle-num,
 .day.fertile-day .day-cycle-num{
   color: inherit;
   background: rgba(255,255,255,0.72);
@@ -704,7 +685,10 @@ h1::before{
 
 .dot.red{
   background:var(--calendar-red);
-  box-shadow: inset 0 0 0 1px rgba(157, 63, 79, 0.2);
+}
+
+.dot.spotting{
+  border:2px solid var(--calendar-red-line);
 }
 
 .dot.green{

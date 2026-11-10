@@ -1,5 +1,4 @@
-// English source copy → Czech, Slovak, Ukrainian. UA is the UI label;
-// uk is the standard language code used by HTML and Intl.
+// English source copy → Czech, Slovak, Ukrainian.
 import { authMessages } from './auth.js';
 import { exportMessages } from './exports.js';
 import { feedbackMessages } from './feedback.js';
@@ -154,7 +153,9 @@ export const messages = {
   'White': ['Bílý', 'Biely', 'Білий'],
   'White-translucent': ['Bělavě průsvitný', 'Belavo priesvitný', 'Білувато-прозорий'],
   'Translucent': ['Průsvitný', 'Priesvitný', 'Прозорий'],
-  'Jump control of STM': ['Kontrola vzestupu STM', 'Kontrola vzostupu STM', 'Контроль підвищення STM'],
+  'Jump control of STM': ['Kontrola vzestupu STM', 'Kontrola vzostupu STM', 'Перевірка сили стрибка БТТ'],
+  'H': ['T', 'T', 'T'],
+  'S': ['M', 'M', 'M'],
   "Don't apply": ['Nepoužít', 'Nepoužiť', 'Не застосовувати'],
   'Apply': ['Použít', 'Použiť', 'Застосувати'],
   'Peak type': ['Typ vrcholu', 'Typ vrcholu', 'Тип піку'],

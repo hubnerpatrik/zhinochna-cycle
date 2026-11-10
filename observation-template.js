@@ -2,6 +2,7 @@ import { MILLISECONDS_PER_DAY } from './date-utils.js';
 import { cycleStarts } from './cycle-summary.js';
 import { t } from './i18n.js';
 import { TEMP_FACTORS } from './core.js';
+import { CERVIX_FIRMNESS_CODES } from './ui/observation-labels.js';
 
 export const TEMPLATE_DAYS = 43;
 export function templatePages(map) {
@@ -39,7 +40,7 @@ export const TEMPLATE_ROWS = [
   ['Color', 681, e => e.color === 'whiteTranslucent' ? initial('White') + initial('Translucent') : initial({ white: 'White', translucent: 'Translucent', other: 'Other' }[e.color])],
   ['Other color', 700, e => e.colorOther ? '*' : ''],
   ['Mucus peak', 724, e => e.markers?.mucus?.value || (e.isPeak ? 'X' : '')],
-  ['Firmness', 748, e => initial({ hard: 'Hard', soft: 'Soft' }[e.cervixFirmness])],
+  ['Firmness', 748, e => t(CERVIX_FIRMNESS_CODES[e.cervixFirmness])],
   ['Height / Openness', 770, e => [({ low: '↓', medium: '↔', high: '↑' }[e.cervixHeight] || ''), ({ closed: '−', medium: '○', open: '+' }[e.cervixOpenness] || '')].join('')],
   ['Fertile range', 835, e => e.isFertile ? '+' : ''],
   ['Sex', 847, e => bool(e.sex)],

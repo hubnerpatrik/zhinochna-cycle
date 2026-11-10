@@ -1,3 +1,5 @@
+export const CERVIX_FIRMNESS_CODES = { hard: 'H', soft: 'S' };
+
 export const OBSERVATION_LABELS = {
   sex: { true: "Sex" },
   otherEnabled: { true: "Other" },

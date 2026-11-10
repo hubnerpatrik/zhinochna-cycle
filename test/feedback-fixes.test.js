@@ -7,6 +7,7 @@ const { visibleObservationRows } = await import('../ui/map-grid.js');
 const { toggleObservationChoice } = await import('../ui/modal-shared.js');
 const { parseBackup } = await import('../backup.js');
 const { setLanguage, t } = await import('../i18n.js');
+const { cervixPositionIcon } = await import('../ui/observation-scales.js');
 
 test('optional observation groups depend on the entire map, including explicit negatives and cervix markers', () => {
   assert.deepEqual(visibleObservationRows({ '2026-10-01': { temp: 36.5 } }), { cervix: false, symptoms: false });
@@ -41,5 +42,16 @@ test('feedback Ukrainian terminology uses the requested words', () => {
     ['Present', 'Є'], ['Slightly stretchy', 'Мало тягучий'], ['Low', 'Низько'], ['Middle', 'Посередині'], ['High', 'Високо'],
   ]) assert.equal(t(key), expected);
   assert.equal(t('Medium'), 'Середня'); // Openness uses a different grammatical form.
+  assert.equal(t('Jump control of STM'), 'Перевірка сили стрибка БТТ');
   setLanguage('en');
+});
+
+test('combined cervix symbols distinguish all nine positions and display partial observations', () => {
+  const symbols = ['low', 'medium', 'high'].flatMap(height =>
+    ['closed', 'medium', 'open'].map(openness => cervixPositionIcon(height, openness)));
+  assert.equal(new Set(symbols).size, 9);
+  assert.match(cervixPositionIcon('low', 'closed'), /r="5" fill="#205b49" stroke="none"/);
+  assert.match(cervixPositionIcon('low', ''), /<svg/);
+  assert.match(cervixPositionIcon('', 'closed'), /<svg/);
+  assert.equal(cervixPositionIcon('', ''), '');
 });

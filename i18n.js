@@ -2,7 +2,7 @@ import { DYNAMIC_MESSAGE_PATTERNS, DYNAMIC_MESSAGE_SUFFIXES } from './i18n/dynam
 import { messages } from './i18n/catalog.js';
 import { formatMonthPeriod } from './month-period.js';
 
-export const languages = Object.freeze({ en: 'EN', uk: 'UA', cs: 'CZ', sk: 'SK' });
+export const languages = Object.freeze({ en: 'English', uk: 'Українська', cs: 'Čeština', sk: 'Slovenčina' });
 export const LANGUAGE_KEY = 'cycle-app-language';
 let language = 'en';
 const LANGUAGE_INDEX = { cs: 0, sk: 1, uk: 2 };
@@ -25,6 +25,8 @@ export function t(source) {
   if (translated) return text.replace(key, translated);
   const dayHelp = /^(\d{4}-\d{2}-\d{2} · )(.*)$/.exec(text);
   if (dayHelp) return dayHelp[1] + t(dayHelp[2]);
+  const cervixPosition = /^(Height: .+) · (Openness: .+)$/.exec(text);
+  if (cervixPosition) return `${t(cervixPosition[1])} · ${t(cervixPosition[2])}`;
   const info = /^(Bleeding|Period intensity|Clots|Sensation|Slippery|Discharge|Consistency|Color|Firmness|Height|Openness|Sex|Notes|Hours|Minutes): (.*)$/.exec(text);
   if (info) {
     const [, label, value] = info;
@@ -109,20 +111,59 @@ export function translateDOM(root = document) {
   root.querySelectorAll?.(selector).forEach(localizeElement);
 }
 
+function initializeLanguagePicker(picker, template) {
+  picker.append(template.content.cloneNode(true));
+  const trigger = picker.querySelector('summary');
+  const currentFlag = picker.querySelector('[data-current-language-flag]');
+  const currentName = picker.querySelector('[data-current-language-name]');
+  const options = picker.querySelectorAll('[data-language]');
+  const closeAndFocus = () => {
+    picker.open = false;
+    trigger.focus();
+  };
+  options.forEach(option => {
+    const code = option.dataset.language;
+    option.setAttribute('aria-label', languages[code]);
+    option.title = languages[code];
+    option.addEventListener('click', () => {
+      setLanguage(code);
+      closeAndFocus();
+    });
+  });
+  picker.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !picker.open) return;
+    event.preventDefault();
+    event.stopPropagation();
+    closeAndFocus();
+  });
+  picker.addEventListener('focusout', event => {
+    if (event.relatedTarget && !picker.contains(event.relatedTarget)) picker.open = false;
+  });
+  return () => {
+    currentFlag.dataset.flag = language;
+    currentName.lang = language;
+    currentName.textContent = languages[language];
+    options.forEach(option => option.setAttribute('aria-pressed', String(option.dataset.language === language)));
+  };
+}
+
 export function initializeLanguage() {
   try {
     const saved = localStorage.getItem(LANGUAGE_KEY);
     language = Object.hasOwn(languages, saved) ? saved : 'en';
   } catch { language = 'en'; }
+  const pickers = [...document.querySelectorAll('.language-picker')];
+  const template = document.getElementById('languagePickerTemplate');
+  const updatePickers = pickers.map(picker => initializeLanguagePicker(picker, template));
+  document.addEventListener('pointerdown', event => {
+    pickers.forEach(picker => { if (!picker.contains(event.target)) picker.open = false; });
+  });
   const update = () => {
     document.documentElement.lang = language;
-    document.querySelectorAll('[data-language-select]').forEach(select => { select.value = language; });
+    updatePickers.forEach(updatePicker => updatePicker());
     translateDOM();
   };
   listeners.add(update);
-  document.querySelectorAll('[data-language-select]').forEach(select => {
-    select.addEventListener('change', () => setLanguage(select.value));
-  });
   // Handle newly rendered screens and dialogs without replacing forms or losing drafts.
   new MutationObserver(records => {
     for (const record of records) {

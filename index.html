@@ -27,6 +27,19 @@
 </head>
 
 <body>
+  <template id="languagePickerTemplate">
+    <summary class="language-picker-trigger">
+      <span class="language-flag" data-flag="en" data-current-language-flag aria-hidden="true"></span>
+      <span class="language-picker-chevron" aria-hidden="true"></span>
+      <span class="visually-hidden"><span data-i18n>Language</span> <span data-current-language-name lang="en">English</span></span>
+    </summary>
+    <div class="language-picker-menu">
+      <button type="button" data-language="en" lang="en"><span class="language-flag" data-flag="en" aria-hidden="true"></span></button>
+      <button type="button" data-language="uk" lang="uk"><span class="language-flag" data-flag="uk" aria-hidden="true"></span></button>
+      <button type="button" data-language="cs" lang="cs"><span class="language-flag" data-flag="cs" aria-hidden="true"></span></button>
+      <button type="button" data-language="sk" lang="sk"><span class="language-flag" data-flag="sk" aria-hidden="true"></span></button>
+    </div>
+  </template>
   <section id="authRoot" class="auth-shell" aria-live="polite">
     <p data-i18n>Checking your session…</p>
   </section>
@@ -52,9 +65,7 @@
         <button id="navMapsBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-maps"/></svg><span class="nav-label-desktop" data-i18n>My Maps</span><span class="nav-label-mobile" data-i18n>Maps</span></button>
         <button id="navActiveMapBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-chart"/></svg><span class="nav-label-desktop" data-i18n>Active Map</span><span class="nav-label-mobile" data-i18n>Active Map</span></button>
       </nav>
-      <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
-        <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
-      </select>
+      <details class="language-picker"></details>
     </header>
 
     <div id="screenRoot"></div>
@@ -62,9 +73,7 @@
     <section id="activeMapScreen" class="hidden" aria-label="Active map" data-i18n-aria-label="Active map">
       <div class="mobile-map-header mobile-only">
         <strong id="mobileMapName">Active map</strong>
-        <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
-          <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
-        </select>
+        <details class="language-picker"></details>
       </div>
       <div class="mobile-map-navigation mobile-only">
         <div class="mobile-map-tabs" role="tablist" aria-label="Map view" data-i18n-aria-label="Map view">
@@ -90,6 +99,10 @@
             <div class="legend-item">
               <span class="dot red"></span>
               <span data-i18n>Menstruation</span>
+            </div>
+            <div class="legend-item">
+              <span class="dot spotting"></span>
+              <span data-i18n>Spotting</span>
             </div>
             <div class="legend-item">
               <span class="dot green"></span>
@@ -163,7 +176,9 @@
 
       <footer id="mobileMapDock" class="mobile-only">
         <div class="mobile-selected-day"><div><strong id="mobileSelectedDate" data-i18n>Select a day</strong><span id="mobileSelectedCycle"></span></div><div class="mobile-selected-measurement"><strong id="mobileSelectedTemp"></strong><span id="mobileSelectedFactor" class="hidden"></span></div></div>
-        <div id="mobileToolFeedback"></div>
+        <div id="mobileToolFeedback">
+          <button id="mobileCancelToolBtn" type="button" class="hidden" data-i18n>Cancel</button>
+        </div>
         <details id="mobileDayDetails" hidden>
           <summary data-i18n>Day info</summary>
           <dl id="mobileDayDetailsList"></dl>
@@ -179,7 +194,6 @@
             <button type="button" data-mobile-tool="crossCellsActionBtn"><span class="mobile-tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 18 16-12" stroke="currentColor" stroke-width="2"/></svg></span><span data-i18n>Cross cells</span></button>
           </dialog>
         </div>
-        <button id="mobileCancelToolBtn" type="button" class="hidden" data-i18n>Cancel</button>
       </footer>
 
       <div class="dev-panel">
@@ -333,7 +347,7 @@
           <option value="5">5</option>
           <option value="6">6</option>
           <option value="↑">↑</option>
-          <option value="↓">↓</option>
+          <option value="↓1">↓1</option>
         </select>
       </div>
 
@@ -350,28 +364,31 @@
       <h2 data-i18n>Cervix</h2>
 
       <div class="modal-section">
-        <div class="section-title" data-i18n>Firmness</div>
-        <div class="segmented two">
-          <button type="button" data-group="cervixFirmness" data-value="hard" data-i18n>Hard</button>
-          <button type="button" data-group="cervixFirmness" data-value="soft" data-i18n>Soft</button>
+        <div class="section-title" id="cervixFirmnessTitle" data-i18n>Firmness</div>
+        <div class="segmented two observation-scale cervix-firmness-choices" role="group" aria-labelledby="cervixFirmnessTitle">
+          <button type="button" data-group="cervixFirmness" data-value="hard">
+            <span class="observation-scale-icon cervix-firmness-code" aria-hidden="true" data-i18n>H</span>
+            <span data-i18n>Hard</span>
+          </button>
+          <button type="button" data-group="cervixFirmness" data-value="soft">
+            <span class="observation-scale-icon cervix-firmness-code" aria-hidden="true" data-i18n>S</span>
+            <span data-i18n>Soft</span>
+          </button>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title" data-i18n>Height</div>
-        <div class="segmented three">
-          <button type="button" data-group="cervixHeight" data-value="low" data-i18n>Low</button>
-          <button type="button" data-group="cervixHeight" data-value="medium" data-i18n>Middle</button>
-          <button type="button" data-group="cervixHeight" data-value="high" data-i18n>High</button>
-        </div>
-      </div>
-
-      <div class="modal-section">
-        <div class="section-title" data-i18n>Openness</div>
-        <div class="segmented three">
+        <div class="section-title" data-i18n>Height / Openness</div>
+        <div class="segmented three" role="group" data-i18n-aria-label="Openness">
           <button type="button" data-group="cervixOpenness" data-value="closed" data-i18n>Closed</button>
           <button type="button" data-group="cervixOpenness" data-value="medium" data-i18n>Medium</button>
           <button type="button" data-group="cervixOpenness" data-value="open" data-i18n>Open</button>
+        </div>
+        <div class="section-title cervix-height-title" data-i18n>Height</div>
+        <div class="segmented three" role="group" data-i18n-aria-label="Height">
+          <button type="button" data-group="cervixHeight" data-value="low" data-i18n>Low</button>
+          <button type="button" data-group="cervixHeight" data-value="medium" data-i18n>Middle</button>
+          <button type="button" data-group="cervixHeight" data-value="high" data-i18n>High</button>
         </div>
       </div>
 

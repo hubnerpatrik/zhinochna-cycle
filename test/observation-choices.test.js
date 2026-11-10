@@ -35,7 +35,7 @@ test('cleared observations remain unselected after saving and reopening; explici
   ]) {
     let pressed;
     buttons.splice(0, buttons.length, {
-      dataset: { group, value: String(value) }, closest: () => element(),
+      dataset: { group, value: String(value) }, closest: () => element(), querySelector: () => null,
       classList: { toggle() {} }, setAttribute: (_name, state) => { pressed = state; },
     });
     open();

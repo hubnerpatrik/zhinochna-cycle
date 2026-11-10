@@ -3,6 +3,7 @@ import { getElementById, querySelectorAll } from "../core.js";
 import { showMessage } from "./toast.js";
 import { clearFieldErrors } from './field-errors.js';
 import { observationChoiceValue } from './observation-values.js';
+import { cervixPositionIcon } from './observation-scales.js';
 
 let navigation = null;
 export function configureModalNavigation(callbacks) {
@@ -48,9 +49,14 @@ export function syncModalUI() {
   querySelectorAll(".segmented button").forEach(button => {
     if (button.closest(".modal")?.classList.contains("hidden")) return;
     const value = observationChoiceValue(button.dataset.value);
-    const active = store.modal[button.dataset.group] === value;
+    const group = button.dataset.group;
+    const active = store.modal[group] === value;
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
+    if (group === 'cervixHeight') {
+      const icon = button.querySelector('.observation-scale-icon');
+      if (icon) icon.innerHTML = cervixPositionIcon(value, store.modal.cervixOpenness);
+    }
   });
 }
 
