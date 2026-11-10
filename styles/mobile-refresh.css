@@ -21,13 +21,13 @@
   }
   .header-brand h1 { font-size: 19px; letter-spacing: -.6px; }
   .app-kicker { font-size: 9px; letter-spacing: .12em; }
-  .app-header > .language-select { top: 2px; right: 0; }
-  .language-select { border-radius: 24px; }
+  .app-header > .language-picker { top: 2px; right: 0; }
+  .language-picker-trigger { border-radius: 24px; }
 
   /* Keep the same navigation and handlers on every screen, including the map. */
   body.mobile-map-active .app-header { display: contents; }
   body.mobile-map-active .app-header > .header-brand,
-  body.mobile-map-active .app-header > .language-select { display: none; }
+  body.mobile-map-active .app-header > .language-picker { display: none; }
   .header-nav {
     position: fixed;
     z-index: 100;

@@ -1,5 +1,4 @@
-// English source copy → Czech, Slovak, Ukrainian. UA is the UI label;
-// uk is the standard language code used by HTML and Intl.
+// English source copy → Czech, Slovak, Ukrainian.
 import { authMessages } from './auth.js';
 import { exportMessages } from './exports.js';
 import { feedbackMessages } from './feedback.js';

@@ -27,6 +27,19 @@
 </head>
 
 <body>
+  <template id="languagePickerTemplate">
+    <summary class="language-picker-trigger">
+      <span class="language-flag" data-flag="en" data-current-language-flag aria-hidden="true"></span>
+      <span class="language-picker-chevron" aria-hidden="true"></span>
+      <span class="visually-hidden"><span data-i18n>Language</span> <span data-current-language-name lang="en">English</span></span>
+    </summary>
+    <div class="language-picker-menu">
+      <button type="button" data-language="en" lang="en"><span class="language-flag" data-flag="en" aria-hidden="true"></span></button>
+      <button type="button" data-language="uk" lang="uk"><span class="language-flag" data-flag="uk" aria-hidden="true"></span></button>
+      <button type="button" data-language="cs" lang="cs"><span class="language-flag" data-flag="cs" aria-hidden="true"></span></button>
+      <button type="button" data-language="sk" lang="sk"><span class="language-flag" data-flag="sk" aria-hidden="true"></span></button>
+    </div>
+  </template>
   <section id="authRoot" class="auth-shell" aria-live="polite">
     <p data-i18n>Checking your session…</p>
   </section>
@@ -52,9 +65,7 @@
         <button id="navMapsBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-maps"/></svg><span class="nav-label-desktop" data-i18n>My Maps</span><span class="nav-label-mobile" data-i18n>Maps</span></button>
         <button id="navActiveMapBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-chart"/></svg><span class="nav-label-desktop" data-i18n>Active Map</span><span class="nav-label-mobile" data-i18n>Active Map</span></button>
       </nav>
-      <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
-        <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
-      </select>
+      <details class="language-picker"></details>
     </header>
 
     <div id="screenRoot"></div>
@@ -62,9 +73,7 @@
     <section id="activeMapScreen" class="hidden" aria-label="Active map" data-i18n-aria-label="Active map">
       <div class="mobile-map-header mobile-only">
         <strong id="mobileMapName">Active map</strong>
-        <select class="language-select" data-language-select aria-label="Language" data-i18n-aria-label="Language">
-          <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
-        </select>
+        <details class="language-picker"></details>
       </div>
       <div class="mobile-map-navigation mobile-only">
         <div class="mobile-map-tabs" role="tablist" aria-label="Map view" data-i18n-aria-label="Map view">
