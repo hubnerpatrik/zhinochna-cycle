@@ -14,6 +14,10 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.17.1 — 2026-11-10
+
+- Open the active map’s calendar on mobile startup and when returning to the map from another screen. Direct links and restored day editors still open their requested views.
+
 ## 0.17.0 — 2026-11-10
 
 - On mobile, swipe to change months and use the compact three-item navigation. Canceling a chart tool returns to Tools on the original calendar or chart.

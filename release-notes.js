@@ -1,13 +1,9 @@
 // Update together with package.json when preparing a release. Keep copy user-facing.
 export const currentRelease = {
-  version: '0.17.0',
+  version: '0.17.1',
   githubUrl: 'https://github.com/hubnerpatrik/zhinochna-cycle/releases',
   changes: [
-    "Swipe between months on mobile. The calendar uses pastel pink for periods and an outline for spotting.",
-    "Mobile navigation fits smaller screens. Cancel reopens Tools on the calendar or chart you started from.",
-    "Cervix height and openness share one row. Firmness uses letter buttons.",
-    "The down-arrow marker now reads ↓1.",
-    "Choose the app language using flags.",
+    "On mobile, opening the app or returning to your active map takes you straight to the calendar.",
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';
