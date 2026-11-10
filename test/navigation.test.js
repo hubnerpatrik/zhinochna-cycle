@@ -71,13 +71,14 @@ function setup(hash = "") {
   const browser = fakeBrowser(hash);
   const pages = [];
   const root = { innerHTML: "", querySelector: () => null, querySelectorAll: () => [] };
-  const router = createRouter({
+  const newRouter = (preferActiveMapOnResume = () => false) => createRouter({
     browser,
     root,
     showStandaloneScreen() {}, openActiveMap() {},
     openMapPage: page => pages.push(page), showMessage() {},
+    preferActiveMapOnResume,
   });
-  return { router, browser, pages, root };
+  return { router: newRouter(), browser, pages, root, newRouter };
 }
 
 test("router restores a specific map and editor day, and Back returns through its parent", () => {
@@ -146,6 +147,35 @@ test("sign-in opens the setup or map home and the main menu remains reachable", 
   assert.equal(router.currentScreen, "menu");
   router.back();
   assert.equal(router.currentScreen, "active-map");
+});
+
+test("mobile startup returns from a restored list to the active map without adding history", () => {
+  const { router, browser, newRouter } = setup();
+  const map = store.createMap("Active cycle");
+  router.start();
+  router.navigate("my-maps");
+  const historyLength = browser.history.length;
+
+  const mobile = newRouter(() => true);
+  mobile.start();
+  assert.equal(mobile.currentScreen, "active-map");
+  assert.equal(new URLSearchParams(browser.location.hash.split("?")[1]).get("map"), map.id);
+  assert.equal(browser.history.length, historyLength);
+
+  mobile.navigate("my-maps");
+  mobile.start();
+  assert.equal(mobile.currentScreen, "my-maps");
+});
+
+test("mobile startup still honors direct links and restored day editors", () => {
+  const { router, browser, pages, newRouter } = setup("#/my-profile");
+  const map = store.createMap("Active cycle");
+  newRouter(() => true).start();
+  assert.equal(browser.location.hash, "#/my-profile");
+  router.navigate({ screen: "active-map", params: new URLSearchParams({ map: map.id, page: "temperature", day: "2026-11-10" }) });
+  newRouter(() => true).start();
+  assert.equal(pages.at(-1), "temperature");
+  assert.equal(store.selectedKey, "2026-11-10");
 });
 
 function setupMapDialogs(hash = "") {

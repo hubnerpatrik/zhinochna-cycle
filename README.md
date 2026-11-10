@@ -6,7 +6,7 @@ A browser app for recording daily observations and reviewing them on a symptothe
 
 [Live Demo](https://cycle-6mf61zw3o-hubnerpatriks-projects.vercel.app/) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
 
-**Active prototype · v0.17.0**
+**Active prototype · v0.17.1**
 
 </div>
 

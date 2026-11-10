@@ -27,7 +27,7 @@ function downloadBackup(contents, mapName) {
   });
 }
 
-export function createRouter({ root, showStandaloneScreen, openActiveMap, openMapPage, showMessage, auth, browser = window }) {
+export function createRouter({ root, showStandaloneScreen, openActiveMap, openMapPage, showMessage, auth, preferActiveMapOnResume, browser = window }) {
   let rendering = false;
   let createMapDialog = null;
 
@@ -278,7 +278,11 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
   }
 
   function start() {
-    navigation.start();
+    navigation.start({
+      resume: ({ screen }) => preferActiveMapOnResume?.()
+        && store.getActiveMapId()
+        && ["menu", "my-maps", "my-profile"].includes(screen) ? "home" : null,
+    });
   }
 
   return {
