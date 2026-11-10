@@ -146,6 +146,7 @@ function openActiveMapScreen() {
     if (!store.selectedKey) store.selectedKey = formatDateKey(focusDate);
     store.month = focusDate.getMonth();
     store.year = focusDate.getFullYear();
+    mobileMap.showCalendarOnEntry();
   }
   displayedMapId = store.getActiveMapId();
   getElementById("screenRoot")?.classList.add("hidden");
@@ -176,6 +177,7 @@ export function startApplication(auth) {
     auth,
     showStandaloneScreen,
     openActiveMap: openActiveMapScreen,
+    preferActiveMapOnResume: mobileMap.isMobile,
     openMapPage: page => {
       const pages = {
         "edit-day": openActionModal,

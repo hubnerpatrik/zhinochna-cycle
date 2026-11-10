@@ -135,8 +135,14 @@ export function createMobileMap({ render, getColumns, interactions }) {
   }
   return {
     active,
+    isMobile: () => media.matches,
     discardToolOrigin,
     returnToTools,
+    showCalendarOnEntry() {
+      if (!media.matches) return;
+      view().tab = "calendar";
+      setChartExpanded(false);
+    },
     init() {
       if (ready) return;
       ready = true;

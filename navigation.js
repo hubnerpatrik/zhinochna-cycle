@@ -20,9 +20,13 @@ export function createNavigation({ browser = window, normalize, render }) {
     if (!silent) render(next);
   }
 
-  function read() {
+  function locationRoute() {
     const [screen, query = ""] = browser.location.hash.replace(/^#\/?/, "").split("?");
-    navigate({ screen, params: new URLSearchParams(query) }, { replace: true });
+    return { screen, params: new URLSearchParams(query) };
+  }
+
+  function read() {
+    navigate(locationRoute(), { replace: true });
   }
 
   function back(fallback = "menu") {
@@ -33,13 +37,14 @@ export function createNavigation({ browser = window, normalize, render }) {
   return {
     navigate,
     back,
-    start() {
-      if (!started) {
-        browser.addEventListener("popstate", read);
-        browser.addEventListener("hashchange", onHashChange);
-        started = true;
-      }
-      read();
+    start({ resume } = {}) {
+      if (started) { read(); return; }
+      browser.addEventListener("popstate", read);
+      browser.addEventListener("hashchange", onHashChange);
+      started = true;
+      const route = locationRoute();
+      const resumed = ownsCurrentHistoryEntry() ? resume?.(route) : null;
+      navigate(resumed ?? route, { replace: true });
     },
     dispose() {
       browser.removeEventListener("popstate", read);
