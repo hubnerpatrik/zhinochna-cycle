@@ -45,9 +45,7 @@ export function afterModalSave(modalId, render, reopen) {
 export function syncModalUI() {
   const otherDetails = getElementById("otherModalDetails");
   if (otherDetails) otherDetails.hidden = !store.modal.otherEnabled;
-  querySelectorAll('input[data-observation]').forEach(input => {
-    input.checked = store.modal[input.dataset.observation] === (input.dataset.observationValue ?? true);
-  });
+  querySelectorAll('input[data-observation]').forEach(input => { input.checked = store.modal[input.dataset.observation] === true; });
   querySelectorAll(".segmented button").forEach(button => {
     if (button.closest(".modal")?.classList.contains("hidden")) return;
     const value = observationChoiceValue(button.dataset.value);

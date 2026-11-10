@@ -24,24 +24,23 @@
 .bleeding-cell svg { width: min(36px, 90%); height: 22px; color: #b43c45; }
 .observation-scale { --scale-accent: #355e91; --scale-fill: #e6edf8; }
 #cervixModal .observation-scale { --scale-accent: #287c7c; --scale-fill: #e1f2f1; }
-:where(#cervixModal) .observation-scale button, .cervix-firmness-choice { border: 1px solid transparent; }
-.observation-scale button, .bleeding-intensity button, .cervix-firmness-choice { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 76px; padding: 10px 4px; font-size: 12px; line-height: 1.3; white-space: normal; overflow-wrap: anywhere; }
+:where(#cervixModal) .observation-scale button { border: 1px solid transparent; }
+.observation-scale button, .bleeding-intensity button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 76px; padding: 10px 4px; font-size: 12px; line-height: 1.3; white-space: normal; overflow-wrap: anywhere; }
 .observation-scale-icon { display: block; width: 48px; height: 40px; color: var(--scale-accent); flex-shrink: 0; }
 .observation-scale-icon svg { display: block; width: 100%; height: 100%; }
 .observation-duotone { --observation-icon-fill: #b7d5e7; }
 .observation-duotone .observation-icon-fill { fill: var(--observation-icon-fill); stroke: none; }
 .observation-duotone .observation-icon-line { stroke: currentColor; }
 #cervixModal .observation-duotone, .map-cells-group-cervix .observation-duotone { --observation-icon-fill: #b9ded9; }
-.observation-scale button.active, .cervix-firmness-choice:has(input:checked) { background: var(--scale-fill); border-color: var(--scale-accent); box-shadow: inset 0 0 0 1px var(--scale-accent); }
-.observation-scale button:focus-visible, .bleeding-intensity button:focus-visible, .cervix-firmness-choice:has(input:focus-visible) { outline: 2px solid var(--scale-accent, #b43c45); outline-offset: 3px; }
+.observation-scale button.active { background: var(--scale-fill); border-color: var(--scale-accent); box-shadow: inset 0 0 0 1px var(--scale-accent); }
+.observation-scale button:focus-visible, .bleeding-intensity button:focus-visible { outline: 2px solid var(--scale-accent, #b43c45); outline-offset: 3px; }
 .observation-scale-cell svg { width: min(36px, 90%); height: 24px; }
 .map-cells-group-mucus .observation-scale-cell { color: #355e91; }
 .map-cells-group-cervix .observation-scale-cell { color: #287c7c; }
 #mucusModal .checkbox-row, #bleedingModal .checkbox-row, #otherModal .checkbox-row { gap: 10px; min-height: 44px; }
 #mucusModal .checkbox-row input, #bleedingModal .checkbox-row input, #otherModal .checkbox-row input { width: 20px; height: 20px; flex: 0 0 20px; accent-color: #355e91; }
-.cervix-firmness-choice { border-radius: var(--control-radius); background: rgba(255, 255, 255, .95); cursor: pointer; font-weight: 500; }
-.cervix-firmness-choice .observation-scale-icon { display: grid; place-items: center; }
-.cervix-firmness-choice input { width: 20px; height: 20px; min-height: 0; margin: 0; accent-color: var(--scale-accent); cursor: pointer; }
+.cervix-firmness-choices button { user-select: none; }
+.cervix-firmness-code { display: grid; place-items: center; font-size: 24px; font-weight: 700; line-height: 1; }
 .cervix-height-title { margin-top: 12px; }
 .map-row-icon { display: grid; place-items: center; flex: 0 0 24px; margin-right: 4px; }
 .nav-icon { display: inline-block; width: 22px; height: 22px; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }

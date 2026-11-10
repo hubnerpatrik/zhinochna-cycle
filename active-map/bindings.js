@@ -266,7 +266,7 @@ export function initializeActiveMapControls({
   const otherColor = getElementById("mucusColorOtherCheckbox");
   getElementById('tempFactorsInput').onchange = syncTempFactorsUI;
   querySelectorAll('input[data-observation]').forEach(input => {
-    input.onchange = () => toggleObservationChoice(input.dataset.observation, input.dataset.observationValue ?? true);
+    input.onchange = () => { store.modal[input.dataset.observation] = input.checked ? true : undefined; };
   });
   const otherColorInput = getElementById("mucusColorOtherInput");
   otherColor.onchange = () => {
