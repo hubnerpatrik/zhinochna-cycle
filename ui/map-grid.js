@@ -7,7 +7,8 @@ import { profileInfoRows } from "./profile-info-modal.js";
 import { observationIcon } from "./observation-icons.js";
 import { interfaceIcon } from './interface-icons.js';
 import { bleedingIcon, BLEEDING_LABELS } from './bleeding-icons.js';
-import { observationScaleIcon, OBSERVATION_LABELS } from './observation-scales.js';
+import { cervixPositionIcon, observationScaleIcon, OBSERVATION_LABELS } from './observation-scales.js';
+import { CERVIX_FIRMNESS_CODES } from './observation-labels.js';
 
 const SIDEBAR_ACTIONS = [
   ['editBtn', 'Edit Day', 'chip-edit-special', 'edit'],
@@ -103,9 +104,8 @@ function createRowDefinitions() {
     ["consistencyRow", "Consistency", "mucus", column => scaleCell(column, 'consistency', 'Consistency', 'mucus')],
     ["colorRow", "Color", "mucus", column => scaleCell(column, 'color', 'Color', 'mucus')],
     ["blueMarkerRow", "Peak Mucus", "mucus", column => makeCell(column.markers?.mucus?.value || "", "", "mucus", column.markers?.mucus?.value ? "marker-blue" : "")],
-    ["cervixFirmnessRow", "Firmness", "cervix", column => scaleCell(column, 'cervixFirmness', 'Firmness', 'cervix')],
-    ["cervixHeightRow", "Height", "cervix", column => scaleCell(column, 'cervixHeight', 'Height', 'cervix')],
-    ["cervixOpennessRow", "Openness", "cervix", column => scaleCell(column, 'cervixOpenness', 'Openness', 'cervix')],
+    ["cervixFirmnessRow", "Firmness", "cervix", cervixFirmnessCell],
+    ["cervixPositionRow", "Height / Openness", "cervix", cervixPositionCell],
     ["orangeMarkerRow", "Peak Cervix", "cervix", column => makeCell(column.markers?.cervix?.value || "", "", "cervix", column.markers?.cervix?.value ? "marker-orange" : "")],
     ["otherRow", "Additional symptoms", "symptoms", column => makeCell(column.other ? "✓" : "", "", "symptoms")],
     ["sexRow", "Sex", "symptoms", column => makeCell(column.sex === true ? "✓" : "", "", "symptoms")],
@@ -120,6 +120,31 @@ function createRowDefinitions() {
   });
 }
 
+function cervixFirmnessCell({ cervixFirmness }) {
+  const cell = makeCell('', '', 'cervix');
+  const code = CERVIX_FIRMNESS_CODES[cervixFirmness];
+  if (code) {
+    setText(cell, code);
+    describeCell(cell, `Firmness: ${OBSERVATION_LABELS.cervixFirmness[cervixFirmness]}`);
+  }
+  return cell;
+}
+
+function cervixPositionCell({ cervixHeight, cervixOpenness }) {
+  const cell = makeCell('', '', 'cervix', 'observation-scale-cell');
+  cell.innerHTML = cervixPositionIcon(cervixHeight, cervixOpenness);
+  const labels = [];
+  if (cervixHeight) labels.push(`Height: ${OBSERVATION_LABELS.cervixHeight[cervixHeight]}`);
+  if (cervixOpenness) labels.push(`Openness: ${OBSERVATION_LABELS.cervixOpenness[cervixOpenness]}`);
+  if (labels.length) describeCell(cell, labels.join(' · '));
+  return cell;
+}
+
+function describeCell(cell, source) {
+  setTranslatedAttribute(cell, 'title', source);
+  setTranslatedAttribute(cell, 'aria-label', source);
+}
+
 function scaleCell(column, field, label, group) {
   const cell = makeCell('', '', group, 'observation-scale-cell');
   const entry = store.entries[column.key];
@@ -129,8 +154,7 @@ function scaleCell(column, field, label, group) {
   if (!svg) return cell;
   cell.innerHTML = svg;
   const source = `${label}: ${OBSERVATION_LABELS[field][value]}${field === 'color' && value === 'other' && entry.colorOther ? ` (${entry.colorOther})` : ''}`;
-  setTranslatedAttribute(cell, 'title', source);
-  setTranslatedAttribute(cell, 'aria-label', source);
+  describeCell(cell, source);
   return cell;
 }
 
@@ -208,12 +232,17 @@ export function renderMapRows(columns, selectColumn, hoverColumn, clearHover) {
     attach(dayCell, column);
     dayNumbers.appendChild(dayCell);
 
+    const crossedRows = store.entries[column.key]?.crossedRows || [];
     definitions.forEach(definition => {
       const cell = definition.render(column);
       if (boundary) cell.classList.add("cycle-boundary");
       if (selected) cell.classList.add(selected);
       if (column.isFertile) cell.classList.add("fertility-cell");
-      if (store.entries[column.key]?.crossedRows?.includes(definition.id)) cell.classList.add("crossed-cell");
+      // The combined row still displays crosses saved on either of its old rows.
+      const crossed = definition.id === "cervixPositionRow"
+        ? crossedRows.includes("cervixHeightRow") || crossedRows.includes("cervixOpennessRow")
+        : crossedRows.includes(definition.id);
+      if (crossed) cell.classList.add("crossed-cell");
       attach(cell, column);
       rows[definition.id].appendChild(cell);
     });

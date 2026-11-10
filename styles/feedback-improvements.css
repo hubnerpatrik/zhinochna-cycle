@@ -38,6 +38,10 @@
 .map-cells-group-cervix .observation-scale-cell { color: #287c7c; }
 #mucusModal .checkbox-row, #bleedingModal .checkbox-row, #otherModal .checkbox-row { gap: 10px; min-height: 44px; }
 #mucusModal .checkbox-row input, #bleedingModal .checkbox-row input, #otherModal .checkbox-row input { width: 20px; height: 20px; flex: 0 0 20px; accent-color: #355e91; }
+.cervix-firmness-choices { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+.cervix-firmness-choices .checkbox-row { min-height: 44px; cursor: pointer; }
+.cervix-firmness-choices input { flex: 0 0 20px; accent-color: #287c7c; }
+.cervix-height-title { margin-top: 12px; }
 .map-row-icon { display: grid; place-items: center; flex: 0 0 24px; margin-right: 4px; }
 .nav-icon { display: inline-block; width: 22px; height: 22px; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }
 .nav-icon, .menu-card-icon svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }

@@ -25,6 +25,8 @@ export function t(source) {
   if (translated) return text.replace(key, translated);
   const dayHelp = /^(\d{4}-\d{2}-\d{2} · )(.*)$/.exec(text);
   if (dayHelp) return dayHelp[1] + t(dayHelp[2]);
+  const cervixPosition = /^(Height: .+) · (Openness: .+)$/.exec(text);
+  if (cervixPosition) return `${t(cervixPosition[1])} · ${t(cervixPosition[2])}`;
   const info = /^(Bleeding|Period intensity|Clots|Sensation|Slippery|Discharge|Consistency|Color|Firmness|Height|Openness|Sex|Notes|Hours|Minutes): (.*)$/.exec(text);
   if (info) {
     const [, label, value] = info;

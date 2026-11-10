@@ -333,7 +333,7 @@
           <option value="5">5</option>
           <option value="6">6</option>
           <option value="↑">↑</option>
-          <option value="↓">↓</option>
+          <option value="↓1">↓1</option>
         </select>
       </div>
 
@@ -350,28 +350,25 @@
       <h2 data-i18n>Cervix</h2>
 
       <div class="modal-section">
-        <div class="section-title" data-i18n>Firmness</div>
-        <div class="segmented two">
-          <button type="button" data-group="cervixFirmness" data-value="hard" data-i18n>Hard</button>
-          <button type="button" data-group="cervixFirmness" data-value="soft" data-i18n>Soft</button>
+        <div class="section-title" id="cervixFirmnessTitle" data-i18n>Firmness</div>
+        <div class="cervix-firmness-choices" role="group" aria-labelledby="cervixFirmnessTitle">
+          <label class="checkbox-row"><input type="checkbox" data-observation="cervixFirmness" data-observation-value="hard"><span data-i18n>Hard</span></label>
+          <label class="checkbox-row"><input type="checkbox" data-observation="cervixFirmness" data-observation-value="soft"><span data-i18n>Soft</span></label>
         </div>
       </div>
 
       <div class="modal-section">
-        <div class="section-title" data-i18n>Height</div>
-        <div class="segmented three">
-          <button type="button" data-group="cervixHeight" data-value="low" data-i18n>Low</button>
-          <button type="button" data-group="cervixHeight" data-value="medium" data-i18n>Middle</button>
-          <button type="button" data-group="cervixHeight" data-value="high" data-i18n>High</button>
-        </div>
-      </div>
-
-      <div class="modal-section">
-        <div class="section-title" data-i18n>Openness</div>
-        <div class="segmented three">
+        <div class="section-title" data-i18n>Height / Openness</div>
+        <div class="segmented three" role="group" data-i18n-aria-label="Openness">
           <button type="button" data-group="cervixOpenness" data-value="closed" data-i18n>Closed</button>
           <button type="button" data-group="cervixOpenness" data-value="medium" data-i18n>Medium</button>
           <button type="button" data-group="cervixOpenness" data-value="open" data-i18n>Open</button>
+        </div>
+        <div class="section-title cervix-height-title" data-i18n>Height</div>
+        <div class="segmented three" role="group" data-i18n-aria-label="Height">
+          <button type="button" data-group="cervixHeight" data-value="low" data-i18n>Low</button>
+          <button type="button" data-group="cervixHeight" data-value="medium" data-i18n>Middle</button>
+          <button type="button" data-group="cervixHeight" data-value="high" data-i18n>High</button>
         </div>
       </div>
 

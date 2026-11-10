@@ -116,6 +116,13 @@ test("BBT, mucus, and cervix markers remain independent", () => {
   });
 });
 
+test("plain and numbered down arrows reopen as the numbered marker", () => {
+  for (const value of ["↓", "↓1"]) {
+    assert.equal(normalizeDayMarkers({ bbt: { value } }).bbt.value, "↓1");
+    assert.equal(normalizeDayMarkers(null, { marker: value, markerColor: "blue" }).mucus.value, "↓1");
+  }
+});
+
 test("cross-cell selection can be cancelled without changing entries", () => {
   globalThis.localStorage = new MemoryStorage();
   const store = new Store();
