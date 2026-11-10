@@ -48,6 +48,8 @@ export function createMobileMap({ render, getColumns, interactions }) {
   let renderFrame = null;
   let toastHome;
   let rowsHome;
+  let toolsView = null;
+  let toolOrigin = null;
   const active = () => media.matches && !getElementById("activeMapScreen")?.classList.contains("hidden");
   const view = () => {
     const id = store.getActiveMapId();
@@ -83,16 +85,58 @@ export function createMobileMap({ render, getColumns, interactions }) {
     getElementById("mobileMapActions")?.classList.toggle("hidden", persistent);
     getElementById("mobileCancelToolBtn")?.classList.toggle("hidden", !persistent || toast?.classList.contains("action-toast"));
   }
+  function setChartExpanded(expanded) {
+    getElementById("activeMapScreen").classList.toggle("mobile-chart-expanded", expanded);
+    const button = getElementById("mobileExpandBtn");
+    button.setAttribute("aria-pressed", String(expanded));
+    setText(button, expanded ? "Close full screen" : "Expand chart");
+  }
   function openTools() {
     if (!active()) return;
     const list = getElementById("mobileToolsList");
     if (list.open) return;
+    const currentView = { ...view() };
+    if (currentView.tab === "graph") {
+      const scroll = document.querySelector(".map-scroll");
+      currentView.left = scroll.scrollLeft;
+      currentView.top = scroll.scrollTop;
+    }
+    toolsView = {
+      mapId: store.getActiveMapId(),
+      view: currentView,
+      year: store.year,
+      month: store.month,
+      pageTop: window.scrollY,
+      expanded: getElementById("activeMapScreen").classList.contains("mobile-chart-expanded"),
+    };
     list.showModal();
     getElementById("mobileTools").setAttribute("aria-expanded", "true");
   }
+  function discardToolOrigin() {
+    toolOrigin = null;
+  }
+  function returnToTools(origin = toolOrigin) {
+    discardToolOrigin();
+    if (!active()) return;
+    if (origin && origin.mapId === store.getActiveMapId()) {
+      Object.assign(view(), origin.view);
+      store.year = origin.year;
+      store.month = origin.month;
+      setChartExpanded(origin.expanded);
+      render();
+      if (origin.view.tab === "graph") {
+        const scroll = document.querySelector(".map-scroll");
+        scroll.scrollLeft = origin.view.left;
+        scroll.scrollTop = origin.view.top;
+      }
+      window.scrollTo({ top: origin.pageTop, behavior: "instant" });
+    }
+    openTools();
+  }
   return {
     active,
-    openTools,
+    discardToolOrigin,
+    returnToTools,
     init() {
       if (ready) return;
       ready = true;
@@ -119,9 +163,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
       getElementById("mobileCloseToolsBtn").onclick = () => toolsList.close();
       toolsList.addEventListener("close", () => getElementById("mobileTools").setAttribute("aria-expanded", String(toolsList.open)));
       getElementById("mobileExpandBtn").onclick = () => {
-        const expanded = getElementById("activeMapScreen").classList.toggle('mobile-chart-expanded');
-        getElementById("mobileExpandBtn").setAttribute('aria-pressed', String(expanded));
-        setText(getElementById("mobileExpandBtn"), expanded ? 'Close full screen' : 'Expand chart');
+        setChartExpanded(!getElementById("activeMapScreen").classList.contains("mobile-chart-expanded"));
         render();
       };
       getElementById("mobileGraphTab").onclick = () => switchTab("graph");
@@ -150,6 +192,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
           getElementById("mobileTools").setAttribute("aria-expanded", "false");
           const id = button.dataset.mobileTool;
           if (id !== "fertileRangeActionBtn") {
+            toolOrigin = toolsView;
             switchTab("graph");
             view().zoom = Math.max(view().zoom, TOOL_MIN_COLUMN_WIDTH / fitWidth);
             render();
@@ -161,9 +204,10 @@ export function createMobileMap({ render, getColumns, interactions }) {
         };
       });
       getElementById("mobileCancelToolBtn").onclick = () => {
+        const origin = toolOrigin;
         interactions.deactivate();
         render();
-        openTools();
+        returnToTools(origin);
       };
       new MutationObserver(feedback).observe(getElementById("mobileToolFeedback"), { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
       new ResizeObserver(schedule).observe(getElementById("mobileMapDock"));

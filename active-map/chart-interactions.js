@@ -38,7 +38,7 @@ export function pixelToPointColumnHit(x, y, columns) {
   return closest;
 }
 
-export function createChartInteractions({ getColumns, renderApp, selectColumn, showMessage, onToolCancel }) {
+export function createChartInteractions({ getColumns, renderApp, selectColumn, showMessage, onToolCancel, onToolEnd }) {
   let activeDrag = null;
   let coverlineSelected = false;
   let suppressNextClick = false;
@@ -66,6 +66,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     const canvas = getElementById("tempChart");
     if (canvas) setCursor(canvas, null);
     hideToolPill();
+    if (!cancel) onToolEnd?.();
     renderApp();
     return true;
   }
@@ -215,6 +216,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       return;
     }
     coverlineDraft = null;
+    onToolEnd?.();
     renderApp();
     showMessage("Coverline deleted.");
   }
@@ -230,6 +232,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       }
       setCrossCellButton(false);
       hideToolPill();
+      onToolEnd?.();
       renderApp();
       showMessage("Crossed cells saved.");
       return;
@@ -426,11 +429,13 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     finishMarkerPlacement() {
       cancelMarkerPlacement();
       hideToolPill();
+      onToolEnd?.();
     },
     deactivate() {
       const active = coverlineSelected || store.horizontalCoverlineMode || store.verticalCoverlineMode
         || store.crossCellSelectionMode || store.markerSelectionMode;
       clearModes();
+      onToolEnd?.();
       getElementById("tempChart")?.classList.remove("coverline-touch-edit");
       if (active) hideToolPill();
     },

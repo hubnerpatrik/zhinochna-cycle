@@ -115,7 +115,11 @@
   #mobileToolFeedback .toast-action-cancel, #mobileCancelToolBtn { background: #fae7e8; color: #793744; }
   #activeMapScreen .temp-scale-column { position: sticky; left: 0; z-index: 4; background: #fffaf6; }
   #activeMapScreen.mobile-chart-expanded { position: fixed; inset: 0; z-index: 500; padding: max(12px, env(safe-area-inset-top)) 8px max(12px, env(safe-area-inset-bottom)); overflow: auto; background: var(--bg, #fffaf6); }
-  .mobile-chart-expanded > .mobile-map-header, .mobile-chart-expanded > .mobile-map-navigation, .mobile-chart-expanded > #mobileMapDock { display: none; }
+  .mobile-chart-expanded > .mobile-map-header,
+  .mobile-chart-expanded > .mobile-map-navigation,
+  .mobile-chart-expanded > #mobileMapDock > :not(#mobileToolFeedback),
+  .mobile-chart-expanded #mobileToolFeedback:not(:has(.persistent-toast.show)) { display: none; }
+  .mobile-chart-expanded > #mobileMapDock { display: contents; }
   body:has(.mobile-chart-expanded:not(.hidden)) { overflow: hidden; }
   .mobile-chart-expanded .mobile-chart-toolbar { margin-bottom: 12px; }
 }
