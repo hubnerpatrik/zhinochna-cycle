@@ -17,6 +17,7 @@ export const messages = {
   ...authMessages,
   'Create your profile to get started.': ['Začni vytvořením profilu.', 'Začni vytvorením profilu.', 'Створіть профіль, щоб почати.'],
   'Language': ['Jazyk', 'Jazyk', 'Мова'],
+  'Map sharing is being fixed.': ['Sdílení map se právě opravuje.', 'Zdieľanie máp sa práve opravuje.', 'Функцію поширення карт зараз виправляють.'],
   'Share map': ['Sdílet mapu', 'Zdieľať mapu', 'Поділитися картою'],
   'Anyone with this link can view a copy of this map for 7 days. Create link?': ['Kdokoli s odkazem může 7 dní zobrazit kopii mapy. Vytvořit odkaz?', 'Ktokoľvek s odkazom môže 7 dní zobraziť kópiu mapy. Vytvoriť odkaz?', 'Будь-хто з посиланням може переглядати копію карти протягом 7 днів. Створити посилання?'],
   'Copy share link': ['Zkopíruj odkaz', 'Skopíruj odkaz', 'Скопіюйте посилання'],

@@ -136,6 +136,44 @@
   min-width: 44px;
   padding-inline: 10px;
 }
+.map-list-actions .map-share-btn[aria-disabled="true"] { opacity: .5; cursor: default; }
+.map-share-control { position: relative; }
+.map-share-control:is(:hover, :focus-within) { z-index: 2; }
+.map-list-card:has(.map-share-control:is(:hover, :focus-within)) {
+  position: relative;
+  z-index: 2;
+}
+.map-share-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  translate: -50% 0;
+  width: max-content;
+  max-width: 10rem;
+  padding-bottom: 8px;
+  visibility: hidden;
+}
+.map-share-control:is(:hover, :focus-within) .map-share-tooltip { visibility: visible; }
+.map-share-tooltip > span {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--text);
+  color: var(--card);
+  box-shadow: var(--shadow-lifted);
+  font-size: .8rem;
+  line-height: 1.4;
+  text-align: center;
+}
+.map-share-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  left: calc(50% - 5px);
+  border: 5px solid transparent;
+  border-bottom: 0;
+  border-top-color: var(--text);
+}
 .map-list-actions :is(.map-export-btn, .map-share-btn) svg {
   width: 20px;
   height: 20px;
