@@ -12,7 +12,14 @@
 .map-row-icon { display: none; }
 .app-header { padding-right: 88px; }
 .app-header > .language-picker { position: absolute; top: 12px; right: 14px; }
-.language-picker { position: relative; flex: 0 0 64px; width: 64px; }
+.language-picker {
+  position: relative;
+  flex: 0 0 64px;
+  width: 64px;
+  -webkit-user-select: none;
+  user-select: none;
+  caret-color: transparent;
+}
 .language-picker[open] { z-index: 110; }
 .language-picker-trigger {
   display: flex;
