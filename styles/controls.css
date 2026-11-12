@@ -130,13 +130,43 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
 
 /* Profile card: the Edit action opens the active map's settings. */
 .profile-info-header {
+  margin-bottom: 10px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
-.profile-info-header .profile-info-title { margin-bottom: 8px; }
-.profile-info-edit { padding: 0; font-size: 13px; }
+.profile-info-header .profile-info-title { margin-bottom: 0; }
+/* Prominent pill: editing map settings is the main action in this card. */
+.profile-info-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 6px 14px 6px 11px;
+  border: 1px solid rgba(255, 138, 101, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff9b7a, #ffc79a);
+  color: #4a2116;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(255, 138, 101, 0.28);
+  cursor: pointer;
+  transition: transform 0.1s var(--ease), box-shadow 0.15s var(--ease), filter 0.15s var(--ease);
+}
+.profile-info-edit svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.profile-info-edit:hover { filter: brightness(1.04); box-shadow: 0 6px 16px rgba(255, 138, 101, 0.36); }
+.profile-info-edit:active { transform: scale(0.96); }
+.profile-info-edit:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 /* Map settings in the create and edit dialogs. */
 .map-settings-fields {

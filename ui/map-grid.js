@@ -63,7 +63,10 @@ export function renderProfileInfo() {
   card.innerHTML = `
     <div class="profile-info-header">
       <div class="profile-info-title" data-i18n>Profile</div>
-      ${editable ? '<button type="button" class="text-btn profile-info-edit" data-i18n>Edit</button>' : ""}
+      ${editable ? `<button type="button" class="profile-info-edit" data-i18n-title="Edit map settings" title="Edit map settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>
+        <span data-i18n>Edit</span>
+      </button>` : ""}
     </div>
     <div class="profile-info-rows"></div>`;
   card.querySelector(".profile-info-edit")?.addEventListener("click", () => openMapSettingsDialog());
