@@ -23,6 +23,10 @@ vMAJOR.MINOR.PATCH
 - Mark or unmark fertile days by dragging across the calendar. Every day between the start and end of the drag changes together.
 - My Profile now holds only your name, consultant and photo. Usual measurement time, method, goal and age are set for each map when you create it, suggested from your newest map, and can be changed with Edit in the map's profile details on desktop and mobile. Changing your profile no longer changes the settings of existing maps. Each map card in My Maps lists its settings.
 - Imported maps show who shared them and keep the author's measurement settings, which cannot be edited.
+- Day editors, Day Info and My Maps show dates in words for the selected language, for example "19. listopadu 2026 (DC 29)".
+- Days after the last record show their cycle day in Edit Day instead of "CD -".
+- The mobile graph scrolls to the selected day when it opens, or when a day outside the current view was picked in the calendar.
+- The map preview in My Maps uses singular English words, such as "1 note".
 - Calendar days show small dots for recorded influence factors, sex and additional symptoms, explained in the legend.
 - Filter My Maps to show all maps, your own, shared with you, open or closed, alongside the year and month filters.
 - Unmarking a fertile day that holds no other record now removes it, so the map and chart no longer stay extended to that day. Saving fertile days also clears such leftover empty days from earlier versions.

@@ -52,7 +52,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
   const active = () => media.matches && !getElementById("activeMapScreen")?.classList.contains("hidden");
   const view = () => {
     const id = store.getActiveMapId();
-    if (!views.has(id)) views.set(id, { tab: "calendar", zoom: null, left: 0, top: 0 });
+    if (!views.has(id)) views.set(id, { tab: "calendar", zoom: null, left: null, top: null });
     return views.get(id);
   };
   const schedule = () => {
@@ -73,8 +73,24 @@ export function createMobileMap({ render, getColumns, interactions }) {
     }
     render();
     if (tab === "graph") {
-      scroll.scrollLeft = view().left;
-      scroll.scrollTop = view().top;
+      const firstVisit = view().left === null;
+      scroll.scrollLeft = view().left ?? 0;
+      scroll.scrollTop = view().top ?? 0;
+      revealSelectedDay(scroll, { centerTemperature: firstVisit });
+    }
+  }
+  // Brings the selected day into view: on the first graph visit, or when another day
+  // was picked in the calendar outside the remembered scroll position.
+  function revealSelectedDay(scroll, { centerTemperature = false } = {}) {
+    const index = getColumns().findIndex(column => column.key === store.selectedKey);
+    if (index < 0) return;
+    const left = index * LAYOUT.columnWidth;
+    const visibleWidth = scroll.clientWidth - LAYOUT.sideLabelWidth;
+    const visible = left >= scroll.scrollLeft && left + LAYOUT.columnWidth <= scroll.scrollLeft + visibleWidth;
+    if (!visible) scroll.scrollLeft = Math.max(0, left - TOOL_SCROLL_LEFT_PADDING);
+    if (centerTemperature) {
+      const temperature = store.entries[store.selectedKey]?.temp ?? DEFAULT_TOOL_TEMPERATURE;
+      scroll.scrollTop = Math.max(0, chartY(temperature) - fitHeight / 2 + TOOL_SCROLL_TOP_PADDING);
     }
   }
   function feedback() {

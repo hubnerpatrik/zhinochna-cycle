@@ -271,6 +271,8 @@ export const messages = {
   'Create copy': ['Vytvořit kopii', 'Vytvoriť kópiu', 'Створити копію'],
   'Map settings': ['Nastavení mapy', 'Nastavenie mapy', 'Налаштування карти'],
   'Time of measurement': ['Čas měření', 'Čas merania', 'Час вимірювання'],
+  // Cycle-day abbreviation after a date, e.g. "19 November 2026 (CD 13)".
+  'CD': ['DC', 'DC', 'ДЦ'],
   'Show': ['Zobrazit', 'Zobraziť', 'Показати'],
   'All maps': ['Všechny mapy', 'Všetky mapy', 'Усі карти'],
   'Shared with me': ['Sdílené se mnou', 'Zdieľané so mnou', 'Надіслані мені'],

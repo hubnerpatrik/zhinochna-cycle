@@ -1,5 +1,7 @@
 import { store } from "../store.js";
-import { getElementById, querySelectorAll } from "../core.js";
+import { getElementById, parseDateKey, querySelectorAll } from "../core.js";
+import { setDateText } from "../i18n.js";
+import { cycleDayForKey } from "../domain.js";
 import { showMessage } from "./toast.js";
 import { clearFieldErrors } from './field-errors.js';
 import { observationChoiceValue } from './observation-values.js';
@@ -35,6 +37,20 @@ export function hideModal(modalId) {
   modal.classList.remove("show");
   modal.classList.add("hidden");
   if (wasOpen) navigation?.modalClosed(modalId);
+}
+
+/**
+ * Title for a day editor: the date in words for the current language and its cycle day.
+ * Days after the last record still get the cycle day the calendar shows.
+ */
+export function setDayTitle(element, key, columns = []) {
+  if (!element) return;
+  if (!key) {
+    element.textContent = "-";
+    return;
+  }
+  const cycleDay = columns.find(column => column.key === key)?.cycleDay ?? cycleDayForKey(key);
+  setDateText(element, parseDateKey(key), "day", { cycleDay: cycleDay == null ? "" : String(cycleDay) });
 }
 
 /** Keeps the open dialog's URL in step with the selected day without adding history entries. */

@@ -16,3 +16,15 @@ test("the My Maps kind filter separates own, shared, open and closed maps", () =
   assert.deepEqual(pick("open"), [own]);
   assert.deepEqual(pick("closed"), [closedOwn, shared]);
 });
+
+test("the map preview uses singular English words for a count of one", async () => {
+  const { buildMapMeta } = await import("../map-list-model.js");
+  const { setLanguage, t } = await import("../i18n.js");
+  const one = buildMapMeta({ entries: { "2026-11-01": { temp: 36.5, bleeding: "menstruation", other: "Note" } } });
+  assert.equal(one.preview, "1 day · 1 temp · 1 period day · 1 note");
+  const many = buildMapMeta({ entries: { "2026-11-01": {}, "2026-11-02": {} } });
+  assert.equal(many.preview, "2 days · 0 temps · 0 period days · 0 notes");
+  setLanguage("cs", { setItem() {} });
+  assert.equal(t(one.preview), "Dny: 1 · teploty: 1 · dny menstruace: 1 · poznámky: 1");
+  setLanguage("en", { setItem() {} });
+});

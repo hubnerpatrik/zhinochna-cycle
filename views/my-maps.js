@@ -1,11 +1,23 @@
 import { MAP_NAME_MAX_LENGTH } from '../form-limits.js';
 import { MAP_KINDS, buildMapMeta, matchesFilter, matchesKind } from '../map-list-model.js';
-import { ISO_DATE_KEY_LENGTH } from '../date-utils.js';
+import { parseDateKey } from '../date-utils.js';
 import { escapeHtml } from "./view-utils.js";
-import { t } from "../i18n.js";
+import { formatDate, t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
 import { MEASUREMENT_METHODS, PROFILE_GOALS, pickMapSettings } from '../profile-options.js';
+
+// Dates in words for the current language; the i18n observer updates them on language change.
+function dateSpan(date) {
+  if (!date || Number.isNaN(date.getTime())) return "—";
+  return `<span data-i18n-date="${date.getTime()}" data-i18n-date-format="day">${escapeHtml(formatDate(date))}</span>`;
+}
+
+// Last activity is a day key or, for closed maps, an ISO timestamp.
+function activityDate(value) {
+  const text = String(value ?? "");
+  return /^\d{4}-\d{2}-\d{2}$/.test(text) ? parseDateKey(text) : new Date(text);
+}
 
 /** One line with the map's own measurement settings; empty values are left out. */
 function renderMapSettingsSummary(snapshot) {
@@ -45,11 +57,11 @@ function renderMapList(container, maps, activeMapId, { year, month, kind }, { on
             ${map.id === activeMapId ? '<span class="map-pill" data-i18n>Active</span>' : ""}
             ${map.profileSnapshotLocked ? '<span class="map-pill" data-i18n>Shared</span>' : ""}
           </div>
-          <p class="map-list-meta"> <span data-i18n>${escapeHtml(map.dateRange)}</span></p>
+          <p class="map-list-meta">${map.dates.length ? `${dateSpan(parseDateKey(map.dates[0]))} – ${dateSpan(parseDateKey(map.dates.at(-1)))}` : '<span data-i18n>No entries yet</span>'}</p>
           ${renderMapSettingsSummary(map.profileSnapshot)}
           ${map.profileSnapshotLocked ? `<p class="map-list-meta map-list-author"><span data-i18n>Shared by:</span> ${map.profileSnapshot?.name ? escapeHtml(map.profileSnapshot.name) : `<span data-i18n>Unknown author</span>`}</p>` : ""}
           <p class="map-list-preview"><span data-i18n>Preview:</span> <span data-i18n>${escapeHtml(map.preview)}</span></p>
-          <p class="map-list-meta"><span data-i18n>Last activity:</span> ${escapeHtml(String(map.lastActivity).slice(0, ISO_DATE_KEY_LENGTH))}</p>
+          <p class="map-list-meta"><span data-i18n>Last activity:</span> ${dateSpan(activityDate(map.lastActivity))}</p>
         </div>
         <div class="map-list-actions">
           <div class="map-export-picker">

@@ -1,7 +1,7 @@
 import { store } from "../store.js";
 import { setText } from "../i18n.js";
 import { TEMP_FACTORS, formatTemp, getAdjustedTemp, getElementById } from "../core.js";
-import { hideModal, showModal } from "./modal-shared.js";
+import { hideModal, setDayTitle, showModal } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
 import { BLEEDING_LABELS } from './bleeding-icons.js';
 import { OBSERVATION_LABELS } from './observation-labels.js';
@@ -31,8 +31,7 @@ export function renderDayInfo(currentColumns) {
   const key = store.selectedKey;
   const data = store.entries[key] || {};
   const observationLabel = (field, labels) => Object.hasOwn(data, field) ? (labels[data[field]] ?? '-') : '-';
-  const column = currentColumns.find(item => item.key === key);
-  setText(getElementById("dayInfoTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
+  setDayTitle(getElementById("dayInfoTitle"), key, currentColumns);
 
   const adjusted = getAdjustedTemp(
     data.temp,

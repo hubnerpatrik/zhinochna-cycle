@@ -17,7 +17,7 @@ export const DYNAMIC_MESSAGE_PATTERNS = [
   [/^≈ (.+) °C vs usual time$/, ['≈ $1 °C oproti obvyklému času', '≈ $1 °C oproti obvyklému času', '≈ $1 °C порівняно зі звичайним часом']],
   [/^“(.*)” imported ✓$/, ['„$1“ importována ✓', '„$1“ importovaná ✓', '«$1» імпортовано ✓']],
   [/^“(.*)” exported ✓$/, ['„$1“ exportována ✓', '„$1“ exportovaná ✓', '«$1» експортовано ✓']],
-  [/^(\d+) days? · (\d+) temps · (\d+) period days · (\d+) notes$/, ['Dny: $1 · teploty: $2 · dny menstruace: $3 · poznámky: $4', 'Dni: $1 · teploty: $2 · dni menštruácie: $3 · poznámky: $4', 'Дні: $1 · температури: $2 · дні менструації: $3 · нотатки: $4']],
+  [/^(\d+) days? · (\d+) temps? · (\d+) period days? · (\d+) notes?$/, ['Dny: $1 · teploty: $2 · dny menstruace: $3 · poznámky: $4', 'Dni: $1 · teploty: $2 · dni menštruácie: $3 · poznámky: $4', 'Дні: $1 · температури: $2 · дні менструації: $3 · нотатки: $4']],
   [/^(\d{4}-\d{2}-\d{2}) to (\d{4}-\d{2}-\d{2})$/, ['$1 až $2', '$1 až $2', '$1 — $2']],
   [/^(\S+) \(CD (.+)\)$/, ['$1 (DC $2)', '$1 (DC $2)', '$1 (ДЦ $2)']],
   [/^([\d.]+) °C at ([\d:]+)$/, ['$1 °C v $2', '$1 °C o $2', '$1 °C о $2']],

@@ -7,6 +7,7 @@ import {
   hideModal,
   persistStore,
   refreshModalRoute,
+  setDayTitle,
   resetModalState,
   showModal,
   syncModalUI,
@@ -36,11 +37,7 @@ export function configureActionModal({ getColumns }) {
 }
 
 function renderActionModalDay() {
-  const label = getElementById("actionModalDay");
-  if (!label) return;
-  const key = store.selectedKey;
-  const column = getActionModalColumns().find(item => item.key === key);
-  setText(label, key ? `${key} (CD ${column?.cycleDay ?? "-"})` : "-");
+  setDayTitle(getElementById("actionModalDay"), store.selectedKey, getActionModalColumns());
 }
 
 export function openActionModal() {
@@ -73,7 +70,6 @@ export function openModal(currentColumns) {
   resetModalState();
   const key = store.selectedKey;
   const data = store.entries[key] || {};
-  const column = currentColumns.find(item => item.key === key);
   Object.assign(store.modal, {
     temp: data.temp ?? null,
     tempFactors: data.tempFactors ?? "",
@@ -81,7 +77,7 @@ export function openModal(currentColumns) {
     measurementTime: data.measurementTime ?? "",
     measurementTimeEnabled: Boolean(data.measurementTime),
   });
-  setText(getElementById("modalTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
+  setDayTitle(getElementById("modalTitle"), key, currentColumns);
   getElementById("tempInput").value = store.modal.temp == null ? "" : Number(store.modal.temp).toFixed(2);
   getElementById("tempFactorsInput").value = store.modal.tempFactors;
   if (getElementById('tempFactorsOtherInput')) getElementById('tempFactorsOtherInput').value = store.modal.tempFactorsOther;
