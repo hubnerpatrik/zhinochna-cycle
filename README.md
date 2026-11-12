@@ -66,11 +66,11 @@ Place coverlines, peak markers, arrows and cross-cell marks directly on the char
 
 - **Share** is temporarily unavailable.
 - **Download** exports a PDF observation card. Excel and JSON appear as disabled options.
-- **Import map** accepts original PDF, Excel (.xlsx) and JSON exports from Cycle Tracker. It checks the embedded data and asks for confirmation before adding the map. Existing maps and the recipient's profile are preserved. Imported maps retain the author's saved profile snapshot.
+- **Import map** accepts original PDF, Excel (.xlsx) and JSON exports from Cycle Tracker. It checks the embedded data and asks for confirmation before adding the map. Existing maps and the recipient's profile are preserved. Imported maps keep the author's name and measurement settings, show who shared them and cannot be edited.
 
 ## Accounts and storage
 
-[Neon Auth setup](docs/auth-setup.md) covers email/password registration, email verification and password reset. **My Profile** stores measurement preferences and supports an optional JPG, PNG or WebP photo up to 10 MB.
+[Neon Auth setup](docs/auth-setup.md) covers email/password registration, email verification and password reset. **My Profile** stores your name, consultant and an optional JPG, PNG or WebP photo up to 10 MB. Usual measurement time, method, goal and age belong to each map: you set them when creating a map and can change them with **Edit** in the map's profile details.
 
 Profiles, maps and manual annotations sync to Neon Postgres through the authenticated `/api/state` endpoint. Each account has a separate browser cache and a queue for changes awaiting upload. If two devices make conflicting edits, the app offers a local backup before switching to the cloud version. See [cloud storage and recovery](docs/cloud-storage.md).
 

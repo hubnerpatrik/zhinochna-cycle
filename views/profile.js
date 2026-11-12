@@ -1,29 +1,12 @@
 import { escapeHtml } from "./view-utils.js";
-import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { prepareProfilePhoto, isStoredProfilePhoto } from '../profile-photo.js';
 import { setText } from '../i18n.js';
-import { PROFILE_GOALS, MEASUREMENT_METHODS } from '../profile-options.js';
 
-const GOAL_OPTIONS = [['', 'Not set'], ...Object.entries(PROFILE_GOALS)];
-const METHOD_OPTIONS = [['', 'Not set'], ...Object.entries(MEASUREMENT_METHODS)];
-
-function renderOptions(options, selectedValue) {
-  return options
-    .map(([value, label]) => {
-      const selected = value === selectedValue ? " selected" : "";
-      return `<option value="${escapeHtml(value)}"${selected} data-i18n>${escapeHtml(label)}</option>`;
-    })
-    .join("");
-}
-
+// The profile holds account identity only; measurement settings are stored with each map.
 function readProfile(container) {
   return {
     name: container.querySelector("[name='name']")?.value ?? "",
     consultantName: container.querySelector("[name='consultantName']")?.value ?? "",
-    age: container.querySelector("[name='age']")?.value ?? "",
-    usualMeasurementTime: container.querySelector("[name='usualMeasurementTime']")?.value ?? "",
-    goal: container.querySelector("[name='goal']")?.value ?? "",
-    measurementMethod: container.querySelector("[name='measurementMethod']")?.value ?? "",
   };
 }
 
@@ -61,25 +44,7 @@ export function renderProfileScreen(container, {
                 <input name="consultantName" type="text" placeholder="Consultant name" data-i18n-placeholder="Consultant name" value="${escapeHtml(profile.consultantName)}">
               </div>
 
-              <div class="modal-section">
-                <div class="input-label" data-i18n>Age</div>
-                <input name="age" type="number" min="10" max="60" placeholder="e.g. 30" data-i18n-placeholder="e.g. 30" value="${escapeHtml(profile.age)}">
-              </div>
-
-              <div class="modal-section">
-                <div class="input-label" data-i18n>Usual measurement time</div>
-                <input name="usualMeasurementTime" type="time" value="${escapeHtml(profile.usualMeasurementTime)}">
-              </div>
-
-              <div class="modal-section">
-                <div class="input-label" data-i18n>Goal</div>
-                <select name="goal">${renderOptions(GOAL_OPTIONS, profile.goal)}</select>
-              </div>
-
-              <div class="modal-section">
-                <div class="input-label" data-i18n>Measurement method</div>
-                <select name="measurementMethod">${renderOptions(METHOD_OPTIONS, profile.measurementMethod)}</select>
-              </div>
+              <p class="field-hint" data-i18n>Measurement time, method, goal and age are set for each map when you create it.</p>
 
               <div class="modal-actions screen-actions">
                 ${showCancel ? '<button type="button" class="btn secondary" id="profileScreenCancelBtn" data-i18n>Back</button>' : ""}
@@ -167,7 +132,6 @@ export function renderProfileScreen(container, {
     setText(photoStatus, 'Photo removed. Save your profile to keep the change.');
     updatePhoto();
   });
-  enhanceTimeInputs(container);
   form?.addEventListener("submit", event => {
     event.preventDefault();
     if (!processingPhoto) onSave?.({ ...readProfile(container), photo });

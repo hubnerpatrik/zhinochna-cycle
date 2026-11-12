@@ -127,3 +127,28 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   user-select: none;
   -webkit-user-select: none;
 }
+
+/* Profile card: the Edit action opens the active map's settings. */
+.profile-info-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.profile-info-header .profile-info-title { margin-bottom: 8px; }
+.profile-info-edit { padding: 0; font-size: 13px; }
+
+/* Map settings in the create and edit dialogs. */
+.map-settings-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.map-settings-fields .modal-section { display: grid; gap: 6px; margin: 0; }
+.map-settings-fields :is(input, select) { width: 100%; box-sizing: border-box; }
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  .map-settings-fields { grid-template-columns: minmax(0, 1fr); }
+}
+
+.profile-details-dialog > .btn.primary { width: 100%; min-height: 48px; margin-top: 16px; }

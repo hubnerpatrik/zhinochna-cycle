@@ -8,6 +8,7 @@ import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
 import { LAYOUT, PHONE_LAYOUT_QUERY, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
 import { observationChoiceValue } from '../ui/observation-values.js';
+import { configureMapSettingsEditor } from '../ui/profile-info-modal.js';
 import {
   bindFertileRangeDrag,
   changeFertileRangeMonth,
@@ -148,6 +149,7 @@ export function initializeActiveMapControls({
 
   querySelectorAll(".btn.primary").forEach(animatePrimaryButton);
   configureActionModal({ getColumns });
+  configureMapSettingsEditor({ render });
   bindButton("editBtn", openActionModal);
   bindButton("actionModalPrevDayBtn", () => shiftActionModalDay(-1, render));
   bindButton("actionModalNextDayBtn", () => shiftActionModalDay(1, render));

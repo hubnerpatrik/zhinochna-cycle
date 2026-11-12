@@ -3,7 +3,7 @@ import { setChartWidth } from './layout-classes.js';
 import { store } from "../store.js";
 import { chartWidth, getElementById } from "../core.js";
 import { renderCycleSummary } from "./cycle-summary.js";
-import { profileInfoRows } from "./profile-info-modal.js";
+import { canEditActiveMapSettings, openMapSettingsDialog, profileInfoRows } from "./profile-info-modal.js";
 import { observationIcon } from "./observation-icons.js";
 import { interfaceIcon } from './interface-icons.js';
 import { bleedingIcon, BLEEDING_LABELS } from './bleeding-icons.js';
@@ -53,15 +53,26 @@ export function renderProfileInfo() {
   if (!card) return;
   const profile = store.getActiveMapProfile();
   const rows = profileInfoRows(profile).filter(([, value]) => value);
+  const editable = canEditActiveMapSettings();
 
-  if (!rows.length) {
+  if (!rows.length && !editable) {
     card.replaceChildren();
     renderCycleSummary(card);
     return;
   }
   card.innerHTML = `
-    <div class="profile-info-title" data-i18n>Profile</div>
+    <div class="profile-info-header">
+      <div class="profile-info-title" data-i18n>Profile</div>
+      ${editable ? '<button type="button" class="text-btn profile-info-edit" data-i18n>Edit</button>' : ""}
+    </div>
     <div class="profile-info-rows"></div>`;
+  card.querySelector(".profile-info-edit")?.addEventListener("click", () => openMapSettingsDialog());
+  if (store.getActiveMap()?.profileSnapshotLocked) {
+    const note = document.createElement("p");
+    note.className = "field-hint";
+    setText(note, "Shared map: these are the author's details and measurement settings.");
+    card.querySelector(".profile-info-header").after(note);
+  }
   const container = card.querySelector(".profile-info-rows");
   rows.forEach(([label, value]) => {
     const row = document.createElement("div");

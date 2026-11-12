@@ -6,6 +6,8 @@ import { renderMenuView } from "./views/menu.js";
 import { renderProfileScreen } from "./views/profile.js";
 import { renderMyMapsView } from "./views/my-maps.js";
 import { openMapDialog } from "./ui/map-dialog.js";
+import { enhanceTimeInputs } from "./ui/time-picker.js";
+import { readMapSettings, renderMapSettingsFields } from "./views/map-settings-fields.js";
 import { closeExportMenu } from './ui/export-menu.js';
 import { escapeHtml } from "./views/view-utils.js";
 import { backupFilename } from "./backup.js";
@@ -160,7 +162,7 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
       case "my-profile":
         renderProfileScreen(root, {
           title: "My Profile",
-          subtitle: "Manage your personal details, measurement preferences and profile photo.",
+          subtitle: "Manage your name, consultant and profile photo.",
           profile: store.getProfile(),
           submitLabel: "Save profile",
           showCancel: true,
@@ -254,7 +256,8 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
         const background = navigation.current.params.get('from') || 'my-maps';
         render(background);
         createMapDialog = openMapDialog({ title: 'Create map', submitLabel: 'Create',
-          body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="${MAP_NAME_MAX_LENGTH}" autofocus></label>`,
+          body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="${MAP_NAME_MAX_LENGTH}" autofocus></label>
+            ${renderMapSettingsFields(store.lastMapSettings())}`,
           onClose: () => {
             if (createMapDialog !== dialog) return;
             createMapDialog = null;
@@ -263,12 +266,13 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           onSubmit: dialog => {
             const name = dialog.querySelector('input').value.trim();
             if (!name) return;
-            const result = runStoreAction(() => store.createMap(name));
+            const result = runStoreAction(() => store.createMap(name, readMapSettings(dialog)));
             if (!result.ok) return;
             showMessage?.("Map created ✓");
             navigate("active-map", { replace: true });
           },
         });
+        enhanceTimeInputs(createMapDialog);
         // Ignore delayed close events from dialogs dismissed by navigation.
         const dialog = createMapDialog;
         break;

@@ -33,6 +33,7 @@ function renderMapList(container, maps, activeMapId, year, month, { onOpen, onRe
             ${map.profileSnapshotLocked ? '<span class="map-pill" data-i18n>Shared</span>' : ""}
           </div>
           <p class="map-list-meta"> <span data-i18n>${escapeHtml(map.dateRange)}</span></p>
+          ${map.profileSnapshotLocked ? `<p class="map-list-meta map-list-author"><span data-i18n>Shared by:</span> ${map.profileSnapshot?.name ? escapeHtml(map.profileSnapshot.name) : `<span data-i18n>Unknown author</span>`}</p>` : ""}
           <p class="map-list-preview"><span data-i18n>Preview:</span> <span data-i18n>${escapeHtml(map.preview)}</span></p>
           <p class="map-list-meta"><span data-i18n>Last activity:</span> ${escapeHtml(String(map.lastActivity).slice(0, ISO_DATE_KEY_LENGTH))}</p>
         </div>

@@ -76,7 +76,7 @@ test("an individual map backup excludes every other saved map", () => {
   assert.equal(secondBackup.data.activeMapId, secondMap.id);
 });
 
-test("saving a map captures its profile independently from later profile changes", () => {
+test("a map keeps its own measurement settings while its saved name follows the profile at save", () => {
   const { store, map } = populatedStore();
   store.saveProfile({ name: "Profile at save", usualMeasurementTime: "07:00" });
   store.closeActiveMap();
@@ -84,7 +84,8 @@ test("saving a map captures its profile independently from later profile changes
 
   const savedMap = store.getMap(map.id);
   assert.equal(savedMap.profileSnapshot.name, "Profile at save");
-  assert.equal(savedMap.profileSnapshot.usualMeasurementTime, "07:00");
+  // Created with the 06:30 profile default; later profile edits never change the map's time.
+  assert.equal(savedMap.profileSnapshot.usualMeasurementTime, "06:30");
   assert.equal(store.getProfile().name, "Changed later");
   assert.equal(JSON.parse(store.createMapBackup(map.id)).data.profile.name, "Profile at save");
 });
@@ -272,4 +273,46 @@ test("export and import round-trip to equivalent application state", () => {
   restored.restoreBackup(source.createBackup());
 
   assert.deepEqual(restored.getPersistentState(), parseBackup(source.createBackup()));
+});
+
+test("each map keeps the settings it was created with, and new maps suggest the newest map's settings", () => {
+  const store = new Store(new LocalStorageAdapter(new MemoryStorage()));
+  store.saveProfile({ name: "Eva", consultantName: "Jana", usualMeasurementTime: "06:00" });
+  // Without maps, legacy profile values are the suggestion.
+  assert.equal(store.lastMapSettings().usualMeasurementTime, "06:00");
+
+  const first = store.createMap("First", { usualMeasurementTime: "07:00", goal: "observation", measurementMethod: "oral", age: "31" });
+  assert.deepEqual(store.getActiveMapProfile(), {
+    name: "Eva", consultantName: "Jana", photo: "",
+    age: "31", usualMeasurementTime: "07:00", goal: "observation", measurementMethod: "oral",
+  });
+  assert.equal(store.lastMapSettings().usualMeasurementTime, "07:00");
+
+  // The profile form edits identity only; maps keep their settings and show the new name.
+  store.saveProfile({ name: "Eva K.", consultantName: "Jana" });
+  assert.equal(store.getProfile().usualMeasurementTime, "06:00");
+  store.save();
+  assert.equal(store.getMap(first.id).profileSnapshot.usualMeasurementTime, "07:00");
+  assert.equal(store.getActiveMapProfile().name, "Eva K.");
+
+  assert.equal(store.updateMapSettings(first.id, { usualMeasurementTime: "08:15", goal: "", measurementMethod: "vaginal", age: "31" }), true);
+  assert.equal(store.getActiveMapProfile().usualMeasurementTime, "08:15");
+  assert.equal(new Store(store.persistence).getMap(first.id).profileSnapshot.measurementMethod, "vaginal");
+});
+
+test("an imported map keeps the author's settings and cannot be edited", () => {
+  const { store: author, map: authorMap } = populatedStore();
+  author.updateMapSettings(authorMap.id, { usualMeasurementTime: "05:45" });
+  author.closeActiveMap();
+  const backup = author.createMapBackup(authorMap.id);
+
+  const recipient = new Store(new LocalStorageAdapter(new MemoryStorage()));
+  recipient.saveProfile({ name: "Recipient" });
+  const imported = recipient.importMapBackup(backup);
+  recipient.setActiveMapId(imported.id);
+  assert.equal(recipient.getActiveMapProfile().name, "Ada");
+  assert.equal(recipient.getActiveMapProfile().usualMeasurementTime, "05:45");
+  assert.equal(recipient.updateMapSettings(imported.id, { usualMeasurementTime: "09:00" }), false);
+  recipient.save();
+  assert.equal(recipient.getMap(imported.id).profileSnapshot.usualMeasurementTime, "05:45");
 });

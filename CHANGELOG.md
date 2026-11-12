@@ -21,6 +21,8 @@ vMAJOR.MINOR.PATCH
 - Copy a map from My Maps. The copy opens as a separate map and the original stays unchanged.
 - Markers stay on like Cross cells: tap any number of days to add or change their markers, then choose Done.
 - Mark or unmark fertile days by dragging across the calendar. Every day between the start and end of the drag changes together.
+- My Profile now holds only your name, consultant and photo. Usual measurement time, method, goal and age are set for each map when you create it, suggested from your newest map, and can be changed with Edit in the map's profile details on desktop and mobile. Changing your profile no longer changes the settings of existing maps.
+- Imported maps show who shared them and keep the author's measurement settings, which cannot be edited.
 - Unmarking a fertile day that holds no other record now removes it, so the map and chart no longer stay extended to that day. Saving fertile days also clears such leftover empty days from earlier versions.
 
 ## 0.17.1 — 2026-11-10
