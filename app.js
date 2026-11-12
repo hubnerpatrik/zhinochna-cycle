@@ -41,10 +41,8 @@ export function selectColumn(key, pointType = "temp") {
   store.selectedKey = key;
   store.selectedPointType = pointType;
   render();
-  if (store.markerSelectionMode) {
-    chartInteractions.finishMarkerPlacement();
-    openMarkersModal();
-  }
+  // Marker mode stays active; each selected day opens its marker editor.
+  if (store.markerSelectionMode) openMarkersModal();
 }
 
 export function hoverColumn(key) {
@@ -139,7 +137,10 @@ function openActiveMapScreen() {
     renderZoomLabel,
     restart: () => router?.start(),
   });
-  chartInteractions.deactivate();
+  // Returning from a marker editor keeps marker mode on the same, already visible map.
+  const resumeMarkers = store.markerSelectionMode && displayedMapId === store.getActiveMapId()
+    && !getElementById("activeMapScreen")?.classList.contains("hidden");
+  if (!resumeMarkers) chartInteractions.deactivate();
   hideAllModals();
   if (displayedMapId !== store.getActiveMapId() || getElementById("activeMapScreen")?.classList.contains("hidden")) {
     const focusDate = getCalendarFocusDate(store.entries);
@@ -154,6 +155,7 @@ function openActiveMapScreen() {
   mobileMap.init();
   render();
   renderZoomLabel();
+  if (resumeMarkers) chartInteractions.resumeMarkerPlacement();
 }
 
 function bindNavigation() {

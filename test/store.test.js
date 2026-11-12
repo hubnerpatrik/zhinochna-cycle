@@ -266,3 +266,16 @@ test("a copy of a closed map is open", () => {
   assert.equal(copy.status, "open");
   assert.equal(copy.closedAt, null);
 });
+
+test("only records with nothing but empty structure count as blank", async () => {
+  const { isBlankEntry } = await import("../data-validation.js");
+  const emptyMarkers = { bbt: { value: "", pointType: "temp" }, mucus: { value: "", pointType: "temp" }, cervix: { value: "", pointType: "temp" } };
+  assert.equal(isBlankEntry({}), true);
+  assert.equal(isBlankEntry({ crossedRows: [], crossedChartTemps: [], markers: emptyMarkers }), true);
+  assert.equal(isBlankEntry({ isFertile: false, markers: emptyMarkers }), true);
+  assert.equal(isBlankEntry({ isFertile: true }), false);
+  assert.equal(isBlankEntry({ sensation: "" }), false, "an explicit empty choice is still a record");
+  assert.equal(isBlankEntry({ crossedRows: ["sexRow"] }), false);
+  assert.equal(isBlankEntry({ markers: { ...emptyMarkers, bbt: { value: "1", pointType: "temp" } } }), false);
+  assert.equal(isBlankEntry({ temp: 36.5 }), false);
+});

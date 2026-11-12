@@ -6,8 +6,11 @@ import { appendCalendarHeader } from './calendar-shared.js';
 import { clearFertileRange, getFertileRange, getCycleStartDates } from "../domain.js";
 import { hideModal, persistStore, showModal } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
+import { isBlankEntry } from "../data-validation.js";
 
 let draft = null;
+let drag = null;
+let suppressNextClick = false;
 
 function collectFertileDays() {
   const selected = new Set(Object.keys(store.entries).filter(key => store.entries[key]?.isFertile === true));
@@ -27,6 +30,69 @@ function toggleDay(key) {
   else draft.selectedKeys.add(key);
   renderPicker();
   getElementById("fertileRangeCalendar").querySelector(`[data-date="${key}"]`)?.focus({ preventScroll: true });
+}
+
+// Updates one day in place so a drag does not rebuild the calendar under the finger.
+function setDraftDay(key, selected) {
+  if (selected) draft.selectedKeys.add(key);
+  else draft.selectedKeys.delete(key);
+  const cell = getElementById("fertileRangeCalendar")?.querySelector(`[data-date="${key}"]`);
+  cell?.classList.toggle("fertile-day", selected);
+  cell?.setAttribute("aria-pressed", String(selected));
+}
+
+/** Date keys from `from` to `to` inclusive, in either direction. */
+export function daysBetween(from, to) {
+  const step = from <= to ? 1 : -1;
+  const cursor = parseDateKey(from);
+  const keys = [from];
+  while (keys.at(-1) !== to) {
+    cursor.setDate(cursor.getDate() + step);
+    keys.push(formatDateKey(cursor));
+  }
+  return keys;
+}
+
+function dayKeyAt(clientX, clientY) {
+  return document.elementFromPoint(clientX, clientY)?.closest?.("#fertileRangeCalendar [data-date]")?.dataset.date;
+}
+
+/**
+ * Drag across days to mark several at once. The first day decides whether the
+ * drag marks or unmarks; taps and keyboard activation still toggle a single day.
+ */
+export function bindFertileRangeDrag() {
+  const calendar = getElementById("fertileRangeCalendar");
+  if (!calendar || calendar.dataset.dragBound) return;
+  calendar.dataset.dragBound = "true";
+  calendar.addEventListener("pointerdown", event => {
+    if (!draft || (event.pointerType === "mouse" && event.button !== 0)) return;
+    const key = event.target.closest?.("[data-date]")?.dataset.date;
+    if (!key) return;
+    event.preventDefault();
+    drag = { pointerId: event.pointerId, select: !draft.selectedKeys.has(key), lastKey: key };
+    setDraftDay(key, drag.select);
+    calendar.setPointerCapture?.(event.pointerId);
+  });
+  calendar.addEventListener("pointermove", event => {
+    if (drag?.pointerId !== event.pointerId) return;
+    const key = dayKeyAt(event.clientX, event.clientY);
+    if (!key || key === drag.lastKey) return;
+    // Fill every day between the previous and current position, so a fast swipe or a
+    // drag across rows marks a continuous range in calendar order.
+    daysBetween(drag.lastKey, key).forEach(day => setDraftDay(day, drag.select));
+    drag.lastKey = key;
+  });
+  const finish = event => {
+    if (drag?.pointerId !== event.pointerId) return;
+    calendar.releasePointerCapture?.(event.pointerId);
+    drag = null;
+    // The pointer already applied the change; ignore the click that follows it.
+    suppressNextClick = true;
+    setTimeout(() => { suppressNextClick = false; }, 0);
+  };
+  calendar.addEventListener("pointerup", finish);
+  calendar.addEventListener("pointercancel", finish);
 }
 
 function renderPicker() {
@@ -55,7 +121,13 @@ function renderPicker() {
     cell.setAttribute("aria-pressed", String(draft.selectedKeys.has(key)));
     setTranslatedAttribute(cell, "aria-label", start ? `${key} (CD ${calendarDayDifference(parseDateKey(key), start) + 1})` : key);
     cell.classList.toggle("fertile-day", draft.selectedKeys.has(key));
-    cell.onclick = () => toggleDay(key);
+    cell.onclick = () => {
+      if (suppressNextClick) {
+        suppressNextClick = false;
+        return;
+      }
+      toggleDay(key);
+    };
     calendar.appendChild(cell);
   }
 }
@@ -93,6 +165,10 @@ export function saveFertileRangeModal(render) {
     if (store.entries[key]?.isFertile === true) delete store.entries[key].isFertile;
   });
   draft.selectedKeys.forEach(key => store.updateEntry(key, { isFertile: true }));
+  // An unmarked day that held nothing else must not keep stretching the map and chart.
+  Object.keys(store.entries).forEach(key => {
+    if (isBlankEntry(store.entries[key])) delete store.entries[key];
+  });
   clearFertileRange();
   if (!persistStore()) {
     render();

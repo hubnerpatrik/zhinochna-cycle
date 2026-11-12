@@ -120,3 +120,10 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
 }
 .day-switcher-btn:hover { background: var(--hairline); }
 .day-switcher-btn:active { transform: scale(0.92); }
+
+/* Fertile range: dragging across days marks them, so the grid must not scroll or select text. */
+.fertile-range-calendar .day {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}

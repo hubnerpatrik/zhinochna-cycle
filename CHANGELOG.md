@@ -19,6 +19,9 @@ vMAJOR.MINOR.PATCH
 - Switch to the previous or next day directly in Edit Day, which now shows the selected date and cycle day.
 - Show cervix height as a short dash with the openness symbol, without the vertical scale.
 - Copy a map from My Maps. The copy opens as a separate map and the original stays unchanged.
+- Markers stay on like Cross cells: tap any number of days to add or change their markers, then choose Done.
+- Mark or unmark fertile days by dragging across the calendar. Every day between the start and end of the drag changes together.
+- Unmarking a fertile day that holds no other record now removes it, so the map and chart no longer stay extended to that day. Saving fertile days also clears such leftover empty days from earlier versions.
 
 ## 0.17.1 — 2026-11-10
 

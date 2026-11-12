@@ -9,6 +9,7 @@ import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
 import { LAYOUT, PHONE_LAYOUT_QUERY, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
 import { observationChoiceValue } from '../ui/observation-values.js';
 import {
+  bindFertileRangeDrag,
   changeFertileRangeMonth,
   clearFertileRangeModal,
   clearMarkersModalInput,
@@ -168,6 +169,7 @@ export function initializeActiveMapControls({
   bindButton("clearFertileRangeBtn", clearFertileRangeModal);
   bindButton("fertileRangePrevMonth", () => changeFertileRangeMonth(-1));
   bindButton("fertileRangeNextMonth", () => changeFertileRangeMonth(1));
+  bindFertileRangeDrag();
   bindButton("clearMarkersModalBtn", clearMarkersModalInput);
   bindButton("saveMarkersModalBtn", () => saveMarkersModal(render));
   bindButton("saveCervixModalBtn", () => saveCervixModal(render));

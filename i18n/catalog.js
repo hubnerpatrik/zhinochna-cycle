@@ -166,6 +166,7 @@ export const messages = {
   'Cervix Marker': ['Značka čípku', 'Značka krčka', 'Позначка шийки матки'],
   'Clear': ['Vymazat', 'Vymazať', 'Очистити'],
   'Clear range': ['Vymazat výběr', 'Vymazať výber', 'Очистити вибір'],
+  'Tap a day, or drag across several days to mark or unmark them.': ['Klepni na den, nebo táhni přes více dnů a označ nebo zruš jejich výběr.', 'Ťukni na deň, alebo potiahni cez viac dní a označ alebo zruš ich výber.', 'Торкніться дня або проведіть по кількох днях, щоб позначити чи зняти позначку.'],
   'Firmness': ['Tuhost', 'Tuhosť', 'Щільність'],
   'Hard': ['Tuhý', 'Tuhý', 'Твердий'],
   'Soft': ['Měkký', 'Mäkký', 'М’який'],
@@ -287,6 +288,6 @@ export const messages = {
   'Crossed cells saved.': ['Přeškrtnuté buňky uloženy.', 'Prečiarknuté bunky uložené.', 'Закреслені клітинки збережено.'],
   'Profile Setup': ['Nastavení profilu', 'Nastavenie profilu', 'Налаштування профілю'],
   'Create your profile before opening the main menu.': ['Před otevřením hlavního menu si vytvoř profil.', 'Pred otvorením hlavného menu si vytvor profil.', 'Створіть профіль перед відкриттям головного меню.'],
-  'Click a day on the chart to choose a marker day.': ['Klepni na den v grafu pro umístění značky.', 'Ťukni na deň v grafe pre umiestnenie značky.', 'Торкніться дня на графіку, щоб розмістити позначку.'],
+  'Tap a day on the chart to add or change its marker.': ['Klepni na den v grafu a přidej nebo změň jeho značku.', 'Ťukni na deň v grafe a pridaj alebo zmeň jeho značku.', 'Торкніться дня на графіку, щоб додати або змінити позначку.'],
   'Click to place both coverlines': ['Klepnutím umísti obě pomocné čáry', 'Ťuknutím umiestni obe pomocné čiary', 'Торкніться, щоб розмістити обидві допоміжні лінії'],
 };
