@@ -16,6 +16,7 @@ Cycle Tracker: browser app for symptothermal cycle observations (calendar + Canv
 npm run check   # lint (syntax check) + tests + vite build — run before every commit
 npm test        # node --test test/*.test.js
 npm run dev     # Vite; set VITE_DEV_AUTH_BYPASS=true in .env.development.local for local UI without sign-in
+                # (empty dev storage is seeded with a demo profile and map from dev/demo-data.js)
 npx vercel dev  # full stack with API (needs .env with DATABASE_URL, VITE_NEON_AUTH_URL)
 npm run db:migrate
 ```
