@@ -14,22 +14,36 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
-- Keep the temperature line solid between consecutive days when the clocks change. Only days without a measurement are bridged with a dashed line.
-- Keep the mobile layout when a phone is turned to landscape instead of switching to the desktop layout.
-- Switch to the previous or next day directly in Edit Day, which now shows the selected date and cycle day.
-- Show cervix height as a short dash with the openness symbol, without the vertical scale.
+## 0.18.0 — 2026-11-12
+
+### Added
+
 - Copy a map from My Maps. The copy opens as a separate map and the original stays unchanged.
-- Markers stay on like Cross cells: tap any number of days to add or change their markers, then choose Done.
-- Mark or unmark fertile days by dragging across the calendar. Every day between the start and end of the drag changes together.
-- My Profile now holds only your name, consultant and photo. Usual measurement time, method, goal and age are set for each map when you create it, suggested from your newest map, and can be changed with Edit in the map's profile details on desktop and mobile. Changing your profile no longer changes the settings of existing maps. Each map card in My Maps lists its settings.
-- Imported maps show who shared them and keep the author's measurement settings, which cannot be edited.
-- Day editors, Day Info and My Maps show dates in words for the selected language, for example "19. listopadu 2026 (DC 29)".
-- Days after the last record show their cycle day in Edit Day instead of "CD -".
-- The mobile graph scrolls to the selected day when it opens, or when a day outside the current view was picked in the calendar.
-- The map preview in My Maps uses singular English words, such as "1 note".
+- Filter My Maps to show all maps, your own, shared with you, open or closed, alongside the year and month filters. Each map card lists its measurement settings.
+- Switch to the previous or next day directly in Edit Day, which shows the selected date and cycle day.
 - Calendar days show small dots for recorded influence factors, sex and additional symptoms, explained in the legend.
-- Filter My Maps to show all maps, your own, shared with you, open or closed, alongside the year and month filters.
-- Unmarking a fertile day that holds no other record now removes it, so the map and chart no longer stay extended to that day. Saving fertile days also clears such leftover empty days from earlier versions.
+- Mark or unmark fertile days by dragging across the calendar. Every day between the start and end of the drag changes together.
+
+### Changed
+
+- My Profile holds only your name, consultant and photo. Usual measurement time, method, goal and age are set for each map when you create it, suggested from your newest map, and can be changed with Edit in the map's profile details on desktop and mobile. Changing your profile no longer changes existing maps.
+- Imported maps show who shared them and keep the author's measurement settings, which cannot be edited.
+- Markers stay on like Cross cells: tap any number of days to add or change their markers, then choose Done.
+- Cervix height uses a vertical line with the height dash and openness symbol, without the scale ticks.
+- Day editors, Day Info and My Maps show dates in words for the selected language, for example "19. listopadu 2026 (DC 29)".
+- The mobile graph scrolls to the selected day when it opens, or when a day outside the current view was picked in the calendar.
+
+### Fixed
+
+- Keep the mobile layout when a phone is turned to landscape instead of switching to the desktop layout.
+- Keep the temperature line solid between consecutive days when the clocks change. Only days without a measurement are bridged with a dashed line.
+- Unmarking a fertile day that holds no other record removes it, so the map and chart no longer stay extended to that day. Saving fertile days also clears such leftover empty days from earlier versions.
+- Days after the last record show their cycle day in Edit Day instead of "CD -".
+- The map preview in My Maps uses singular English words, such as "1 note".
+
+### Deployment
+
+- No database migration. After deploying, reload the app on every device so an older open version cannot write profile values back into map settings.
 
 ## 0.17.1 — 2026-11-10
 
