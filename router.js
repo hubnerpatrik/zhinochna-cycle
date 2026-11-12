@@ -216,6 +216,13 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
             navigate("my-maps");
             return true;
           },
+          onCopy: (mapId, name) => {
+            const result = runStoreAction(() => store.duplicateMap(mapId, name));
+            if (!result.ok || !result.value) return false;
+            showMessage?.("Map copied ✓");
+            navigate("my-maps");
+            return true;
+          },
           onDelete: mapId => {
             const result = runStoreAction(() => store.deleteMap(mapId));
             if (!result.ok || !result.value) return;
@@ -277,6 +284,13 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
     }
   }
 
+  function modalRoute(modalId) {
+    const params = new URLSearchParams({ map: store.getActiveMapId(), page: MODAL_ROUTES[modalId] });
+    if (store.selectedKey) params.set("day", store.selectedKey);
+    if (store.selectedPointType === "adjusted") params.set("point", "adjusted");
+    return { screen: "active-map", params };
+  }
+
   function start() {
     navigation.start({
       resume: ({ screen }) => preferActiveMapOnResume?.()
@@ -291,10 +305,11 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
     start,
     modalOpened(modalId) {
       if (rendering || !MODAL_ROUTES[modalId]) return;
-      const params = new URLSearchParams({ map: store.getActiveMapId(), page: MODAL_ROUTES[modalId] });
-      if (store.selectedKey) params.set("day", store.selectedKey);
-      if (store.selectedPointType === "adjusted") params.set("point", "adjusted");
-      navigate({ screen: "active-map", params }, { silent: true });
+      navigate(modalRoute(modalId), { silent: true });
+    },
+    modalRouteChanged(modalId) {
+      if (rendering || !MODAL_ROUTES[modalId]) return;
+      navigate(modalRoute(modalId), { silent: true, replace: true });
     },
     modalClosed() {
       if (!rendering) navigation.back("active-map");

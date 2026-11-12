@@ -24,7 +24,7 @@ body.mobile-map-active .account-bar { display: none; }
 .cloud-status [hidden] { display: none; }
 .cloud-status[data-warning="true"] { padding: 12px; border: 1px solid #e8ba82; border-radius: 10px; background: #fff7e9; color: #704421; }
 body.mobile-map-active .cloud-status { position: fixed; bottom: 8px; right: 8px; z-index: 30; max-width: min(360px, calc(100vw - 32px)); margin: 0; padding: 6px 10px; border-radius: 8px; background: var(--card); box-shadow: var(--card-elev); }
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .auth-shell { margin: 3vh auto; padding: 16px; }
   .account-storage-note { order: 3; flex-basis: 100%; }
 }

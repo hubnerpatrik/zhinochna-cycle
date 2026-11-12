@@ -423,6 +423,25 @@ export class Store {
     return true;
   }
 
+  /** Adds an independent open copy of a map, including the active map's unsaved-to-list state. */
+  duplicateMap(mapId, name) {
+    const source = this.getPersistentState().maps[mapId];
+    const nextName = String(name ?? "").trim();
+    if (!source || !nextName) return null;
+    const copyId = this._generateMapId();
+    const copy = {
+      ...clonePersistentState(source),
+      id: copyId,
+      name: nextName,
+      createdAt: new Date().toISOString(),
+      status: "open",
+      closedAt: null,
+    };
+    this.maps[copyId] = this._normalizeMap(copy, copyId, nextName);
+    this._persistAll();
+    return this.maps[copyId];
+  }
+
   deleteMap(mapId) {
     if (!this.maps[mapId]) return false;
     delete this.maps[mapId];

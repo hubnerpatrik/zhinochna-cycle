@@ -5,11 +5,10 @@ import { openCycleSummary } from "../ui/cycle-summary.js";
 import { openProfileInfo } from "../ui/profile-info-modal.js";
 import { cycleStarts } from "../cycle-summary.js";
 import { buildColumns } from '../domain.js';
-import { DEFAULT_LAYOUT, LAYOUT, TEMP_FACTORS, chartY, formatDateKey, formatTemp, getAdjustedTemp, parseDateKey, getElementById, syncCSSVariables } from "../core.js";
+import { DEFAULT_LAYOUT, LAYOUT, PHONE_LAYOUT_QUERY, TEMP_FACTORS, chartY, formatDateKey, formatTemp, getAdjustedTemp, parseDateKey, getElementById, syncCSSVariables } from "../core.js";
 import { applyLayoutClass } from '../ui/layout-classes.js';
 import { ZOOM_MIN, ZOOM_MAX, clampZoom } from './map-gestures.js';
 
-const MOBILE_BREAKPOINT = 560;
 const MOBILE_AXIS_WIDTH = 48;
 const CHART_BORDER_WIDTH = 2;
 const MIN_READABLE_COLUMN_WIDTH = 32;
@@ -39,7 +38,7 @@ export function readableColumnWidth(viewportWidth, count) {
 }
 
 export function createMobileMap({ render, getColumns, interactions }) {
-  const media = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+  const media = window.matchMedia(PHONE_LAYOUT_QUERY);
   const views = new Map();
   let ready = false;
   let desktopWidth = LAYOUT.columnWidth;

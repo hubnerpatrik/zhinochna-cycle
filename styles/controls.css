@@ -73,7 +73,7 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
 #fertileRangeCalendar button.day { font: inherit; color: var(--text); }
 #fertileRangeCalendar button.day:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .map-day.cycle-boundary, .map-cell.cycle-boundary { box-shadow: inset 2px 0 #b41414; }
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .mobile-map-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0; }
   .mobile-map-tabs button { width: 100%; min-height: 48px; border-radius: 12px; }
   .mobile-map-tabs svg { width: 28px; height: 28px; }
@@ -93,3 +93,30 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   .app-header { padding-right: 82px; }
   .mobile-map-header .language-picker { flex-basis: 60px; width: 60px; }
 }
+
+/* Edit Day: switch to the previous or next calendar day without closing the menu. */
+.day-switcher {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 12px;
+}
+.day-switcher-label {
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.day-switcher-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), transform 0.1s var(--ease);
+}
+.day-switcher-btn:hover { background: var(--hairline); }
+.day-switcher-btn:active { transform: scale(0.92); }

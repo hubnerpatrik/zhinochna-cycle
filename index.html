@@ -235,6 +235,11 @@
   <div id="actionModal" class="modal hidden">
     <div class="modal-card">
       <h2 data-i18n>Edit Day</h2>
+      <div class="day-switcher" role="group" aria-label="Day" data-i18n-aria-label="Day">
+        <button id="actionModalPrevDayBtn" class="day-switcher-btn" type="button" aria-label="Previous day" data-i18n-aria-label="Previous day">‹</button>
+        <span id="actionModalDay" class="day-switcher-label" aria-live="polite"></span>
+        <button id="actionModalNextDayBtn" class="day-switcher-btn" type="button" aria-label="Next day" data-i18n-aria-label="Next day">›</button>
+      </div>
       <div id="actionModalActions"></div>
       <button id="closeActionModalBtn" class="btn secondary" type="button" data-i18n>Close</button>
     </div>

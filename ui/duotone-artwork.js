@@ -11,11 +11,10 @@ stretchy:'<path class="observation-icon-fill" d="M8 14q16 12 32 0v14q-16-12-32 0
 white:`<path d="${droplet}" fill="#fff"/><path class="observation-icon-line" d="${droplet}"/><path class="observation-icon-line" d="M18 25q0 5 4 6" opacity=".35"/>`,
 half:`<path class="observation-icon-fill" d="M24 4C20 10 12 17 12 24a12 12 0 0 0 12 12Z"/><path class="observation-icon-line" d="${droplet}"/><path class="observation-icon-line" d="M24 5v30" opacity=".5"/>`,
 clear:`<path class="observation-icon-line" d="${droplet}" stroke-dasharray="2 4"/><path class="observation-icon-line" d="m19 27 9-9m-7 12 8-8" opacity=".4"/>`,
-high:'<path class="observation-icon-line" d="M13 5v29m-4-4 4 4 4-4M9 9l4-4 4 4M24 6h15m-15 28h15" opacity=".6"/><circle class="observation-icon-fill" cx="31" cy="13" r="6"/><circle class="observation-icon-line" cx="31" cy="13" r="6"/>',
 closed:'<circle cx="24" cy="20" r="5" fill="#205b49" stroke="none"/>',
 open:'<circle class="observation-icon-fill" cx="24" cy="20" r="15"/><circle class="observation-icon-line" cx="24" cy="20" r="15"/><circle cx="24" cy="20" r="8" fill="var(--observation-icon-paper, #fffaf6)"/><circle class="observation-icon-line" cx="24" cy="20" r="8"/>',
 };
-const height = y => '<path class="observation-icon-line" d="M13 5v29m-4-4 4 4 4-4M9 9l4-4 4 4M24 6h15m-15 28h15" opacity=".6"/><circle class="observation-icon-fill" cx="31" cy="'+y+'" r="6"/><circle class="observation-icon-line" cx="31" cy="'+y+'" r="6"/>';
+const height = y => '<path class="observation-icon-line" d="M13 5v29" stroke-width="3.4" opacity=".7"/><path class="observation-icon-line" d="M13 '+y+'h12"/><circle class="observation-icon-fill" cx="31" cy="'+y+'" r="6"/><circle class="observation-icon-line" cx="31" cy="'+y+'" r="6"/>';
 const opening = radius => '<circle class="observation-icon-fill" cx="24" cy="20" r="15"/><circle class="observation-icon-line" cx="24" cy="20" r="15"/><circle class="observation-icon-line" cx="24" cy="20" r="'+radius+'" fill="var(--observation-icon-paper, #fffaf6)"/>';
 const groups = {
   sex: { true: '<path class="observation-icon-fill" d="M24 34 10 21C0 10 15 1 24 12 33 1 48 10 38 21Z"/><path class="observation-icon-line" d="M24 34 10 21C0 10 15 1 24 12 33 1 48 10 38 21Z"/>' },
@@ -24,7 +23,7 @@ const groups = {
   consistency: { '': artwork.none, creamy: artwork.creamy, slightlyStretchy: artwork.slightly, stretchy: artwork.stretchy },
   color: { '': artwork.none, white: artwork.white, whiteTranslucent: artwork.half, translucent: artwork.clear,
     other: '<path class="observation-icon-line" d="'+droplet+'"/><path class="observation-icon-line" d="M24 17v12m-6-6h12"/>' },
-  cervixHeight: { low: height(27), medium: height(20), high: artwork.high },
+  cervixHeight: { low: height(31), medium: height(20), high: height(9) },
   cervixOpenness: { closed: artwork.closed, medium: opening(4.5), open: artwork.open },
 };
 export function duotoneArtwork(group, value) { return groups[group]?.[value] || ''; }

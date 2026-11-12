@@ -1,7 +1,7 @@
 /* Compact mobile surfaces and a thumb-friendly navigation dock. */
 .nav-icon, .nav-label-mobile, .menu-card-icon { display: none; }
 
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   :root {
     --mobile-nav-item-height: clamp(48px, 14vw, 58px);
     --mobile-nav-bottom: max(12px, env(safe-area-inset-bottom));

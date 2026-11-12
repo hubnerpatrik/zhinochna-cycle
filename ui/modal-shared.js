@@ -37,6 +37,11 @@ export function hideModal(modalId) {
   if (wasOpen) navigation?.modalClosed(modalId);
 }
 
+/** Keeps the open dialog's URL in step with the selected day without adding history entries. */
+export function refreshModalRoute(modalId) {
+  navigation?.modalRouteChanged?.(modalId);
+}
+
 export function afterModalSave(modalId, render, reopen) {
   render();
   if (!navigation && reopen) reopen();

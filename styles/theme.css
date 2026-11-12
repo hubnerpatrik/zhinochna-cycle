@@ -986,7 +986,7 @@ select:focus {
   backdrop-filter: blur(12px);
 }
 
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .app-header {
     margin-inline: 0;
     padding-inline: 0;
@@ -1110,7 +1110,7 @@ select:focus {
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .app {
     width: 100%;
     padding:

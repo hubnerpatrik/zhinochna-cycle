@@ -15,6 +15,10 @@ vMAJOR.MINOR.PATCH
 ## Unreleased
 
 - Keep the temperature line solid between consecutive days when the clocks change. Only days without a measurement are bridged with a dashed line.
+- Keep the mobile layout when a phone is turned to landscape instead of switching to the desktop layout.
+- Switch to the previous or next day directly in Edit Day, which now shows the selected date and cycle day.
+- Show cervix height as a short dash with the openness symbol, without the vertical scale.
+- Copy a map from My Maps. The copy opens as a separate map and the original stays unchanged.
 
 ## 0.17.1 — 2026-11-10
 

@@ -8,6 +8,10 @@ export const querySelectorAll = selector => document.querySelectorAll(selector);
 // Retain the existing public aliases for integrations importing core utilities.
 export { getElementById as qs, querySelectorAll as qsa };
 
+// Phones use the mobile layout in both orientations: a landscape phone is wide but short.
+// Keep in sync with the matching @media rules in styles/*.css.
+export const PHONE_LAYOUT_QUERY = "(max-width: 560px), (max-height: 500px) and (pointer: coarse)";
+
 export const DEFAULT_LAYOUT = Object.freeze({
   columnWidth: 50,
   sideLabelWidth: 96,

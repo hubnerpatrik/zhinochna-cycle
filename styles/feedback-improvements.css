@@ -52,7 +52,7 @@
 .icon-label-button > svg { width: 20px; height: 20px; flex-shrink: 0; }
 .action-icon { display: grid; place-items: center; width: 32px; height: 32px; flex: 0 0 32px; padding: 0; line-height: 0; }
 .action-icon > svg.interface-duotone { display: block; width: 20px; height: 20px; margin: 0; }
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .nav-icon { margin-right: 0; }
   .menu-card-icon { margin-bottom: 0; }
   #mobileObservationsBtn { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; margin-top: 12px; border: 1px solid var(--hairline); border-radius: 14px; background: #fffaf6; font-size: 14px; font-weight: 600; color: var(--text); scroll-margin-top: 12px; }
@@ -123,7 +123,7 @@
   body:has(.mobile-chart-expanded:not(.hidden)) { overflow: hidden; }
   .mobile-chart-expanded .mobile-chart-toolbar { margin-bottom: 12px; }
 }
-@media (max-width: 560px) and (prefers-reduced-transparency: reduce) {
+@media (max-width: 560px) and (prefers-reduced-transparency: reduce), (max-height: 500px) and (pointer: coarse) and (prefers-reduced-transparency: reduce) {
   .header-nav { background: #fffaf6; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 

@@ -6,7 +6,7 @@ import { t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
 
-function renderMapList(container, maps, activeMapId, year, month, onOpen, onRename, onDelete, onExport) {
+function renderMapList(container, maps, activeMapId, year, month, { onOpen, onRename, onCopy, onDelete, onExport }) {
   const filteredMaps = maps.filter(map => matchesFilter(map, year, month));
   const list = container.querySelector("#mapsList");
 
@@ -45,6 +45,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
             <span class="map-share-tooltip" id="map-share-info-${index}" role="tooltip"><span data-i18n>Map sharing is being fixed.</span></span>
           </div>
           <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
+          <button type="button" class="btn secondary map-copy-btn" data-map-copy-id="${escapeHtml(map.id)}" data-i18n>Copy</button>
           <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
           <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
         </div>
@@ -85,6 +86,25 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
     });
   });
 
+  list.querySelectorAll("[data-map-copy-id]").forEach(button => {
+    button.addEventListener("click", () => {
+      const mapId = button.dataset.mapCopyId;
+      const map = filteredMaps.find(item => item.id === mapId);
+      if (!map) return;
+      const suggestedName = `${map.name || t("Untitled map")} (${t("copy")})`.slice(0, MAP_NAME_MAX_LENGTH);
+
+      openMapDialog({
+        title: 'Copy map', submitLabel: 'Create copy', closeOnNavigation: true,
+        body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="${MAP_NAME_MAX_LENGTH}" value="${escapeHtml(suggestedName)}" autofocus></label>`,
+        onSubmit: dialog => {
+          const name = dialog.querySelector('input').value.trim();
+          if (!name) return;
+          if (onCopy?.(mapId, name) !== false) dialog.close();
+        },
+      });
+    });
+  });
+
   list.querySelectorAll("[data-map-delete-id]").forEach(button => {
     button.addEventListener("click", () => {
       const confirmation = button.closest(".map-list-card")?.querySelector(".map-delete-confirmation");
@@ -104,7 +124,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
   });
 }
 
-export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImport, onOpen, onRename, onDelete, onExport }) {
+export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImport, onOpen, onRename, onCopy, onDelete, onExport }) {
   const mapMeta = maps.map(buildMapMeta);
   const allYears = [...new Set(mapMeta.flatMap(map => map.years))].sort();
   let selectedYear = "";
@@ -165,7 +185,7 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
   const refresh = () => {
     selectedYear = yearFilter?.value ?? "";
     selectedMonth = monthFilter?.value ?? "";
-    renderMapList(container, mapMeta, activeMapId, selectedYear, selectedMonth, onOpen, onRename, onDelete, onExport);
+    renderMapList(container, mapMeta, activeMapId, selectedYear, selectedMonth, { onOpen, onRename, onCopy, onDelete, onExport });
   };
 
   yearFilter?.addEventListener("change", refresh);
