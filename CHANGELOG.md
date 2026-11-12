@@ -14,6 +14,8 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+- Keep the temperature line solid between consecutive days when the clocks change. Only days without a measurement are bridged with a dashed line.
+
 ## 0.17.1 — 2026-11-10
 
 - Open the active map’s calendar on mobile startup and when returning to the map from another screen. Direct links and restored day editors still open their requested views.
