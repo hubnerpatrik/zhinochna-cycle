@@ -1,13 +1,26 @@
 import { MAP_NAME_MAX_LENGTH } from '../form-limits.js';
-import { buildMapMeta, matchesFilter } from '../map-list-model.js';
+import { MAP_KINDS, buildMapMeta, matchesFilter, matchesKind } from '../map-list-model.js';
 import { ISO_DATE_KEY_LENGTH } from '../date-utils.js';
 import { escapeHtml } from "./view-utils.js";
 import { t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
+import { MEASUREMENT_METHODS, PROFILE_GOALS, pickMapSettings } from '../profile-options.js';
 
-function renderMapList(container, maps, activeMapId, year, month, { onOpen, onRename, onCopy, onDelete, onExport }) {
-  const filteredMaps = maps.filter(map => matchesFilter(map, year, month));
+/** One line with the map's own measurement settings; empty values are left out. */
+function renderMapSettingsSummary(snapshot) {
+  const settings = pickMapSettings(snapshot);
+  const parts = [
+    settings.usualMeasurementTime && `<span data-i18n>Time of measurement</span> ${escapeHtml(settings.usualMeasurementTime)}`,
+    MEASUREMENT_METHODS[settings.measurementMethod] && `<span data-i18n>${escapeHtml(MEASUREMENT_METHODS[settings.measurementMethod])}</span>`,
+    PROFILE_GOALS[settings.goal] && `<span data-i18n>${escapeHtml(PROFILE_GOALS[settings.goal])}</span>`,
+    settings.age && `<span data-i18n>Age</span> ${escapeHtml(settings.age)}`,
+  ].filter(Boolean);
+  return parts.length ? `<p class="map-list-meta map-list-settings">${parts.join(" · ")}</p>` : "";
+}
+
+function renderMapList(container, maps, activeMapId, { year, month, kind }, { onOpen, onRename, onCopy, onDelete, onExport }) {
+  const filteredMaps = maps.filter(map => matchesKind(map, kind) && matchesFilter(map, year, month));
   const list = container.querySelector("#mapsList");
 
   if (!list) return;
@@ -33,6 +46,7 @@ function renderMapList(container, maps, activeMapId, year, month, { onOpen, onRe
             ${map.profileSnapshotLocked ? '<span class="map-pill" data-i18n>Shared</span>' : ""}
           </div>
           <p class="map-list-meta"> <span data-i18n>${escapeHtml(map.dateRange)}</span></p>
+          ${renderMapSettingsSummary(map.profileSnapshot)}
           ${map.profileSnapshotLocked ? `<p class="map-list-meta map-list-author"><span data-i18n>Shared by:</span> ${map.profileSnapshot?.name ? escapeHtml(map.profileSnapshot.name) : `<span data-i18n>Unknown author</span>`}</p>` : ""}
           <p class="map-list-preview"><span data-i18n>Preview:</span> <span data-i18n>${escapeHtml(map.preview)}</span></p>
           <p class="map-list-meta"><span data-i18n>Last activity:</span> ${escapeHtml(String(map.lastActivity).slice(0, ISO_DATE_KEY_LENGTH))}</p>
@@ -128,8 +142,6 @@ function renderMapList(container, maps, activeMapId, year, month, { onOpen, onRe
 export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImport, onOpen, onRename, onCopy, onDelete, onExport }) {
   const mapMeta = maps.map(buildMapMeta);
   const allYears = [...new Set(mapMeta.flatMap(map => map.years))].sort();
-  let selectedYear = "";
-  let selectedMonth = "";
 
   container.innerHTML = `
     <section class="screen" aria-label="My maps" data-i18n-aria-label="My maps">
@@ -142,6 +154,12 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
 
         <div class="screen-card map-filter-card">
           <div class="map-filters">
+            <label>
+              <span class="input-label" data-i18n>Show</span>
+              <select id="mapsKindFilter">
+                ${Object.entries(MAP_KINDS).map(([value, label]) => `<option value="${value}" data-i18n>${escapeHtml(label)}</option>`).join("")}
+              </select>
+            </label>
             <label>
               <span class="input-label" data-i18n>Year</span>
               <select id="mapsYearFilter">
@@ -180,15 +198,16 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
     </section>
   `;
 
+  const kindFilter = container.querySelector("#mapsKindFilter");
   const yearFilter = container.querySelector("#mapsYearFilter");
   const monthFilter = container.querySelector("#mapsMonthFilter");
 
   const refresh = () => {
-    selectedYear = yearFilter?.value ?? "";
-    selectedMonth = monthFilter?.value ?? "";
-    renderMapList(container, mapMeta, activeMapId, selectedYear, selectedMonth, { onOpen, onRename, onCopy, onDelete, onExport });
+    const filters = { kind: kindFilter?.value ?? "", year: yearFilter?.value ?? "", month: monthFilter?.value ?? "" };
+    renderMapList(container, mapMeta, activeMapId, filters, { onOpen, onRename, onCopy, onDelete, onExport });
   };
 
+  kindFilter?.addEventListener("change", refresh);
   yearFilter?.addEventListener("change", refresh);
   monthFilter?.addEventListener("change", refresh);
   container.querySelector("#myMapsCreateBtn")?.addEventListener("click", () => onCreate?.());

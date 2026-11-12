@@ -26,6 +26,23 @@ export function buildMapMeta(map) {
   };
 }
 
+// Which maps My Maps shows: own or shared, open or closed.
+export const MAP_KINDS = Object.freeze({
+  '': 'All maps',
+  mine: 'My maps',
+  shared: 'Shared with me',
+  open: 'Open maps',
+  closed: 'Closed maps',
+});
+
+export function matchesKind(map, kind) {
+  if (kind === 'mine') return !map.profileSnapshotLocked;
+  if (kind === 'shared') return map.profileSnapshotLocked === true;
+  if (kind === 'open') return map.status !== 'closed';
+  if (kind === 'closed') return map.status === 'closed';
+  return true;
+}
+
 export function matchesFilter(map, year, month) {
   if (!year && !month) return true;
   return map.dates.some(date => {
