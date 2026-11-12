@@ -152,3 +152,29 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
 }
 
 .profile-details-dialog > .btn.primary { width: 100%; min-height: 48px; margin-top: 16px; }
+
+/* Calendar dots: influence factors, sex and additional symptoms recorded for the day. */
+.day-marks {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  display: flex;
+  gap: 3px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.day-mark {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+}
+.legend .day-mark { width: 9px; height: 9px; }
+.day-mark-factor { background: #e19a1c; }
+.day-mark-sex { background: #c2477e; }
+.day-mark-other { background: #6a62d6; }
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  .day-marks { bottom: 4px; gap: 2px; }
+  .day-mark { width: 6px; height: 6px; }
+}

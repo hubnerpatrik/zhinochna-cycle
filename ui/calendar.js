@@ -27,6 +27,31 @@ function temperatureScaleValues() {
   return temperatures;
 }
 
+// Small calendar dots for observations that are otherwise only visible in the map rows.
+export const CALENDAR_DAY_MARKS = Object.freeze([
+  ["factor", "Influence factors", entry => Boolean(entry?.tempFactors)],
+  ["sex", "Sex", entry => entry?.sex === true],
+  ["other", "Additional symptoms", entry => Boolean(entry?.other?.trim?.())],
+]);
+
+export function calendarDayMarks(entry) {
+  return CALENDAR_DAY_MARKS.filter(([, , recorded]) => recorded(entry)).map(([type]) => type);
+}
+
+function appendDayMarks(cell, entry) {
+  const marks = calendarDayMarks(entry);
+  if (!marks.length) return;
+  const dots = document.createElement("span");
+  dots.className = "day-marks";
+  dots.setAttribute("aria-hidden", "true");
+  marks.forEach(type => {
+    const dot = document.createElement("span");
+    dot.className = `day-mark day-mark-${type}`;
+    dots.appendChild(dot);
+  });
+  cell.appendChild(dots);
+}
+
 export function renderMonth() {
   setDateText(getElementById("monthLabel"), new Date(store.year, store.month));
 }
@@ -73,6 +98,7 @@ export function renderCalendar(selectColumn) {
     const dayNumber = document.createElement("span");
     dayNumber.textContent = day;
     cell.appendChild(dayNumber);
+    appendDayMarks(cell, entry);
 
     if (entry?.bleeding === "menstruation") cell.classList.add("red");
     if (entry?.bleeding === "spotting") cell.classList.add("spotting-day");

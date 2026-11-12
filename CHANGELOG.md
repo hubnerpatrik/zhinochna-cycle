@@ -23,6 +23,7 @@ vMAJOR.MINOR.PATCH
 - Mark or unmark fertile days by dragging across the calendar. Every day between the start and end of the drag changes together.
 - My Profile now holds only your name, consultant and photo. Usual measurement time, method, goal and age are set for each map when you create it, suggested from your newest map, and can be changed with Edit in the map's profile details on desktop and mobile. Changing your profile no longer changes the settings of existing maps. Each map card in My Maps lists its settings.
 - Imported maps show who shared them and keep the author's measurement settings, which cannot be edited.
+- Calendar days show small dots for recorded influence factors, sex and additional symptoms, explained in the legend.
 - Filter My Maps to show all maps, your own, shared with you, open or closed, alongside the year and month filters.
 - Unmarking a fertile day that holds no other record now removes it, so the map and chart no longer stay extended to that day. Saving fertile days also clears such leftover empty days from earlier versions.
 
