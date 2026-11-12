@@ -1,13 +1,38 @@
 import { MAP_NAME_MAX_LENGTH } from '../form-limits.js';
-import { buildMapMeta, matchesFilter } from '../map-list-model.js';
-import { ISO_DATE_KEY_LENGTH } from '../date-utils.js';
+import { MAP_KINDS, buildMapMeta, matchesFilter, matchesKind } from '../map-list-model.js';
+import { parseDateKey } from '../date-utils.js';
 import { escapeHtml } from "./view-utils.js";
-import { t } from "../i18n.js";
+import { formatDate, t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
+import { MEASUREMENT_METHODS, PROFILE_GOALS, pickMapSettings } from '../profile-options.js';
 
-function renderMapList(container, maps, activeMapId, year, month, onOpen, onRename, onDelete, onExport) {
-  const filteredMaps = maps.filter(map => matchesFilter(map, year, month));
+// Dates in words for the current language; the i18n observer updates them on language change.
+function dateSpan(date) {
+  if (!date || Number.isNaN(date.getTime())) return "—";
+  return `<span data-i18n-date="${date.getTime()}" data-i18n-date-format="day">${escapeHtml(formatDate(date))}</span>`;
+}
+
+// Last activity is a day key or, for closed maps, an ISO timestamp.
+function activityDate(value) {
+  const text = String(value ?? "");
+  return /^\d{4}-\d{2}-\d{2}$/.test(text) ? parseDateKey(text) : new Date(text);
+}
+
+/** One line with the map's own measurement settings; empty values are left out. */
+function renderMapSettingsSummary(snapshot) {
+  const settings = pickMapSettings(snapshot);
+  const parts = [
+    settings.usualMeasurementTime && `<span data-i18n>Time of measurement</span> ${escapeHtml(settings.usualMeasurementTime)}`,
+    MEASUREMENT_METHODS[settings.measurementMethod] && `<span data-i18n>${escapeHtml(MEASUREMENT_METHODS[settings.measurementMethod])}</span>`,
+    PROFILE_GOALS[settings.goal] && `<span data-i18n>${escapeHtml(PROFILE_GOALS[settings.goal])}</span>`,
+    settings.age && `<span data-i18n>Age</span> ${escapeHtml(settings.age)}`,
+  ].filter(Boolean);
+  return parts.length ? `<p class="map-list-meta map-list-settings">${parts.join(" · ")}</p>` : "";
+}
+
+function renderMapList(container, maps, activeMapId, { year, month, kind }, { onOpen, onRename, onCopy, onDelete, onExport }) {
+  const filteredMaps = maps.filter(map => matchesKind(map, kind) && matchesFilter(map, year, month));
   const list = container.querySelector("#mapsList");
 
   if (!list) return;
@@ -32,9 +57,11 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
             ${map.id === activeMapId ? '<span class="map-pill" data-i18n>Active</span>' : ""}
             ${map.profileSnapshotLocked ? '<span class="map-pill" data-i18n>Shared</span>' : ""}
           </div>
-          <p class="map-list-meta"> <span data-i18n>${escapeHtml(map.dateRange)}</span></p>
+          <p class="map-list-meta">${map.dates.length ? `${dateSpan(parseDateKey(map.dates[0]))} – ${dateSpan(parseDateKey(map.dates.at(-1)))}` : '<span data-i18n>No entries yet</span>'}</p>
+          ${renderMapSettingsSummary(map.profileSnapshot)}
+          ${map.profileSnapshotLocked ? `<p class="map-list-meta map-list-author"><span data-i18n>Shared by:</span> ${map.profileSnapshot?.name ? escapeHtml(map.profileSnapshot.name) : `<span data-i18n>Unknown author</span>`}</p>` : ""}
           <p class="map-list-preview"><span data-i18n>Preview:</span> <span data-i18n>${escapeHtml(map.preview)}</span></p>
-          <p class="map-list-meta"><span data-i18n>Last activity:</span> ${escapeHtml(String(map.lastActivity).slice(0, ISO_DATE_KEY_LENGTH))}</p>
+          <p class="map-list-meta"><span data-i18n>Last activity:</span> ${dateSpan(activityDate(map.lastActivity))}</p>
         </div>
         <div class="map-list-actions">
           <div class="map-export-picker">
@@ -45,6 +72,7 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
             <span class="map-share-tooltip" id="map-share-info-${index}" role="tooltip"><span data-i18n>Map sharing is being fixed.</span></span>
           </div>
           <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
+          <button type="button" class="btn secondary map-copy-btn" data-map-copy-id="${escapeHtml(map.id)}" data-i18n>Copy</button>
           <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
           <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
         </div>
@@ -85,6 +113,25 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
     });
   });
 
+  list.querySelectorAll("[data-map-copy-id]").forEach(button => {
+    button.addEventListener("click", () => {
+      const mapId = button.dataset.mapCopyId;
+      const map = filteredMaps.find(item => item.id === mapId);
+      if (!map) return;
+      const suggestedName = `${map.name || t("Untitled map")} (${t("copy")})`.slice(0, MAP_NAME_MAX_LENGTH);
+
+      openMapDialog({
+        title: 'Copy map', submitLabel: 'Create copy', closeOnNavigation: true,
+        body: `<label>${escapeHtml(t('Map name'))}<input name="mapName" type="text" required maxlength="${MAP_NAME_MAX_LENGTH}" value="${escapeHtml(suggestedName)}" autofocus></label>`,
+        onSubmit: dialog => {
+          const name = dialog.querySelector('input').value.trim();
+          if (!name) return;
+          if (onCopy?.(mapId, name) !== false) dialog.close();
+        },
+      });
+    });
+  });
+
   list.querySelectorAll("[data-map-delete-id]").forEach(button => {
     button.addEventListener("click", () => {
       const confirmation = button.closest(".map-list-card")?.querySelector(".map-delete-confirmation");
@@ -104,11 +151,9 @@ function renderMapList(container, maps, activeMapId, year, month, onOpen, onRena
   });
 }
 
-export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImport, onOpen, onRename, onDelete, onExport }) {
+export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImport, onOpen, onRename, onCopy, onDelete, onExport }) {
   const mapMeta = maps.map(buildMapMeta);
   const allYears = [...new Set(mapMeta.flatMap(map => map.years))].sort();
-  let selectedYear = "";
-  let selectedMonth = "";
 
   container.innerHTML = `
     <section class="screen" aria-label="My maps" data-i18n-aria-label="My maps">
@@ -121,6 +166,12 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
 
         <div class="screen-card map-filter-card">
           <div class="map-filters">
+            <label>
+              <span class="input-label" data-i18n>Show</span>
+              <select id="mapsKindFilter">
+                ${Object.entries(MAP_KINDS).map(([value, label]) => `<option value="${value}" data-i18n>${escapeHtml(label)}</option>`).join("")}
+              </select>
+            </label>
             <label>
               <span class="input-label" data-i18n>Year</span>
               <select id="mapsYearFilter">
@@ -159,15 +210,16 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
     </section>
   `;
 
+  const kindFilter = container.querySelector("#mapsKindFilter");
   const yearFilter = container.querySelector("#mapsYearFilter");
   const monthFilter = container.querySelector("#mapsMonthFilter");
 
   const refresh = () => {
-    selectedYear = yearFilter?.value ?? "";
-    selectedMonth = monthFilter?.value ?? "";
-    renderMapList(container, mapMeta, activeMapId, selectedYear, selectedMonth, onOpen, onRename, onDelete, onExport);
+    const filters = { kind: kindFilter?.value ?? "", year: yearFilter?.value ?? "", month: monthFilter?.value ?? "" };
+    renderMapList(container, mapMeta, activeMapId, filters, { onOpen, onRename, onCopy, onDelete, onExport });
   };
 
+  kindFilter?.addEventListener("change", refresh);
   yearFilter?.addEventListener("change", refresh);
   monthFilter?.addEventListener("change", refresh);
   container.querySelector("#myMapsCreateBtn")?.addEventListener("click", () => onCreate?.());

@@ -3,7 +3,7 @@ import { setChartWidth } from './layout-classes.js';
 import { store } from "../store.js";
 import { chartWidth, getElementById } from "../core.js";
 import { renderCycleSummary } from "./cycle-summary.js";
-import { profileInfoRows } from "./profile-info-modal.js";
+import { canEditActiveMapSettings, openMapSettingsDialog, profileInfoRows } from "./profile-info-modal.js";
 import { observationIcon } from "./observation-icons.js";
 import { interfaceIcon } from './interface-icons.js';
 import { bleedingIcon, BLEEDING_LABELS } from './bleeding-icons.js';
@@ -53,15 +53,29 @@ export function renderProfileInfo() {
   if (!card) return;
   const profile = store.getActiveMapProfile();
   const rows = profileInfoRows(profile).filter(([, value]) => value);
+  const editable = canEditActiveMapSettings();
 
-  if (!rows.length) {
+  if (!rows.length && !editable) {
     card.replaceChildren();
     renderCycleSummary(card);
     return;
   }
   card.innerHTML = `
-    <div class="profile-info-title" data-i18n>Profile</div>
+    <div class="profile-info-header">
+      <div class="profile-info-title" data-i18n>Profile</div>
+      ${editable ? `<button type="button" class="profile-info-edit" data-i18n-title="Edit map settings" title="Edit map settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>
+        <span data-i18n>Edit</span>
+      </button>` : ""}
+    </div>
     <div class="profile-info-rows"></div>`;
+  card.querySelector(".profile-info-edit")?.addEventListener("click", () => openMapSettingsDialog());
+  if (store.getActiveMap()?.profileSnapshotLocked) {
+    const note = document.createElement("p");
+    note.className = "field-hint";
+    setText(note, "Shared map: these are the author's details and measurement settings.");
+    card.querySelector(".profile-info-header").after(note);
+  }
   const container = card.querySelector(".profile-info-rows");
   rows.forEach(([label, value]) => {
     const row = document.createElement("div");

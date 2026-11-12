@@ -61,12 +61,38 @@ export function setText(element, source) {
   element.textContent = t(source);
 }
 
-export function setDateText(element, date, format = 'month') {
+const DATE_FORMATS = {
+  month: { month: 'long', year: 'numeric' },
+  short: { day: 'numeric', month: 'short' },
+  // A full date in words, e.g. "19 November 2026" or "19. listopadu 2026".
+  day: { day: 'numeric', month: 'long', year: 'numeric' },
+};
+
+export function formatDate(date, format = 'day', locale = getLocale()) {
+  return date.toLocaleDateString(locale, DATE_FORMATS[format] || DATE_FORMATS.short);
+}
+
+// Date text that follows the language, optionally followed by the cycle day: "19 November 2026 (CD 13)".
+function dateText(date, format, cycleDay) {
+  const text = formatDate(date, format);
+  return cycleDay == null ? text : `${text} (${t('CD')} ${cycleDay || '-'})`;
+}
+
+function localizedDateText(element) {
+  return dateText(new Date(Number(element.getAttribute('data-i18n-date'))),
+    element.getAttribute('data-i18n-date-format'), element.getAttribute('data-i18n-cycle-day'));
+}
+
+export function setDateText(element, date, format = 'month', { cycleDay } = {}) {
   if (!element) return;
+  // Date text replaces any plain translated copy previously set on this element.
+  element.removeAttribute?.('data-i18n');
+  originals.delete(element);
+  if (cycleDay === undefined) element.removeAttribute?.('data-i18n-cycle-day');
+  else element.setAttribute('data-i18n-cycle-day', cycleDay ?? '');
   element.setAttribute('data-i18n-date', String(date.getTime()));
   element.setAttribute('data-i18n-date-format', format);
-  element.textContent = date.toLocaleDateString(getLocale(), format === 'month'
-    ? { month: 'long', year: 'numeric' } : { day: 'numeric', month: 'short' });
+  element.textContent = dateText(date, format, cycleDay);
 }
 
 export function setMonthPeriod(element, keys) {
@@ -95,9 +121,7 @@ function localizeElement(element) {
     if (element.textContent !== value) element.textContent = value;
   }
   if (element.hasAttribute('data-i18n-date')) {
-    const date = new Date(Number(element.getAttribute('data-i18n-date')));
-    const value = date.toLocaleDateString(getLocale(), element.getAttribute('data-i18n-date-format') === 'month'
-      ? { month: 'long', year: 'numeric' } : { day: 'numeric', month: 'short' });
+    const value = localizedDateText(element);
     if (element.textContent !== value) element.textContent = value;
   }
   for (const attr of ['title', 'aria-label', 'placeholder', 'alt']) {
@@ -176,6 +200,6 @@ export function initializeLanguage() {
       }
     }
   }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true,
-    attributeFilter: ['data-i18n', 'data-i18n-date', 'data-i18n-date-format', 'data-i18n-title', 'data-i18n-aria-label', 'data-i18n-placeholder', 'data-i18n-alt'] });
+    attributeFilter: ['data-i18n', 'data-i18n-date', 'data-i18n-date-format', 'data-i18n-cycle-day', 'data-i18n-title', 'data-i18n-aria-label', 'data-i18n-placeholder', 'data-i18n-alt'] });
   update();
 }

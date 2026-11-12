@@ -24,6 +24,7 @@ import {
   normalizeCycleSummaries,
 } from "./data-validation.js";
 import { parseBackup, serializeBackup } from "./backup.js";
+import { PROFILE_IDENTITY_FIELDS, pickMapSettings } from "./profile-options.js";
 
 const MAP_ID_RADIX = 36;
 const RANDOM_FRACTION_PREFIX_LENGTH = 2;
@@ -264,10 +265,37 @@ export class Store {
     return this.profile;
   }
 
-  /** Returns the profile captured with the active map, falling back for older maps. */
+  /**
+   * Profile details for the active map: its own measurement settings, with the current
+   * account name for the user's own maps and the author's details for imported maps.
+   */
   getActiveMapProfile() {
-    const mapProfile = this.activeMapId ? this.maps[this.activeMapId]?.profileSnapshot : null;
-    return mapProfile || this.profile;
+    const map = this.activeMapId ? this.maps[this.activeMapId] : null;
+    if (!map?.profileSnapshot) return this.profile;
+    return map.profileSnapshotLocked ? map.profileSnapshot : this._ownMapSnapshot(map.profileSnapshot);
+  }
+
+  /** The current account identity combined with a map's own measurement settings. */
+  _ownMapSnapshot(settingsSource) {
+    const identity = Object.fromEntries(PROFILE_IDENTITY_FIELDS.map(field => [field, this.profile[field] ?? ""]));
+    return { ...identity, ...pickMapSettings(settingsSource) };
+  }
+
+  /** Settings to suggest for a new map: those of the newest own map, or legacy profile values. */
+  lastMapSettings() {
+    const latest = Object.values(this.maps)
+      .filter(map => !map.profileSnapshotLocked && map.profileSnapshot)
+      .sort((left, right) => String(right.createdAt).localeCompare(String(left.createdAt)))[0];
+    return pickMapSettings(latest?.profileSnapshot ?? this.profile);
+  }
+
+  /** Changes the measurement settings of one of the user's own maps. Imported maps stay read-only. */
+  updateMapSettings(mapId, settings) {
+    const map = this.maps[mapId];
+    if (!map || map.profileSnapshotLocked) return false;
+    this.maps[mapId] = { ...map, profileSnapshot: this._ownMapSnapshot(settings) };
+    this._persistAll();
+    return true;
   }
 
   /** Returns all state required to restore the application. */
@@ -365,8 +393,9 @@ export class Store {
   }
 
   saveProfile(profile) {
+    // The profile form edits identity only; earlier measurement values stay as defaults for new maps.
     this.profile = {
-      ...this._normalizeProfile(profile),
+      ...this._normalizeProfile({ ...this.profile, ...profile }),
       setupCompleted: true,
     };
     this._persistAll();
@@ -382,9 +411,9 @@ export class Store {
     return Object.hasOwn(this.maps, mapId) ? this._normalizeMap(this.maps[mapId], mapId, this.maps[mapId].name) : null;
   }
 
-  createMap(name) {
+  createMap(name, settings = this.lastMapSettings()) {
     const mapId = this._generateMapId();
-    const map = this._emptyMap(mapId, name.trim());
+    const map = { ...this._emptyMap(mapId, name.trim()), profileSnapshot: this._ownMapSnapshot(settings) };
     this.maps[mapId] = map;
     this.activeMapId = mapId;
     this._clearTransientSelection();
@@ -421,6 +450,25 @@ export class Store {
 
     this._persistAll();
     return true;
+  }
+
+  /** Adds an independent open copy of a map, including the active map's unsaved-to-list state. */
+  duplicateMap(mapId, name) {
+    const source = this.getPersistentState().maps[mapId];
+    const nextName = String(name ?? "").trim();
+    if (!source || !nextName) return null;
+    const copyId = this._generateMapId();
+    const copy = {
+      ...clonePersistentState(source),
+      id: copyId,
+      name: nextName,
+      createdAt: new Date().toISOString(),
+      status: "open",
+      closedAt: null,
+    };
+    this.maps[copyId] = this._normalizeMap(copy, copyId, nextName);
+    this._persistAll();
+    return this.maps[copyId];
   }
 
   deleteMap(mapId) {
@@ -490,9 +538,10 @@ export class Store {
         entries: this.entries,
         coverlines: this.coverlines,
         fertileRange: this.fertileRange,
+        // Own maps keep their measurement settings; only the account identity is refreshed.
         profileSnapshot: activeMap.profileSnapshotLocked
           ? activeMap.profileSnapshot
-          : { ...this.profile },
+          : this._ownMapSnapshot(activeMap.profileSnapshot ?? this.profile),
       };
     }
 

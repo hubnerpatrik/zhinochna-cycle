@@ -268,3 +268,17 @@ test("cancelling creation returns to My Maps and submitting opens only the creat
   assert.equal(router.currentScreen, 'my-maps');
   assert.equal(dialogs.length, 2);
 });
+
+test("switching the Edit Day date replaces the editor URL without adding history entries", () => {
+  const { router, browser } = setup();
+  store.createMap("Switch days");
+  router.start();
+  router.navigate("active-map");
+  store.selectedKey = "2026-10-31";
+  router.modalOpened("actionModal");
+  const depth = browser.history.state.cycleNavigation.depth;
+  store.selectedKey = "2026-11-01";
+  router.modalRouteChanged("actionModal");
+  assert.match(browser.location.hash, /page=edit-day&day=2026-11-01/);
+  assert.equal(browser.history.state.cycleNavigation.depth, depth);
+});

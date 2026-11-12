@@ -47,3 +47,52 @@ test('fertile picker shows cycle days across months, resets on a new cycle, and 
   openFertileRangeModal(); changeFertileRangeMonth(1);
   assert.equal(day('2026-04-01').getAttribute('aria-pressed'), 'false');
 });
+
+test('a fertile-day drag fills every day between two positions, in either direction and across months', async () => {
+  const { daysBetween } = await import('../ui/fertile-range-modal.js');
+  assert.deepEqual(daysBetween('2026-10-29', '2026-11-02'), ['2026-10-29', '2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02']);
+  assert.deepEqual(daysBetween('2026-10-26', '2026-10-24'), ['2026-10-26', '2026-10-25', '2026-10-24']);
+  assert.deepEqual(daysBetween('2026-10-24', '2026-10-24'), ['2026-10-24']);
+});
+
+test('several separate fertile ranges save together, and unmarking a day without other data removes it', async () => {
+  const { saveFertileRangeModal } = await import('../ui/fertile-range-modal.js');
+  const element = () => {
+    const attributes = {};
+    return {
+      children: [], textContent: '', className: '',
+      setAttribute(key, value) { attributes[key] = value; },
+      getAttribute(key) { return attributes[key]; },
+      replaceChildren(...children) { this.children = children; },
+      appendChild(child) { this.children.push(child); },
+      querySelector(selector) { return this.children.find(child => selector === `[data-date="${child.getAttribute('data-date')}"]`); },
+      focus() {},
+      classList: { add() {}, remove() {}, contains: () => false, toggle() {} },
+    };
+  };
+  const nodes = { fertileRangeCalendar: element(), fertileRangeMonthLabel: element(), fertileRangeModal: element(), toast: element() };
+  globalThis.requestAnimationFrame = callback => { callback(); return 1; };
+  globalThis.cancelAnimationFrame = () => {};
+  globalThis.document = { createElement: element, getElementById: id => nodes[id], querySelectorAll: () => [] };
+  store.reset(); store.createMap('Ranges');
+  store.entries['2026-06-01'] = { temp: 36.4 };
+  store.entries['2026-06-20'] = { temp: 36.6 };
+  store.selectedKey = '2026-06-01';
+  const tap = key => nodes.fertileRangeCalendar.children.find(child => child.getAttribute('data-date') === key).onclick();
+
+  openFertileRangeModal();
+  ['2026-06-05', '2026-06-06', '2026-06-14', '2026-06-15', '2026-06-25'].forEach(tap);
+  saveFertileRangeModal(() => {});
+  const fertile = () => Object.keys(store.entries).filter(key => store.entries[key].isFertile).sort();
+  assert.deepEqual(fertile(), ['2026-06-05', '2026-06-06', '2026-06-14', '2026-06-15', '2026-06-25']);
+  assert.equal(Object.keys(store.entries).sort().at(-1), '2026-06-25');
+
+  openFertileRangeModal();
+  ['2026-06-06', '2026-06-25'].forEach(tap);
+  saveFertileRangeModal(() => {});
+  assert.deepEqual(fertile(), ['2026-06-05', '2026-06-14', '2026-06-15']);
+  assert.equal(store.entries['2026-06-06'], undefined);
+  assert.equal(store.entries['2026-06-25'], undefined);
+  assert.equal(Object.keys(store.entries).sort().at(-1), '2026-06-20');
+  assert.equal(store.entries['2026-06-20'].temp, 36.6);
+});

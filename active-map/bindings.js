@@ -6,9 +6,11 @@ import { toggleObservationChoice } from "../ui/modal-shared.js";
 import { t } from "../i18n.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
-import { LAYOUT, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
+import { LAYOUT, PHONE_LAYOUT_QUERY, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
 import { observationChoiceValue } from '../ui/observation-values.js';
+import { configureMapSettingsEditor } from '../ui/profile-info-modal.js';
 import {
+  bindFertileRangeDrag,
   changeFertileRangeMonth,
   clearFertileRangeModal,
   clearMarkersModalInput,
@@ -21,7 +23,9 @@ import {
   closeModal,
   closeMucusModal,
   closeOtherModal,
+  configureActionModal,
   openActionModal,
+  shiftActionModalDay,
   openBleedingModal,
   openCervixModal,
   openDayInfoModal,
@@ -61,7 +65,7 @@ function bindButton(id, handler) {
 function bindCalendarSwipe(changeMonth) {
   const calendar = getElementById("calendar");
   if (!calendar) return;
-  const phone = window.matchMedia("(max-width: 560px)");
+  const phone = window.matchMedia(PHONE_LAYOUT_QUERY);
   const minDistance = 45;
   let start;
 
@@ -144,7 +148,11 @@ export function initializeActiveMapControls({
   bindCalendarSwipe(changeMonth);
 
   querySelectorAll(".btn.primary").forEach(animatePrimaryButton);
+  configureActionModal({ getColumns });
+  configureMapSettingsEditor({ render });
   bindButton("editBtn", openActionModal);
+  bindButton("actionModalPrevDayBtn", () => shiftActionModalDay(-1, render));
+  bindButton("actionModalNextDayBtn", () => shiftActionModalDay(1, render));
   bindButton("closeBtn", closeModal);
   bindButton("saveBtn", () => saveModal(render));
   bindButton("closeActionModalBtn", closeActionModal);
@@ -163,6 +171,7 @@ export function initializeActiveMapControls({
   bindButton("clearFertileRangeBtn", clearFertileRangeModal);
   bindButton("fertileRangePrevMonth", () => changeFertileRangeMonth(-1));
   bindButton("fertileRangeNextMonth", () => changeFertileRangeMonth(1));
+  bindFertileRangeDrag();
   bindButton("clearMarkersModalBtn", clearMarkersModalInput);
   bindButton("saveMarkersModalBtn", () => saveMarkersModal(render));
   bindButton("saveCervixModalBtn", () => saveCervixModal(render));

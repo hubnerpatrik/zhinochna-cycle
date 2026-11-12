@@ -336,7 +336,7 @@ select:focus-visible{
 
 .map-filters{
   display:grid;
-  grid-template-columns:repeat(2, minmax(0, 1fr));
+  grid-template-columns:repeat(3, minmax(0, 1fr));
   gap:14px;
 }
 
@@ -1900,7 +1900,7 @@ input:focus{
 
 }
 
-@media (max-width:560px){
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .header-nav{
     display:grid;
     grid-template-columns:repeat(2, minmax(0, 1fr));

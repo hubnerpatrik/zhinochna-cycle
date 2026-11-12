@@ -65,6 +65,16 @@ export function resolveCycleDay(date, starts, fallbackIndex) {
 }
 
 /**
+ * Cycle day of any date, also outside the recorded range (as the calendar shows it);
+ * null before the first recorded cycle start.
+ */
+export function cycleDayForKey(key, starts = getCycleStartDates()) {
+  const date = normalize(parseDateKey(key));
+  const latestStart = starts.findLast(start => normalize(start) <= date);
+  return latestStart === undefined ? null : calendarDayDifference(date, normalize(latestStart)) + 1;
+}
+
+/**
  * Returns a stable cycle ID string (e.g. "cycle-2") for a given date.
  * Increments each time a new cycle start is detected before that date.
  */

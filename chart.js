@@ -8,7 +8,7 @@ import { applyLayoutClass, setChartWidth } from './ui/layout-classes.js';
 import { store } from "./store.js";
 import { LAYOUT, getElementById, chartY, chartPointY, isChartTemperature, chartLineY, chartGridY, tempSlotCount, graphHeight, chartWidth, pixelYToTemp } from "./core.js";
 import { getCycleCoverlineValues, setCycleCoverlineValues } from "./domain.js";
-import { MILLISECONDS_PER_DAY } from './date-utils.js';
+import { calendarDayDifference } from './date-utils.js';
 
 const GRID_MAJOR_INTERVAL = 5;
 const GRID_PIXEL_OFFSET = 0.5;
@@ -307,7 +307,8 @@ export function drawTemperatureLine(context, cycleGroups) {
       const previousY = chartY(previousColumn.temp);
       const columnY = chartY(column.temp);
 
-      const daysBetween = (column.date - previousColumn.date) / MILLISECONDS_PER_DAY;
+      // Count calendar days, not milliseconds: daylight-saving days last 23 or 25 hours.
+      const daysBetween = calendarDayDifference(column.date, previousColumn.date);
 
       context.beginPath();
       context.moveTo(previousColumn.centerX, previousY);

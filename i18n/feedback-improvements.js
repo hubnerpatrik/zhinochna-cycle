@@ -13,7 +13,7 @@ export const feedbackImprovementMessages = {
   'Expand chart': ['Zvětšit graf', 'Zväčšiť graf', 'Збільшити графік'],
   'Close full screen': ['Zavřít celý displej', 'Zavrieť celú obrazovku', 'Закрити повний екран'],
   'Drag a line or endpoint, then save or cancel.': ['Přetáhni čáru nebo její konec. Potom ulož nebo zruš změny.', 'Potiahni čiaru alebo jej koniec. Potom ulož alebo zruš zmeny.', 'Перетягніть лінію або її кінець. Потім збережіть або скасуйте зміни.'],
-  'Manage your personal details, measurement preferences and profile photo.': ['Uprav své osobní údaje, nastavení měření a profilovou fotku.', 'Uprav svoje osobné údaje, nastavenie merania a profilovú fotku.', 'Редагуйте особисті дані, налаштування вимірювання та фото профілю.'],
+  'Manage your name, consultant and profile photo.': ['Uprav své jméno, poradkyni a profilovou fotku.', 'Uprav svoje meno, poradkyňu a profilovú fotku.', 'Редагуйте своє ім’я, консультантку та фото профілю.'],
   'Attach screenshot': ['Přiložit screenshot', 'Priložiť snímku obrazovky', 'Додати знімок екрана'],
   'Remove screenshot': ['Odebrat screenshot', 'Odobrať snímku obrazovky', 'Видалити знімок екрана'],
   'Screenshot': ['Screenshot', 'Snímka obrazovky', 'Знімок екрана'],

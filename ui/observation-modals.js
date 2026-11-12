@@ -1,11 +1,13 @@
 import { setText } from '../i18n.js';
 import { normalizeDayMarkers, store } from "../store.js";
-import { MEASUREMENT_TEMPERATURE_RANGE, getTimeAdjustment, getElementById, querySelectorAll } from "../core.js";
+import { MEASUREMENT_TEMPERATURE_RANGE, formatDateKey, getTimeAdjustment, getElementById, parseDateKey, querySelectorAll } from "../core.js";
 import { markerColorFromType, markerTypeFromColor, normalizeMarkerColor } from "./marker-utils.js";
 import {
   afterModalSave,
   hideModal,
   persistStore,
+  refreshModalRoute,
+  setDayTitle,
   resetModalState,
   showModal,
   syncModalUI,
@@ -27,8 +29,36 @@ function finishSave(modalId, render) {
   return true;
 }
 
+let getActionModalColumns = () => [];
+
+/** Supplies the rendered map columns so the Edit Day menu can show the cycle day. */
+export function configureActionModal({ getColumns }) {
+  getActionModalColumns = getColumns;
+}
+
+function renderActionModalDay() {
+  setDayTitle(getElementById("actionModalDay"), store.selectedKey, getActionModalColumns());
+}
+
 export function openActionModal() {
+  renderActionModalDay();
   showModal("actionModal");
+}
+
+/** Moves the Edit Day menu to an adjacent calendar day without leaving the dialog. */
+export function shiftActionModalDay(offset, render) {
+  if (!store.selectedKey) return;
+  const date = parseDateKey(store.selectedKey);
+  date.setDate(date.getDate() + offset);
+  store.selectedKey = formatDateKey(date);
+  store.selectedPointType = "temp";
+  if (date.getMonth() !== store.month || date.getFullYear() !== store.year) {
+    store.month = date.getMonth();
+    store.year = date.getFullYear();
+  }
+  render();
+  renderActionModalDay();
+  refreshModalRoute("actionModal");
 }
 
 export function closeActionModal() {
@@ -40,7 +70,6 @@ export function openModal(currentColumns) {
   resetModalState();
   const key = store.selectedKey;
   const data = store.entries[key] || {};
-  const column = currentColumns.find(item => item.key === key);
   Object.assign(store.modal, {
     temp: data.temp ?? null,
     tempFactors: data.tempFactors ?? "",
@@ -48,7 +77,7 @@ export function openModal(currentColumns) {
     measurementTime: data.measurementTime ?? "",
     measurementTimeEnabled: Boolean(data.measurementTime),
   });
-  setText(getElementById("modalTitle"), `${key} (CD ${column?.cycleDay ?? "-"})`);
+  setDayTitle(getElementById("modalTitle"), key, currentColumns);
   getElementById("tempInput").value = store.modal.temp == null ? "" : Number(store.modal.temp).toFixed(2);
   getElementById("tempFactorsInput").value = store.modal.tempFactors;
   if (getElementById('tempFactorsOtherInput')) getElementById('tempFactorsOtherInput').value = store.modal.tempFactorsOther;

@@ -73,7 +73,7 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
 #fertileRangeCalendar button.day { font: inherit; color: var(--text); }
 #fertileRangeCalendar button.day:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .map-day.cycle-boundary, .map-cell.cycle-boundary { box-shadow: inset 2px 0 #b41414; }
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .mobile-map-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0; }
   .mobile-map-tabs button { width: 100%; min-height: 48px; border-radius: 12px; }
   .mobile-map-tabs svg { width: 28px; height: 28px; }
@@ -92,4 +92,119 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   .map-row-group-symptoms .map-row-icon { background: #efe4f1; color: #825594; }
   .app-header { padding-right: 82px; }
   .mobile-map-header .language-picker { flex-basis: 60px; width: 60px; }
+}
+
+/* Edit Day: switch to the previous or next calendar day without closing the menu. */
+.day-switcher {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 12px;
+}
+.day-switcher-label {
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.day-switcher-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), transform 0.1s var(--ease);
+}
+.day-switcher-btn:hover { background: var(--hairline); }
+.day-switcher-btn:active { transform: scale(0.92); }
+
+/* Fertile range: dragging across days marks them, so the grid must not scroll or select text. */
+.fertile-range-calendar .day {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Profile card: the Edit action opens the active map's settings. */
+.profile-info-header {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.profile-info-header .profile-info-title { margin-bottom: 0; }
+/* Prominent pill: editing map settings is the main action in this card. */
+.profile-info-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 6px 14px 6px 11px;
+  border: 1px solid rgba(255, 138, 101, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff9b7a, #ffc79a);
+  color: #4a2116;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(255, 138, 101, 0.28);
+  cursor: pointer;
+  transition: transform 0.1s var(--ease), box-shadow 0.15s var(--ease), filter 0.15s var(--ease);
+}
+.profile-info-edit svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.profile-info-edit:hover { filter: brightness(1.04); box-shadow: 0 6px 16px rgba(255, 138, 101, 0.36); }
+.profile-info-edit:active { transform: scale(0.96); }
+.profile-info-edit:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+/* Map settings in the create and edit dialogs. */
+.map-settings-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.map-settings-fields .modal-section { display: grid; gap: 6px; margin: 0; }
+.map-settings-fields :is(input, select) { width: 100%; box-sizing: border-box; }
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  .map-settings-fields { grid-template-columns: minmax(0, 1fr); }
+}
+
+.profile-details-dialog > .btn.primary { width: 100%; min-height: 48px; margin-top: 16px; }
+
+/* Calendar dots: influence factors, sex and additional symptoms recorded for the day. */
+.day-marks {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  display: flex;
+  gap: 3px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.day-mark {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+}
+.legend .day-mark { width: 9px; height: 9px; }
+.day-mark-factor { background: #e19a1c; }
+.day-mark-sex { background: #c2477e; }
+.day-mark-other { background: #6a62d6; }
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  .day-marks { bottom: 4px; gap: 2px; }
+  .day-mark { width: 6px; height: 6px; }
 }

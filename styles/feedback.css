@@ -39,7 +39,7 @@
 .map-export-formats { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; display: grid; gap: 6px; width: max(100%, 132px); padding: 8px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card, #fffaf6); box-shadow: 0 8px 24px #32201826; }
 .map-export-formats[hidden] { display: none; }
 .map-export-formats .btn { width: 100%; min-width: 0; min-height: 44px; }
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .feedback-launch { bottom: calc(92px + env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right)); padding: 10px; width: 48px; min-width: 48px; height: 48px; border-radius: 50%; }
   .feedback-launch > span:last-child { display: none; }
   .feedback-panel { inset: auto 0 0; width: 100%; height: 78dvh; max-height: calc(100dvh - 16px); border-radius: 22px 22px 0 0; padding: 20px 18px max(20px, env(safe-area-inset-bottom)); }

@@ -10,7 +10,6 @@ import {
 import { chartPointY, pixelXToColumnKey, pixelYToChartCellTemp, getElementById } from "../core.js";
 
 const POINT_HIT_RADIUS = 18;
-const MARKER_HINT_DELAY_MS = 300;
 
 export function canvasPointerPosition(event, canvas) {
   const rect = canvas.getBoundingClientRect();
@@ -42,7 +41,6 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
   let activeDrag = null;
   let coverlineSelected = false;
   let suppressNextClick = false;
-  let markerHintTimer = null;
   let hintFrame = null;
   let coverlineDraft = null;
 
@@ -139,10 +137,37 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
   }
 
   function cancelMarkerPlacement() {
-    clearTimeout(markerHintTimer);
-    markerHintTimer = null;
     store.markerSelectionMode = false;
     getElementById("markersActionBtn")?.classList.remove("active");
+  }
+
+  // Marker mode stays on like Cross cells: every tapped day opens its marker editor until Done.
+  function showMarkerPill() {
+    const toast = showPersistentHint("");
+    if (!toast) return;
+    const label = document.createElement("span");
+    setText(label, "Tap a day on the chart to add or change its marker.");
+    const done = document.createElement("button");
+    done.type = "button";
+    done.className = "toast-action toast-action-primary";
+    setText(done, "Done");
+    done.onclick = finishMarkerPlacement;
+    toast.replaceChildren(label, done);
+    toast.classList.add("action-toast");
+  }
+
+  function startMarkerPlacement() {
+    clearModes();
+    renderApp();
+    store.markerSelectionMode = true;
+    getElementById("markersActionBtn")?.classList.add("active");
+    showMarkerPill();
+  }
+
+  function finishMarkerPlacement() {
+    cancelMarkerPlacement();
+    hideToolPill();
+    onToolEnd?.();
   }
 
   function clearModes() {
@@ -254,18 +279,8 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
   function bindToolButtons() {
     const markerButton = getElementById("markersActionBtn");
     markerButton.onclick = () => {
-      if (store.markerSelectionMode) {
-        cancelMarkerPlacement();
-        hideToolPill();
-        return;
-      }
-      clearModes();
-      renderApp();
-      store.markerSelectionMode = true;
-      markerButton.classList.add("active");
-      markerHintTimer = setTimeout(() => {
-        if (store.markerSelectionMode) showPersistentHint("Click a day on the chart to choose a marker day.");
-      }, MARKER_HINT_DELAY_MS);
+      if (store.markerSelectionMode) finishMarkerPlacement();
+      else startMarkerPlacement();
     };
 
     getElementById("crossCellsActionBtn").onclick = () => {
@@ -426,10 +441,12 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       }
       renderCurrentChart();
     },
-    finishMarkerPlacement() {
-      cancelMarkerPlacement();
-      hideToolPill();
-      onToolEnd?.();
+    finishMarkerPlacement,
+    /** Shows the marker pill again after a marker editor opened from marker mode closes. */
+    resumeMarkerPlacement() {
+      if (!store.markerSelectionMode) return;
+      getElementById("markersActionBtn")?.classList.add("active");
+      showMarkerPill();
     },
     deactivate() {
       const active = coverlineSelected || store.horizontalCoverlineMode || store.verticalCoverlineMode

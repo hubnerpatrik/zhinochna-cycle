@@ -5,6 +5,8 @@ export const DEVELOPMENT_NAMESPACE = "cycle-development:";
 export async function startLocalPreview({ app, root }) {
   // Select isolated local persistence before the application constructs its store.
   configurePersistence(() => new LocalStorageAdapter(globalThis.localStorage, DEVELOPMENT_NAMESPACE));
+  const [{ store }, { seedDemoData }] = await Promise.all([import("../store.js"), import("./demo-data.js")]);
+  seedDemoData(store);
   const { startApplication } = await import("../app.js");
   document.getElementById("accountEmail").textContent = "Local development · data saved in this browser";
   document.getElementById("signOutBtn").remove();

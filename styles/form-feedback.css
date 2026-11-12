@@ -23,7 +23,7 @@ input.field-invalid, select.field-invalid, textarea.field-invalid {
 .release-notes-dialog li { margin: 16px 0; line-height: 1.55; }
 .menu-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 13px; }
 .menu-changelog { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #8c432e; text-decoration: underline; text-underline-offset: 3px; }
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .release-notes-control { margin-left: auto; }
   .release-announcement { position: fixed; top: max(80px, env(safe-area-inset-top)); right: 16px; }
   .release-announcement::before { display: none; }

@@ -50,7 +50,7 @@
   .day:hover { transform: none; }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .mobile-only { display: block; }
   body.mobile-map-active .app-header { display: none; }
   body.mobile-map-active .app { padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)); }
@@ -171,7 +171,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   #activeMapScreen:not(.mobile-calendar-view) > .chart-card,
   #activeMapScreen.mobile-calendar-view > .layout {
     animation: mobile-panel-in 160ms ease-out;
@@ -195,7 +195,7 @@
   }
 }
 
-@media (max-width: 560px) and (prefers-reduced-motion: reduce) {
+@media (max-width: 560px) and (prefers-reduced-motion: reduce), (max-height: 500px) and (pointer: coarse) and (prefers-reduced-motion: reduce) {
   #activeMapScreen:not(.mobile-calendar-view) > .chart-card,
   #activeMapScreen.mobile-calendar-view > .layout,
   .mobile-tools-list:not([hidden]) { animation: none; }
@@ -210,7 +210,7 @@
   .mobile-tools-list button:active { transform: none; }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   #mobileDayDetails { margin: 8px 0; }
   #mobileDayDetails summary { cursor: pointer; padding: 8px 0; font-weight: 600; }
   #mobileDayDetailsList { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 12px; margin: 0 0 8px; }

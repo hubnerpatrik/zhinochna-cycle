@@ -232,3 +232,50 @@ test("reset clears every transient interaction mode", () => {
   assert.equal(store.crossCellSelectionMode, false);
   assert.equal(store.crossCellDraft, null);
 });
+
+test("copying a map creates an independent open map with the active map's current data", () => {
+  globalThis.localStorage = new MemoryStorage();
+  const store = new Store();
+  store.saveProfile({ name: "Copier" });
+  const original = store.createMap("Original");
+  store.updateEntry("2026-10-01", { temp: 36.5 });
+  store.coverlines = { default: { horizontalTemp: 36.4 } };
+  const copy = store.duplicateMap(original.id, "Original (copy)");
+
+  assert.ok(copy);
+  assert.notEqual(copy.id, original.id);
+  assert.equal(copy.name, "Original (copy)");
+  assert.equal(copy.entries["2026-10-01"].temp, 36.5);
+  assert.equal(copy.coverlines.default.horizontalTemp, 36.4);
+  assert.equal(store.getActiveMapId(), original.id);
+
+  copy.entries["2026-10-01"].temp = 37;
+  assert.equal(store.getMap(original.id).entries["2026-10-01"].temp, 36.5);
+  assert.equal(store.duplicateMap(original.id, "   "), null);
+  assert.equal(store.duplicateMap("missing", "Copy"), null);
+});
+
+test("a copy of a closed map is open", () => {
+  globalThis.localStorage = new MemoryStorage();
+  const store = new Store();
+  store.saveProfile({ name: "Copier" });
+  const closed = store.createMap("Closed");
+  store.closeActiveMap();
+  assert.equal(store.getMap(closed.id).status, "closed");
+  const copy = store.duplicateMap(closed.id, "Reopened copy");
+  assert.equal(copy.status, "open");
+  assert.equal(copy.closedAt, null);
+});
+
+test("only records with nothing but empty structure count as blank", async () => {
+  const { isBlankEntry } = await import("../data-validation.js");
+  const emptyMarkers = { bbt: { value: "", pointType: "temp" }, mucus: { value: "", pointType: "temp" }, cervix: { value: "", pointType: "temp" } };
+  assert.equal(isBlankEntry({}), true);
+  assert.equal(isBlankEntry({ crossedRows: [], crossedChartTemps: [], markers: emptyMarkers }), true);
+  assert.equal(isBlankEntry({ isFertile: false, markers: emptyMarkers }), true);
+  assert.equal(isBlankEntry({ isFertile: true }), false);
+  assert.equal(isBlankEntry({ sensation: "" }), false, "an explicit empty choice is still a record");
+  assert.equal(isBlankEntry({ crossedRows: ["sexRow"] }), false);
+  assert.equal(isBlankEntry({ markers: { ...emptyMarkers, bbt: { value: "1", pointType: "temp" } } }), false);
+  assert.equal(isBlankEntry({ temp: 36.5 }), false);
+});

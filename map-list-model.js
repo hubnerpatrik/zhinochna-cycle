@@ -6,6 +6,11 @@ function getSortedEntryDates(entries) {
   return Object.keys(entries || {}).sort();
 }
 
+// English source copy; other languages use "label: count", so only English needs the singular.
+function countLabel(count, singular) {
+  return `${count} ${singular}${count === 1 ? "" : "s"}`;
+}
+
 export function buildMapMeta(map) {
   const dates = getSortedEntryDates(map.entries);
   const years = [...new Set(dates.map(date => date.slice(0, YEAR_KEY_LENGTH)))].sort();
@@ -20,10 +25,31 @@ export function buildMapMeta(map) {
     dates,
     years,
     months,
-    preview: `${dates.length} day${dates.length === 1 ? "" : "s"} · ${temperatureCount} temps · ${periodCount} period days · ${notesCount} notes`,
-    dateRange: dates.length ? `${dates[0]} to ${dates.at(-1)}` : "No entries yet",
+    preview: [
+      countLabel(dates.length, "day"),
+      countLabel(temperatureCount, "temp"),
+      countLabel(periodCount, "period day"),
+      countLabel(notesCount, "note"),
+    ].join(" · "),
     lastActivity: map.closedAt || dates.at(-1) || map.createdAt,
   };
+}
+
+// Which maps My Maps shows: own or shared, open or closed.
+export const MAP_KINDS = Object.freeze({
+  '': 'All maps',
+  mine: 'My maps',
+  shared: 'Shared with me',
+  open: 'Open maps',
+  closed: 'Closed maps',
+});
+
+export function matchesKind(map, kind) {
+  if (kind === 'mine') return !map.profileSnapshotLocked;
+  if (kind === 'shared') return map.profileSnapshotLocked === true;
+  if (kind === 'open') return map.status !== 'closed';
+  if (kind === 'closed') return map.status === 'closed';
+  return true;
 }
 
 export function matchesFilter(map, year, month) {

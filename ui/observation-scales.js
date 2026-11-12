@@ -20,8 +20,9 @@ export function cervixPositionIcon(height, openness) {
   if (!openness) return observationScaleIcon('cervixHeight', height);
   if (!height) return observationScaleIcon('cervixOpenness', openness);
   const y = CERVIX_HEIGHT_Y[height];
+  // A vertical line from top to bottom (no scale ticks), the height dash and the openness symbol.
   return scaleSvg(`
-    <path d="M10 9v22M6 9h8M6 20h8M6 31h8" opacity=".4"/>
+    <path d="M10 9v22" stroke-width="3.4" opacity=".7"/>
     <path d="M10 ${y}h9"/>
     <g transform="translate(15 ${y - 11}) scale(.55)">${duotoneArtwork('cervixOpenness', openness)}</g>
   `);

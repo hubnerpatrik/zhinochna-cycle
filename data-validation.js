@@ -113,6 +113,23 @@ export function normalizeDayMarkers(markers, legacyEntry = {}) {
   return normalized;
 }
 
+/**
+ * True when a day record holds nothing but empty structure: no observation fields at all,
+ * no crossed cells and no marker values. Empty choices such as "" stay meaningful elsewhere,
+ * so any other field keeps the record.
+ */
+export function isBlankEntry(entry) {
+  if (!isPlainObject(entry)) return false;
+  return Object.entries(entry).every(([field, value]) => {
+    if (field === "isFertile") return value !== true;
+    if (field === "crossedRows" || field === "crossedChartTemps") return Array.isArray(value) && value.length === 0;
+    if (field === "markers") {
+      return isPlainObject(value) && Object.values(value).every(marker => !isPlainObject(marker) || !marker.value);
+    }
+    return false;
+  });
+}
+
 export function emptyProfile() {
   return { ...PROFILE_DEFAULTS };
 }
