@@ -14,6 +14,8 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.19.1 — 2026-11-15
+
 ### Fixed
 
 - On phones the app opens on the active map when it is launched with a restored Main Menu or My Maps address, not only after a reload.
