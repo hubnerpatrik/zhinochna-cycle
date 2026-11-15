@@ -457,3 +457,13 @@ body {
     transform: none;
   }
 }
+
+/* Calendar month swipe: the grid follows the finger; the card clips what slides past its edge. */
+.calendar-dragging {
+  transform: translateX(var(--calendar-drag-x, 0px));
+  will-change: transform;
+}
+
+.calendar-card:has(.calendar-dragging) {
+  overflow-x: clip;
+}

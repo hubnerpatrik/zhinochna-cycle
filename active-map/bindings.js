@@ -7,6 +7,7 @@ import { t } from "../i18n.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
 import { LAYOUT, PHONE_LAYOUT_QUERY, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
+import { bindCalendarSwipe } from "./calendar-swipe.js";
 import { observationChoiceValue } from '../ui/observation-values.js';
 import { configureMapSettingsEditor } from '../ui/profile-info-modal.js';
 import {
@@ -62,31 +63,6 @@ function bindButton(id, handler) {
   if (button) button.onclick = handler;
 }
 
-function bindCalendarSwipe(changeMonth) {
-  const calendar = getElementById("calendar");
-  if (!calendar) return;
-  const phone = window.matchMedia(PHONE_LAYOUT_QUERY);
-  const minDistance = 45;
-  let start;
-
-  calendar.addEventListener("touchstart", event => {
-    start = phone.matches && event.touches.length === 1 ? event.touches[0] : null;
-  }, { passive: true });
-  calendar.addEventListener("touchcancel", () => { start = null; });
-  calendar.addEventListener("touchend", event => {
-    const origin = start;
-    start = null;
-    if (!origin || !phone.matches || event.touches.length || !event.cancelable) return;
-    const end = event.changedTouches[0];
-    if (!end || origin.identifier !== end.identifier) return;
-    const x = end.clientX - origin.clientX;
-    const y = end.clientY - origin.clientY;
-    if (Math.abs(x) < minDistance || Math.abs(x) < Math.abs(y) * 1.5) return;
-    event.preventDefault();
-    changeMonth(x < 0 ? 1 : -1);
-  }, { passive: false });
-}
-
 function bindOverlayClicks(definitions) {
   definitions.forEach(([id, close]) => {
     getElementById(id)?.addEventListener("click", event => {
@@ -138,7 +114,11 @@ export function initializeActiveMapControls({
   };
   bindButton("prevMonth", () => changeMonth(-1));
   bindButton("nextMonth", () => changeMonth(1));
-  bindCalendarSwipe(changeMonth);
+  bindCalendarSwipe(getElementById("calendar"), {
+    changeMonth,
+    isPhone: () => window.matchMedia(PHONE_LAYOUT_QUERY).matches,
+    reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
 
   configureActionModal({ getColumns });
   configureMapSettingsEditor({ render });
