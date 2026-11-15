@@ -1,4 +1,5 @@
 import { escapeHtml } from "./view-utils.js";
+import { makeSheetDialog } from '../ui/sheet-dialog.js';
 import { prepareProfilePhoto, isStoredProfilePhoto } from '../profile-photo.js';
 import { setText } from '../i18n.js';
 
@@ -86,6 +87,7 @@ export function renderProfileScreen(container, {
   const submit = form.querySelector('[type="submit"]');
   const photoDialog = container.querySelector('#profilePhotoDialog');
   const photoActions = container.querySelector('#profilePhotoActions');
+  makeSheetDialog(photoDialog);
   photoActions.onclick = () => photoDialog.showModal();
   container.querySelector('#profilePhotoClose').onclick = () => photoDialog.close();
   photoDialog.addEventListener('close', () => photoActions.focus({ preventScroll: true }));

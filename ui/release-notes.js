@@ -1,4 +1,5 @@
 import { currentRelease, RELEASE_SEEN_KEY, releasePreference, isNewRelease } from '../release-notes.js';
+import { makeSheetDialog } from './sheet-dialog.js';
 import { translateDOM } from '../i18n.js';
 
 export function setupReleaseNotes(app) {
@@ -23,6 +24,7 @@ export function setupReleaseNotes(app) {
     dialog.querySelector('ul').append(item);
   });
   app.append(dialog);
+  makeSheetDialog(dialog);
   [control, dialog].forEach(root => {
     root.querySelectorAll('[data-release-version]').forEach(node => { node.textContent = currentRelease.version; });
     root.querySelectorAll('[data-release-github]').forEach(node => { node.href = currentRelease.githubUrl; });

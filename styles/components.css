@@ -493,13 +493,13 @@ html:has(.modal.show) .modal.hidden .modal-card {
     .modal.show .modal-card { transform: translateY(100%); }
   }
 
-  #mobileToolsList {
+  dialog.sheet-dialog {
     inset: auto 0 0;
     margin: 0;
     width: 100%;
     max-width: none;
     max-height: calc(100dvh - max(48px, env(safe-area-inset-top)));
-    padding-bottom: calc(clamp(12px, 4vw, 20px) + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--sheet-pad, 24px) + env(safe-area-inset-bottom));
     border-width: 1px 0 0;
     border-radius: var(--r-lg) var(--r-lg) 0 0;
     box-shadow: var(--shadow-float);
@@ -507,22 +507,22 @@ html:has(.modal.show) .modal.hidden .modal-card {
     transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), display 0.3s allow-discrete, overlay 0.3s allow-discrete;
   }
 
-  #mobileToolsList[open] {
+  dialog.sheet-dialog[open] {
     transform: translateY(0);
   }
 
-  #mobileToolsList::backdrop {
+  dialog.sheet-dialog::backdrop {
     opacity: 0;
     transition: opacity 0.3s var(--ease), display 0.3s allow-discrete, overlay 0.3s allow-discrete;
   }
 
-  #mobileToolsList[open]::backdrop {
+  dialog.sheet-dialog[open]::backdrop {
     opacity: 1;
   }
 
   @starting-style {
-    #mobileToolsList[open] { transform: translateY(100%); }
-    #mobileToolsList[open]::backdrop { opacity: 0; }
+    dialog.sheet-dialog[open] { transform: translateY(100%); }
+    dialog.sheet-dialog[open]::backdrop { opacity: 0; }
   }
 
   .sheet-handle {
@@ -532,6 +532,11 @@ html:has(.modal.show) .modal.hidden .modal-card {
     height: 24px;
     margin: -16px 0 -12px;
     touch-action: none;
+  }
+
+  /* Tools has a tighter frame than the other sheet dialogs. */
+  #mobileToolsList {
+    --sheet-pad: clamp(12px, 4vw, 20px);
   }
 
   #mobileToolsList .sheet-handle {
@@ -566,6 +571,24 @@ html:has(.modal.show) .modal.hidden .modal-card {
   font-size: min(0.5625rem, 3cqi);
 }
 
+/* A message with one button (for example Undo) stays on one row: text left, button right. */
+.toast.action-toast.toast-inline {
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 6px 6px 18px;
+  text-align: left;
+}
+
+.toast.action-toast.toast-inline > span {
+  flex: 1 1 auto;
+}
+
+.toast.action-toast.toast-inline .toast-action {
+  flex: none;
+  min-height: 44px;
+}
+
 /* Reduced motion: no scaling, sliding or looping; colour and opacity changes stay. */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -576,15 +599,15 @@ html:has(.modal.show) .modal.hidden .modal-card {
 
   .modal,
   .modal-card,
-  #mobileToolsList,
-  #mobileToolsList::backdrop {
+  dialog.sheet-dialog,
+  dialog.sheet-dialog::backdrop {
     transition: none;
   }
 
   .modal-card,
   .modal.show .modal-card,
-  #mobileToolsList,
-  #mobileToolsList[open] {
+  dialog.sheet-dialog,
+  dialog.sheet-dialog[open] {
     transform: none;
   }
 

@@ -152,3 +152,35 @@ export function addSheetGrip(card, titleSelector = ':scope > h2, :scope > header
   card.prepend(handle);
   card.querySelector(titleSelector)?.classList.add('sheet-grip');
 }
+
+// Leave duration of a dialog in ms, from its own transition (0 when it has none, e.g. on desktop or with reduced motion).
+function leaveDuration(dialog) {
+  const parts = getComputedStyle(dialog).transitionDuration.split(',');
+  return Math.max(0, ...parts.map(part => parseFloat(part) * (part.includes('ms') ? 1 : 1000) || 0));
+}
+
+/**
+ * Removes a dialog that was built for one use after its leave transition has played, so closing it
+ * slides it away instead of making it vanish. Without a transition it is removed at once.
+ */
+export function removeAfterLeave(dialog, {
+  duration = () => leaveDuration(dialog),
+  setTimer = (callback, ms) => setTimeout(callback, ms),
+  clearTimer = id => clearTimeout(id),
+} = {}) {
+  if (!dialog?.isConnected) return;
+  const ms = duration();
+  if (!(ms > 0)) { dialog.remove(); return; }
+  let done = false;
+  let timer;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    clearTimer(timer);
+    dialog.removeEventListener('transitionend', onEnd);
+    dialog.remove();
+  };
+  const onEnd = event => { if (event.target === dialog) finish(); };
+  dialog.addEventListener('transitionend', onEnd);
+  timer = setTimer(finish, ms + 150); // never wait forever if the browser skips the event
+}

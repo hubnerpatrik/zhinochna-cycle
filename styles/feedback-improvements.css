@@ -81,7 +81,7 @@
 
   .feedback-launch.btn { display: grid; place-items: center; flex: none; width: 48px; min-width: 48px; max-width: 48px; height: 48px; min-height: 48px; padding: 0; border-radius: 50%; font-size: 1.375rem; line-height: 1; bottom: var(--mobile-nav-space); }
   .feedback-launch > span:first-child { display: block; }
-  #mobileToolsList { position: fixed; inset: 0; margin: auto; width: min(350px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: clamp(12px, 4vw, 20px); border: 1px solid var(--line); border-radius: 24px; background: var(--surface); color: var(--text); box-shadow: 0 16px 70px var(--shade); }
+  #mobileToolsList { position: fixed; overflow: auto; padding: clamp(12px, 4vw, 20px); border: 1px solid var(--line); background: var(--surface); color: var(--text); }
   #mobileToolsList:not([open]) { display: none; }
   #mobileToolsList[open] { display: grid; grid-template-columns: 1fr; gap: 10px; }
   #mobileToolsList header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }

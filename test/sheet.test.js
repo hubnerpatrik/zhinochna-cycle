@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { rubberband } from '../ui/motion.js';
-import { bindSheetDismiss, settleSheet } from '../ui/sheet.js';
+import { bindSheetDismiss, removeAfterLeave, settleSheet } from '../ui/sheet.js';
 
 test('rubber-banding resists more the further past the edge, and never exceeds the content size', () => {
   assert.equal(rubberband(0, 400), 0);
@@ -156,4 +156,50 @@ test('reduced motion closes the sheet at once, without sliding', () => {
   release();
   assert.equal(state().closeCalls, 1);
   assert.equal(offsets.at(-1), 0);
+});
+
+// A dialog that is removed from the page when it closes must stay until its leave transition has played.
+function leavingDialog() {
+  const listeners = {};
+  let removed = 0;
+  const dialog = {
+    isConnected: true,
+    addEventListener(type, handler) { (listeners[type] ||= []).push(handler); },
+    removeEventListener(type, handler) { listeners[type] = (listeners[type] || []).filter(item => item !== handler); },
+    remove() { removed += 1; this.isConnected = false; },
+  };
+  const timers = [];
+  const options = duration => ({ duration: () => duration, setTimer: (callback, ms) => { timers.push({ callback, ms }); return timers.length; }, clearTimer: () => {} });
+  return { dialog, listeners, timers, options, removed: () => removed };
+}
+
+test('a dialog without a leave transition is removed immediately', () => {
+  const { dialog, options, removed } = leavingDialog();
+  removeAfterLeave(dialog, options(0));
+  assert.equal(removed(), 1);
+});
+
+test('a dialog with a leave transition stays until the transition ends', () => {
+  const { dialog, listeners, options, removed } = leavingDialog();
+  removeAfterLeave(dialog, options(300));
+  assert.equal(removed(), 0, 'still there while it slides away');
+  listeners.transitionend[0]({ target: dialog });
+  assert.equal(removed(), 1);
+});
+
+test('the leave never waits forever if no transition event arrives, and removal happens only once', () => {
+  const { dialog, listeners, timers, options, removed } = leavingDialog();
+  removeAfterLeave(dialog, options(300));
+  assert.ok(timers[0].ms >= 300 && timers[0].ms <= 600, 'a fallback timer slightly longer than the transition');
+  timers[0].callback();
+  assert.equal(removed(), 1);
+  listeners.transitionend?.[0]?.({ target: dialog });
+  assert.equal(removed(), 1, 'a late event does not remove it twice');
+});
+
+test('transition events bubbling up from the dialog content do not remove it early', () => {
+  const { dialog, listeners, options, removed } = leavingDialog();
+  removeAfterLeave(dialog, options(300));
+  listeners.transitionend[0]({ target: { tagName: 'BUTTON' } });
+  assert.equal(removed(), 0);
 });

@@ -6,7 +6,7 @@ import { openProfileInfo } from "../ui/profile-info-modal.js";
 import { cycleStarts } from "../cycle-model.js";
 import { buildColumns } from '../domain.js';
 import { DEFAULT_LAYOUT, LAYOUT, PHONE_LAYOUT_QUERY, TEMP_FACTORS, chartY, formatDateKey, formatTemp, getAdjustedTemp, parseDateKey, getElementById, syncCSSVariables } from "../core.js";
-import { addSheetGrip, bindSheetDismiss } from "../ui/sheet.js";
+import { makeSheetDialog } from "../ui/sheet-dialog.js";
 import { applyLayoutClass } from '../ui/layout-classes.js';
 import { ZOOM_MIN, ZOOM_MAX, clampZoom } from './map-gestures.js';
 
@@ -181,13 +181,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
       getElementById("mobileSaveBtn").onclick = () => getElementById("saveActiveMapBtn").click();
       getElementById("mobileDayBtn").onclick = () => getElementById("editBtn").click();
       const toolsList = getElementById("mobileToolsList");
-      addSheetGrip(toolsList, ":scope > header");
-      bindSheetDismiss(toolsList, {
-        requestClose: () => toolsList.close(),
-        isOpen: () => toolsList.open,
-        isPhone: () => window.matchMedia(PHONE_LAYOUT_QUERY).matches,
-        reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-      });
+      makeSheetDialog(toolsList, ":scope > header");
       getElementById("mobileTools").onclick = openTools;
       getElementById("mobileCloseToolsBtn").onclick = () => toolsList.close();
       toolsList.addEventListener("close", () => getElementById("mobileTools").setAttribute("aria-expanded", String(toolsList.open)));
