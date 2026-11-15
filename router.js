@@ -281,11 +281,15 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
     return { screen: "active-map", params };
   }
 
+  // Phones reopen on the active map. A restored list screen is replaced on any launch;
+  // Profile is replaced only on a reload, because a fresh load of it can be a direct link.
+  const RESUMABLE_SCREENS = Object.freeze({ own: ["menu", "my-maps", "my-profile"], fresh: ["menu", "my-maps"] });
+
   function start() {
     navigation.start({
-      resume: ({ screen }) => preferActiveMapOnResume?.()
+      resume: ({ screen }, { ownEntry }) => preferActiveMapOnResume?.()
         && store.getActiveMapId()
-        && ["menu", "my-maps", "my-profile"].includes(screen) ? "home" : null,
+        && RESUMABLE_SCREENS[ownEntry ? "own" : "fresh"].includes(screen) ? "home" : null,
     });
   }
 

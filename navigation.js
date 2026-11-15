@@ -43,7 +43,7 @@ export function createNavigation({ browser = window, normalize, render }) {
       browser.addEventListener("hashchange", onHashChange);
       started = true;
       const route = locationRoute();
-      const resumed = ownsCurrentHistoryEntry() ? resume?.(route) : null;
+      const resumed = resume?.(route, { ownEntry: ownsCurrentHistoryEntry() }) ?? null;
       navigate(resumed ?? route, { replace: true });
     },
     dispose() {

@@ -14,6 +14,12 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.19.1 — 2026-11-15
+
+### Fixed
+
+- On phones the app opens on the active map when it is launched with a restored Main Menu or My Maps address, not only after a reload.
+
 ### Changed
 
 - The optional goal setting was removed from map settings. Goals stored in older maps and backups are ignored on load and dropped when they are next saved.
