@@ -175,7 +175,6 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
     <section class="screen" aria-label="My maps" data-i18n-aria-label="My maps">
       <div class="screen-shell">
         <div class="screen-hero">
-          <p class="screen-kicker" data-i18n>My Maps</p>
           <h2 data-i18n>Saved cycle maps</h2>
           <p data-i18n>Export maps or import a shared map.</p>
         </div>

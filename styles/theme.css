@@ -32,9 +32,9 @@
 }
 .time-picker-panel[hidden] { display: none; }
 .time-picker-panel.is-above { top: auto; bottom: calc(100% + 8px); }
-.time-picker-heading { margin-bottom: 14px; font-size: 14px; font-weight: 650; color: var(--text); }
+.time-picker-heading { margin-bottom: 14px; font-size: 0.875rem; font-weight: 650; color: var(--text); }
 .time-picker-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.time-picker-label { margin-bottom: 8px; text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.time-picker-label { margin-bottom: 8px; text-align: center; font-size: 0.8125rem; font-weight: 600; color: var(--muted);}
 .time-picker-drum { position: relative; border-radius: 12px; overflow: hidden; background: var(--surface); }
 .time-picker-drum::before {
   content: ""; position: absolute; top: 80px; left: 4px; right: 4px; height: 40px;
@@ -53,13 +53,13 @@
 .time-picker-options button {
   display: block; width: 100%; height: 40px; min-height: 40px; margin: 0; padding: 0;
   border: 0; border-radius: 9px; background: transparent; color: var(--text);
-  font: inherit; font-size: 19px; font-variant-numeric: tabular-nums; cursor: pointer;
+  font: inherit; font-size: 1.1875rem; font-variant-numeric: tabular-nums; cursor: pointer;
   scroll-snap-align: center; line-height: 40px;
 }
 .time-picker-options button[aria-selected="true"] { font-weight: 700; color: var(--action); }
 .time-picker-options:focus-visible { outline: 2px solid var(--action); outline-offset: -2px; border-radius: 12px; }
 .time-picker-footer { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--hairline); }
-.time-picker-footer button { border: 0; border-radius: 10px; padding: 9px 18px; font: inherit; font-size: 13px; cursor: pointer; }
+.time-picker-footer button { border: 0; border-radius: 10px; padding: 9px 18px; font: inherit; font-size: 0.8125rem; cursor: pointer; }
 .time-picker-clear { background: transparent; color: var(--muted); }
 .time-picker-done { background: var(--action-fill); color: var(--action-fill-ink); font-weight: 600; }
 .time-picker button:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
@@ -430,7 +430,7 @@ select:focus,
 }
 
 .screen-hero h2 {
-  font-size: clamp(34px, 3.4vw, 40px);
+  font-size: clamp(2.125rem, 3.4vw, 2.5rem);
   letter-spacing: -0.045em;
   text-wrap: balance;
 }
@@ -442,7 +442,7 @@ select:focus,
 /* Main menu: keep the grid, strengthen hierarchy and personality. */
 
 .screen-menu .screen-hero h2 {
-  font-size: clamp(38px, 4.4vw, 48px);
+  font-size: clamp(2.375rem, 4.4vw, 3rem);
 }
 
 .menu-summary-card > * {
@@ -455,7 +455,7 @@ select:focus,
 }
 
 .menu-summary-value {
-  font-size: 26px;
+  font-size: 1.625rem;
 }
 
 .menu-summary-note {
@@ -489,7 +489,7 @@ select:focus,
 }
 
 .menu-card-title {
-  font-size: 23px;
+  font-size: 1.4375rem;
 }
 
 .menu-card-description {
@@ -574,7 +574,7 @@ select:focus,
 
 .profile-photo-title {
   color: var(--text);
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: -0.025em;
 }
@@ -583,7 +583,7 @@ select:focus,
   max-width: 190px;
   margin: 7px 0 0;
   color: var(--ink-muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.45;
 }
 
@@ -654,7 +654,7 @@ select:focus {
 
   .screen-hero h2,
   .screen-menu .screen-hero h2 {
-    font-size: 34px;
+    font-size: 2.125rem;
   }
 
   .menu-card {
@@ -760,7 +760,7 @@ select:focus {
 
   #sidebarActions .action-label {
     flex: 0 1 auto;
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 1.25;
     text-align: center;
   }
@@ -788,13 +788,13 @@ select:focus {
   .header-brand h1 {
     gap: 8px;
     margin-bottom: 4px;
-    font-size: clamp(20px, 6.4vw, 24px);
+    font-size: clamp(1.25rem, 6.4vw, 1.5rem);
   }
 
   .app-kicker,
   .screen-kicker {
     margin-bottom: 6px;
-    font-size: 10px;
+    font-size: 0.8125rem;
   }
 
   .header-nav {
@@ -810,7 +810,7 @@ select:focus {
     height: 42px;
     grid-column: auto;
     padding-inline: 12px;
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 
   .screen-shell,
@@ -825,12 +825,12 @@ select:focus {
 
   .screen-hero h2,
   .screen-menu .screen-hero h2 {
-    font-size: clamp(29px, 9vw, 34px);
+    font-size: clamp(1.8125rem, 9vw, 2.125rem);
     line-height: 1.08;
   }
 
   .screen-hero p:last-child {
-    font-size: 14px;
+    font-size: 0.875rem;
   }
 
   .screen-form-card,
@@ -843,7 +843,7 @@ select:focus {
   }
 
   .menu-summary-value {
-    font-size: 23px;
+    font-size: 1.4375rem;
   }
 
   .menu-grid,
@@ -858,7 +858,7 @@ select:focus {
   }
 
   .menu-card-title {
-    font-size: 21px;
+    font-size: 1.3125rem;
   }
 
   .map-list-title-row {
@@ -894,25 +894,25 @@ select:focus {
 
   .calendar-weekday {
     padding-bottom: 2px;
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
 
   .day {
     border-radius: 10px;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 
   .day-cycle-num {
     top: 3px;
     left: 3px;
     padding-inline: 4px;
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
 
   .legend {
     gap: 8px 12px;
     margin-top: 12px;
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
 
   .chart-card {
@@ -940,7 +940,7 @@ select:focus {
 
   .active-map-name {
     overflow: hidden;
-    font-size: 16px;
+    font-size: 1rem;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -964,7 +964,7 @@ select:focus {
     min-width: 0;
     height: 44px;
     padding-inline: 9px;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 
   .profile-editor-layout {

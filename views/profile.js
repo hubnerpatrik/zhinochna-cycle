@@ -26,7 +26,6 @@ export function renderProfileScreen(container, {
     <section class="screen screen-form" aria-label="${escapeHtml(title)}" data-i18n-aria-label="${escapeHtml(title)}">
       <div class="screen-shell">
         <div class="screen-hero">
-          <p class="screen-kicker" data-i18n>Profile</p>
           <h2> <span data-i18n>${escapeHtml(title)}</span></h2>
           <p> <span data-i18n>${escapeHtml(subtitle)}</span></p>
         </div>

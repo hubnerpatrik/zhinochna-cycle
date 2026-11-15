@@ -26,7 +26,7 @@
     display: block;
     margin: 0 0 12px;
     color: var(--muted);
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 1.5;
   }
 
@@ -55,15 +55,15 @@
   body.mobile-map-active .app-header { display: none; }
   body.mobile-map-active .app { padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)); }
   .mobile-map-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; min-height: 44px; }
-  .mobile-map-header strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; }
-  .mobile-map-header button, .mobile-chart-toolbar button, #mobileCancelToolBtn { min-height: 44px; min-width: 44px; border: 0; border-radius: 10px; background: var(--card); color: var(--text); padding: 8px; font: inherit; font-size: 12px; }
+  .mobile-map-header strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1rem; }
+  .mobile-map-header button, .mobile-chart-toolbar button, #mobileCancelToolBtn { min-height: 44px; min-width: 44px; border: 0; border-radius: 10px; background: var(--card); color: var(--text); padding: 8px; font: inherit; font-size: 0.75rem; }
   .mobile-map-tabs { display: flex; justify-content: center; gap: 16px; padding: 2px; }
   .mobile-map-tabs button { display: grid; place-items: center; width: 48px; min-height: 44px; background: transparent; border: 2px solid transparent; border-radius: 10px; color: var(--muted); cursor: pointer; }
   .mobile-map-tabs button[aria-selected="true"] { color: var(--action); border-bottom-color: currentColor; }
   .mobile-map-tabs svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .mobile-map-tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .mobile-profile-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0; }
-  .mobile-profile-actions button { min-height:44px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+  .mobile-profile-actions button { min-height:44px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); font:inherit; font-size:0.8125rem; font-weight:600; cursor:pointer; }
   .mobile-profile-actions button:active { background:var(--surface-alt); }
 
   .mobile-profile-actions button:active { filter:brightness(.95); }
@@ -75,37 +75,37 @@
   #activeMapScreen > .layout { margin-top: 10px; }
   #activeMapScreen .chart-card { padding: 0 8px; margin-top: 4px; background: transparent; box-shadow: none; border: 0; }
   .mobile-chart-toolbar { display: flex; align-items: center; gap: 3px; }
-  .mobile-chart-toolbar > span { flex: 1; font-size: 11px; color: var(--muted); }
+  .mobile-chart-toolbar > span { flex: 1; font-size: 0.6875rem; color: var(--muted); }
   #activeMapScreen .map-scroll { height: var(--mobile-plot-height); max-height: var(--mobile-plot-height); overflow: auto; overscroll-behavior: contain; }
   #activeMapScreen .cycle-map { border-radius: 10px; }
   #activeMapScreen .map-side-label { display: none; }
-  #activeMapScreen .map-temp-spacer { font-size: 10px; }
+  #activeMapScreen .map-temp-spacer { font-size: 0.625rem; }
   #activeMapScreen .map-header-row > .map-temp-spacer, #activeMapScreen .temp-scale-column { grid-column: 2; grid-row: 1; }
   #activeMapScreen .map-days, #activeMapScreen .map-chart-area { grid-column: 3; grid-row: 1; }
   #activeMapScreen .map-chart-row .map-side-label { display: none; }
   #activeMapScreen .map-chart-area canvas { display: block; }
   #activeMapScreen:not(.mobile-observations) #mapRows { display: none; }
   #activeMapScreen .map-row { grid-template-columns: 48px 0 1fr; min-width: max-content; height: 44px; }
-  #activeMapScreen .map-row .map-side-label { display: flex; width: 48px; font-size: 10px; padding-left: 2px; grid-column: 1; }
+  #activeMapScreen .map-row .map-side-label { display: flex; width: 48px; font-size: 0.625rem; padding-left: 2px; grid-column: 1; }
   #activeMapScreen .map-row .map-temp-spacer { display: none; }
   #activeMapScreen .map-row .map-cells { grid-column: 3; }
-  #activeMapScreen .map-gesture-hint { margin: 0; font-size: 10px; line-height: 1.4; padding: 3px 0 6px; }
-  .mobile-observations-btn { width: 100%; min-height: 32px; border: 0; background: transparent; color: var(--muted); font-size: 11px; }
+  #activeMapScreen .map-gesture-hint { margin: 0; font-size: 0.625rem; line-height: 1.4; padding: 3px 0 6px; }
+  .mobile-observations-btn { width: 100%; min-height: 32px; border: 0; background: transparent; color: var(--muted); font-size: 0.6875rem; }
   #mobileMapDock { padding: 14px 8px 4px; border-top: 1px solid var(--line); margin-top: 6px; }
-  .mobile-selected-day { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 2px 14px; font-size: 13px; }
-  #mobileSelectedDate { font-size: 15px; font-weight: 650; letter-spacing: -.2px; color: var(--ink); }
+  .mobile-selected-day { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 2px 14px; font-size: 0.8125rem; }
+  #mobileSelectedDate { font-size: 0.9375rem; font-weight: 650; letter-spacing: -.2px; color: var(--ink); }
   #mobileSelectedTemp { font-weight: 550; font-variant-numeric: tabular-nums; color: var(--ink-muted); }
-  #mobileSelectedCycle { display: block; font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
+  #mobileSelectedCycle { display: block; font-size: 0.6875rem; color: var(--ink-muted); margin-top: 4px; }
   .mobile-map-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .mobile-map-actions > .btn { min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; font-size: 13px; font-weight: 600; box-shadow: none; transition: background .15s ease, border-color .15s ease; }
+  .mobile-map-actions > .btn { min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; font-size: 0.8125rem; font-weight: 600; box-shadow: none; transition: background .15s ease, border-color .15s ease; }
   .mobile-map-actions svg { width: 19px; height: 19px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
   .mobile-tools-list { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 3px; padding-top: 12px; border-top: 1px solid var(--line); }
   .mobile-tools-list[hidden] { display: none; }
-  .mobile-tools-list button { display: flex; align-items: center; gap: 8px; min-height: 54px; padding: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; color: var(--ink); font: inherit; font-size: 12px; font-weight: 550; text-align: left; transition: background .15s ease; }
+  .mobile-tools-list button { display: flex; align-items: center; gap: 8px; min-height: 54px; padding: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; color: var(--ink); font: inherit; font-size: 0.75rem; font-weight: 550; text-align: left; transition: background .15s ease; }
   .mobile-tool-icon { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 auto; border-radius: 8px; background: var(--surface-alt); color: var(--ink-muted); }
   .mobile-tools-list button:active { background: var(--surface-alt); }
   #mobileMapActions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  #mobileToolFeedback .toast { position: static; width: 100%; max-width: none; margin: 0 0 8px; transform: none; border-radius: 14px; box-shadow: none; font-size: 12px; padding: 10px; }
+  #mobileToolFeedback .toast { position: static; width: 100%; max-width: none; margin: 0 0 8px; transform: none; border-radius: 14px; box-shadow: none; font-size: 0.75rem; padding: 10px; }
   #mobileToolFeedback .toast:not(.show) { display: none; }
   #mobileCancelToolBtn { display: block; min-width: 100px; margin: 0 auto; }
   #mobileCancelToolBtn.hidden, #mobileMapActions.hidden { display: none; }
@@ -128,14 +128,14 @@
   /* A 16px input font keeps the keyboard from triggering automatic page zoom. */
   input, select, textarea,
   .modal-card input, .modal-card select,
-  .profile-fields input, .profile-fields select { font-size: 16px; }
+  .profile-fields input, .profile-fields select { font-size: max(16px, 1rem); }
 
   .zoom-controls .tool-btn { width: 44px; height: 44px; }
   .chart-tools-left { grid-template-columns: minmax(0, 1fr); }
   .zoom-controls { justify-self: start; }
   .active-map-meta { display: flex; flex-wrap: wrap; }
   .active-map-name { white-space: normal; overflow-wrap: anywhere; }
-  .map-side-label { padding-left: 6px; white-space: normal; overflow-wrap: anywhere; font-size: 10px; }
+  .map-side-label { padding-left: 6px; white-space: normal; overflow-wrap: anywhere; font-size: 0.625rem; }
   .screen-hero h2, .map-list-title, .menu-summary-value { overflow-wrap: anywhere; }
 
   .segmented button { padding-inline: 6px; overflow-wrap: anywhere; }

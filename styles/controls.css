@@ -114,7 +114,7 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   border-radius: 50%;
   background: var(--bg);
   color: var(--text);
-  font-size: 18px;
+  font-size: 1.125rem;
   cursor: pointer;
   transition: background 0.15s var(--ease), transform 0.1s var(--ease);
 }
@@ -149,7 +149,7 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   background: var(--action-fill);
   color: var(--action-fill-ink);
   font: inherit;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.1s var(--ease), box-shadow 0.15s var(--ease), filter 0.15s var(--ease);

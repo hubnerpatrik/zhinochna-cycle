@@ -100,10 +100,8 @@ select:focus-visible{
 .app-kicker,
 .screen-kicker{
   margin:0 0 8px;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
+  font-size:0.8125rem;
+  font-weight:600;
   color:var(--muted);
 }
 
@@ -122,7 +120,7 @@ select:focus-visible{
   border-radius:var(--control-radius);
   background:transparent;
   color:var(--muted);
-  font-size:14px;
+  font-size:0.875rem;
   font-weight:700;
   cursor:pointer;
   transition:background 0.15s var(--ease), color 0.15s var(--ease), transform 0.1s var(--ease);
@@ -170,7 +168,7 @@ select:focus-visible{
 
 .screen-hero h2{
   margin:0;
-  font-size:32px;
+  font-size:2rem;
   letter-spacing:-0.04em;
   line-height:1.05;
   font-weight:700;
@@ -180,7 +178,7 @@ select:focus-visible{
   margin:0;
   max-width:720px;
   color:var(--muted);
-  font-size:15px;
+  font-size:0.9375rem;
   line-height:1.5;
 }
 
@@ -237,16 +235,14 @@ select:focus-visible{
 }
 
 .menu-summary-label{
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
+  font-size:0.8125rem;
+  font-weight:600;
   color:var(--muted);
 }
 
 .menu-summary-value{
   margin-top:6px;
-  font-size:22px;
+  font-size:1.375rem;
   font-weight:700;
   letter-spacing:-0.03em;
 }
@@ -254,7 +250,7 @@ select:focus-visible{
 .menu-summary-note{
   max-width:280px;
   color:var(--muted);
-  font-size:14px;
+  font-size:0.875rem;
   line-height:1.45;
   text-align:right;
 }
@@ -293,19 +289,19 @@ select:focus-visible{
   justify-content:center;
   border-radius:50%;
   background:var(--bg);
-  font-size:13px;
+  font-size:0.8125rem;
   font-weight:700;
 }
 
 .menu-card-title{
-  font-size:22px;
+  font-size:1.375rem;
   font-weight:700;
   letter-spacing:-0.03em;
 }
 
 .menu-card-description{
   color:var(--muted);
-  font-size:14px;
+  font-size:0.875rem;
   line-height:1.45;
 }
 
@@ -340,7 +336,7 @@ select:focus-visible{
 .map-list-card h3,
 .empty-state h3{
   margin:0;
-  font-size:20px;
+  font-size:1.25rem;
   letter-spacing:-0.03em;
 }
 
@@ -355,7 +351,7 @@ select:focus-visible{
 .empty-state p{
   margin:6px 0 0;
   color:var(--muted);
-  font-size:14px;
+  font-size:0.875rem;
   line-height:1.45;
 }
 
@@ -372,7 +368,7 @@ select:focus-visible{
   border-radius:999px;
   background:rgba(10,132,255,0.12);
   color:var(--blue);
-  font-size:12px;
+  font-size:0.75rem;
   font-weight:700;
 }
 
@@ -451,7 +447,7 @@ select:focus-visible{
   padding-top:14px;
   border-top:1px solid rgba(239,68,68,.2);
   color:var(--danger);
-  font-size:14px;
+  font-size:0.875rem;
   font-weight:600;
 }
 
@@ -494,7 +490,7 @@ h1{
   align-items:center;
   gap:10px;
 
-  font-size:24px;
+  font-size:1.5rem;
   font-weight:700;
   letter-spacing:-0.04em;
   line-height:1.2;
@@ -514,11 +510,9 @@ h1{
 
 .calendar-weekday {
   text-align: center;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight:600;
-  letter-spacing:0.02em;
   color: var(--muted);
-  text-transform:uppercase;
   padding-bottom:4px;
 }
 
@@ -534,7 +528,7 @@ h1{
 .month-label{
   text-align:center;
 
-  font-size:16px;
+  font-size:1rem;
   font-weight:600;
   letter-spacing:-0.01em;
 }
@@ -549,7 +543,7 @@ h1{
   background:var(--bg);
   color:var(--text);
 
-  font-size:15px;
+  font-size:0.9375rem;
 
   cursor:pointer;
   transition:background 0.15s var(--ease), transform 0.1s var(--ease);
@@ -588,7 +582,7 @@ h1{
 
   cursor:pointer;
 
-  font-size:13px;
+  font-size:0.8125rem;
   font-weight:500;
 
   transition:background 0.15s var(--ease), transform 0.1s var(--ease), box-shadow 0.15s var(--ease), border-color 0.15s var(--ease);
@@ -630,7 +624,7 @@ h1{
   position: absolute;
   top: 6px;
   left: 6px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 800;
   color: var(--text);
   line-height: 1;
@@ -655,7 +649,7 @@ h1{
 
   margin-top:16px;
 
-  font-size:12px;
+  font-size:0.75rem;
   font-weight:500;
   color:var(--muted);
 }
@@ -699,11 +693,9 @@ h1{
   margin:0 0 12px;
   padding:0 2px;
 
-  font-size:12px;
-  font-weight:700;
+  font-size:0.8125rem;
+  font-weight:600;
 
-  text-transform:uppercase;
-  letter-spacing:0.06em;
 
   color:var(--muted);
 }
@@ -725,10 +717,8 @@ h1{
 }
 
 .profile-info-title{
-  font-size:12px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:0.06em;
+  font-size:0.8125rem;
+  font-weight:600;
   color:var(--muted);
   margin-bottom:8px;
 }
@@ -777,7 +767,7 @@ h1{
   align-items:baseline;
   gap:8px;
   padding:3px 0;
-  font-size:12px;
+  font-size:0.75rem;
 }
 
 .profile-info-label{
@@ -799,11 +789,9 @@ h1{
 }
 
 .info-label{
-  font-size:11px;
-  font-weight:700;
+  font-size:0.8125rem;
+  font-weight:600;
 
-  text-transform:uppercase;
-  letter-spacing:0.05em;
 
   color:var(--muted);
 }
@@ -811,7 +799,7 @@ h1{
 .info-value{
   min-height:18px;
 
-  font-size:15px;
+  font-size:0.9375rem;
   line-height:1.35;
 
   color:var(--text);
@@ -843,7 +831,7 @@ h1{
 
   cursor:pointer;
 
-  font-size:14px;
+  font-size:0.875rem;
   font-weight:600;
   text-align:left;
 
@@ -953,7 +941,7 @@ h1{
 }
 
 .active-map-name{
-  font-size:18px;
+  font-size:1.125rem;
   font-weight:700;
   letter-spacing:-0.03em;
 }
@@ -994,7 +982,7 @@ h1{
 
   cursor:pointer;
 
-  font-size:13px;
+  font-size:0.8125rem;
   font-weight:600;
 
   transition:
@@ -1081,7 +1069,7 @@ h1{
   align-items: center;
   gap: 6px;
   margin-bottom: 12px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text);
 }
@@ -1109,7 +1097,7 @@ h1{
 
   border-right:1px solid var(--hairline);
 
-  font-size:11px;
+  font-size:0.6875rem;
   font-weight:600;
   white-space:nowrap;
 
@@ -1148,7 +1136,7 @@ h1{
 
   transform:translateY(-50%);
 
-  font-size:11px;
+  font-size:0.6875rem;
   font-weight:600;
   font-variant-numeric: tabular-nums;
   font-feature-settings:"tnum" 1, "lnum" 1;
@@ -1188,7 +1176,7 @@ h1{
 
   border-right:1px solid var(--hairline);
 
-  font-size:10px;
+  font-size:0.625rem;
   color:var(--text);
 }
 
@@ -1388,7 +1376,7 @@ body:has(.modal.show:not(.hidden), dialog:modal) {
 
 .modal-card h2{
   margin:0;
-  font-size:18px;
+  font-size:1.125rem;
   font-weight:700;
   letter-spacing:-0.01em;
 }
@@ -1401,11 +1389,9 @@ body:has(.modal.show:not(.hidden), dialog:modal) {
 
 .section-title,
 .input-label{
-  font-size:11px;
-  font-weight:700;
+  font-size:0.8125rem;
+  font-weight:600;
 
-  text-transform:uppercase;
-  letter-spacing:0.05em;
 
   color:var(--muted);
 }
@@ -1422,7 +1408,7 @@ select{
   background:var(--card);
   color:var(--text);
 
-  font-size:14px;
+  font-size:0.875rem;
 }
 
 /* ─── form elements ──────────────────────── */
@@ -1439,7 +1425,7 @@ input{
   background:var(--card);
   color:var(--text);
 
-  font-size:14px;
+  font-size:0.875rem;
 
   transition:border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
@@ -1471,7 +1457,7 @@ input{
   transform: translateY(-50%);
   pointer-events: none;
   color: var(--muted);
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 input[type="date"],
@@ -1507,7 +1493,7 @@ input:focus{
   align-items:center;
   gap:12px;
 
-  font-size:14px;
+  font-size:0.875rem;
 }
 
 .checkbox-row input{
@@ -1553,7 +1539,7 @@ input:focus{
 
   cursor:pointer;
 
-  font-size:12px;
+  font-size:0.75rem;
   font-weight:500;
 
   transition:background 0.15s var(--ease), box-shadow 0.15s var(--ease), color 0.15s var(--ease);
@@ -1593,7 +1579,7 @@ input:focus{
 
   cursor:pointer;
 
-  font-size:14px;
+  font-size:0.875rem;
   font-weight:600;
 
   transition:transform 0.1s var(--ease), opacity 0.15s var(--ease);
@@ -1624,7 +1610,7 @@ input:focus{
 .field-hint{
   min-height:14px;
 
-  font-size:12px;
+  font-size:0.75rem;
   font-weight:500;
 
   color:var(--muted);
@@ -1645,7 +1631,7 @@ input:focus{
   border-radius:999px;
   box-shadow:var(--shadow-modal);
 
-  font-size:14px;
+  font-size:0.875rem;
   font-weight:500;
 
   opacity:0;
@@ -1683,7 +1669,7 @@ input:focus{
   border-radius:999px;
   color:white;
   font:inherit;
-  font-size:13px;
+  font-size:0.8125rem;
   font-weight:700;
   cursor:pointer;
 }
@@ -1732,7 +1718,7 @@ input:focus{
   background:transparent;
   color:var(--muted);
 
-  font-size:11px;
+  font-size:0.6875rem;
   font-weight:500;
 
   cursor:pointer;

@@ -1,15 +1,15 @@
 .map-create-plus { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-.map-create-plus > span:first-child { font-size: 28px; line-height: 1; }
+.map-create-plus > span:first-child { font-size: 1.75rem; line-height: 1; }
 .map-dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 26px; border: 1px solid var(--hairline); border-radius: 24px; background: var(--card); color: var(--text); box-shadow: 0 20px 70px var(--shade); }
 .map-dialog::backdrop, .mobile-tools-list::backdrop { background: var(--backdrop); }
 .map-dialog h2 { margin: 0 0 24px; }
 .map-dialog label { display: grid; gap: 10px; }
-.map-dialog input { width: 100%; min-height: 48px; font: inherit; font-size: 16px; }
+.map-dialog input { width: 100%; min-height: 48px; font: inherit; font-size: max(16px, 1rem); }
 .map-dialog .modal-actions { margin-top: 24px; }
 .map-dialog button { min-height: 44px; padding: 10px 18px; border-radius: 12px; border: 1px solid var(--hairline); font: inherit; cursor: pointer; }
 .feedback-attachment { display: block; width: auto; max-width: 100%; max-height: 360px; object-fit: contain; border-radius: 10px; margin-block: 12px; }
 .feedback-image-picker { display: grid; gap: 8px; margin-block: 16px; }
-.feedback-image-picker input { display: block; width: 100%; margin-top: 8px; font-size: 14px; }
+.feedback-image-picker input { display: block; width: 100%; margin-top: 8px; font-size: 0.875rem; }
 .feedback-image-picker small { color: var(--ink-muted); }
 .map-export-popover { position: fixed; inset: auto; margin: 0; display: none; grid-template-columns: 1fr; gap: 6px; width: 180px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 10px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card); box-shadow: 0 12px 36px var(--shade); }
 .map-export-popover:popover-open { display: grid; }
@@ -22,7 +22,7 @@
 .observation-scale { --scale-accent: var(--data-mucus); --scale-fill: var(--data-mucus-tint); }
 #cervixModal .observation-scale { --scale-accent: var(--data-cervix); --scale-fill: var(--data-cervix-tint); }
 :where(#cervixModal) .observation-scale button { border: 1px solid transparent; }
-.observation-scale button, .bleeding-intensity button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 76px; padding: 10px 4px; font-size: 12px; line-height: 1.3; white-space: normal; overflow-wrap: anywhere; }
+.observation-scale button, .bleeding-intensity button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 76px; padding: 10px 4px; font-size: 0.75rem; line-height: 1.3; white-space: normal; overflow-wrap: anywhere; }
 .observation-scale-icon { display: block; width: 48px; height: 40px; color: var(--scale-accent); flex-shrink: 0; }
 .observation-scale-icon svg { display: block; width: 100%; height: 100%; }
 .observation-duotone { --observation-icon-fill: var(--data-mucus-fill); }
@@ -37,7 +37,7 @@
 #mucusModal .checkbox-row, #bleedingModal .checkbox-row, #otherModal .checkbox-row { gap: 10px; min-height: 44px; }
 #mucusModal .checkbox-row input, #bleedingModal .checkbox-row input, #otherModal .checkbox-row input { width: 20px; height: 20px; flex: 0 0 20px; accent-color: var(--data-mucus); }
 .cervix-firmness-choices button { user-select: none; }
-.cervix-firmness-code { display: grid; place-items: center; font-size: 24px; font-weight: 700; line-height: 1; }
+.cervix-firmness-code { display: grid; place-items: center; font-size: 1.5rem; font-weight: 700; line-height: 1; }
 .cervix-height-title { margin-top: 12px; }
 .map-row-icon { display: grid; place-items: center; flex: 0 0 24px; margin-right: 4px; }
 .nav-icon { display: inline-block; width: 22px; height: 22px; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }
@@ -53,18 +53,18 @@
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .nav-icon { margin-right: 0; }
   .menu-card-icon { margin-bottom: 0; }
-  #mobileObservationsBtn { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; margin-top: 12px; border: 1px solid var(--hairline); border-radius: 14px; background: var(--surface); font-size: 14px; font-weight: 600; color: var(--text); scroll-margin-top: 12px; }
-  #mobileObservationsBtn::after { content: '+'; font-size: 22px; }
+  #mobileObservationsBtn { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; margin-top: 12px; border: 1px solid var(--hairline); border-radius: 14px; background: var(--surface); font-size: 0.875rem; font-weight: 600; color: var(--text); scroll-margin-top: 12px; }
+  #mobileObservationsBtn::after { content: '+'; font-size: 1.375rem; }
   #mobileObservationsBtn[aria-expanded="true"]::after { content: '−'; }
   #mobileObservationPanel { margin-top: 10px; }
-  .mobile-observation-period { margin: 0 0 8px; font-size: 15px; font-weight: 600; line-height: 1.4; }
+  .mobile-observation-period { margin: 0 0 8px; font-size: 0.9375rem; font-weight: 600; line-height: 1.4; }
   .mobile-observation-period:empty { display: none; }
   .mobile-selected-measurement { display: grid; justify-items: end; gap: 4px; min-width: 0; max-width: 55%; }
-  #mobileSelectedFactor { max-width: 100%; font-size: 12px; color: var(--ink-muted); overflow-wrap: anywhere; text-align: right; }
-  #activeMapScreen .calendar .day, #calendar .day { font-size: 13px; }
-  #calendar .day-cycle-num { font-size: 9px; font-weight: 500; padding: 1px 3px; box-shadow: none; }
+  #mobileSelectedFactor { max-width: 100%; font-size: 0.75rem; color: var(--ink-muted); overflow-wrap: anywhere; text-align: right; }
+  #activeMapScreen .calendar .day, #calendar .day { font-size: 0.8125rem; }
+  #calendar .day-cycle-num { font-size: 0.5625rem; font-weight: 500; padding: 1px 3px; box-shadow: none; }
   #mobileObservationPanel[hidden] { display: none; }
-  .mobile-observation-hint { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  .mobile-observation-hint { color: var(--muted); font-size: 0.75rem; line-height: 1.5; }
   #mobileObservationScroll { overflow-x: auto; overscroll-behavior-x: contain; touch-action: pan-x pan-y; border: 1px solid var(--hairline); border-radius: 14px; background: var(--surface); }
   #mobileObservationGrid { width: max-content; min-width: 100%; }
   #mobileObservationGrid #mapRows { display: block; }
@@ -74,20 +74,20 @@
   #activeMapScreen #mobileObservationGrid .map-row-icon { display: grid; }
   #mobileObservationGrid .map-cell { height: 44px; }
   .mobile-observation-header { display: grid; grid-template-columns: 48px max-content; min-height: 44px; border-bottom: 1px solid var(--hairline); }
-  .mobile-observation-header > span { position: sticky; left: 0; z-index: 3; display: flex; align-items: center; padding: 6px; background: var(--surface-alt); font-size: 11px; }
+  .mobile-observation-header > span { position: sticky; left: 0; z-index: 3; display: flex; align-items: center; padding: 6px; background: var(--surface-alt); font-size: 0.6875rem; }
   #mobileObservationDays { height: 44px; }
-  #mobileObservationDays button { height: 44px; padding: 0; border: 0; border-right: 1px solid var(--hairline); border-radius: 0; background: var(--surface-alt); font: inherit; font-size: 10px; color: var(--text); cursor: pointer; }
+  #mobileObservationDays button { height: 44px; padding: 0; border: 0; border-right: 1px solid var(--hairline); border-radius: 0; background: var(--surface-alt); font: inherit; font-size: 0.625rem; color: var(--text); cursor: pointer; }
   /* Glass treatment belongs only to the phone navigation dock. */
 
-  .feedback-launch.btn { display: grid; place-items: center; flex: none; width: 48px; min-width: 48px; max-width: 48px; height: 48px; min-height: 48px; padding: 0; border-radius: 50%; font-size: 22px; line-height: 1; bottom: var(--mobile-nav-space); }
+  .feedback-launch.btn { display: grid; place-items: center; flex: none; width: 48px; min-width: 48px; max-width: 48px; height: 48px; min-height: 48px; padding: 0; border-radius: 50%; font-size: 1.375rem; line-height: 1; bottom: var(--mobile-nav-space); }
   .feedback-launch > span:first-child { display: block; }
   #mobileToolsList { position: fixed; inset: 0; margin: auto; width: min(350px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: clamp(12px, 4vw, 20px); border: 1px solid var(--line); border-radius: 24px; background: var(--surface); color: var(--text); box-shadow: 0 16px 70px var(--shade); }
   #mobileToolsList:not([open]) { display: none; }
   #mobileToolsList[open] { display: grid; grid-template-columns: 1fr; gap: 10px; }
   #mobileToolsList header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  #mobileToolsList h2 { margin: 0; font-size: 22px; }
+  #mobileToolsList h2 { margin: 0; font-size: 1.375rem; }
   #mobileToolsList button { min-height: 48px; padding: 12px; text-align: left; }
-  #mobileToolsList header button { text-align: center; width: 44px; font-size: 24px; }
+  #mobileToolsList header button { text-align: center; width: 44px; font-size: 1.5rem; }
   #mobileToolFeedback:has(.persistent-toast.show) {
     position: fixed;
     z-index: 110;
@@ -107,7 +107,7 @@
   }
   #mobileToolFeedback .persistent-toast { order: -1; flex: 1; min-width: 0; margin: 0; padding: 0; background: transparent; color: var(--ink); }
   #mobileToolFeedback .action-toast { gap: 6px; text-align: center; }
-  #mobileToolFeedback .toast-action, #mobileCancelToolBtn { min-width: 44px; min-height: 44px; height: auto; padding: 6px clamp(4px, 1.5vw, 10px); border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: 12px; line-height: 1.2; }
+  #mobileToolFeedback .toast-action, #mobileCancelToolBtn { min-width: 44px; min-height: 44px; height: auto; padding: 6px clamp(4px, 1.5vw, 10px); border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: 0.75rem; line-height: 1.2; }
   #mobileToolFeedback .toast-action { flex: 1 1 0; white-space: normal; overflow-wrap: anywhere; }
   #mobileToolFeedback .toast-action-cancel, #mobileCancelToolBtn { background: var(--danger-tint); color: var(--danger); }
   #activeMapScreen .temp-scale-column { position: sticky; left: 0; z-index: 4; background: var(--surface); }

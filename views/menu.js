@@ -31,7 +31,6 @@ export function renderMenuView(container, { activeMap, onNavigate }) {
     <section class="screen screen-menu" aria-label="Main menu" data-i18n-aria-label="Main menu">
       <div class="screen-shell">
         <div class="screen-hero">
-          <p class="screen-kicker" data-i18n>Main Menu</p>
           <h2 data-i18n>Start making maps</h2>
           <p data-i18n>Create a map in My Maps, or continue with your active map.</p>
         </div>

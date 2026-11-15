@@ -262,7 +262,7 @@ body {
 
 .header-brand h1 {
   margin: 0;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 650;
   letter-spacing: -0.02em;
   text-shadow: none;
@@ -278,7 +278,7 @@ body {
   margin: 0;
   min-width: 0;
   color: var(--ink-muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .app-header .account-bar .btn {
@@ -288,7 +288,7 @@ body {
   border-color: transparent;
   background: transparent;
   color: var(--ink-muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
 }
 
@@ -361,7 +361,7 @@ body {
     border-radius: 0;
     background: transparent;
     color: var(--ink-muted);
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 500;
   }
 
@@ -393,7 +393,7 @@ body {
   }
 
   .header-brand h1 {
-    font-size: clamp(16px, 5vw, 19px);
+    font-size: clamp(1rem, 5vw, 1.1875rem);
   }
 
   .header-brand {
@@ -551,6 +551,19 @@ html:has(.modal.show) .modal.hidden .modal-card {
   .sheet-grip {
     touch-action: none;
   }
+}
+
+/* Calendar cells have a fixed size. Their text follows the reader's text setting only up to what a cell can hold. */
+.calendar-grid {
+  container-type: inline-size;
+}
+
+#calendar .day {
+  font-size: min(0.8125rem, 4.4cqi);
+}
+
+#calendar .day-cycle-num {
+  font-size: min(0.5625rem, 3cqi);
 }
 
 /* Reduced motion: no scaling, sliding or looping; colour and opacity changes stay. */
