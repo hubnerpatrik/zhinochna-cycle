@@ -2,7 +2,7 @@
 const icons = {
   edit: ['<path d="M4 20l4-1 11-11-3-3L5 16l-1 4Z"/>', '<path d="M4 20l4-1 11-11-3-3L5 16l-1 4Z"/><path d="M14 6l3 3"/>'],
   info: ['<circle cx="12" cy="12" r="9"/>', '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".5" fill="currentColor"/>'],
-  fertile: ['<path d="M5 4h11l-2.5 3.5L16 11H5Z"/>', '<path d="M5 21V4h11l-2.5 3.5L16 11H5"/>'],
+  fertile: ['<rect x="4" y="7" width="16" height="10" rx="2"/>', '<path d="M4 5v14M20 5v14M8 12h8m-5.5-2.5L8 12l2.5 2.5m3-5L16 12l-2.5 2.5"/>'],
   temperature: ['<path d="M12 14.5V5a2 2 0 1 0-4 0v9.5a4 4 0 1 0 4 0Z"/>', '<path d="M12 14.5V5a2 2 0 1 0-4 0v9.5a4 4 0 1 0 4 0Z"/><path d="M12 9v4"/>'],
   period: ['<path d="M12 3c4 5 7 8.5 7 12a7 7 0 1 1-14 0c0-3.5 3-7 7-12Z"/>', '<path d="M12 3c4 5 7 8.5 7 12a7 7 0 1 1-14 0c0-3.5 3-7 7-12Z"/>'],
   mucus: ['<path d="M3 9c1.5 1.6 3 1.6 4.5 0s3-1.6 4.5 0 3 1.6 4.5 0 3-1.6 4.5 0v6c-1.5-1.6-3-1.6-4.5 0s-3 1.6-4.5 0-3-1.6-4.5 0-3 1.6-4.5 0Z"/>', '<path d="M3 9c1.5 1.6 3 1.6 4.5 0s3-1.6 4.5 0 3 1.6 4.5 0 3-1.6 4.5 0M3 15c1.5 1.6 3 1.6 4.5 0s3-1.6 4.5 0 3 1.6 4.5 0 3-1.6 4.5 0"/>'],
@@ -20,7 +20,7 @@ const icons = {
 export function interfaceIcon(name) {
   const [fill, line] = icons[name] || icons.info;
   // The original drawings do not all share a visual center within the 24-unit grid.
-  const offset = { temperature: '2 -.5', period: '0 -.5', edit: '.5 -.5', fertile: '1.5 -.5' }[name] || '0 0';
+  const offset = { temperature: '2 -.5', period: '0 -.5', edit: '.5 -.5' }[name] || '0 0';
   return `<svg class="interface-duotone" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(${offset})"><g fill="currentColor" fill-opacity=".2" stroke="none">${fill}</g>${line}</g></svg>`;
 }
 

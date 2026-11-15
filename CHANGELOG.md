@@ -14,6 +14,10 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Changed
+
+- Fertile range has its own range icon instead of the marker flag, and the phone Tools menu shows all tool icons in one neutral color.
+
 ## 0.19.1 — 2026-11-15
 
 ### Fixed

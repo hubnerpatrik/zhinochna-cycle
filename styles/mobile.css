@@ -104,9 +104,6 @@
   .mobile-tools-list[hidden] { display: none; }
   .mobile-tools-list button { display: flex; align-items: center; gap: 8px; min-height: 54px; padding: 8px; background: #fffaf6; border: 1px solid #e9e0d9; border-radius: 11px; color: #414843; font: inherit; font-size: 12px; font-weight: 550; text-align: left; transition: background .15s ease; }
   .mobile-tool-icon { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 auto; border-radius: 8px; background: #f0ebe6; color: #746c65; }
-  .mobile-tools-list [data-mobile-tool="coverlineBtn"] .mobile-tool-icon { background: #e5eeea; color: #426f60; }
-  .mobile-tools-list [data-mobile-tool="markersActionBtn"] .mobile-tool-icon { background: #eeebf5; color: #78668e; }
-  .mobile-tools-list [data-mobile-tool="crossCellsActionBtn"] .mobile-tool-icon { background: #f4e8e8; color: #98666f; }
   .mobile-tools-list button:active { background: #f0e9e2; }
   #mobileMapActions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   #mobileToolFeedback .toast { position: static; width: 100%; max-width: none; margin: 0 0 8px; transform: none; border-radius: 14px; box-shadow: none; font-size: 12px; padding: 10px; }
