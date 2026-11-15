@@ -16,6 +16,12 @@ test('the app header is one bar: brand mark, name, account tools and navigation 
   }
 });
 
+test('the hidden Menu tab has no unused phone label', () => {
+  const menuBtn = header.match(/<button id="navMenuBtn"[\s\S]*?<\/button>/)?.[0] || '';
+  assert.ok(menuBtn, 'the Menu tab exists');
+  assert.doesNotMatch(menuBtn, /nav-label-mobile/, 'phones hide this tab, so it needs no phone label');
+});
+
 test('on wide screens navigation is plain text tabs with an accent underline, not pills with icons', () => {
   const wide = components.match(/@media \(min-width: 561px\) and \(min-height: 501px\), \(min-width: 561px\) and \(pointer: fine\) \{([\s\S]*?)\n\}/)?.[1] || '';
   assert.ok(wide, 'components.css has a wide-screen header block');

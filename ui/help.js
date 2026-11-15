@@ -3,7 +3,6 @@ import { setTranslatedAttribute } from '../i18n.js';
 // Native hover help follows the same translation mechanism as other UI copy.
 const HELP_MESSAGES = {
   'Main Menu': 'Open the overview and choose what to do next.',
-  Menu: 'Open the overview and choose what to do next.',
   'My Profile': 'Set your profile and usual measurement time.',
   Profile: 'Review your profile and measurement settings.',
   'My Maps': 'Manage maps, import backups and download exports.',
