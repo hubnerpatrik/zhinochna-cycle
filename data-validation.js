@@ -4,6 +4,11 @@ import { DEFAULT_HISTORY_COUNT, EXTENDED_HISTORY_COUNT } from './cycle-summary.j
 
 const TEMPERATURE_PRECISION_FACTOR = 100;
 const COVERLINE_TOP_CELL_STEP = 0.05;
+const COVERLINE_FIELDS = Object.freeze([
+  "horizontalTemp", "verticalTopTemp", "verticalBottomTemp",
+  "verticalKey", "verticalPosition", "horizontalStartKey", "horizontalStartPosition",
+  "horizontalEndKey", "horizontalEndPosition",
+]);
 
 export const CROSSABLE_ROW_IDS = Object.freeze([
   "cycleDayRow", "bleedingRow", "spottingRow", "sedimentRow", "sensationRow",
@@ -150,7 +155,13 @@ export function normalizeProfile(profile, { strict = false } = {}) {
       throw new DataValidationError("The profile completion value is malformed.");
     }
   }
-  const normalized = { ...PROFILE_DEFAULTS, ...source };
+  // Only known fields are kept, so stored state never carries unvalidated data.
+  const normalized = Object.fromEntries(Object.entries(PROFILE_DEFAULTS).map(([key, fallback]) => {
+    const value = source[key];
+    const valid = typeof value === "string" || (key === "age" && typeof value === "number" && Number.isFinite(value));
+    return [key, valid ? value : fallback];
+  }));
+  if (typeof source.setupCompleted === "boolean") normalized.setupCompleted = source.setupCompleted;
   if (!isStoredProfilePhoto(normalized.photo)) {
     if (strict) throw new DataValidationError('The profile photo is malformed.');
     normalized.photo = '';
@@ -331,7 +342,7 @@ function normalizeCoverlines(coverlines, strict) {
       if (strict) throw new DataValidationError(`The coverline “${key}” is malformed.`);
       return;
     }
-    normalized[key] = { ...value };
+    normalized[key] = Object.fromEntries(COVERLINE_FIELDS.filter(field => value[field] != null).map(field => [field, value[field]]));
   });
   return normalized;
 }
@@ -426,7 +437,7 @@ export function normalizeApplicationData(data, { strict = false } = {}) {
   ]));
 
   let activeMapId = source.activeMapId ?? null;
-  if (activeMapId !== null && (typeof activeMapId !== "string" || !maps[activeMapId])) {
+  if (activeMapId !== null && (typeof activeMapId !== "string" || !Object.hasOwn(maps, activeMapId))) {
     if (strict) throw new DataValidationError("The active map ID does not identify an imported map.");
     activeMapId = null;
   }

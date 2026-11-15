@@ -17,6 +17,15 @@ vMAJOR.MINOR.PATCH
 ### Fixed
 
 - PDF, Excel and CSV exports now mark fertile days from an older map's fertile range, matching the calendar and chart.
+- Loading the cloud version after a conflict keeps only the latest recovery copy, so browser storage no longer fills up.
+- Saved maps on this device that no longer pass validation no longer block sign-in; what can be kept is synced and the original is kept as a recovery copy.
+- Maps the cloud rejects as invalid now show a clear message instead of retrying silently.
+- The feedback inbox loads screenshots only when a report is opened, so large inboxes keep loading.
+
+### Changed
+
+- Numbered feedback pins are shown only to administrators listed in the new `FEEDBACK_PIN_EMAILS` server setting.
+- Shared map links are limited to 20 active links per account (requires migration `004-shared-map-owner.sql`).
 
 ## 0.18.0 — 2026-11-12
 

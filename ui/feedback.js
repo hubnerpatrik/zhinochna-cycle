@@ -68,6 +68,19 @@ export function setupFeedback({ auth, app, transport, description }) {
     imageGeneration++;
     imageLoading = false;
     render();
+    void loadThread(threadId);
+  }
+  // The list omits screenshots; read the complete thread once it is opened.
+  async function loadThread(threadId) {
+    const thread = threads.find(item => item.id === threadId);
+    if (!thread?.messages.some(message => message.hasImage && !message.image)) return;
+    const epoch = generation;
+    try {
+      const result = await request('GET', undefined, threadId);
+      if (epoch !== generation || !result?.thread) return;
+      threads = threads.map(item => item.id === threadId ? result.thread : item);
+    } catch { if (epoch === generation) error = t('Feedback could not be loaded. Try again.'); }
+    if (epoch === generation && selected === threadId) render();
   }
   conceal = () => {
     generation++; cancelPick(); panel.close(); pins.replaceChildren();
@@ -164,7 +177,7 @@ export function setupFeedback({ auth, app, transport, description }) {
       const pin = document.createElement('button'); pin.type = 'button'; pin.className = 'feedback-pin';
       pin.textContent = String(index + 1); pin.setAttribute('aria-label', `${t('Feedback')}: ${thread.anchor.label}`);
       setOverlayPosition(pin, `feedback-pin-${index}`, { left: pinLeft, top: pinTop });
-      pin.onclick = () => { selected = thread.id; draft = null; open(); };
+      pin.onclick = () => { selected = thread.id; draft = null; open(); void loadThread(thread.id); };
       pins.append(pin);
     });
   }

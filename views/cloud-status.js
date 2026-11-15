@@ -12,7 +12,10 @@ const STATUS_MESSAGES = {
   conflict: "Maps changed on another device. Download your local backup, then load the cloud version.",
   "local-conflict": "Maps changed in another tab. Download your local backup, then reload.",
   "too-large": "Your maps exceed the cloud storage limit. Download a backup and reduce their size.",
+  invalid: "Your account did not accept these maps. Download a backup and report the problem.",
 };
+const WARNING_STATES = ["error", "conflict", "local-conflict", "too-large", "invalid"];
+const RETRY_STATES = ["error", "pending", "too-large", "invalid"];
 
 export function setupCloudStatus(cloud) {
   const panel = document.getElementById("cloudStatusPanel");
@@ -28,8 +31,8 @@ export function setupCloudStatus(cloud) {
   };
   const render = state => {
     setText(message, STATUS_MESSAGES[state] || STATUS_MESSAGES.error);
-    panel.dataset.warning = ["error", "conflict", "local-conflict", "too-large"].includes(state);
-    retry.hidden = !["error", "pending", "too-large"].includes(state);
+    panel.dataset.warning = WARNING_STATES.includes(state);
+    retry.hidden = !RETRY_STATES.includes(state);
     reload.hidden = !["conflict", "local-conflict"].includes(state);
     backup.hidden = panel.dataset.warning !== "true";
   };

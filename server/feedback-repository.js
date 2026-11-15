@@ -49,11 +49,21 @@ export function createFeedbackRepository(sql) {
     });
   }
   return {
+    // The list leaves screenshots out (each can be ~140 kB) so the response stays
+    // small; messages that had one carry hasImage and the thread is read on demand.
     async list(userId, admin) {
-      const rows = await sql`SELECT id, owner_id AS "ownerId", anchor, resolved, messages, created_at AS "createdAt"
+      const rows = await sql`SELECT id, owner_id AS "ownerId", anchor, resolved, created_at AS "createdAt",
+        COALESCE((SELECT jsonb_agg(CASE WHEN item.message ? 'image'
+            THEN (item.message - 'image') || '{"hasImage": true}'::jsonb ELSE item.message END ORDER BY item.position)
+          FROM jsonb_array_elements(messages) WITH ORDINALITY AS item(message, position)), '[]'::jsonb) AS messages
         FROM cycle_private.feedback WHERE owner_id = ${userId} OR ${admin}
         ORDER BY updated_at DESC LIMIT ${MAX_FEEDBACK_THREADS}`;
       return withAuthors(rows);
+    },
+    async get(userId, admin, id) {
+      const rows = await sql`SELECT id, owner_id AS "ownerId", anchor, resolved, messages, created_at AS "createdAt"
+        FROM cycle_private.feedback WHERE id = ${id}::uuid AND (owner_id = ${userId} OR ${admin})`;
+      return (await withAuthors(rows))[0] ?? null;
     },
     async write(userId, admin, input) {
       if (input.action === 'resolve' && !admin) return null;

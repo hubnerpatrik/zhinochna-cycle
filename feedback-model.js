@@ -27,6 +27,8 @@ function normalizeAnchor(anchor) {
   };
 }
 
+export const isFeedbackId = value => typeof value === 'string' && UUID_PATTERN.test(value);
+
 export function validateFeedback(input) {
   if (!input || !UUID_PATTERN.test(input.id)) throw new Error('Invalid ID');
   const allowedFields = input.action === 'create' ? CREATE_FIELDS

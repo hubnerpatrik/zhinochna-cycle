@@ -1,9 +1,9 @@
-import { validateFeedback } from '../feedback-model.js';
+import { isFeedbackId, validateFeedback } from '../feedback-model.js';
 import { HTTP_STATUS, setPrivateResponseHeaders, hasJsonContentType, serializeRequestBody } from './http.js';
 
 const MAX_FEEDBACK_BODY_BYTES = 164_000;
 
-export function createFeedbackHandler({ identify, repository, adminIds = [], adminEmails = [] }) {
+export function createFeedbackHandler({ identify, repository, adminIds = [], adminEmails = [], pinEmails = [] }) {
   return async (request, response) => {
     setPrivateResponseHeaders(response);
     if (!['GET', 'POST'].includes(request.method)) {
@@ -16,7 +16,15 @@ export function createFeedbackHandler({ identify, repository, adminIds = [], adm
     const userId = typeof identity === 'string' ? identity : identity.userId;
     const admin = adminIds.includes(userId) || (Boolean(identity.email) && adminEmails.includes(identity.email));
     if (request.method === 'GET') {
-      const showPins = admin && identity.email === 'hiba.p@seznam.cz';
+      const threadId = request.query?.id;
+      if (threadId !== undefined) {
+        if (!isFeedbackId(threadId)) return response.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'invalid_id' });
+        try {
+          const thread = await repository.get(userId, admin, threadId);
+          return thread ? response.status(HTTP_STATUS.OK).json({ thread }) : response.status(HTTP_STATUS.NOT_FOUND).json({ error: 'not_found' });
+        } catch { return response.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({ error: 'storage_unavailable' }); }
+      }
+      const showPins = admin && Boolean(identity.email) && pinEmails.includes(identity.email);
       try { return response.status(HTTP_STATUS.OK).json({ admin, showPins, threads: await repository.list(userId, admin) }); }
       catch { return response.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({ error: 'storage_unavailable' }); }
     }
