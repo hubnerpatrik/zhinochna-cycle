@@ -62,7 +62,7 @@ export function renderProfileInfo() {
   }
   card.innerHTML = `
     <div class="profile-info-header">
-      <div class="profile-info-title" data-i18n>Profile</div>
+      <div class="profile-info-title" data-i18n>Map info</div>
       ${editable ? `<button type="button" class="profile-info-edit" data-i18n-title="Edit map settings" title="Edit map settings">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>
         <span data-i18n>Edit</span>
@@ -85,7 +85,7 @@ export function renderProfileInfo() {
     name.className = "profile-info-label";
     content.className = "profile-info-value";
     setText(name, label);
-    if (label === "Goal" || label === "Measurement method") setText(content, value);
+    if (label === "Measurement method") setText(content, value);
     else content.textContent = value;
     row.append(name, content);
     container.appendChild(row);

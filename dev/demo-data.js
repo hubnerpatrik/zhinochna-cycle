@@ -7,7 +7,6 @@ export const DEMO_PROFILE = Object.freeze({
   name: "Demo profile",
   usualMeasurementTime: "07:00",
   measurementMethod: "oral",
-  goal: "observation",
 });
 
 export const DEMO_MAP_NAME = "Demo map";

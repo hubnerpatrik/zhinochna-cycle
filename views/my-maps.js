@@ -5,7 +5,7 @@ import { escapeHtml } from "./view-utils.js";
 import { formatDate, t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
-import { MEASUREMENT_METHODS, PROFILE_GOALS, pickMapSettings } from '../profile-options.js';
+import { MEASUREMENT_METHODS, pickMapSettings } from '../profile-options.js';
 
 // Dates in words for the current language; the i18n observer updates them on language change.
 function dateSpan(date) {
@@ -25,7 +25,6 @@ function renderMapSettingsSummary(snapshot) {
   const parts = [
     settings.usualMeasurementTime && `<span data-i18n>Time of measurement</span> ${escapeHtml(settings.usualMeasurementTime)}`,
     MEASUREMENT_METHODS[settings.measurementMethod] && `<span data-i18n>${escapeHtml(MEASUREMENT_METHODS[settings.measurementMethod])}</span>`,
-    PROFILE_GOALS[settings.goal] && `<span data-i18n>${escapeHtml(PROFILE_GOALS[settings.goal])}</span>`,
     settings.age && `<span data-i18n>Age</span> ${escapeHtml(settings.age)}`,
   ].filter(Boolean);
   return parts.length ? `<p class="map-list-meta map-list-settings">${parts.join(" · ")}</p>` : "";

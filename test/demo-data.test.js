@@ -32,7 +32,7 @@ test("demo data fills an empty store and passes strict backup validation", () =>
 
 test("demo data never overwrites existing development data", () => {
   const store = createStore();
-  store.saveProfile({ name: "Existing", usualMeasurementTime: "06:30", measurementMethod: "oral", goal: "observation" });
+  store.saveProfile({ name: "Existing", usualMeasurementTime: "06:30", measurementMethod: "oral" });
   assert.equal(seedDemoData(store, TODAY), false);
   assert.equal(store.listMaps().length, 0);
   assert.equal(store.getProfile().name, "Existing");

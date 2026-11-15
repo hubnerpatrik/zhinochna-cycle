@@ -219,7 +219,7 @@ test("missing optional map and profile fields receive safe defaults", () => {
     },
   }));
 
-  assert.equal(restored.profile.goal, "");
+  assert.equal("goal" in restored.profile, false);
   assert.deepEqual(restored.maps["map-1"].entries, {});
   assert.deepEqual(restored.maps["map-1"].coverlines, {});
   assert.equal(restored.activeMapId, null);
@@ -281,10 +281,10 @@ test("each map keeps the settings it was created with, and new maps suggest the 
   // Without maps, legacy profile values are the suggestion.
   assert.equal(store.lastMapSettings().usualMeasurementTime, "06:00");
 
-  const first = store.createMap("First", { usualMeasurementTime: "07:00", goal: "observation", measurementMethod: "oral", age: "31" });
+  const first = store.createMap("First", { usualMeasurementTime: "07:00", measurementMethod: "oral", age: "31" });
   assert.deepEqual(store.getActiveMapProfile(), {
     name: "Eva", consultantName: "Jana", photo: "",
-    age: "31", usualMeasurementTime: "07:00", goal: "observation", measurementMethod: "oral",
+    age: "31", usualMeasurementTime: "07:00", measurementMethod: "oral",
   });
   assert.equal(store.lastMapSettings().usualMeasurementTime, "07:00");
 
@@ -295,7 +295,7 @@ test("each map keeps the settings it was created with, and new maps suggest the 
   assert.equal(store.getMap(first.id).profileSnapshot.usualMeasurementTime, "07:00");
   assert.equal(store.getActiveMapProfile().name, "Eva K.");
 
-  assert.equal(store.updateMapSettings(first.id, { usualMeasurementTime: "08:15", goal: "", measurementMethod: "vaginal", age: "31" }), true);
+  assert.equal(store.updateMapSettings(first.id, { usualMeasurementTime: "08:15", measurementMethod: "vaginal", age: "31" }), true);
   assert.equal(store.getActiveMapProfile().usualMeasurementTime, "08:15");
   assert.equal(new Store(store.persistence).getMap(first.id).profileSnapshot.measurementMethod, "vaginal");
 });

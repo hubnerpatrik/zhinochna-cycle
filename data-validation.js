@@ -49,7 +49,6 @@ const PROFILE_DEFAULTS = Object.freeze({
   consultantName: "",
   age: "",
   usualMeasurementTime: "",
-  goal: "",
   measurementMethod: "",
   photo: "",
 });

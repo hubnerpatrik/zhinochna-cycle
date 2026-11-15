@@ -202,7 +202,7 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
 }
 .legend .day-mark { width: 9px; height: 9px; }
 .day-mark-factor { background: #e19a1c; }
-.day-mark-sex { background: #c2477e; }
+.day-mark-sex { background: #0b7480; }
 .day-mark-other { background: #6a62d6; }
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .day-marks { bottom: 4px; gap: 2px; }

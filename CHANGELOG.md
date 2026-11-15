@@ -14,6 +14,12 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Changed
+
+- The optional goal setting was removed from map settings. Goals stored in older maps and backups are ignored on load and dropped when they are next saved.
+- The map's details button, card and dialog are now called Map info instead of Profile.
+- The sex dot in the calendar is dark teal, so it is no longer mistaken for the red menstruation colour.
+
 ## 0.19.0 — 2026-11-15
 
 ### Fixed

@@ -1,9 +1,3 @@
-export const PROFILE_GOALS = {
-  avoid: 'Avoid pregnancy',
-  achieve: 'Achieve pregnancy',
-  observation: 'Observation only',
-};
-
 export const MEASUREMENT_METHODS = {
   oral: 'Oral',
   vaginal: 'Vaginal',
@@ -11,7 +5,7 @@ export const MEASUREMENT_METHODS = {
 };
 
 // Measurement settings belong to a map: each map keeps the values it was recorded with.
-export const MAP_SETTINGS_FIELDS = Object.freeze(['age', 'usualMeasurementTime', 'goal', 'measurementMethod']);
+export const MAP_SETTINGS_FIELDS = Object.freeze(['age', 'usualMeasurementTime', 'measurementMethod']);
 // Account identity shown with a user's own maps.
 export const PROFILE_IDENTITY_FIELDS = Object.freeze(['name', 'consultantName', 'photo']);
 

@@ -1,6 +1,6 @@
 import { setText } from '../i18n.js';
 import { store } from '../store.js';
-import { PROFILE_GOALS, MEASUREMENT_METHODS } from '../profile-options.js';
+import { MEASUREMENT_METHODS } from '../profile-options.js';
 import { openMapDialog } from './map-dialog.js';
 import { enhanceTimeInputs } from './time-picker.js';
 import { showMessage } from './toast.js';
@@ -19,7 +19,6 @@ export function profileInfoRows(profile) {
     ['Consultant', profile.consultantName],
     ['Age', profile.age],
     ['Time', profile.usualMeasurementTime],
-    ['Goal', PROFILE_GOALS[profile.goal]],
     ['Measurement method', MEASUREMENT_METHODS[profile.measurementMethod]],
   ];
 }
@@ -56,13 +55,13 @@ export function openProfileInfo(trigger) {
   const dialog = document.createElement('dialog');
   dialog.className = 'profile-details-dialog';
   dialog.setAttribute('aria-labelledby', 'profileDetailsTitle');
-  dialog.innerHTML = '<h2 id="profileDetailsTitle" data-i18n>Profile</h2><dl></dl><button type="button" class="btn" data-close data-i18n>Close</button>';
+  dialog.innerHTML = '<h2 id="profileDetailsTitle" data-i18n>Map info</h2><dl></dl><button type="button" class="btn" data-close data-i18n>Close</button>';
   const list = dialog.querySelector('dl');
   profileInfoRows(store.getActiveMapProfile()).forEach(([label, value]) => {
     const term = document.createElement('dt');
     const detail = document.createElement('dd');
     setText(term, label);
-    if (label === 'Goal' || label === 'Measurement method') setText(detail, value || '—');
+    if (label === 'Measurement method') setText(detail, value || '—');
     else detail.textContent = value || '—';
     list.append(term, detail);
   });
