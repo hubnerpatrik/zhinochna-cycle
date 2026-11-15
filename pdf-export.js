@@ -9,7 +9,7 @@ import { templatePages, TEMPLATE_ROWS } from './observation-template.js';
 import { serializeMapBackup } from './backup.js';
 import { calculateSummary } from './cycle-summary.js';
 import { drawTemplateLabels } from './pdf-template-labels.js';
-import { PROFILE_GOALS, MEASUREMENT_METHODS } from './profile-options.js';
+import { MEASUREMENT_METHODS } from './profile-options.js';
 
 export async function mapPdf(map, backup = serializeMapBackup(map)) {
   const image = new Image();
@@ -35,7 +35,6 @@ export async function mapPdf(map, backup = serializeMapBackup(map)) {
     const profile = map.profileSnapshot || {};
     text(profile.age || '', 552, 59, 8, 40);
     text(map.name || '', 27, 887, 8, 177);
-    text(t(PROFILE_GOALS[profile.goal] || ''), 216, 887, 8, 200);
     text(profile.usualMeasurementTime || '', 447, 887, 8, 36);
     text(t(MEASUREMENT_METHODS[profile.measurementMethod] || ''), 555, 887, 8, 130);
     const manual = map.cycleSummaries?.[page.start] || {};

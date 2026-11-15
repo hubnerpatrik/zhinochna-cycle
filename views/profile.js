@@ -44,7 +44,7 @@ export function renderProfileScreen(container, {
                 <input name="consultantName" type="text" placeholder="Consultant name" data-i18n-placeholder="Consultant name" value="${escapeHtml(profile.consultantName)}">
               </div>
 
-              <p class="field-hint" data-i18n>Measurement time, method, goal and age are set for each map when you create it.</p>
+              <p class="field-hint" data-i18n>Measurement time, method and age are set for each map when you create it.</p>
 
               <div class="modal-actions screen-actions">
                 ${showCancel ? '<button type="button" class="btn secondary" id="profileScreenCancelBtn" data-i18n>Back</button>' : ""}
