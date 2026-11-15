@@ -35,3 +35,9 @@ test('a shared map names its author on the same card', () => {
   assert.match(renderMapCard(shared, 'other'), /map-list-author/);
   assert.doesNotMatch(renderMapCard(map, 'other'), /map-list-author/);
 });
+
+test('deleting needs no confirmation step because the deletion can be undone', () => {
+  const html = renderMapCard(map, 'map-1');
+  assert.match(html, /data-map-delete-id="map-1"/);
+  assert.doesNotMatch(html, /map-delete-confirmation|data-map-delete-yes|data-map-delete-no/);
+});

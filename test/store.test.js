@@ -279,3 +279,67 @@ test("only records with nothing but empty structure count as blank", async () =>
   assert.equal(isBlankEntry({ markers: { ...emptyMarkers, bbt: { value: "1", pointType: "temp" } } }), false);
   assert.equal(isBlankEntry({ temp: 36.5 }), false);
 });
+
+test("a deleted map comes back with its data, its active state and its place in the list", () => {
+  globalThis.localStorage = new MemoryStorage();
+  const store = new Store();
+  const older = store.createMap("Older");
+  const newer = store.createMap("Newer");
+  store.maps[older.id].createdAt = "2026-01-01T00:00:00.000Z";
+  store.maps[newer.id].createdAt = "2026-02-01T00:00:00.000Z";
+  store.setActiveMapId(newer.id);
+  store.entries["2026-08-17"] = { temp: 36.5, bleeding: "menstruation" };
+  store.save();
+  const before = store.listMaps().map(map => map.id);
+
+  const snapshot = store.snapshotMap(newer.id);
+  assert.equal(store.deleteMap(newer.id), true);
+  assert.equal(store.getMap(newer.id), null);
+  assert.equal(store.getActiveMapId(), null);
+
+  assert.equal(store.restoreMap(snapshot), true);
+  assert.deepEqual(store.listMaps().map(map => map.id), before, "same place in the list");
+  assert.equal(store.getActiveMapId(), newer.id, "active again, because it was active when deleted");
+  assert.equal(store.entries["2026-08-17"].temp, 36.5, "the temperature is back");
+  assert.equal(store.entries["2026-08-17"].bleeding, "menstruation", "the bleeding record is back");
+  assert.ok(JSON.parse(localStorage.getItem(MAPS_STORAGE_KEY))[newer.id], "the restore is saved");
+});
+
+test("restoring a map never takes over the active map the user picked meanwhile", () => {
+  globalThis.localStorage = new MemoryStorage();
+  const store = new Store();
+  const first = store.createMap("First");
+  const second = store.createMap("Second");
+  store.setActiveMapId(first.id);
+  const snapshot = store.snapshotMap(first.id);
+  store.deleteMap(first.id);
+  store.setActiveMapId(second.id);
+
+  assert.equal(store.restoreMap(snapshot), true);
+  assert.equal(store.getActiveMapId(), second.id);
+  assert.ok(store.getMap(first.id), "the deleted map is back, but not active");
+});
+
+test("a restore changes nothing when the map is already there or the snapshot is missing", () => {
+  globalThis.localStorage = new MemoryStorage();
+  const store = new Store();
+  const map = store.createMap("Keep");
+  const snapshot = store.snapshotMap(map.id);
+  assert.equal(store.restoreMap(snapshot), false, "the id is still in use");
+  assert.equal(store.restoreMap(null), false);
+  assert.equal(store.snapshotMap("missing"), null);
+  assert.equal(store.listMaps().length, 1);
+});
+
+test("a snapshot is a copy: later edits do not leak into the restored map", () => {
+  globalThis.localStorage = new MemoryStorage();
+  const store = new Store();
+  const map = store.createMap("Copy");
+  store.entries["2026-08-17"] = { temp: 36.5 };
+  const snapshot = store.snapshotMap(map.id);
+  store.entries["2026-08-17"].temp = 99;
+  store.deleteMap(map.id);
+  store.restoreMap(snapshot);
+  store.setActiveMapId(map.id);
+  assert.equal(store.entries["2026-08-17"].temp, 36.5);
+});

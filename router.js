@@ -6,6 +6,8 @@ import { renderMenuView } from "./views/menu.js";
 import { renderProfileScreen } from "./views/profile.js";
 import { renderMyMapsView } from "./views/my-maps.js";
 import { openMapDialog } from "./ui/map-dialog.js";
+import { showActionMessage } from "./ui/toast.js";
+import { deleteMapWithUndo } from "./map-delete.js";
 import { enhanceTimeInputs } from "./ui/time-picker.js";
 import { readMapSettings, renderMapSettingsFields } from "./views/map-settings-fields.js";
 import { closeExportMenu } from './ui/export-menu.js';
@@ -211,12 +213,10 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
             navigate("my-maps");
             return true;
           },
-          onDelete: mapId => {
-            const result = runStoreAction(() => store.deleteMap(mapId));
-            if (!result.ok || !result.value) return;
-            showMessage?.("Map deleted");
-            navigate("my-maps");
-          },
+          onDelete: mapId => deleteMapWithUndo(mapId, {
+            store, runStoreAction, offerUndo: showActionMessage, notify: text => showMessage?.(text),
+            refresh: () => navigate("my-maps"),
+          }),
           onExport: async (mapId, format = 'json') => {
             try {
               const map = store.getMap(mapId);

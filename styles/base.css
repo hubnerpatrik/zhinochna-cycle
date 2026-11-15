@@ -438,29 +438,6 @@ select:focus-visible{
   }
 }
 
-.map-delete-confirmation{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:16px;
-  margin-top:16px;
-  padding-top:14px;
-  border-top:1px solid rgba(239,68,68,.2);
-  color:var(--danger);
-  font-size:0.875rem;
-  font-weight:600;
-}
-
-.map-delete-confirmation-actions{
-  display:flex;
-  gap:8px;
-}
-
-.map-delete-confirmation-actions .btn{
-  flex:0 0 auto;
-  min-width:72px;
-}
-
 .empty-state{
   text-align:center;
 }
@@ -696,7 +673,6 @@ h1{
   font-size:0.8125rem;
   font-weight:600;
 
-
   color:var(--muted);
 }
 
@@ -791,7 +767,6 @@ h1{
 .info-label{
   font-size:0.8125rem;
   font-weight:600;
-
 
   color:var(--muted);
 }
@@ -1392,7 +1367,6 @@ body:has(.modal.show:not(.hidden), dialog:modal) {
   font-size:0.8125rem;
   font-weight:600;
 
-
   color:var(--muted);
 }
 
@@ -1781,19 +1755,6 @@ input:focus{
   .map-list-actions .btn{
     flex:1 1 100px;
     min-width:0;
-  }
-
-  .map-delete-confirmation{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-
-  .map-delete-confirmation-actions{
-    width:100%;
-  }
-
-  .map-delete-confirmation-actions .btn{
-    flex:1 1 0;
   }
 
   .menu-grid,

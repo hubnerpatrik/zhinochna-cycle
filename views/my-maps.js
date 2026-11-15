@@ -51,13 +51,6 @@ export function renderMapCard(map, activeMapId) {
           <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
         </div>
       </div>
-      <div class="map-delete-confirmation hidden" data-map-delete-confirmation="${escapeHtml(map.id)}" role="alert">
-        <span data-i18n>Are you sure you want to delete this map? This cannot be undone.</span>
-        <div class="map-delete-confirmation-actions">
-          <button type="button" class="btn secondary" data-map-delete-no="${escapeHtml(map.id)}" data-i18n>No</button>
-          <button type="button" class="btn danger" data-map-delete-yes="${escapeHtml(map.id)}" data-i18n>Yes</button>
-        </div>
-      </div>
     </article>
   `;
 }
@@ -149,21 +142,7 @@ function renderMapList(container, maps, activeMapId, { year, month, kind }, { on
   });
 
   list.querySelectorAll("[data-map-delete-id]").forEach(button => {
-    button.addEventListener("click", () => {
-      const confirmation = button.closest(".map-list-card")?.querySelector(".map-delete-confirmation");
-      confirmation?.classList.remove("hidden");
-      confirmation?.querySelector("[data-map-delete-no]")?.focus();
-    });
-  });
-
-  list.querySelectorAll("[data-map-delete-no]").forEach(button => {
-    button.addEventListener("click", () => {
-      button.closest(".map-delete-confirmation")?.classList.add("hidden");
-    });
-  });
-
-  list.querySelectorAll("[data-map-delete-yes]").forEach(button => {
-    button.addEventListener("click", () => onDelete?.(button.dataset.mapDeleteYes));
+    button.addEventListener("click", () => onDelete?.(button.dataset.mapDeleteId));
   });
 }
 

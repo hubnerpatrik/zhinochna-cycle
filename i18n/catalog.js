@@ -282,6 +282,8 @@ export const messages = {
   "Shared map: these are the author's details and measurement settings.": ['Sdílená mapa: jde o údaje a nastavení měření autora mapy.', 'Zdieľaná mapa: ide o údaje a nastavenie merania autora mapy.', 'Спільна карта: це дані та налаштування вимірювання авторки карти.'],
   'Measurement time, method and age are set for each map when you create it.': ['Čas měření, metodu a věk nastavíš u každé mapy při jejím vytvoření.', 'Čas merania, metódu a vek nastavíš pri každej mape pri jej vytvorení.', 'Час вимірювання, метод і вік задаєте для кожної карти під час її створення.'],
   'Map deleted': ['Mapa smazána', 'Mapa vymazaná', 'Карту видалено'],
+  'Undo': ['Vrátit', 'Vrátiť', 'Повернути'],
+  'Map restored ✓': ['Mapa obnovena ✓', 'Mapa obnovená ✓', 'Карту відновлено ✓'],
   'Map name cannot be empty': ['Název mapy nesmí být prázdný', 'Názov mapy nesmie byť prázdny', 'Назва карти не може бути порожньою'],
   'Map not found': ['Mapa nenalezena', 'Mapa sa nenašla', 'Карту не знайдено'],
   'No fertile days in this month': ['V tomto měsíci nejsou vybrané plodné dny', 'V tomto mesiaci nie sú vybrané plodné dni', 'У цьому місяці не вибрано плідних днів'],
