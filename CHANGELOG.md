@@ -21,6 +21,7 @@ vMAJOR.MINOR.PATCH
 
 ### Changed
 
+- On phones the Tools menu and the day editors (Edit Day, Temperature, Bleeding, Mucus, Cervix, Markers, Fertile range, Other, Day info) are bottom sheets: they rise from the bottom edge with a grabber, leave the same way, and can be dragged down by the grabber or the title, with a spring back when the pull is short and resistance when pulled up; switching between editors replaces the sheet instead of showing two at once.
 - Swiping the calendar on a phone now moves the month with your finger: the grid follows the drag, a flick carries it on, the next month slides in from the side you swiped toward, and you can grab it again mid-motion; a short slow drag springs back, and with reduced motion the month simply switches.
 - The app header is one quiet bar: a cycle mark beside the name, the account line, What's new and language on the right, and plain text tabs underlined in coral for the current screen; the separate account row, the tracked-caps label and the pill navigation are gone.
 - Fertile range has its own range icon instead of the marker flag, and each chart tool has its own soft pastel color, in the phone Tools menu and on the desktop tool buttons: green fertile range, red coverlines, blue markers and amber crossed cells.

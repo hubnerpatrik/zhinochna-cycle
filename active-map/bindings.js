@@ -8,6 +8,7 @@ import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
 import { LAYOUT, PHONE_LAYOUT_QUERY, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
 import { bindCalendarSwipe } from "./calendar-swipe.js";
+import { addSheetGrip, bindSheetDismiss } from "../ui/sheet.js";
 import { observationChoiceValue } from '../ui/observation-values.js';
 import { configureMapSettingsEditor } from '../ui/profile-info-modal.js';
 import {
@@ -114,7 +115,13 @@ export function initializeActiveMapControls({
   };
   bindButton("prevMonth", () => changeMonth(-1));
   bindButton("nextMonth", () => changeMonth(1));
-  bindCalendarSwipe(getElementById("calendar"), {
+  const calendarGrid = getElementById("calendar");
+  bindCalendarSwipe(calendarGrid, {
+    area: calendarGrid?.closest(".calendar-card") ?? calendarGrid,
+    isInside: event => {
+      const band = calendarGrid.getBoundingClientRect();
+      return event.clientY >= band.top && event.clientY <= band.bottom;
+    },
     changeMonth,
     isPhone: () => window.matchMedia(PHONE_LAYOUT_QUERY).matches,
     reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -169,6 +176,18 @@ export function initializeActiveMapControls({
     ["otherModal", closeOtherModal],
     ["dayInfoModal", closeDayInfoModal],
   ]);
+
+  // On phones the editors are bottom sheets: drag the grabber or title down to close them.
+  querySelectorAll(".modal").forEach(modal => {
+    const card = modal.querySelector(":scope > .modal-card");
+    addSheetGrip(card);
+    bindSheetDismiss(card, {
+      requestClose: () => modal.dispatchEvent(new MouseEvent("click", { bubbles: true })),
+      isOpen: () => !modal.classList.contains("hidden"),
+      isPhone: () => window.matchMedia(PHONE_LAYOUT_QUERY).matches,
+      reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    });
+  });
 
   const mapScroll = document.querySelector(".map-scroll");
   const fixedWidth = () => LAYOUT.sideLabelWidth + LAYOUT.tempScaleWidth;

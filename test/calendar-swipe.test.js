@@ -47,7 +47,7 @@ test('velocity comes from the last moments of the drag only', () => {
 });
 
 // A fake calendar element plus a manual clock and frame queue.
-function harness({ phone = true, reducedMotion = false, width = 320 } = {}) {
+function harness({ phone = true, reducedMotion = false, width = 320, isInside } = {}) {
   const handlers = {};
   const element = {
     clientWidth: width,
@@ -68,6 +68,7 @@ function harness({ phone = true, reducedMotion = false, width = 320 } = {}) {
     schedule: callback => { queue.push(callback); return queue.length; },
     cancelSchedule: () => { queue = []; },
     now: () => time,
+    ...(isInside ? { isInside } : {}),
   });
   const fire = (type, event = {}) => {
     const full = { pointerType: 'touch', pointerId: 1, isPrimary: true, clientX: 0, clientY: 0, preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() {}, ...event };
@@ -184,4 +185,26 @@ test('the tap that ends a drag does not select a day', () => {
   fire('pointerup', { clientX: 100 });
   fire('click', { preventDefault() { prevented = true; }, stopPropagation() {}, stopImmediatePropagation() { prevented = true; } });
   assert.equal(prevented, false, 'a plain tap still reaches the day');
+});
+
+test('the finger can grab the sliding grid by touching the empty part of its card', () => {
+  // The grid moves sideways, so the listener lives on the stable card and only the grid's vertical band counts.
+  const band = event => event.clientY >= 50 && event.clientY <= 400;
+  const { offsets, fire, drag, release, advance } = harness({ isInside: band });
+  drag(-200, { stepMs: 40 });
+  release();
+  advance(80);
+  const grabbedAt = offsets.at(-1);
+  assert.ok(grabbedAt < -150, 'the old month is sliding out');
+  fire('pointerdown', { clientX: 300, clientY: 200, target: { closest: () => null } }); // empty card area, inside the band
+  fire('pointermove', { clientX: 330, clientY: 200 });
+  assert.ok(Math.abs(offsets.at(-1) - (grabbedAt + 30)) < 0.01, 'grabs wherever the finger lands in the band');
+});
+
+test('a touch outside the grid band never starts a swipe', () => {
+  const band = event => event.clientY >= 50 && event.clientY <= 400;
+  const { offsets, fire } = harness({ isInside: band });
+  fire('pointerdown', { clientX: 300, clientY: 450 });
+  for (let step = 1; step <= 6; step += 1) fire('pointermove', { clientX: 300 - step * 40, clientY: 450 });
+  assert.deepEqual(offsets, []);
 });

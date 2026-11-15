@@ -438,6 +438,121 @@ body {
 .marker-btn svg { color: var(--tool-marker); }
 .cross-cells-btn svg { color: var(--tool-cross); }
 
+/* Bottom sheets: on phones dialogs rise from the bottom edge and leave the same way. Entering and leaving
+   are CSS transitions (display and top layer change discretely at the end of the leave), so a close from
+   any button, Escape or a drag plays the same motion. The grabber and title are the drag zone (ui/sheet.js). */
+.modal {
+  transition: opacity 0.25s var(--ease), display 0.25s allow-discrete;
+}
+
+@starting-style {
+  .modal.show { opacity: 0; }
+  .modal.show .modal-card { transform: scale(0.96) translateY(6px); }
+}
+
+/* Replacing one editor with another: the old card is gone at once (only its dimming cross-fades),
+   so two sheets never move at the same time. A real close keeps its leave transition. */
+html:has(.modal.show) .modal.hidden .modal-card {
+  transition: none;
+}
+
+.sheet-handle {
+  display: none;
+}
+
+.sheet-dragging {
+  /* Beats every state transform; the finger owns the position while dragging. */
+  transform: translateY(var(--sheet-drag-y, 0px)) !important;
+  transition: none !important;
+}
+
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  .modal {
+    align-items: flex-end;
+    padding: 0;
+    background: var(--backdrop);
+  }
+
+  .modal > .modal-card,
+  .modal > .modal-card.wide {
+    width: 100%;
+    max-height: calc(100dvh - max(48px, env(safe-area-inset-top)));
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    border-bottom: 0;
+    box-shadow: var(--shadow-float);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .modal.show .modal-card {
+    transform: translateY(0);
+  }
+
+  @starting-style {
+    .modal.show .modal-card { transform: translateY(100%); }
+  }
+
+  #mobileToolsList {
+    inset: auto 0 0;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    max-height: calc(100dvh - max(48px, env(safe-area-inset-top)));
+    padding-bottom: calc(clamp(12px, 4vw, 20px) + env(safe-area-inset-bottom));
+    border-width: 1px 0 0;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    box-shadow: var(--shadow-float);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), display 0.3s allow-discrete, overlay 0.3s allow-discrete;
+  }
+
+  #mobileToolsList[open] {
+    transform: translateY(0);
+  }
+
+  #mobileToolsList::backdrop {
+    opacity: 0;
+    transition: opacity 0.3s var(--ease), display 0.3s allow-discrete, overlay 0.3s allow-discrete;
+  }
+
+  #mobileToolsList[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    #mobileToolsList[open] { transform: translateY(100%); }
+    #mobileToolsList[open]::backdrop { opacity: 0; }
+  }
+
+  .sheet-handle {
+    display: block;
+    flex: none;
+    align-self: stretch;
+    height: 24px;
+    margin: -16px 0 -12px;
+    touch-action: none;
+  }
+
+  #mobileToolsList .sheet-handle {
+    margin: -10px 0 -6px;
+  }
+
+  .sheet-handle::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 5px;
+    margin: 10px auto 0;
+    border-radius: var(--r-pill);
+    background: color-mix(in srgb, var(--ink) 22%, transparent);
+  }
+
+  .sheet-grip {
+    touch-action: none;
+  }
+}
+
 /* Reduced motion: no scaling, sliding or looping; colour and opacity changes stay. */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -446,8 +561,17 @@ body {
     animation: none !important;
   }
 
+  .modal,
   .modal-card,
-  .modal.show .modal-card {
+  #mobileToolsList,
+  #mobileToolsList::backdrop {
+    transition: none;
+  }
+
+  .modal-card,
+  .modal.show .modal-card,
+  #mobileToolsList,
+  #mobileToolsList[open] {
     transform: none;
   }
 
@@ -466,4 +590,11 @@ body {
 
 .calendar-card:has(.calendar-dragging) {
   overflow-x: clip;
+}
+
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  /* The swipe listens on the card (the grid itself moves away from under the finger). */
+  .calendar-card {
+    touch-action: pan-y pinch-zoom;
+  }
 }

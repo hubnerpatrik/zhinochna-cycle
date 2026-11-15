@@ -162,19 +162,10 @@
   to { opacity: 1; }
 }
 
-@keyframes mobile-tools-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   #activeMapScreen:not(.mobile-calendar-view) > .chart-card,
   #activeMapScreen.mobile-calendar-view > .layout {
     animation: mobile-panel-in 160ms ease-out;
-  }
-
-  .mobile-tools-list:not([hidden]) {
-    animation: mobile-tools-in 180ms cubic-bezier(.2, .7, .3, 1);
   }
 
   .mobile-map-tabs button,
@@ -193,8 +184,7 @@
 
 @media (max-width: 560px) and (prefers-reduced-motion: reduce), (max-height: 500px) and (pointer: coarse) and (prefers-reduced-motion: reduce) {
   #activeMapScreen:not(.mobile-calendar-view) > .chart-card,
-  #activeMapScreen.mobile-calendar-view > .layout,
-  .mobile-tools-list:not([hidden]) { animation: none; }
+  #activeMapScreen.mobile-calendar-view > .layout { animation: none; }
 
   .mobile-map-tabs button,
   .mobile-map-actions > .btn,
