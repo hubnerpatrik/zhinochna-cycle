@@ -1,12 +1,11 @@
 // Update together with package.json when preparing a release. Keep copy user-facing.
 export const currentRelease = {
-  version: '0.18.0',
+  version: '0.19.0',
   githubUrl: 'https://github.com/hubnerpatrik/zhinochna-cycle/releases',
   changes: [
-    "Measurement time, method, goal and age now belong to each map. Set them when creating a map and change them with Edit.",
-    "Copy maps and filter My Maps by your own, shared, open or closed maps.",
-    "Switch days directly in Edit Day, drag across days to mark fertile days, and keep Markers on for several days.",
-    "Calendar dots show influence factors, sex and symptoms, and dates are written out in your language.",
+    "PDF, Excel and CSV exports show the same fertile days as the calendar and chart.",
+    "Cloud sync is more reliable: stored maps that cannot be read no longer block sign-in, and old recovery copies no longer fill browser storage.",
+    "Map import errors appear in your language.",
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';

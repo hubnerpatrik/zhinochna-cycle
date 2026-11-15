@@ -39,6 +39,7 @@ export class CloudStorageAdapter {
     this.onStatus = onStatus;
     this.schedule = schedule;
     this.recoveryKey = `${this.key}:recovery`;
+    this.removeLegacyRecoveryCopies();
     this.raw = storage.getItem(this.key);
     this.envelope = this.raw ? this.readEnvelope(this.raw) : null;
     this.stopped = false;
@@ -69,8 +70,9 @@ export class CloudStorageAdapter {
     }
   }
 
-  // Only the latest recovery copy is kept; each can be as large as the account state.
-  retainRecoveryCopy(raw) {
+  // Older versions kept one recovery copy per conflict under random keys; each
+  // can be as large as the account state, so they could fill browser storage.
+  removeLegacyRecoveryCopies() {
     const legacyPrefix = `${this.recoveryKey}:`;
     const legacyKeys = [];
     for (let index = 0; index < (this.storage.length ?? 0); index++) {
@@ -78,6 +80,11 @@ export class CloudStorageAdapter {
       if (key?.startsWith(legacyPrefix)) legacyKeys.push(key);
     }
     legacyKeys.forEach(key => this.storage.removeItem(key));
+  }
+
+  // Only the latest recovery copy is kept.
+  retainRecoveryCopy(raw) {
+    this.removeLegacyRecoveryCopies();
     try { this.storage.setItem(this.recoveryKey, raw); }
     catch { /* The user is offered a backup download before data is replaced. */ }
   }

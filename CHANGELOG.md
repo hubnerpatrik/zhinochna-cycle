@@ -14,10 +14,12 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.19.0 — 2026-11-15
+
 ### Fixed
 
 - PDF, Excel and CSV exports now mark fertile days from an older map's fertile range, matching the calendar and chart.
-- Loading the cloud version after a conflict keeps only the latest recovery copy, so browser storage no longer fills up.
+- Only the latest cloud recovery copy is kept, and copies left by older versions are removed when the account opens, so browser storage no longer fills up.
 - Saved maps on this device that no longer pass validation no longer block sign-in; what can be kept is synced and the original is kept as a recovery copy.
 - Maps the cloud rejects as invalid now show a clear message instead of retrying silently.
 - The feedback inbox loads screenshots only when a report is opened, so large inboxes keep loading.
