@@ -14,6 +14,11 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Fixed
+
+- Save, Open map and other primary buttons no longer keep pulsing forever after the first click.
+- With reduced motion turned on, dialogs simply fade in without scaling, cards no longer lift on hover, and no animation plays; with increased contrast turned on, borders and secondary text are darker.
+
 ### Changed
 
 - The app header is one quiet bar: a cycle mark beside the name, the account line, What's new and language on the right, and plain text tabs underlined in coral for the current screen; the separate account row, the tracked-caps label and the pill navigation are gone.

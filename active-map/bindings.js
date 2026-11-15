@@ -95,13 +95,6 @@ function bindOverlayClicks(definitions) {
   });
 }
 
-function animatePrimaryButton(button) {
-  button?.addEventListener("click", () => {
-    button.classList.add("pulse-attention");
-    button.addEventListener("animationend", () => button.classList.remove("pulse-attention"), { once: true });
-  });
-}
-
 export function saveActiveMap({
   activeStore = store,
   notify = showMessage,
@@ -147,7 +140,6 @@ export function initializeActiveMapControls({
   bindButton("nextMonth", () => changeMonth(1));
   bindCalendarSwipe(changeMonth);
 
-  querySelectorAll(".btn.primary").forEach(animatePrimaryButton);
   configureActionModal({ getColumns });
   configureMapSettingsEditor({ render });
   bindButton("editBtn", openActionModal);

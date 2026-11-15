@@ -120,3 +120,12 @@
   /* Elevation: only floating layers (sheets, dialogs, menus) cast a shadow. */
   --shadow-float: 0 12px 32px rgba(22, 32, 41, 0.12), 0 2px 6px rgba(22, 32, 41, 0.06);
 }
+
+/* Higher contrast on request: firmer lines and darker quiet text. */
+@media (prefers-contrast: more) {
+  :root {
+    --line: rgba(22, 32, 41, 0.45);
+    --line-soft: rgba(22, 32, 41, 0.3);
+    --ink-muted: #3d444a;
+  }
+}

@@ -437,3 +437,23 @@ body {
 .coverline-btn svg { color: var(--tool-coverline); }
 .marker-btn svg { color: var(--tool-marker); }
 .cross-cells-btn svg { color: var(--tool-cross); }
+
+/* Reduced motion: no scaling, sliding or looping; colour and opacity changes stay. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
+
+  .modal-card,
+  .modal.show .modal-card {
+    transform: none;
+  }
+
+  .menu-card:hover,
+  .map-list-card:hover,
+  button.menu-summary-card:not(:disabled):hover {
+    transform: none;
+  }
+}
