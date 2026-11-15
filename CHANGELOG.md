@@ -14,6 +14,10 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Fixed
+
+- PDF, Excel and CSV exports now mark fertile days from an older map's fertile range, matching the calendar and chart.
+
 ## 0.18.0 — 2026-11-12
 
 ### Added

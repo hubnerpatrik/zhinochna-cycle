@@ -1,20 +1,18 @@
-// domain.js — Cycle detection and column building
+// domain.js — Column building and active-map coverlines
 // ─────────────────────────────────────────────
-// Owns all cycle logic: detecting cycle starts,
-// resolving cycle IDs and cycle-day numbers,
-// and building the column array consumed by render.
+// Builds the column array consumed by render from the active map,
+// using the cycle model for cycle and fertility answers.
 
 import { normalizeDayMarkers, store } from "./store.js";
 import { ISO_DATE_KEY_LENGTH, MILLISECONDS_PER_DAY } from './date-utils.js';
 import {
-  normalize,
   parseDateKey,
   columnX,
   columnCenterX,
   getTimeAdjustment,
   getAdjustedTemp,
-  calendarDayDifference,
 } from "./core.js";
+import { cycleModel } from './cycle-model.js';
 
 const LEGACY_CYCLE_PREFIX = 'cycle-';
 const COVERLINE_TEMPERATURE_FIELDS = ['horizontalTemp', 'verticalTopTemp', 'verticalBottomTemp'];
@@ -28,76 +26,27 @@ function latestLegacyCoverlineKey(coverlines) {
     .at(-1);
 }
 
-/* ─── cycle detection ─────────────────────── */
+/* ─── cycle model ─────────────────────────── */
 
-/**
- * Returns a sorted array of cycle start dates.
- * A cycle start is the first menstruation day after a non-menstruation day.
- */
-export function getCycleStartDates() {
-  const keys   = Object.keys(store.entries).sort();
-  const starts = [];
-
-  keys.forEach((key, index) => {
-    if (store.entries[key]?.bleeding !== "menstruation") return;
-    const previousKey = keys[index - 1];
-    const previousDate = previousKey ? parseDateKey(previousKey) : null;
-    const isPreviousCalendarDay = previousDate
-      ? calendarDayDifference(parseDateKey(key), previousDate) === 1
-      : false;
-    const previousDayIsPeriod = isPreviousCalendarDay
-      && store.entries[previousKey]?.bleeding === "menstruation";
-    if (!previousDayIsPeriod) starts.push(normalize(parseDateKey(key)));
-  });
-
-  return starts;
+/** The cycle model of the active map. */
+export function activeCycleModel() {
+  return cycleModel({ entries: store.entries, fertileRange: store.fertileRange });
 }
 
-/**
- * Returns the cycle-day number for a given date relative to the most
- * recent cycle start that is ≤ that date. Falls back to entry index + 1
- * if no cycle start has been recorded yet.
- */
-export function resolveCycleDay(date, starts, fallbackIndex) {
-  const normalizedDate = normalize(date);
-  const latestStart = starts.findLast(start => normalize(start) <= normalizedDate);
-  return latestStart === undefined ? fallbackIndex + 1 : calendarDayDifference(normalizedDate, normalize(latestStart)) + 1;
-}
-
-/**
- * Cycle day of any date, also outside the recorded range (as the calendar shows it);
- * null before the first recorded cycle start.
- */
-export function cycleDayForKey(key, starts = getCycleStartDates()) {
-  const date = normalize(parseDateKey(key));
-  const latestStart = starts.findLast(start => normalize(start) <= date);
-  return latestStart === undefined ? null : calendarDayDifference(date, normalize(latestStart)) + 1;
-}
-
-/**
- * Returns a stable cycle ID string (e.g. "cycle-2") for a given date.
- * Increments each time a new cycle start is detected before that date.
- */
-export function resolveCycleId(date, starts = getCycleStartDates()) {
-  const normalizedDate = normalize(date);
-  const cycleIndex = starts.findLastIndex(start => normalize(start) <= normalizedDate) + 1;
-  return `cycle-${cycleIndex || 1}`;
-}
-
-function buildColumn(key, index, date, starts) {
+function buildColumn(key, index, model, mapProfile) {
   const raw = store.entries[key] ?? {};
-  const mapProfile = store.getActiveMapProfile();
 
   return {
     key,
-    date,
+    date: parseDateKey(key),
     index,
 
     x: columnX(index),
     centerX: columnCenterX(index),
 
-    cycleId: resolveCycleId(date, starts),
-    cycleDay: resolveCycleDay(date, starts, index),
+    cycleId: model.cycleId(key),
+    // Before the first recorded cycle start the chart numbers days from the map's first day.
+    cycleDay: model.cycleDay(key) ?? index + 1,
 
     temp: raw.temp ?? null,
     tempFactors: raw.tempFactors ?? "",
@@ -119,7 +68,7 @@ function buildColumn(key, index, date, starts) {
     cervixOpenness: raw.cervixOpenness ?? "",
     sex: raw.sex === true,
     other: raw.other ?? "",
-    isFertile: isFertileDay(key, store.entries),
+    isFertile: model.isFertile(key),
     isPeak: raw.isPeak ?? false,
     markers: normalizeDayMarkers(raw.markers, raw),
   };
@@ -137,17 +86,15 @@ export function buildColumns() {
   const keys = Object.keys(store.entries).sort();
   if (!keys.length) return [];
 
-  const starts = getCycleStartDates();
+  const model = activeCycleModel();
+  const mapProfile = store.getActiveMapProfile();
 
   const dates = [];
   const end = Date.parse(`${keys.at(-1)}T12:00:00Z`);
   for (let time = Date.parse(`${keys[0]}T12:00:00Z`); time <= end; time += MILLISECONDS_PER_DAY) {
     dates.push(new Date(time).toISOString().slice(0, ISO_DATE_KEY_LENGTH));
   }
-  return dates.map((key, index) => {
-    const date = parseDateKey(key);
-    return buildColumn(key, index, date, starts);
-  });
+  return dates.map((key, index) => buildColumn(key, index, model, mapProfile));
 }
 
 export function getFertileRange() {
@@ -157,14 +104,6 @@ export function getFertileRange() {
 
 export function clearFertileRange() {
   store.fertileRange = { start: null, end: null };
-}
-
-export function isFertileDay(key, entries = store.entries) {
-  if (entries[key]?.isFertile === true) return true;
-  const range = getFertileRange();
-  if (!range) return false;
-  const day = normalize(parseDateKey(key));
-  return day >= normalize(parseDateKey(range.start)) && day <= normalize(parseDateKey(range.end));
 }
 
 export function getCycleCoverlineValues(cycleIndex = null) {

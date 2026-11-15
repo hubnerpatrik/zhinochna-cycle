@@ -1,5 +1,5 @@
 import { MILLISECONDS_PER_DAY } from './date-utils.js';
-import { cycleStarts } from './cycle-summary.js';
+import { cycleStarts } from './cycle-model.js';
 import { t } from './i18n.js';
 import { TEMP_FACTORS } from './core.js';
 import { CERVIX_FIRMNESS_CODES } from './ui/observation-labels.js';

@@ -1,6 +1,8 @@
 import { templatePages, TEMPLATE_ROWS } from './observation-template.js';
 import { t } from './i18n.js';
 import { calculateSummary } from './cycle-summary.js';
+import { cycleModel } from './cycle-model.js';
+import { exportDay } from './export-data.js';
 
 const main = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
 const rel = 'http://schemas.openxmlformats.org/package/2006/relationships';
@@ -11,6 +13,7 @@ const cell = (value, column, row, style = 1) => `<c r="${col(column)}${row}" s="
 
 export function addObservationSheets(files, map, backup) {
   const pages = templatePages(map);
+  const model = cycleModel(map);
   let overrides = '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>';
   let relationships = `<Relationship Id="rIdStyles" Type="${office}/styles" Target="styles.xml"/>`;
   const sheets = [];
@@ -31,7 +34,7 @@ export function addObservationSheets(files, map, backup) {
     data += row(25, cell(t('Temperature'), 0, 25) + dayCells(25, date => map.entries[date]?.temp ?? '', 3));
     TEMPLATE_ROWS.forEach(([label, , value], i) => {
       const r = 26 + i;
-      data += row(r, cell(t(label), 0, r) + dayCells(r, date => date ? value(map.entries[date] || {}) : ''), 20);
+      data += row(r, cell(t(label), 0, r) + dayCells(r, date => date ? value(exportDay(model, map.entries, date)) : ''), 20);
     });
     data += row(45, cell(t('Import uses the original exported data. Changes made in Excel are not imported.'), 0, 45, 2), 24);
     data += row(46, cell(t('Chart scale: 36.00–37.40 °C. Complete observations and notes are on the Data sheet.'), 0, 46, 2), 28);

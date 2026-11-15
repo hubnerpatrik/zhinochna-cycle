@@ -6,13 +6,12 @@ import {
   LAYOUT,
   MEASUREMENT_TEMPERATURE_RANGE,
   TEMP_FACTORS,
-  calendarDayDifference,
   chartY,
   formatDateKey,
   getDaysInMonth,
   getElementById,
 } from "../core.js";
-import { getCycleStartDates, isFertileDay } from "../domain.js";
+import { activeCycleModel } from "../domain.js";
 
 const COMPACT_SCALE_HEIGHT = 600;
 const COMPACT_LABEL_INTERVAL = 4;
@@ -77,7 +76,7 @@ export function renderCalendar(selectColumn) {
   appendCalendarHeader(element, store.year, store.month);
 
   const totalDays = getDaysInMonth(store.year, store.month);
-  const descendingCycleStarts = getCycleStartDates().reverse();
+  const model = activeCycleModel();
 
   Array.from({ length: totalDays }, (_, index) => index + 1).forEach(day => {
     const date = new Date(store.year, store.month, day);
@@ -87,11 +86,11 @@ export function renderCalendar(selectColumn) {
     cell.className = "day";
     setTranslatedAttribute(cell, 'title', `${key} · Select this day to review or edit its observations.`);
 
-    const latestCycleStart = descendingCycleStarts.find(start => start <= date);
-    if (latestCycleStart) {
+    const cycleDay = model.cycleDay(key);
+    if (cycleDay != null) {
       const cycleNumber = document.createElement("span");
       cycleNumber.className = "day-cycle-num";
-      cycleNumber.textContent = calendarDayDifference(date, latestCycleStart) + 1;
+      cycleNumber.textContent = cycleDay;
       cell.appendChild(cycleNumber);
     }
 
@@ -102,7 +101,7 @@ export function renderCalendar(selectColumn) {
 
     if (entry?.bleeding === "menstruation") cell.classList.add("red");
     if (entry?.bleeding === "spotting") cell.classList.add("spotting-day");
-    if (isFertileDay(key)) cell.classList.add("fertile-day");
+    if (model.isFertile(key)) cell.classList.add("fertile-day");
     if (store.selectedKey === key) cell.classList.add("selected");
 
     cell.onclick = () => selectColumn(key);

@@ -1,6 +1,7 @@
 import { setText } from '../i18n.js';
 import { store } from '../store.js';
-import { DEFAULT_HISTORY_COUNT, buildCycleHistory, calculateSummary, cycleStarts, manualFields, summaryRows } from '../cycle-summary.js';
+import { DEFAULT_HISTORY_COUNT, buildCycleHistory, calculateSummary, manualFields, summaryRows } from '../cycle-summary.js';
+import { cycleStarts } from '../cycle-model.js';
 
 function currentSummary(start, manual) {
   const { maps, activeMapId } = store.getPersistentState();

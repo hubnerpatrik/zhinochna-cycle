@@ -1,7 +1,7 @@
 import { store } from "../store.js";
 import { getElementById, parseDateKey, querySelectorAll } from "../core.js";
 import { setDateText } from "../i18n.js";
-import { cycleDayForKey } from "../domain.js";
+import { activeCycleModel } from "../domain.js";
 import { showMessage } from "./toast.js";
 import { clearFieldErrors } from './field-errors.js';
 import { observationChoiceValue } from './observation-values.js';
@@ -49,7 +49,7 @@ export function setDayTitle(element, key, columns = []) {
     element.textContent = "-";
     return;
   }
-  const cycleDay = columns.find(column => column.key === key)?.cycleDay ?? cycleDayForKey(key);
+  const cycleDay = columns.find(column => column.key === key)?.cycleDay ?? activeCycleModel().cycleDay(key);
   setDateText(element, parseDateKey(key), "day", { cycleDay: cycleDay == null ? "" : String(cycleDay) });
 }
 
