@@ -6,12 +6,12 @@ import { EXPORT_FIELDS, EXPORT_LABELS, exportDay, observationText, sortedMapEntr
 import { cycleModel } from './cycle-model.js';
 import { MILLISECONDS_PER_DAY } from './date-utils.js';
 import { templatePages, TEMPLATE_ROWS } from './observation-template.js';
-import { mapBackupPayload } from './map-transfer.js';
+import { serializeMapBackup } from './backup.js';
 import { calculateSummary } from './cycle-summary.js';
 import { drawTemplateLabels } from './pdf-template-labels.js';
 import { PROFILE_GOALS, MEASUREMENT_METHODS } from './profile-options.js';
 
-export async function mapPdf(map, backup = mapBackupPayload(map)) {
+export async function mapPdf(map, backup = serializeMapBackup(map)) {
   const image = new Image();
   image.src = new URL('./assets/observation-template.png', import.meta.url).href;
   await image.decode();

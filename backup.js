@@ -53,6 +53,29 @@ export function parseBackup(json) {
   }
 }
 
+/**
+ * The portable backup of one map, embedded in every map export. A map without
+ * its own profile snapshot carries the exporting account's profile.
+ */
+export function serializeMapBackup(map, { accountProfile = {}, active = false, exportedAt } = {}) {
+  const id = map.id || 'exported-map';
+  const profileSnapshot = map.profileSnapshot || accountProfile;
+  return serializeBackup({
+    profile: profileSnapshot,
+    maps: { [id]: { ...map, id, profileSnapshot } },
+    activeMapId: active ? id : null,
+  }, exportedAt);
+}
+
+/** Parses a backup that must hold exactly one map, as map imports require. */
+export function parseMapBackup(json) {
+  const state = parseBackup(json);
+  if (Object.keys(state.maps).length !== 1) {
+    throw new BackupFormatError("A shared-map backup must contain exactly one map.", "unsupported-format");
+  }
+  return state;
+}
+
 export function backupFilename(date = new Date(), mapName = "") {
   const mapSlug = String(mapName)
     .normalize("NFKD")

@@ -1,6 +1,6 @@
 import { workbookBytes } from './xlsx-export.js';
 import { mapExportRows, valueText, EXPORT_FIELDS, EXPORT_LABELS, observationText, sortedMapEntries } from './export-data.js';
-import { mapBackupPayload } from './map-transfer.js';
+import { serializeMapBackup } from './backup.js';
 import { t } from './i18n.js';
 
 export { EXPORT_FIELDS, observationText } from './export-data.js';
@@ -20,7 +20,7 @@ export function mapCsv(map) {
   const rows = mapExportRows(map);
   return '\uFEFF' + rows.map(row => row.map(csvCell).join(',')).join('\r\n') + '\r\n';
 }
-export function mapXlsx(map, backup = mapBackupPayload(map)) {
+export function mapXlsx(map, backup = serializeMapBackup(map)) {
   const rows = [[t('Date'), ...EXPORT_LABELS.map(t)], ...sortedMapEntries(map).map(([date, entry]) => [date, ...EXPORT_FIELDS.map(key => {
     const value = entry[key];
     return typeof value === 'string' ? observationText(key, value) : value;

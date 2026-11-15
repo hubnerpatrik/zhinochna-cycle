@@ -1,5 +1,8 @@
 import { concatenateBytes } from './binary-utils.js';
-import { PDF_BACKUP_START, PDF_BACKUP_END } from './map-transfer.js';
+
+// Markers around the backup copy that map import reads back from a PDF.
+export const PDF_BACKUP_START = '\n%CYCLE-TRACKER-DATA-BEGIN\n';
+export const PDF_BACKUP_END = '\n%CYCLE-TRACKER-DATA-END\n';
 
 const DEFAULT_IMAGE_WIDTH = 1684;
 const DEFAULT_IMAGE_HEIGHT = 1190;

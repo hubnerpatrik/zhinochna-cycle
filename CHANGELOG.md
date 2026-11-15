@@ -21,6 +21,7 @@ vMAJOR.MINOR.PATCH
 - Saved maps on this device that no longer pass validation no longer block sign-in; what can be kept is synced and the original is kept as a recovery copy.
 - Maps the cloud rejects as invalid now show a clear message instead of retrying silently.
 - The feedback inbox loads screenshots only when a report is opened, so large inboxes keep loading.
+- Map import errors (unsupported file, missing import data, invalid Excel file) are now shown in the app language instead of always in Czech.
 
 ### Changed
 

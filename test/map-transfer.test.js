@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mapXlsx, jpegPagesPdf } from '../map-export.js';
-import { mapBackupPayload, readMapImport } from '../map-transfer.js';
-import { parseBackup } from '../backup.js';
+import { exportMap, readImportText, readMapImport } from '../map-transfer.js';
+import { parseBackup, serializeBackup, serializeMapBackup } from '../backup.js';
 import { templatePages } from '../observation-template.js';
 import { setLanguage } from '../i18n.js';
 import { drawTemplateLabels } from '../pdf-template-labels.js';
@@ -48,10 +48,10 @@ test('Excel package declares the content type of every part, including the embed
 });
 
 test('Excel imports all data, metadata and annotations without changing JSON backup format', async () => {
-  const backup = mapBackupPayload(map);
+  const backup = serializeMapBackup(map);
   const bytes = mapXlsx(map, backup);
   const imported = await readMapImport(new File([bytes], 'map.xlsx'));
-  assert.deepEqual(parseBackup(imported), parseBackup(backup));
+  assert.deepEqual(imported, parseBackup(backup));
   const text = new TextDecoder().decode(bytes);
   assert.match(text, /scatterChart/);
   assert.match(text, /<c:min val="36"/);
@@ -93,19 +93,19 @@ test('PDF reference labels are repainted in the selected application language', 
 });
 
 test('PDF contains a real JSON attachment and a browser-readable recovery copy', async () => {
-  const backup = mapBackupPayload(map);
+  const backup = serializeMapBackup(map);
   const bytes = jpegPagesPdf([new Uint8Array([255,216,255,217])], undefined, undefined, backup);
   assert.match(new TextDecoder().decode(bytes), /\/EmbeddedFiles/);
   const imported = await readMapImport(new File([bytes], 'map.PDF'));
-  assert.deepEqual(parseBackup(imported), parseBackup(backup));
+  assert.deepEqual(imported, parseBackup(backup));
 });
 
 test('JSON import stays byte-for-byte unchanged and foreign formats fail explicitly', async () => {
-  const backup = mapBackupPayload(map);
-  assert.equal(await readMapImport(new File([backup], 'map.json')), backup);
-  await assert.rejects(readMapImport(new File(['%PDF-1.4'], 'scan.pdf')), /neobsahuje data/);
+  const backup = serializeMapBackup(map);
+  assert.equal(await readImportText(new File([backup], 'map.json')), backup);
+  await assert.rejects(readMapImport(new File(['%PDF-1.4'], 'scan.pdf')), /contains no import data/);
   await assert.rejects(readMapImport(new File(['garbage'], 'map.xlsx')));
-  await assert.rejects(readMapImport(new File(['garbage'], 'map.doc')), /Podporované formáty/);
+  await assert.rejects(readMapImport(new File(['garbage'], 'map.doc')), /Supported import formats/);
 });
 
 test('template retains calendar gaps, splits cycles and continues after day 43', () => {
@@ -115,4 +115,43 @@ test('template retains calendar gaps, splits cycles and continues after day 43',
   assert.equal(pages[1].offset, 43);
   assert.equal(pages[1].dates[0], '2026-02-13');
   assert.equal(pages[2].offset, 0);
+});
+
+test('every export format names its file and type; all but CSV embed the backup', async () => {
+  const exported = {};
+  const dated = { ...map, createdAt: '2026-10-01T00:00:00.000Z' };
+  for (const format of ['json', 'xlsx', 'csv']) exported[format] = await exportMap(dated, format, { accountProfile: { name: 'Author' } });
+  assert.equal(exported.json.mimeType, 'application/json');
+  assert.match(exported.json.filename, /^cycle-tracker-.+-backup-\d{4}-\d{2}-\d{2}\.json$/);
+  assert.equal(exported.xlsx.filename, 'Žluťoučký цикл.xlsx');
+  assert.equal(exported.csv.mimeType, 'text/csv;charset=utf-8');
+  const fromJson = await readMapImport(new File([exported.json.contents], 'map.json'));
+  const fromXlsx = await readMapImport(new File([exported.xlsx.contents], 'map.xlsx'));
+  assert.deepEqual(fromXlsx.maps, fromJson.maps);
+  assert.equal(fromJson.profile.name, 'Author', 'maps without a snapshot carry the account profile');
+  await assert.rejects(exportMap(map, 'docx'), /Unsupported export format/);
+});
+
+test('the store and export module build the same map backup', async () => {
+  const { MemoryStorage } = await import('./setup.js');
+  globalThis.localStorage ??= new MemoryStorage();
+  const { Store } = await import('../store.js');
+  const { LocalStorageAdapter } = await import('../storage/local-storage-adapter.js');
+  const store = new Store(new LocalStorageAdapter(new MemoryStorage(), 'transfer:'));
+  store.saveProfile({ name: 'Owner' });
+  const created = store.createMap('Shared');
+  store.updateEntry('2026-10-01', { temp: 36.5 });
+  store.save();
+  const exportedAt = '2026-11-15T10:00:00.000Z';
+  const { contents } = await exportMap(store.getMap(created.id), 'json', {
+    accountProfile: store.getProfile(), active: true, exportedAt,
+  });
+  assert.equal(contents, store.createMapBackup(created.id, exportedAt));
+});
+
+test('map imports accept exactly one map', async () => {
+  const twoMaps = serializeBackup({ profile: {}, maps: {
+    a: { id: 'a', name: 'A', entries: {} }, b: { id: 'b', name: 'B', entries: {} },
+  }, activeMapId: null });
+  await assert.rejects(readMapImport(new File([twoMaps], 'maps.json')), /exactly one map/);
 });
