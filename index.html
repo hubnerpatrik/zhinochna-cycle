@@ -44,20 +44,13 @@
     <p data-i18n>Checking your session…</p>
   </section>
   <main class="app hidden" id="trackerApp">
-    <div class="account-bar">
-      <span id="accountEmail"></span>
-      <button id="signOutBtn" class="btn secondary" type="button" data-i18n>Sign out</button>
-    </div>
-    <aside id="cloudStatusPanel" class="cloud-status" aria-label="Cloud storage" data-i18n-aria-label="Cloud storage">
-      <span data-cloud-message role="status" aria-live="polite" data-i18n>Loading your cloud maps…</span>
-      <button type="button" data-cloud-retry hidden data-i18n>Retry sync</button>
-      <button type="button" data-cloud-backup hidden data-i18n>Download local backup</button>
-      <button type="button" data-cloud-reload hidden data-i18n>Back up and load cloud version</button>
-    </aside>
     <header class="app-header">
       <div class="header-brand">
-        <p class="app-kicker" data-i18n>Cycle tracking</p>
-        <h1>Marta Zhinochna STM</h1>
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle class="brand-mark-track" cx="16" cy="16" r="11"/><path class="brand-mark-arc" d="M16 5A11 11 0 0 1 25.53 10.5"/><circle class="brand-mark-dot" cx="25.53" cy="10.5" r="2.6"/></svg>
+        <div class="brand-text">
+          <p class="app-kicker visually-hidden" data-i18n>Cycle tracking</p>
+          <h1>Marta Zhinochna STM</h1>
+        </div>
       </div>
       <nav id="headerNav" class="header-nav hidden" aria-label="Main navigation" data-i18n-aria-label="Main navigation">
         <button id="navMenuBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-home"/></svg><span class="nav-label-desktop" data-i18n>Main Menu</span><span class="nav-label-mobile" data-i18n>Menu</span></button>
@@ -65,8 +58,18 @@
         <button id="navMapsBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-maps"/></svg><span class="nav-label-desktop" data-i18n>My Maps</span><span class="nav-label-mobile" data-i18n>Maps</span></button>
         <button id="navActiveMapBtn" class="header-nav-btn" type="button"><svg class="nav-icon" aria-hidden="true"><use href="/icons.svg#nav-chart"/></svg><span class="nav-label-desktop" data-i18n>Active Map</span><span class="nav-label-mobile" data-i18n>Active Map</span></button>
       </nav>
+      <div class="account-bar">
+        <span id="accountEmail"></span>
+        <button id="signOutBtn" class="btn secondary" type="button" data-i18n>Sign out</button>
+      </div>
       <details class="language-picker"></details>
     </header>
+    <aside id="cloudStatusPanel" class="cloud-status" aria-label="Cloud storage" data-i18n-aria-label="Cloud storage">
+      <span data-cloud-message role="status" aria-live="polite" data-i18n>Loading your cloud maps…</span>
+      <button type="button" data-cloud-retry hidden data-i18n>Retry sync</button>
+      <button type="button" data-cloud-backup hidden data-i18n>Download local backup</button>
+      <button type="button" data-cloud-reload hidden data-i18n>Back up and load cloud version</button>
+    </aside>
 
     <div id="screenRoot"></div>
 

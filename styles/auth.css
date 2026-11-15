@@ -9,9 +9,9 @@ body.auth-locked .modal, body.auth-locked dialog, body.auth-locked dialog::backd
 .auth-field input { width: 100%; min-width: 0; box-sizing: border-box; }
 .auth-form .btn { width: 100%; min-height: 46px; }
 .auth-links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 22px; }
-.auth-link { font: inherit; font-size: 14px; border: 0; background: none; padding: 6px 0; color: #814332; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.auth-link { font: inherit; font-size: 14px; border: 0; background: none; padding: 6px 0; color: var(--action-hover); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .auth-feedback { margin: 18px 0 0; font-size: 14px; line-height: 1.6; }
-.auth-feedback[data-error="true"] { color: #a02b2b; }
+.auth-feedback[data-error="true"] { color: var(--danger); }
 .auth-language { display: flex; justify-content: flex-end; margin: 0 0 16px; }
 .auth-language select { width: auto; }
 .account-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; font-size: 13px; }
@@ -20,9 +20,9 @@ body.auth-locked .modal, body.auth-locked dialog, body.auth-locked dialog::backd
 .account-storage-note { flex: 1; color: var(--muted); font-size: 12px; }
 body.mobile-map-active .account-bar { display: none; }
 .cloud-status { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: -8px 0 18px; color: var(--muted); font-size: 12px; line-height: 1.5; }
-.cloud-status button { font: inherit; text-decoration: underline; background: transparent; border: 0; padding: 0; color: #814332; cursor: pointer; }
+.cloud-status button { font: inherit; text-decoration: underline; background: transparent; border: 0; padding: 0; color: var(--action-hover); cursor: pointer; }
 .cloud-status [hidden] { display: none; }
-.cloud-status[data-warning="true"] { padding: 12px; border: 1px solid #e8ba82; border-radius: 10px; background: #fff7e9; color: #704421; }
+.cloud-status[data-warning="true"] { padding: 12px; border: 1px solid var(--warning-line); border-radius: 10px; background: var(--warning-tint); color: var(--warning-ink); }
 body.mobile-map-active .cloud-status { position: fixed; bottom: 8px; right: 8px; z-index: 30; max-width: min(360px, calc(100vw - 32px)); margin: 0; padding: 6px 10px; border-radius: 8px; background: var(--card); box-shadow: var(--card-elev); }
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .auth-shell { margin: 3vh auto; padding: 16px; }

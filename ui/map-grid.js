@@ -11,9 +11,9 @@ import { cervixPositionIcon, observationScaleIcon, OBSERVATION_LABELS } from './
 import { CERVIX_FIRMNESS_CODES } from './observation-labels.js';
 
 const SIDEBAR_ACTIONS = [
-  ['editBtn', 'Edit Day', 'chip-edit-special', 'edit'],
-  ['dayInfoBtn', 'Day Info', 'chip-gray', 'info'],
-  ['fertileRangeActionBtn', 'Fertile range', 'chip-green', 'fertile'],
+  ['editBtn', 'Edit Day', 'chip-neutral', 'edit'],
+  ['dayInfoBtn', 'Day Info', 'chip-neutral', 'info'],
+  ['fertileRangeActionBtn', 'Fertile range', 'chip-neutral', 'fertile'],
 ];
 const MODAL_ACTIONS = [
   ['temperatureActionBtn', 'Temperature', 'chip-orange', 'temperature'],

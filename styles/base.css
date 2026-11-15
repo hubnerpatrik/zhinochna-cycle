@@ -8,34 +8,14 @@
 
 :root{
   /* surfaces */
-  --bg:#fbfcfd; /* slightly warm white */
-  --card:#ffffff;
-  --hairline:#eef1f3;
 
   /* typography */
   --font-sans:'Inter', -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
   /* text */
-  --text:#0f1720; /* deep charcoal for readability */
-  --muted:#94a3b8; /* cool muted tone */
 
   /* system accent colors (neon-inspired light theme) */
-  --accent:#a8ff00; /* neon lime primary accent */
-  --blue:#0a84ff; /* reserved blue for mucus/interactive markers */
   --green:var(--calendar-green);
-  --red:#ef4444;
-  --calendar-green:#cfe7b4;
-  --calendar-red:#f4c7cf;
-  --calendar-red-text:#793744;
-  --calendar-red-line:#b76878;
-  --calendar-green-text:#4d6246;
-  --purple:#8b5cf6;
-  --orange:#fb923c;
-  --teal:#14b8a6;
-  --tool-coverline:#08736c;
-  --tool-marker:#4b43c6;
-  --tool-cross:#a93659;
-  --gray-chip:#9aa6b2;
 
   /* radii (less rounded look) */
   --radius-lg:8px;
@@ -470,7 +450,7 @@ select:focus-visible{
   margin-top:16px;
   padding-top:14px;
   border-top:1px solid rgba(239,68,68,.2);
-  color:#b91c1c;
+  color:var(--danger);
   font-size:14px;
   font-weight:600;
 }
@@ -521,30 +501,9 @@ h1{
   color:var(--text);
 }
 
-h1::before{
-  content:"";
-  display:inline-block;
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:linear-gradient(135deg, var(--accent), #d7ef9a);
-  box-shadow:0 0 0 4px rgba(168,255,0,0.12);
-}
-
 /* subtle accent underline for section headers */
 .modal-card h2, .calendar-card .month-label {
   position:relative;
-}
-.modal-card h2::after, .calendar-card .month-label::after {
-  content:"";
-  position:absolute;
-  left:0;
-  bottom:-8px;
-  width:36px;
-  height:4px;
-  background:var(--accent);
-  border-radius:4px;
-  opacity:0.9;
 }
 
 /* ─── calendar ───────────────────────────── */
@@ -659,15 +618,6 @@ h1::before{
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.65),
     0 1px 3px rgba(77, 98, 70, 0.12);
-}
-
-.day.fertile-day.selected{
-  background:linear-gradient(145deg, rgba(92,214,135,0.3), rgba(34,197,94,0.3));
-  color:#176534;
-  border-color:rgba(34,197,94,0.3);
-  box-shadow:
-    0 0 0 2px rgba(74,222,128,0.12),
-    0 8px 20px rgba(34,197,94,0.12);
 }
 
 /* ─── cycle day number in calendar cell ──── */
@@ -792,9 +742,7 @@ h1::before{
   margin:14px auto 17px;
   border:2px dashed rgba(111, 73, 62, 0.18);
   border-radius:50%;
-  background:
-    radial-gradient(circle at 68% 22%, rgba(255, 255, 255, 0.88), transparent 30%),
-    linear-gradient(145deg, rgba(238, 227, 255, 0.68), rgba(255, 225, 214, 0.64) 58%, rgba(226, 242, 228, 0.68));
+  background:var(--surface-alt);
   color:rgba(92, 72, 68, 0.34);
   box-shadow:
     0 10px 24px rgba(92, 61, 52, 0.08),
@@ -935,15 +883,6 @@ h1::before{
   height:16px;
 }
 
-.action-icon.chip-orange{ background:linear-gradient(135deg,#ff9f0a,#ff3b30); }
-.action-icon.chip-red{    background:var(--red); }
-.action-icon.chip-blue{   background:var(--blue); }
-.action-icon.chip-purple{ background:var(--purple); }
-.action-icon.chip-gray{   background:var(--gray-chip); }
-.action-icon.chip-teal{   background:var(--teal); }
-.action-icon.chip-green{  background:#22c55e; }
-.action-icon.chip-green{  color:#ffffff; }
-
 .action-label{
   flex:1;
 }
@@ -1073,20 +1012,10 @@ h1::before{
 }
 
 .tool-btn.active{
-  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02)), var(--accent);
-  color:#07120a;
-  box-shadow: 0 6px 18px rgba(162, 255, 80, 0.12), 0 1px 0 rgba(255,255,255,0.5) inset;
-  border: 1px solid rgba(10,10,10,0.06);
-}
-
-.marker-btn{
-  background:linear-gradient(135deg, #5964d8, var(--tool-marker));
-  color:white;
-  box-shadow:0 6px 16px rgba(75,67,198,0.2);
-}
-
-.marker-btn:hover{
-  background:linear-gradient(135deg, #5964d8, #3f38ad);
+  background:var(--action-fill);
+  color:var(--action-fill-ink);
+  box-shadow:none;
+  border:1px solid var(--action);
 }
 
 .marker-btn:active{
@@ -1096,35 +1025,10 @@ h1::before{
 .coverline-btn{
   flex-shrink:0;
   min-width:112px;
-  background:linear-gradient(135deg, #128078, var(--tool-coverline));
-  color:white;
-  box-shadow:0 6px 16px rgba(8,115,108,0.2);
-}
-
-.coverline-btn:hover{
-  background:linear-gradient(135deg, #168e87, #075f59);
 }
 
 .coverline-btn:active{
   transform:scale(0.96);
-}
-
-.cross-cells-btn{
-  background:linear-gradient(135deg, #c24466, var(--tool-cross));
-  color:white;
-  box-shadow:0 6px 16px rgba(169,54,89,0.2);
-}
-
-.cross-cells-btn:hover{
-  background:linear-gradient(135deg, #c54b6a, #922c4b);
-}
-
-.coverline-btn.active,
-.marker-btn.active,
-.cross-cells-btn.active{
-  color:white;
-  border:1px solid rgba(255,255,255,0.48);
-  box-shadow:0 0 0 3px rgba(15,23,32,0.12), inset 0 1px 0 rgba(255,255,255,0.28);
 }
 
 /* ─── map structure ──────────────────────── */
@@ -1297,7 +1201,7 @@ h1::before{
 
 .map-day:nth-child(5n),
 .map-cell:nth-child(5n){
-  border-right:1px solid #d4d4da;
+  border-right:1px solid var(--line);
 }
 
 .selected-column{
@@ -1315,7 +1219,7 @@ h1::before{
   right:12%;
   top:50%;
   height:2px;
-  background:#1c1c1e;
+  background:var(--ink);
   transform:rotate(-35deg);
   transform-origin:center;
   pointer-events:none;
@@ -1380,39 +1284,38 @@ h1::before{
 .cervix-indicator.closed{
   width: 6px;
   height: 6px;
-  border: 1px solid #111;
-  background: #111;
+  border: 1px solid var(--ink);
+  background: var(--ink);
 }
 
 .cervix-indicator.medium{
   width: 10px;
   height: 10px;
-  border: 2px solid #10b981;
+  border: 2px solid var(--data-cervix-marker);
   background: rgba(16,185,129,0.2);
 }
 
 .cervix-indicator.open{
   width: 14px;
   height: 14px;
-  border: 2px solid #10b981;
+  border: 2px solid var(--data-cervix-marker);
   background: transparent;
 }
 
 .map-cell.marker-blue {
-  color: #2563eb;
+  color: var(--data-marker-blue);
   font-weight: 700;
 }
 
 .map-cell.marker-green {
-  color: #16a34a;
+  color: var(--data-marker-green);
   font-weight: 700;
 }
 
 .map-cell.marker-orange {
-  color: #ea580c;
+  color: var(--data-marker-orange);
   font-weight: 700;
 }
-
 
 /* ─── modal ──────────────────────────────── */
 
@@ -1439,8 +1342,6 @@ body:has(.modal.show:not(.hidden), dialog:modal) {
   justify-content: center;
   padding:20px;
   background: rgba(2,6,23,0.06); /* subtle overlay for light UI */
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s var(--ease);
@@ -1702,20 +1603,6 @@ input:focus{
   transform:scale(0.97);
 }
 
-.btn.primary{
-  background:var(--blue);
-  color:white;
-}
-
-.btn.secondary{
-  background:var(--bg);
-  color:var(--text);
-}
-
-.btn.secondary:hover{
-  background:var(--hairline);
-}
-
 .modal-actions .btn{
   flex:1 1 0;
 }
@@ -1731,7 +1618,7 @@ input:focus{
 }
 
 .btn.danger:hover{
-  background:#dc2626;
+  background:var(--danger);
 }
 
 .field-hint{
@@ -1808,15 +1695,15 @@ input:focus{
 }
 
 .toast-action-cancel{
-  border-color:#ffd0d0;
-  background:#ffe8e8;
-  color:#a33a3a;
+  border-color:var(--danger-line);
+  background:var(--danger-tint);
+  color:var(--danger);
 }
 
 .toast-action-danger{
   border-color:white;
   background:white;
-  color:#b41414;
+  color:var(--data-coverline);
 }
 
 .toast-action:hover{

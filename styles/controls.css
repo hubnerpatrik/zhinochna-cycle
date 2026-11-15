@@ -27,9 +27,9 @@
   justify-content: center;
   gap: 8px;
   min-height: 44px;
-  border: 1px solid #d9c9c0;
+  border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fffaf6;
+  background: var(--surface);
   color: var(--text);
   list-style: none;
   cursor: pointer;
@@ -45,13 +45,13 @@
   gap: 2px;
   width: 100%;
   padding: 4px;
-  border: 1px solid #d9c9c0;
+  border: 1px solid var(--line);
   border-radius: 12px;
-  background: #fffaf6;
+  background: var(--surface);
   box-shadow: 0 8px 24px rgba(46, 32, 25, .16);
 }
 .language-picker-menu button { display: grid; place-items: center; min-height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; cursor: pointer; }
-.language-picker-menu button:hover, .language-picker-menu button[aria-pressed="true"] { background: #eee5df; }
+.language-picker-menu button:hover, .language-picker-menu button[aria-pressed="true"] { background: var(--surface-alt); }
 .language-flag {
   display: block;
   flex: 0 0 24px;
@@ -72,24 +72,24 @@ button.menu-summary-card:disabled { cursor: default; opacity: .65; }
 button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
 #fertileRangeCalendar button.day { font: inherit; color: var(--text); }
 #fertileRangeCalendar button.day:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.map-day.cycle-boundary, .map-cell.cycle-boundary { box-shadow: inset 2px 0 #b41414; }
+.map-day.cycle-boundary, .map-cell.cycle-boundary { box-shadow: inset 2px 0 var(--data-coverline); }
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .mobile-map-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0; }
   .mobile-map-tabs button { width: 100%; min-height: 48px; border-radius: 12px; }
   .mobile-map-tabs svg { width: 28px; height: 28px; }
-  #mobileSaveBtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0; padding: 10px; border: 1px solid var(--accent); border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-3)); color: var(--text); font-weight: 600; box-shadow: 0 3px 10px rgba(255, 138, 101, .16); cursor: pointer; }
+  #mobileSaveBtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0; padding: 10px; border: 1px solid var(--action-fill); border-radius: 12px; background: var(--action-fill); color: var(--action-fill-ink); font-weight: 600; cursor: pointer; }
   #mobileSaveBtn svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
   #mobileSaveBtn:active:not(:disabled) { filter: brightness(.96); }
-  #mobileSaveBtn:focus-visible { outline: 2px solid #a64e25; outline-offset: 2px; }
+  #mobileSaveBtn:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
   #mobileSaveBtn:disabled { opacity: .5; box-shadow: none; cursor: default; }
   #activeMapScreen .map-row .map-side-label { padding: 0; justify-content: center; }
   #activeMapScreen .map-row .map-row-caption { display: none; }
   #activeMapScreen .map-row .map-cell { height: 100%; }
-  .map-row-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: #eee8e2; color: #645d57; flex: 0 0 32px; }
-  .map-row-group-red .map-row-icon { background: #f8e3e2; color: #a74646; }
-  .map-row-group-mucus .map-row-icon { background: #e6eaf2; color: var(--mucus-navy); }
-  .map-row-group-cervix .map-row-icon { background: #e1f2f1; color: #287c7c; }
-  .map-row-group-symptoms .map-row-icon { background: #efe4f1; color: #825594; }
+  .map-row-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--surface-alt); color: var(--ink-muted); flex: 0 0 32px; }
+  .map-row-group-red .map-row-icon { background: var(--data-bleeding-tint); color: var(--data-bleeding); }
+  .map-row-group-mucus .map-row-icon { background: var(--data-mucus-tint); color: var(--mucus-navy); }
+  .map-row-group-cervix .map-row-icon { background: var(--data-cervix-tint); color: var(--data-cervix); }
+  .map-row-group-symptoms .map-row-icon { background: var(--data-symptoms-tint); color: var(--data-symptoms); }
   .app-header { padding-right: 82px; }
   .mobile-map-header .language-picker { flex-basis: 60px; width: 60px; }
 }
@@ -144,14 +144,13 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   gap: 6px;
   min-height: 34px;
   padding: 6px 14px 6px 11px;
-  border: 1px solid rgba(255, 138, 101, 0.45);
+  border: 1px solid var(--action-fill);
   border-radius: 999px;
-  background: linear-gradient(135deg, #ff9b7a, #ffc79a);
-  color: #4a2116;
+  background: var(--action-fill);
+  color: var(--action-fill-ink);
   font: inherit;
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(255, 138, 101, 0.28);
   cursor: pointer;
   transition: transform 0.1s var(--ease), box-shadow 0.15s var(--ease), filter 0.15s var(--ease);
 }
@@ -164,9 +163,9 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.profile-info-edit:hover { filter: brightness(1.04); box-shadow: 0 6px 16px rgba(255, 138, 101, 0.36); }
+.profile-info-edit:hover { background: var(--action-fill-hover); border-color: var(--action-fill-hover); }
 .profile-info-edit:active { transform: scale(0.96); }
-.profile-info-edit:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.profile-info-edit:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 
 /* Map settings in the create and edit dialogs. */
 .map-settings-fields {
@@ -201,9 +200,9 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
 }
 .legend .day-mark { width: 9px; height: 9px; }
-.day-mark-factor { background: #e19a1c; }
-.day-mark-sex { background: #0b7480; }
-.day-mark-other { background: #6a62d6; }
+.day-mark-factor { background: var(--data-factor); }
+.day-mark-sex { background: var(--data-sex); }
+.day-mark-other { background: var(--data-symptoms); }
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .day-marks { bottom: 4px; gap: 2px; }
   .day-mark { width: 6px; height: 6px; }

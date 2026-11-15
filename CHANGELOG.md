@@ -16,7 +16,13 @@ vMAJOR.MINOR.PATCH
 
 ### Changed
 
-- Fertile range has its own range icon instead of the marker flag, and the phone Tools menu shows all tool icons in one neutral color.
+- The app header is one quiet bar: a cycle mark beside the name, the account line, What's new and language on the right, and plain text tabs underlined in coral for the current screen; the separate account row, the tracked-caps label and the pill navigation are gone.
+- Fertile range has its own range icon instead of the marker flag, and each chart tool has its own soft pastel color, in the phone Tools menu and on the desktop tool buttons: green fertile range, red coverlines, blue markers and amber crossed cells.
+- Primary actions (Day record, Create map, Open map, Save, time picker Done, active tools) use one flat pastel coral with dark labels instead of a pale gradient; a stronger coral marks thin details such as links, focus rings, the selected day and the current screen.
+- Secondary buttons (Map info, Summary, Import map, export, more actions) share one plain style; cards, menu cards and the navigation are flat without gradients, glass blur or decorative stripes; action icons in the map sidebar are neutral, and observation icons keep a light tint of their data color.
+- Every screen uses one flat warm background and plain cards: the decorative background blobs, glass blur and gradients are gone; the selected day, the active map card and the Map info Edit button follow the coral accent, chart tools are plain until active, and Delete map is marked by a red label instead of a pink gradient.
+- The temperature chart sits on the same neutral surface as the rest of the app, with ink grid lines and a coral day selection; observation colors in the chart stay as before and now come from one shared palette.
+- All interface colors come from one set of design tokens, so borders, quiet labels, links, error messages, dialog backdrops and status notes look the same on every screen.
 
 ## 0.19.1 — 2026-11-15
 

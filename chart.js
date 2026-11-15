@@ -9,6 +9,7 @@ import { store } from "./store.js";
 import { LAYOUT, getElementById, chartY, chartPointY, isChartTemperature, chartLineY, chartGridY, tempSlotCount, graphHeight, chartWidth, pixelYToTemp } from "./core.js";
 import { getCycleCoverlineValues, setCycleCoverlineValues } from "./domain.js";
 import { calendarDayDifference } from './date-utils.js';
+import { CHART_COLORS } from './chart-palette.js';
 
 const GRID_MAJOR_INTERVAL = 5;
 const GRID_PIXEL_OFFSET = 0.5;
@@ -45,9 +46,9 @@ const TEMPERATURE_DECIMAL_PLACES = 2;
 function beginCoverlinePath(context, selected) {
   context.beginPath();
   context.setLineDash([]);
-  context.strokeStyle = selected ? 'rgba(180,20,20,1)' : 'rgba(180,20,20,0.8)';
+  context.strokeStyle = selected ? CHART_COLORS.coverline : CHART_COLORS.coverlineMuted;
   context.lineWidth = selected ? SELECTED_COVERLINE_WIDTH : ANNOTATION_LINE_WIDTH;
-  context.shadowColor = selected ? 'rgba(180,20,20,0.35)' : 'transparent';
+  context.shadowColor = selected ? CHART_COLORS.coverlineGlow : 'transparent';
   context.shadowBlur = selected ? COVERLINE_SHADOW_BLUR : 0;
 }
 
@@ -109,8 +110,8 @@ function drawCoverlineHandle(context, x, y) {
   if (typeof context.arc !== "function" || typeof context.fill !== "function") return;
   context.beginPath();
   context.setLineDash([]);
-  context.fillStyle = "white";
-  context.strokeStyle = "rgba(180,20,20,1)";
+  context.fillStyle = CHART_COLORS.paper;
+  context.strokeStyle = CHART_COLORS.coverline;
   context.lineWidth = EMPHASIZED_LINE_WIDTH;
   context.arc(x, y, COVERLINE_HANDLE_RADIUS, 0, FULL_CIRCLE_RADIANS);
   context.fill();
@@ -140,7 +141,7 @@ export function drawVerticalGrid(context, columns) {
     const x = Math.round(column.x) + GRID_PIXEL_OFFSET;
     context.beginPath();
     context.lineWidth = DEFAULT_LINE_WIDTH;
-    context.strokeStyle = column.index % GRID_MAJOR_INTERVAL === 0 ? "rgba(0,0,0,0.30)" : "rgba(0,0,0,0.10)";
+    context.strokeStyle = column.index % GRID_MAJOR_INTERVAL === 0 ? CHART_COLORS.gridMajor : CHART_COLORS.gridMinor;
     context.moveTo(x, LAYOUT.chartPaddingTop);
     context.lineTo(x, LAYOUT.chartHeight - LAYOUT.chartPaddingBottom);
     context.stroke();
@@ -148,7 +149,7 @@ export function drawVerticalGrid(context, columns) {
   const lastX = chartWidth(columns) + GRID_PIXEL_OFFSET;
   context.beginPath();
   context.lineWidth = DEFAULT_LINE_WIDTH;
-  context.strokeStyle = "rgba(0,0,0,0.30)";
+  context.strokeStyle = CHART_COLORS.gridMajor;
   context.moveTo(lastX, LAYOUT.chartPaddingTop);
   context.lineTo(lastX, LAYOUT.chartHeight - LAYOUT.chartPaddingBottom);
   context.stroke();
@@ -162,7 +163,7 @@ export function drawHorizontalGrid(context, canvasWidth) {
     const y = Math.floor(chartGridY(index)) + GRID_PIXEL_OFFSET;
     context.beginPath();
     context.lineWidth = DEFAULT_LINE_WIDTH;
-    context.strokeStyle = index % GRID_MAJOR_INTERVAL === 0 ? "rgba(0,0,0,0.30)" : "rgba(0,0,0,0.10)";
+    context.strokeStyle = index % GRID_MAJOR_INTERVAL === 0 ? CHART_COLORS.gridMajor : CHART_COLORS.gridMinor;
     context.moveTo(0, y);
     context.lineTo(canvasWidth, y);
     context.stroke();
@@ -214,7 +215,7 @@ export function drawHorizontalCoverline(context, columns, selected = false) {
 export function drawOverlayBands(context, columns) {
   columns.forEach(column => {
     if (!column.isFertile) return;
-    context.fillStyle = "rgba(207,231,180,0.28)";
+    context.fillStyle = CHART_COLORS.fertileFill;
     context.fillRect(
       column.x,
       LAYOUT.chartPaddingTop,
@@ -241,7 +242,7 @@ export function drawCrossedChartCells(context, columns) {
       const right = column.x + LAYOUT.columnWidth - insetX;
 
       context.beginPath();
-      context.strokeStyle = "rgba(22,163,74,0.78)";
+      context.strokeStyle = CHART_COLORS.fertileLine;
       context.lineWidth = ANNOTATION_LINE_WIDTH;
       context.moveTo(left, centerY + cellHalfHeight - insetY);
       context.lineTo(right, centerY - cellHalfHeight + insetY);
@@ -256,7 +257,7 @@ export function drawSelectedHighlight(context, columns) {
   if (!store.selectedKey) return;
   const column = columns.find(candidate => candidate.key === store.selectedKey);
   if (!column) return;
-  context.fillStyle = "rgba(37,99,235,0.08)";
+  context.fillStyle = CHART_COLORS.selection;
   context.fillRect(column.x, 0, LAYOUT.columnWidth, LAYOUT.chartHeight);
 }
 
@@ -266,7 +267,7 @@ export function drawHoverLine(context, columns) {
   const column = columns.find(candidate => candidate.key === store.hoveredKey);
   if (!column) return;
   context.beginPath();
-  context.strokeStyle = "rgba(37,99,235,0.45)";
+  context.strokeStyle = CHART_COLORS.hover;
   context.moveTo(column.centerX, 0);
   context.lineTo(column.centerX, LAYOUT.chartHeight);
   context.stroke();
@@ -278,7 +279,7 @@ export function drawCycleSeparators(context, cycleGroups) {
     const x = group.columns[0].x - GRID_PIXEL_OFFSET;
     context.beginPath();
     context.setLineDash([]);
-    context.strokeStyle = "#b41414";
+    context.strokeStyle = CHART_COLORS.coverline;
     context.lineWidth = EMPHASIZED_LINE_WIDTH;
     context.moveTo(x, 0);
     context.lineTo(x, LAYOUT.chartHeight);
@@ -294,7 +295,7 @@ export function drawTemperatureLine(context, cycleGroups) {
     const valid = group.columns.filter(candidate => candidate.temp != null);
     if (valid.length < 2) return;
 
-    context.strokeStyle = "#111";
+    context.strokeStyle = CHART_COLORS.ink;
     context.lineWidth = EMPHASIZED_LINE_WIDTH;
     context.lineCap = "round";
     context.lineJoin = "round";
@@ -329,7 +330,7 @@ export function drawTemperaturePoints(context, columns) {
 
     const pointY = chartPointY(column.temp);
     if (!isChartTemperature(column.temp)) {
-      drawOverflowTemperature(context, column, column.temp, '#b43c45');
+      drawOverflowTemperature(context, column, column.temp, CHART_COLORS.overflow);
       return;
     }
     const markerY = column.markers?.bbt?.pointType === "adjusted" && column.adjustedTemp != null
@@ -339,7 +340,7 @@ export function drawTemperaturePoints(context, columns) {
     if (column.isPeak) {
       context.beginPath();
       context.arc(column.centerX, markerY, PEAK_POINT_RADIUS, 0, FULL_CIRCLE_RADIANS);
-      context.strokeStyle = "rgba(22,163,74,0.75)";
+      context.strokeStyle = CHART_COLORS.peakRing;
       context.lineWidth = EMPHASIZED_LINE_WIDTH;
       context.stroke();
     }
@@ -349,14 +350,14 @@ export function drawTemperaturePoints(context, columns) {
     if (hasFactors) {
       context.beginPath();
       context.arc(column.centerX, pointY, INFLUENCE_POINT_RADIUS, 0, FULL_CIRCLE_RADIANS);
-      context.strokeStyle = "#ff0000";
+      context.strokeStyle = CHART_COLORS.influence;
       context.lineWidth = EMPHASIZED_LINE_WIDTH;
       context.stroke();
     }
 
     context.beginPath();
     context.arc(column.centerX, pointY, TEMPERATURE_POINT_RADIUS, 0, FULL_CIRCLE_RADIANS);
-    context.fillStyle = "#111";
+    context.fillStyle = CHART_COLORS.ink;
     context.fill();
   });
 
@@ -387,7 +388,7 @@ export function drawAdjustedTemperaturePoints(context, columns) {
     // When the measurement itself overflows, its actual value takes precedence.
     if (!isChartTemperature(column.temp)) return;
     if (!isChartTemperature(column.adjustedTemp)) {
-      drawOverflowTemperature(context, column, column.adjustedTemp, '#2563eb');
+      drawOverflowTemperature(context, column, column.adjustedTemp, CHART_COLORS.adjusted);
       return;
     }
 
@@ -396,7 +397,7 @@ export function drawAdjustedTemperaturePoints(context, columns) {
 
     context.beginPath();
     context.setLineDash(DASH_PATTERN);
-    context.strokeStyle = "#2563eb";
+    context.strokeStyle = CHART_COLORS.adjusted;
     context.lineWidth = ANNOTATION_LINE_WIDTH;
     context.moveTo(column.centerX, baseY);
     context.lineTo(column.centerX, adjustedY);
@@ -405,7 +406,7 @@ export function drawAdjustedTemperaturePoints(context, columns) {
     context.setLineDash([]);
     context.beginPath();
     context.arc(column.centerX, adjustedY, TEMPERATURE_POINT_RADIUS, 0, FULL_CIRCLE_RADIANS);
-    context.fillStyle = "#2563eb";
+    context.fillStyle = CHART_COLORS.adjusted;
     context.fill();
   });
 
@@ -420,7 +421,7 @@ export function drawMeasurementTimes(context, columns) {
     if (!isChartTemperature(column.temp)) return;
     const pointY = chartY(column.temp);
     context.font = "10px Inter";
-    context.fillStyle = "#8e8e93";
+    context.fillStyle = CHART_COLORS.inkMuted;
     context.textAlign = "center";
     context.fillText(column.measurementTime, column.centerX, pointY + MEASUREMENT_TIME_OFFSET);
   });
@@ -443,7 +444,7 @@ export function drawMarkers(context, columns) {
     }
 
     context.font = "bold 14px Inter";
-    context.fillStyle = "#16a34a";
+    context.fillStyle = CHART_COLORS.fertile;
     context.textAlign = "center";
     const markerTemp = usingAdjusted ? column.adjustedTemp : column.temp;
     const labelY = !isChartTemperature(markerTemp)

@@ -1,7 +1,7 @@
 .map-create-plus { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .map-create-plus > span:first-child { font-size: 28px; line-height: 1; }
-.map-dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 26px; border: 1px solid var(--hairline); border-radius: 24px; background: var(--card, #fffaf6); color: var(--text); box-shadow: 0 20px 70px #32201833; }
-.map-dialog::backdrop, .mobile-tools-list::backdrop { background: #30282066; }
+.map-dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 26px; border: 1px solid var(--hairline); border-radius: 24px; background: var(--card); color: var(--text); box-shadow: 0 20px 70px var(--shade); }
+.map-dialog::backdrop, .mobile-tools-list::backdrop { background: var(--backdrop); }
 .map-dialog h2 { margin: 0 0 24px; }
 .map-dialog label { display: grid; gap: 10px; }
 .map-dialog input { width: 100%; min-height: 48px; font: inherit; font-size: 16px; }
@@ -10,32 +10,32 @@
 .feedback-attachment { display: block; width: auto; max-width: 100%; max-height: 360px; object-fit: contain; border-radius: 10px; margin-block: 12px; }
 .feedback-image-picker { display: grid; gap: 8px; margin-block: 16px; }
 .feedback-image-picker input { display: block; width: 100%; margin-top: 8px; font-size: 14px; }
-.feedback-image-picker small { color: #566b61; }
-.map-export-popover { position: fixed; inset: auto; margin: 0; display: none; grid-template-columns: 1fr; gap: 6px; width: 180px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 10px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card, #fffaf6); box-shadow: 0 12px 36px #32201833; }
+.feedback-image-picker small { color: var(--ink-muted); }
+.map-export-popover { position: fixed; inset: auto; margin: 0; display: none; grid-template-columns: 1fr; gap: 6px; width: 180px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 10px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card); box-shadow: 0 12px 36px var(--shade); }
 .map-export-popover:popover-open { display: grid; }
 .map-export-popover .btn { width: 100%; min-height: 44px; }
 .bleeding-intensity button { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.bleeding-intensity [data-bleeding-icon] { display: block; width: 42px; height: 26px; color: #b43c45; }
+.bleeding-intensity [data-bleeding-icon] { display: block; width: 42px; height: 26px; color: var(--data-bleeding); }
 .bleeding-intensity svg { width: 100%; height: 100%; }
-.bleeding-intensity button.active { background: #f9dfe1; border-color: #b43c45; color: #76232b; }
-.bleeding-cell svg { width: min(36px, 90%); height: 22px; color: #b43c45; }
-.observation-scale { --scale-accent: #355e91; --scale-fill: #e6edf8; }
-#cervixModal .observation-scale { --scale-accent: #287c7c; --scale-fill: #e1f2f1; }
+.bleeding-intensity button.active { background: var(--data-bleeding-tint); border-color: var(--data-bleeding); color: var(--data-bleeding-ink); }
+.bleeding-cell svg { width: min(36px, 90%); height: 22px; color: var(--data-bleeding); }
+.observation-scale { --scale-accent: var(--data-mucus); --scale-fill: var(--data-mucus-tint); }
+#cervixModal .observation-scale { --scale-accent: var(--data-cervix); --scale-fill: var(--data-cervix-tint); }
 :where(#cervixModal) .observation-scale button { border: 1px solid transparent; }
 .observation-scale button, .bleeding-intensity button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 76px; padding: 10px 4px; font-size: 12px; line-height: 1.3; white-space: normal; overflow-wrap: anywhere; }
 .observation-scale-icon { display: block; width: 48px; height: 40px; color: var(--scale-accent); flex-shrink: 0; }
 .observation-scale-icon svg { display: block; width: 100%; height: 100%; }
-.observation-duotone { --observation-icon-fill: #b7d5e7; }
+.observation-duotone { --observation-icon-fill: var(--data-mucus-fill); }
 .observation-duotone .observation-icon-fill { fill: var(--observation-icon-fill); stroke: none; }
 .observation-duotone .observation-icon-line { stroke: currentColor; }
-#cervixModal .observation-duotone, .map-cells-group-cervix .observation-duotone { --observation-icon-fill: #b9ded9; }
+#cervixModal .observation-duotone, .map-cells-group-cervix .observation-duotone { --observation-icon-fill: var(--data-cervix-fill); }
 .observation-scale button.active { background: var(--scale-fill); border-color: var(--scale-accent); box-shadow: inset 0 0 0 1px var(--scale-accent); }
-.observation-scale button:focus-visible, .bleeding-intensity button:focus-visible { outline: 2px solid var(--scale-accent, #b43c45); outline-offset: 3px; }
+.observation-scale button:focus-visible, .bleeding-intensity button:focus-visible { outline: 2px solid var(--scale-accent); outline-offset: 3px; }
 .observation-scale-cell svg { width: min(36px, 90%); height: 24px; }
-.map-cells-group-mucus .observation-scale-cell { color: #355e91; }
-.map-cells-group-cervix .observation-scale-cell { color: #287c7c; }
+.map-cells-group-mucus .observation-scale-cell { color: var(--data-mucus); }
+.map-cells-group-cervix .observation-scale-cell { color: var(--data-cervix); }
 #mucusModal .checkbox-row, #bleedingModal .checkbox-row, #otherModal .checkbox-row { gap: 10px; min-height: 44px; }
-#mucusModal .checkbox-row input, #bleedingModal .checkbox-row input, #otherModal .checkbox-row input { width: 20px; height: 20px; flex: 0 0 20px; accent-color: #355e91; }
+#mucusModal .checkbox-row input, #bleedingModal .checkbox-row input, #otherModal .checkbox-row input { width: 20px; height: 20px; flex: 0 0 20px; accent-color: var(--data-mucus); }
 .cervix-firmness-choices button { user-select: none; }
 .cervix-firmness-code { display: grid; place-items: center; font-size: 24px; font-weight: 700; line-height: 1; }
 .cervix-height-title { margin-top: 12px; }
@@ -43,11 +43,9 @@
 .nav-icon { display: inline-block; width: 22px; height: 22px; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }
 .nav-icon, .menu-card-icon svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .menu-card-index { display: none; }
-.menu-card-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; margin-bottom: 14px; color: #58768b; }
+.menu-card-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; margin-bottom: 14px; color: var(--ink-muted); }
 .menu-card-icon svg { width: 28px; height: 28px; }
-.menu-card:nth-child(1) .menu-card-icon { color: #866aa4; }
-.menu-card:nth-child(3) .menu-card-icon { color: #ae704d; }
-.menu-card:nth-child(4) .menu-card-icon { color: #50856c; }
+
 .icon-label-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
 .icon-label-button > svg { width: 20px; height: 20px; flex-shrink: 0; }
 .action-icon { display: grid; place-items: center; width: 32px; height: 32px; flex: 0 0 32px; padding: 0; line-height: 0; }
@@ -55,36 +53,35 @@
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .nav-icon { margin-right: 0; }
   .menu-card-icon { margin-bottom: 0; }
-  #mobileObservationsBtn { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; margin-top: 12px; border: 1px solid var(--hairline); border-radius: 14px; background: #fffaf6; font-size: 14px; font-weight: 600; color: var(--text); scroll-margin-top: 12px; }
+  #mobileObservationsBtn { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; margin-top: 12px; border: 1px solid var(--hairline); border-radius: 14px; background: var(--surface); font-size: 14px; font-weight: 600; color: var(--text); scroll-margin-top: 12px; }
   #mobileObservationsBtn::after { content: '+'; font-size: 22px; }
   #mobileObservationsBtn[aria-expanded="true"]::after { content: '−'; }
   #mobileObservationPanel { margin-top: 10px; }
   .mobile-observation-period { margin: 0 0 8px; font-size: 15px; font-weight: 600; line-height: 1.4; }
   .mobile-observation-period:empty { display: none; }
   .mobile-selected-measurement { display: grid; justify-items: end; gap: 4px; min-width: 0; max-width: 55%; }
-  #mobileSelectedFactor { max-width: 100%; font-size: 12px; color: #9b493c; overflow-wrap: anywhere; text-align: right; }
+  #mobileSelectedFactor { max-width: 100%; font-size: 12px; color: var(--ink-muted); overflow-wrap: anywhere; text-align: right; }
   #activeMapScreen .calendar .day, #calendar .day { font-size: 13px; }
   #calendar .day-cycle-num { font-size: 9px; font-weight: 500; padding: 1px 3px; box-shadow: none; }
   #mobileObservationPanel[hidden] { display: none; }
   .mobile-observation-hint { color: var(--muted); font-size: 12px; line-height: 1.5; }
-  #mobileObservationScroll { overflow-x: auto; overscroll-behavior-x: contain; touch-action: pan-x pan-y; border: 1px solid var(--hairline); border-radius: 14px; background: #fffaf6; }
+  #mobileObservationScroll { overflow-x: auto; overscroll-behavior-x: contain; touch-action: pan-x pan-y; border: 1px solid var(--hairline); border-radius: 14px; background: var(--surface); }
   #mobileObservationGrid { width: max-content; min-width: 100%; }
   #mobileObservationGrid #mapRows { display: block; }
   #activeMapScreen #mobileObservationGrid .map-row { grid-template-columns: 48px 0 max-content; height: 44px; overflow: visible; }
-  #activeMapScreen #mobileObservationGrid .map-side-label { position: sticky; left: 0; z-index: 2; display: flex; justify-content: center; width: 48px; padding: 6px; background: #fffaf6; }
+  #activeMapScreen #mobileObservationGrid .map-side-label { position: sticky; left: 0; z-index: 2; display: flex; justify-content: center; width: 48px; padding: 6px; background: var(--surface); }
   #activeMapScreen #mobileObservationGrid .map-row-caption { display: none; }
   #activeMapScreen #mobileObservationGrid .map-row-icon { display: grid; }
   #mobileObservationGrid .map-cell { height: 44px; }
   .mobile-observation-header { display: grid; grid-template-columns: 48px max-content; min-height: 44px; border-bottom: 1px solid var(--hairline); }
-  .mobile-observation-header > span { position: sticky; left: 0; z-index: 3; display: flex; align-items: center; padding: 6px; background: #f4e9e1; font-size: 11px; }
+  .mobile-observation-header > span { position: sticky; left: 0; z-index: 3; display: flex; align-items: center; padding: 6px; background: var(--surface-alt); font-size: 11px; }
   #mobileObservationDays { height: 44px; }
-  #mobileObservationDays button { height: 44px; padding: 0; border: 0; border-right: 1px solid var(--hairline); border-radius: 0; background: #f4e9e1; font: inherit; font-size: 10px; color: var(--text); cursor: pointer; }
+  #mobileObservationDays button { height: 44px; padding: 0; border: 0; border-right: 1px solid var(--hairline); border-radius: 0; background: var(--surface-alt); font: inherit; font-size: 10px; color: var(--text); cursor: pointer; }
   /* Glass treatment belongs only to the phone navigation dock. */
-  .header-nav { border: 1px solid #ffffffc9; background: linear-gradient(145deg, #ffffffa3, #fff8f075); -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%); box-shadow: inset 0 1px 1px #fff, inset 0 -1px 1px #ffffff66, 0 10px 36px #57483c26; }
-  .header-nav-btn.is-active { border-color: #ffffffdb; background: linear-gradient(135deg, #ffffffc7, #ffe5d795); box-shadow: inset 0 1px 1px #fff, 0 3px 12px #79503b12; color: #854023; }
+
   .feedback-launch.btn { display: grid; place-items: center; flex: none; width: 48px; min-width: 48px; max-width: 48px; height: 48px; min-height: 48px; padding: 0; border-radius: 50%; font-size: 22px; line-height: 1; bottom: var(--mobile-nav-space); }
   .feedback-launch > span:first-child { display: block; }
-  #mobileToolsList { position: fixed; inset: 0; margin: auto; width: min(350px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: clamp(12px, 4vw, 20px); border: 1px solid #e9d9d3; border-radius: 24px; background: #fffaf6; color: var(--text); box-shadow: 0 16px 70px #32201833; }
+  #mobileToolsList { position: fixed; inset: 0; margin: auto; width: min(350px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: clamp(12px, 4vw, 20px); border: 1px solid var(--line); border-radius: 24px; background: var(--surface); color: var(--text); box-shadow: 0 16px 70px var(--shade); }
   #mobileToolsList:not([open]) { display: none; }
   #mobileToolsList[open] { display: grid; grid-template-columns: 1fr; gap: 10px; }
   #mobileToolsList header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -103,18 +100,18 @@
     max-width: 360px;
     margin-inline: auto;
     padding: 8px;
-    border: 1px solid #e8d6cf;
+    border: 1px solid var(--line);
     border-radius: 16px;
-    background: #fff7f2;
-    box-shadow: 0 6px 24px #57483c26;
+    background: var(--surface);
+    box-shadow: 0 6px 24px var(--shade);
   }
-  #mobileToolFeedback .persistent-toast { order: -1; flex: 1; min-width: 0; margin: 0; padding: 0; background: transparent; color: #57423a; }
+  #mobileToolFeedback .persistent-toast { order: -1; flex: 1; min-width: 0; margin: 0; padding: 0; background: transparent; color: var(--ink); }
   #mobileToolFeedback .action-toast { gap: 6px; text-align: center; }
-  #mobileToolFeedback .toast-action, #mobileCancelToolBtn { min-width: 44px; min-height: 44px; height: auto; padding: 6px clamp(4px, 1.5vw, 10px); border: 1px solid #e8d6cf; border-radius: 12px; background: #fffdfb; font-size: 12px; line-height: 1.2; }
+  #mobileToolFeedback .toast-action, #mobileCancelToolBtn { min-width: 44px; min-height: 44px; height: auto; padding: 6px clamp(4px, 1.5vw, 10px); border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: 12px; line-height: 1.2; }
   #mobileToolFeedback .toast-action { flex: 1 1 0; white-space: normal; overflow-wrap: anywhere; }
-  #mobileToolFeedback .toast-action-cancel, #mobileCancelToolBtn { background: #fae7e8; color: #793744; }
-  #activeMapScreen .temp-scale-column { position: sticky; left: 0; z-index: 4; background: #fffaf6; }
-  #activeMapScreen.mobile-chart-expanded { position: fixed; inset: 0; z-index: 500; padding: max(12px, env(safe-area-inset-top)) 8px max(12px, env(safe-area-inset-bottom)); overflow: auto; background: var(--bg, #fffaf6); }
+  #mobileToolFeedback .toast-action-cancel, #mobileCancelToolBtn { background: var(--danger-tint); color: var(--danger); }
+  #activeMapScreen .temp-scale-column { position: sticky; left: 0; z-index: 4; background: var(--surface); }
+  #activeMapScreen.mobile-chart-expanded { position: fixed; inset: 0; z-index: 500; padding: max(12px, env(safe-area-inset-top)) 8px max(12px, env(safe-area-inset-bottom)); overflow: auto; background: var(--bg); }
   .mobile-chart-expanded > .mobile-map-header,
   .mobile-chart-expanded > .mobile-map-navigation,
   .mobile-chart-expanded > #mobileMapDock > :not(#mobileToolFeedback),
@@ -124,7 +121,7 @@
   .mobile-chart-expanded .mobile-chart-toolbar { margin-bottom: 12px; }
 }
 @media (max-width: 560px) and (prefers-reduced-transparency: reduce), (max-height: 500px) and (pointer: coarse) and (prefers-reduced-transparency: reduce) {
-  .header-nav { background: #fffaf6; -webkit-backdrop-filter: none; backdrop-filter: none; }
+
 }
 
 #mucusModal .modal-card, #otherModal .modal-card { gap: 12px; }
@@ -145,9 +142,4 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.btn.map-import-btn {
-  color: #234972;
-  background: #e1edfb;
-  border-color: #abc7e7;
-}
-.btn.map-import-btn:hover { background: #d2e4f9; }
+

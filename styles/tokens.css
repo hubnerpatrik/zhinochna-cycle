@@ -1,0 +1,122 @@
+/* Design tokens: the one source of colour, spacing, radius, type and elevation.
+   Other stylesheets reference these variables instead of raw values. */
+:root {
+  /* Neutrals: the interface stays mostly neutral; colour belongs to the observations. */
+  --bg: #fff8f3;
+  --surface: #fffaf6;
+  --surface-alt: #f6efe9;
+  --ink: #162029;
+  --ink-muted: #5f666d;
+  --line: rgba(22, 32, 41, 0.12);
+  --line-soft: rgba(22, 32, 41, 0.06);
+
+  /* The one accent: primary action, focus ring, links and active state. */
+  --action: #c2492e;
+  --action-hover: #a93d25;
+  --action-ink: #ffffff;
+  --action-tint: #fbe9e3;
+  /* Pastel fill for primary buttons; always with the dark label. */
+  --action-fill: #f9a184;
+  --action-fill-hover: #f48b69;
+  --action-fill-ink: var(--ink);
+  --danger: #b42318;
+  --danger-tint: #fdecea;
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--action);
+
+  --danger-line: #f1b8b3;
+  --danger-ring: rgba(180, 35, 24, 0.11);
+
+  /* Status notes (feedback threads, sync warnings). */
+  --info-tint: #e8f1ff;
+  --info-line: #a0bbdf;
+  --info-ink: #203f68;
+  --success-tint: #e2f2dd;
+  --success-line: #93bc82;
+  --warning-tint: #fff4dc;
+  --warning-line: #dcb977;
+  --warning-ink: #634817;
+
+  /* Overlays and shadows. */
+  --backdrop: rgba(22, 32, 41, 0.36);
+  --shade: rgba(22, 32, 41, 0.14);
+
+  /* Legacy names kept as aliases while older rules migrate. */
+  --text: var(--ink);
+  --muted: var(--ink-muted);
+  --hairline: var(--line-soft);
+
+  /* Observation data colours, shared with the chart (chart-palette.js). */
+  --data-adjusted: #2563eb;
+  --data-fertile: #16a34a;
+  --data-coverline: #b41414;
+  --data-overflow: #b43c45;
+  --data-bleeding: #b43c45;
+  --data-bleeding-tint: #f9dfe1;
+  --data-bleeding-ink: #76232b;
+  --data-mucus: #355e91;
+  --data-mucus-tint: #e6edf8;
+  --data-mucus-fill: #b7d5e7;
+  --data-cervix: #287c7c;
+  --data-cervix-tint: #e1f2f1;
+  --data-cervix-fill: #b9ded9;
+  --data-cervix-marker: #10b981;
+  --data-factor: #e19a1c;
+  --data-sex: #0b7480;
+  --data-symptoms: #6a62d6;
+  --data-symptoms-tint: #efe4f1;
+  --data-marker-blue: #2563eb;
+  --data-marker-green: #16a34a;
+  --data-marker-orange: #ea580c;
+  --data-period-line: #e6aeb9;
+  --data-fertile-line: #698451;
+
+  /* Chart tools: soft pastels of what each tool draws (icon 3:1 on its tint). */
+  --tool-fertile: #559262;
+  --tool-fertile-tint: #e6f2e3;
+  --tool-coverline: #c0635f;
+  --tool-coverline-tint: #f9e6e4;
+  --tool-marker: #6283cc;
+  --tool-marker-tint: #e7edf9;
+  --tool-cross: #a87d33;
+  --tool-cross-tint: #f8efdc;
+
+  /* Calendar and observation base colours (formerly in base.css and theme.css). */
+  --blue: #0a84ff;
+  --red: #ef4444;
+  --orange: #fb923c;
+  --green: #cfe7b4;
+  --mucus-navy: #001f6b;
+  --cervix-light: #7dd3fc;
+  --calendar-green: #cfe7b4;
+  --calendar-green-text: #4d6246;
+  --calendar-red: #f4c7cf;
+  --calendar-red-text: #793744;
+  --calendar-red-line: #b76878;
+
+  /* Spacing scale. */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+
+  /* Radius scale. */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-pill: 999px;
+
+  /* Type scale. */
+  --t-label: 13px;
+  --t-small: 14px;
+  --t-body: 16px;
+  --t-title: 18px;
+  --t-h2: 22px;
+  --t-h1: 28px;
+
+  /* Elevation: only floating layers (sheets, dialogs, menus) cast a shadow. */
+  --shadow-float: 0 12px 32px rgba(22, 32, 41, 0.12), 0 2px 6px rgba(22, 32, 41, 0.06);
+}

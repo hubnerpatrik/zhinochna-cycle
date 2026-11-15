@@ -1,0 +1,439 @@
+/* Shared component recipes built only from tokens.css.
+   One secondary button, one flat card, one icon chip, one navigation state. */
+
+/* Secondary action: surface, hairline, ink label. */
+.btn.secondary,
+.btn.map-import-btn,
+.btn.map-export-btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: none;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.btn.secondary:hover,
+.btn.map-import-btn:hover,
+.btn.map-export-btn:hover {
+  border-color: rgba(22, 32, 41, 0.22);
+  background: var(--surface-alt);
+}
+
+/* Flat cards: surface and hairline, no gradient, glass or shadow. */
+.screen-card,
+.menu-card,
+.menu-summary-card {
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.menu-summary-card {
+  position: relative;
+  min-height: 104px;
+  overflow: hidden;
+}
+
+.menu-card:hover,
+button.menu-summary-card:not(:disabled):hover {
+  transform: translateY(-2px);
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.menu-card-icon {
+  border-radius: var(--r-md);
+  background: var(--surface-alt);
+  color: var(--ink-muted);
+}
+
+.screen-hero {
+  padding-left: 0;
+}
+
+/* Icon chips: neutral for interface actions; observation chips keep a light tint of their data colour. */
+.action-icon {
+  border-radius: var(--r-sm);
+  box-shadow: none;
+  color: var(--ink);
+}
+
+.action-icon.chip-neutral,
+.action-icon.chip-gray,
+.action-icon.chip-purple,
+.action-icon.chip-edit-special,
+.action-icon.chip-profile-special {
+  background: var(--surface-alt);
+  color: var(--ink-muted);
+}
+
+.action-icon.chip-orange { background: color-mix(in srgb, var(--orange) 22%, var(--surface)); }
+.action-icon.chip-red { background: color-mix(in srgb, var(--red) 22%, var(--surface)); }
+.action-icon.chip-blue { background: color-mix(in srgb, var(--blue) 18%, var(--surface)); }
+.action-icon.chip-teal { background: var(--data-cervix-tint); color: var(--data-cervix); }
+.action-icon.chip-green { background: color-mix(in srgb, var(--green) 60%, var(--surface)); }
+
+/* Navigation: the current screen takes the action tint. */
+.header-nav-btn.is-active {
+  border-color: transparent;
+  background: var(--action-tint);
+  box-shadow: none;
+  color: var(--action);
+}
+
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  .menu-summary-card {
+    min-height: 0;
+  }
+
+  .header-nav {
+    background: var(--surface);
+  }
+}
+
+/* Page ground. */
+body {
+  background: var(--bg);
+}
+
+/* Surfaces on every screen: one flat card recipe. */
+.calendar-card,
+.info-card,
+.chart-card,
+.empty-state,
+.screen-form-card,
+.map-filter-card,
+.map-list-card {
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.map-list-card {
+  transition: transform 0.16s ease, border-color 0.16s ease;
+}
+
+.map-list-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.map-list-card.is-active {
+  border-color: var(--action);
+  box-shadow: none;
+}
+
+.modal-card {
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+}
+
+.toast {
+  border: 0;
+  background: var(--ink);
+  color: var(--surface);
+}
+
+/* Destructive action: secondary shape, danger label. */
+.btn.map-delete-btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--danger);
+  box-shadow: none;
+}
+
+.btn.map-delete-btn:hover {
+  border-color: var(--danger);
+  background: var(--danger-tint);
+}
+
+/* Calendar / graph switch and other segmented choices. */
+.segmented button.active {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Selected day: action outline; a fertile day keeps its data colour. */
+.day.selected {
+  border: 1px solid var(--action);
+  background: var(--action-tint);
+  box-shadow: none;
+}
+
+.day.fertile-day.selected {
+  border-color: var(--action);
+  background: color-mix(in srgb, var(--green) 80%, var(--surface));
+  color: var(--ink);
+  box-shadow: none;
+}
+
+/* Desktop chart tools: secondary until active (.tool-btn.active). */
+.marker-btn,
+.coverline-btn,
+.cross-cells-btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.marker-btn:hover,
+.coverline-btn:hover,
+.cross-cells-btn:hover {
+  background: var(--surface-alt);
+}
+
+/* Marker editor choices keep their data colour as a flat tint. */
+#markersModal .peak-day-toggle button.active {
+  border-color: color-mix(in srgb, var(--orange) 62%, var(--surface));
+  background: color-mix(in srgb, var(--orange) 34%, var(--surface));
+  color: var(--ink);
+  box-shadow: none;
+}
+
+#markersModal button[data-group="markerColor"][data-value="green"].active {
+  border-color: color-mix(in srgb, var(--green) 66%, var(--surface));
+  background: color-mix(in srgb, var(--green) 44%, var(--surface));
+  box-shadow: none;
+}
+
+#markersModal button[data-group="markerColor"][data-value="blue"].active {
+  border-color: color-mix(in srgb, var(--mucus-navy) 45%, var(--surface));
+  background: color-mix(in srgb, var(--mucus-navy) 22%, var(--surface));
+  box-shadow: none;
+}
+
+#markersModal button[data-group="markerColor"][data-value="orange"].active {
+  border-color: color-mix(in srgb, var(--cervix-light) 58%, var(--surface));
+  background: color-mix(in srgb, var(--cervix-light) 32%, var(--surface));
+  box-shadow: none;
+}
+
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  .toast {
+    width: calc(100% - 24px);
+    bottom: max(12px, env(safe-area-inset-bottom));
+    padding: 12px 16px;
+    text-align: center;
+  }
+}
+
+/* App header: brand mark and name, quiet account tools, plain text tabs on one hairline. */
+.brand-mark {
+  flex: none;
+  width: 28px;
+  height: 28px;
+}
+
+.brand-mark-track {
+  fill: none;
+  stroke: var(--ink);
+  stroke-opacity: 0.14;
+  stroke-width: 3;
+}
+
+.brand-mark-arc {
+  fill: none;
+  stroke: var(--action);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.brand-mark-dot {
+  fill: var(--action-fill);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-text {
+  min-width: 0;
+}
+
+.header-brand h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-shadow: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-header .account-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.app-header .account-bar .btn {
+  margin-left: 0;
+  min-height: 36px;
+  padding: 0 10px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.app-header .account-bar .btn:hover {
+  border-color: transparent;
+  background: var(--surface-alt);
+  color: var(--ink);
+}
+
+.app-header .language-picker-trigger {
+  min-height: 36px;
+  border-color: transparent;
+  background: transparent;
+}
+
+.app-header .language-picker-trigger:hover {
+  background: var(--surface-alt);
+}
+
+#accountEmail {
+  min-width: 0;
+  max-width: 28ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 561px) and (min-height: 501px), (min-width: 561px) and (pointer: fine) {
+  .app-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      "brand account language"
+      "nav nav nav";
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 6px;
+    margin: 0 -14px 24px;
+    padding: 12px 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .header-brand { grid-area: brand; }
+  .app-header .account-bar { grid-area: account; justify-self: end; }
+
+  .app-header > .language-picker {
+    grid-area: language;
+    position: static;
+  }
+
+  .header-nav {
+    grid-area: nav;
+    justify-self: stretch;
+    display: flex;
+    gap: 4px;
+    margin-bottom: -1px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .header-nav-btn {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+    height: 44px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--ink-muted);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .header-nav-btn:hover:not(:disabled) {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .header-nav-btn:active {
+    transform: none;
+  }
+
+  .header-nav-btn.is-active {
+    background: transparent;
+    color: var(--ink);
+    box-shadow: inset 0 -2px 0 var(--action);
+  }
+
+  .nav-icon { display: none; }
+  .nav-label-desktop { display: none; }
+  .nav-label-mobile { display: inline; }
+
+}
+
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  .app-header {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .header-brand h1 {
+    font-size: clamp(16px, 5vw, 19px);
+  }
+
+  .header-brand {
+    flex: 1 1 auto;
+  }
+
+  .app-header .account-bar {
+    order: 3;
+    flex: 1 0 100%;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    margin: -6px 0 0;
+  }
+
+  .app-header .release-notes-control {
+    margin-left: auto;
+  }
+}
+
+/* Chart tools: phone chips and desktop button icons share one soft colour per tool. */
+.mobile-tools-list [data-mobile-tool="fertileRangeActionBtn"] .mobile-tool-icon {
+  background: var(--tool-fertile-tint);
+  color: var(--tool-fertile);
+}
+
+.mobile-tools-list [data-mobile-tool="coverlineBtn"] .mobile-tool-icon {
+  background: var(--tool-coverline-tint);
+  color: var(--tool-coverline);
+}
+
+.mobile-tools-list [data-mobile-tool="markersActionBtn"] .mobile-tool-icon {
+  background: var(--tool-marker-tint);
+  color: var(--tool-marker);
+}
+
+.mobile-tools-list [data-mobile-tool="crossCellsActionBtn"] .mobile-tool-icon {
+  background: var(--tool-cross-tint);
+  color: var(--tool-cross);
+}
+
+.coverline-btn svg { color: var(--tool-coverline); }
+.marker-btn svg { color: var(--tool-marker); }
+.cross-cells-btn svg { color: var(--tool-cross); }
