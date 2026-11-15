@@ -412,14 +412,54 @@ select:focus-visible{
   gap:10px;
 }
 
-.map-edit-btn{
-  flex:0 0 auto;
-  min-width:120px;
+.map-more-menu{
+  position:relative;
 }
 
-.map-delete-btn{
-  flex:0 0 auto;
-  min-width:100px;
+.map-more-btn{
+  min-width:44px;
+  padding-inline:10px;
+  justify-content:center;
+  cursor:pointer;
+  list-style:none;
+  user-select:none;
+}
+
+.map-more-btn::-webkit-details-marker{
+  display:none;
+}
+
+.map-more-list{
+  position:absolute;
+  top:calc(100% + 6px);
+  right:0;
+  z-index:3;
+  display:grid;
+  gap:6px;
+  min-width:160px;
+  padding:8px;
+  border:1px solid var(--hairline);
+  border-radius:16px;
+  background:var(--card);
+  box-shadow:var(--shadow-lifted);
+}
+
+.map-more-list .btn{
+  width:100%;
+  justify-content:flex-start;
+}
+
+.map-list-card:has(.map-more-menu[open]){
+  position:relative;
+  z-index:3;
+}
+
+/* On phones the actions sit above the bottom navigation, so the menu opens upward. */
+@media (max-width:560px){
+  .map-more-list{
+    top:auto;
+    bottom:calc(100% + 6px);
+  }
 }
 
 .map-delete-confirmation{
@@ -1833,7 +1873,6 @@ input:focus{
   .header-nav,
   .header-nav-btn,
   .map-open-btn,
-  .map-edit-btn,
   .screen-inline-actions .btn{
     width:100%;
   }

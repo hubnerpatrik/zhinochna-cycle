@@ -5,7 +5,6 @@ import { escapeHtml } from "./view-utils.js";
 import { formatDate, t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
-import { MEASUREMENT_METHODS, pickMapSettings } from '../profile-options.js';
 
 // Dates in words for the current language; the i18n observer updates them on language change.
 function dateSpan(date) {
@@ -19,15 +18,69 @@ function activityDate(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(text) ? parseDateKey(text) : new Date(text);
 }
 
-/** One line with the map's own measurement settings; empty values are left out. */
-function renderMapSettingsSummary(snapshot) {
-  const settings = pickMapSettings(snapshot);
-  const parts = [
-    settings.usualMeasurementTime && `<span data-i18n>Time of measurement</span> ${escapeHtml(settings.usualMeasurementTime)}`,
-    MEASUREMENT_METHODS[settings.measurementMethod] && `<span data-i18n>${escapeHtml(MEASUREMENT_METHODS[settings.measurementMethod])}</span>`,
-    settings.age && `<span data-i18n>Age</span> ${escapeHtml(settings.age)}`,
-  ].filter(Boolean);
-  return parts.length ? `<p class="map-list-meta map-list-settings">${parts.join(" · ")}</p>` : "";
+/** One My Maps card: identity and dates on top, the common actions beside them, the rest in a menu. */
+export function renderMapCard(map, activeMapId) {
+  const dates = map.dates.length
+    ? `${dateSpan(parseDateKey(map.dates[0]))} – ${dateSpan(parseDateKey(map.dates.at(-1)))}`
+    : '<span data-i18n>No entries yet</span>';
+  return `
+    <article class="screen-card map-list-card${map.id === activeMapId ? " is-active" : ""}">
+      <div class="map-list-main">
+        <div>
+          <div class="map-list-title-row">
+            <h3 ${map.name ? "" : "data-i18n"}>${escapeHtml(map.name || "Untitled map")}</h3>
+            <span class="map-pill ${map.status === "closed" ? "map-pill-closed" : ""}" data-i18n>${map.status === "closed" ? "Closed" : "Open"}</span>
+            ${map.id === activeMapId ? '<span class="map-pill" data-i18n>Active</span>' : ""}
+            ${map.profileSnapshotLocked ? '<span class="map-pill" data-i18n>Shared</span>' : ""}
+          </div>
+          <p class="map-list-meta">${dates} · <span data-i18n>Last activity:</span> ${dateSpan(activityDate(map.lastActivity))}</p>
+          ${map.profileSnapshotLocked ? `<p class="map-list-meta map-list-author"><span data-i18n>Shared by:</span> ${map.profileSnapshot?.name ? escapeHtml(map.profileSnapshot.name) : `<span data-i18n>Unknown author</span>`}</p>` : ""}
+        </div>
+        <div class="map-list-actions">
+          <div class="map-export-picker">
+            <button type="button" class="btn secondary map-export-btn" data-i18n-aria-label="Export" aria-label="Export" data-i18n-title="Export" title="Export" data-export-toggle data-export-map="${escapeHtml(map.id)}" aria-expanded="false"><svg aria-hidden="true"><use href="/icons.svg#map-export"/></svg></button>
+          </div>
+          <details class="map-more-menu">
+            <summary class="btn secondary map-more-btn" data-i18n-aria-label="More actions" aria-label="More actions" data-i18n-title="More actions" title="More actions"><span aria-hidden="true">⋯</span></summary>
+            <div class="map-more-list">
+              <button type="button" class="btn secondary" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
+              <button type="button" class="btn secondary" data-map-copy-id="${escapeHtml(map.id)}" data-i18n>Copy</button>
+              <button type="button" class="btn danger" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
+            </div>
+          </details>
+          <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
+        </div>
+      </div>
+      <div class="map-delete-confirmation hidden" data-map-delete-confirmation="${escapeHtml(map.id)}" role="alert">
+        <span data-i18n>Are you sure you want to delete this map? This cannot be undone.</span>
+        <div class="map-delete-confirmation-actions">
+          <button type="button" class="btn secondary" data-map-delete-no="${escapeHtml(map.id)}" data-i18n>No</button>
+          <button type="button" class="btn danger" data-map-delete-yes="${escapeHtml(map.id)}" data-i18n>Yes</button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+/** The card menu closes on a choice, an outside click, Escape, or when another card's menu opens. */
+function bindMoreMenu(menu, list) {
+  const stopListening = () => {
+    document.removeEventListener("click", onDocumentClick);
+    document.removeEventListener("keydown", onEscape);
+  };
+  const close = () => { menu.open = false; stopListening(); };
+  const onDocumentClick = event => { if (!menu.isConnected || !menu.contains(event.target) || event.target.closest("button")) close(); };
+  const onEscape = event => {
+    if (event.key !== "Escape") return;
+    close();
+    menu.querySelector("summary")?.focus();
+  };
+  menu.addEventListener("toggle", () => {
+    if (!menu.open) return stopListening();
+    list.querySelectorAll(".map-more-menu[open]").forEach(other => { if (other !== menu) other.open = false; });
+    document.addEventListener("click", onDocumentClick);
+    document.addEventListener("keydown", onEscape);
+  });
 }
 
 function renderMapList(container, maps, activeMapId, { year, month, kind }, { onOpen, onRename, onCopy, onDelete, onExport }) {
@@ -46,45 +99,9 @@ function renderMapList(container, maps, activeMapId, { year, month, kind }, { on
     return;
   }
 
-  list.innerHTML = filteredMaps.map((map, index) => `
-    <article class="screen-card map-list-card${map.id === activeMapId ? " is-active" : ""}">
-      <div class="map-list-main">
-        <div>
-          <div class="map-list-title-row">
-            <h3 ${map.name ? "" : "data-i18n"}>${escapeHtml(map.name || "Untitled map")}</h3>
-            <span class="map-pill ${map.status === "closed" ? "map-pill-closed" : ""}" data-i18n>${map.status === "closed" ? "Closed" : "Open"}</span>
-            ${map.id === activeMapId ? '<span class="map-pill" data-i18n>Active</span>' : ""}
-            ${map.profileSnapshotLocked ? '<span class="map-pill" data-i18n>Shared</span>' : ""}
-          </div>
-          <p class="map-list-meta">${map.dates.length ? `${dateSpan(parseDateKey(map.dates[0]))} – ${dateSpan(parseDateKey(map.dates.at(-1)))}` : '<span data-i18n>No entries yet</span>'}</p>
-          ${renderMapSettingsSummary(map.profileSnapshot)}
-          ${map.profileSnapshotLocked ? `<p class="map-list-meta map-list-author"><span data-i18n>Shared by:</span> ${map.profileSnapshot?.name ? escapeHtml(map.profileSnapshot.name) : `<span data-i18n>Unknown author</span>`}</p>` : ""}
-          <p class="map-list-preview"><span data-i18n>Preview:</span> <span data-i18n>${escapeHtml(map.preview)}</span></p>
-          <p class="map-list-meta"><span data-i18n>Last activity:</span> ${dateSpan(activityDate(map.lastActivity))}</p>
-        </div>
-        <div class="map-list-actions">
-          <div class="map-export-picker">
-            <button type="button" class="btn secondary map-export-btn" data-i18n-aria-label="Export" aria-label="Export" data-i18n-title="Export" title="Export" data-export-toggle data-export-map="${escapeHtml(map.id)}" aria-expanded="false"><svg aria-hidden="true"><use href="/icons.svg#map-export"/></svg></button>
-          </div>
-          <div class="map-share-control">
-            <button type="button" class="btn secondary map-share-btn" aria-disabled="true" aria-label="Share map" data-i18n-aria-label="Share map" aria-describedby="map-share-info-${index}"><svg aria-hidden="true"><use href="/icons.svg#map-share"/></svg></button>
-            <span class="map-share-tooltip" id="map-share-info-${index}" role="tooltip"><span data-i18n>Map sharing is being fixed.</span></span>
-          </div>
-          <button type="button" class="btn secondary map-edit-btn" data-map-rename-id="${escapeHtml(map.id)}" data-i18n>Edit name</button>
-          <button type="button" class="btn secondary map-copy-btn" data-map-copy-id="${escapeHtml(map.id)}" data-i18n>Copy</button>
-          <button type="button" class="btn danger map-delete-btn" data-map-delete-id="${escapeHtml(map.id)}" data-i18n>Delete</button>
-          <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
-        </div>
-      </div>
-      <div class="map-delete-confirmation hidden" data-map-delete-confirmation="${escapeHtml(map.id)}" role="alert">
-        <span data-i18n>Are you sure you want to delete this map? This cannot be undone.</span>
-        <div class="map-delete-confirmation-actions">
-          <button type="button" class="btn secondary" data-map-delete-no="${escapeHtml(map.id)}" data-i18n>No</button>
-          <button type="button" class="btn danger" data-map-delete-yes="${escapeHtml(map.id)}" data-i18n>Yes</button>
-        </div>
-      </div>
-    </article>
-  `).join("");
+  list.innerHTML = filteredMaps.map(map => renderMapCard(map, activeMapId)).join("");
+
+  list.querySelectorAll(".map-more-menu").forEach(menu => bindMoreMenu(menu, list));
 
   list.querySelectorAll("[data-map-id]").forEach(button => {
     button.addEventListener("click", () => onOpen?.(button.dataset.mapId));
