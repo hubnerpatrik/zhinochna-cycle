@@ -13,6 +13,7 @@ import { readMapSettings, renderMapSettingsFields } from "./views/map-settings-f
 import { closeExportMenu } from './ui/export-menu.js';
 import { escapeHtml } from "./views/view-utils.js";
 import { createNavigation } from "./navigation.js";
+import { changeScreen } from "./ui/screen-transition.js";
 import { downloadFile } from './browser-download.js';
 import { exportMap, readMapImport } from './map-transfer.js';
 
@@ -103,7 +104,18 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
     return { screen, params: clean };
   }
 
+  let shownScreen = null;
+
   function renderRoute(route) {
+    const from = shownScreen;
+    shownScreen = route.screen;
+    changeScreen({
+      from, to: route.screen, update: () => showRoute(route),
+      reducedMotion: () => browser.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false,
+    });
+  }
+
+  function showRoute(route) {
     rendering = true;
     try {
       // The dialog lives outside root, so replacing the page cannot dismiss it.

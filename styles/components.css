@@ -634,3 +634,20 @@ html:has(.modal.show) .modal.hidden .modal-card {
     touch-action: pan-y pinch-zoom;
   }
 }
+
+/* Switching screens (Menu, My Maps, Active Map) cross-fades briefly; the tab bar stays put. */
+.header-nav { view-transition-name: app-nav; }
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 160ms;
+  animation-timing-function: ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

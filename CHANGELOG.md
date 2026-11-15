@@ -21,6 +21,7 @@ vMAJOR.MINOR.PATCH
 
 ### Changed
 
+- Switching between Profile, My Maps and Active Map cross-fades briefly while the tab bar stays in place; browsers without View Transitions, and anyone with reduced motion turned on, just see the new screen at once.
 - Deleting a map no longer asks "Are you sure?" first: it is deleted at once and a message offers Undo for 10 seconds, which brings the map back with its observations, its place in the list and, if it was open, its active state.
 - Text sizes now follow the browser's text-size setting instead of fixed pixels, so larger text in the browser makes the whole app larger; calendar day numbers grow only as far as their cell allows.
 - Small labels are plain 13 px sentence-case text instead of tracked capitals, and the screen-name labels above the headings (Main menu, My maps, Profile, Create map) are gone because the tab and the heading already say it.
