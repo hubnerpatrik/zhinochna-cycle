@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-Guidance for Claude Code in this repository. The user communicates in Czech — reply in Czech; code, comments, commits and docs stay in English.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+The user communicates in Czech — reply in Czech; code, comments, commits and docs stay in English.
 
 ## Project
 
@@ -15,6 +17,8 @@ Cycle Tracker: browser app for symptothermal cycle observations (calendar + Canv
 ```bash
 npm run check   # lint (syntax check) + tests + vite build — run before every commit
 npm test        # node --test test/*.test.js
+node --test test/store.test.js                        # single test file
+node --test --test-name-pattern="conflict" test/*.test.js  # tests matching a name
 npm run dev     # Vite; set VITE_DEV_AUTH_BYPASS=true in .env.development.local for local UI without sign-in
                 # (empty dev storage is seeded with a demo profile and map from dev/demo-data.js)
 npx vercel dev  # full stack with API (needs .env with DATABASE_URL, VITE_NEON_AUTH_URL)
@@ -22,6 +26,7 @@ npm run db:migrate
 ```
 
 Node ≥ 20.19 (`.nvmrc`). If `node` is not on PATH, say so instead of silently skipping checks.
+`npm run lint` (`scripts/check-js.js`) is only `node --check` over every `.js` file — there is no ESLint/Prettier. CI (`.github/workflows/ci.yml`) runs `npm run check` on pushes to `main` and on PRs.
 
 ## Architecture notes
 
@@ -29,7 +34,9 @@ Node ≥ 20.19 (`.nvmrc`). If `node` is not on PATH, say so instead of silently 
 - `router.js` — screens and map pages with browser history; `app.js` `render()` re-renders the active map; `renderZoom()` changes geometry only.
 - `active-map/` — chart interactions, gestures, mobile calendar/graph switching. `ui/` — modals and rendering pieces. `views/` — standalone screens.
 - Persistence: `storage/local-storage-adapter.js` (per-account cache + upload queue) and `storage/cloud-storage-adapter.js`. Server stores the whole account state as one JSONB document (max 2 MB) with version compare-and-swap and idempotent `mutation_id` (`server/state-repository.js`). Do not break this conflict model.
-- `data-validation.js` normalizes all stored/imported data; `backup.js` handles the embedded JSON backup used by imports and exports.
+- Auth: `bootstrap.js` owns the sign-in lifecycle (session checks, cloud setup) before calling `startApplication`; client logic is in `auth/`. `/api/auth/*` is rewritten (`vercel.json`) to `api/auth.js`, a proxy to Neon Auth. The dev auth bypass (`dev/local-preview.js`, isolated `cycle-development:` storage namespace) only works on localhost in Vite dev and is stripped from production builds.
+- Other endpoints: `api/feedback.js` (UI-anchored feedback threads, see `docs/feedback.md`), `api/share-map.js` (read-only shared map HTML), `api/db_health.js`. Cloud sync and recovery are described in `docs/cloud-storage.md`.
+- `data-validation.js` normalizes all stored/imported data; `backup.js` handles the JSON backup embedded in PDF/XLSX/JSON exports — import reads that embedded backup, so export format changes must keep it parseable.
 - i18n: English source strings are the keys. `t()` in `i18n.js` looks up `messages[key]` as `[cs, sk, uk]` from `i18n/*.js`. Every new user-visible string needs Czech, Slovak and Ukrainian translations.
 
 ## Conventions
@@ -39,6 +46,7 @@ Node ≥ 20.19 (`.nvmrc`). If `node` is not on PATH, say so instead of silently 
 - Record user-visible changes under `## Unreleased` in `CHANGELOG.md`.
 - Releases (see `CONTRIBUTING.md`, `docs/release-notes.md`): bump `package.json` + `package-lock.json`, `currentRelease` in `release-notes.js` (with translations in `i18n/form-feedback.js`), changelog section, tag `vX.Y.Z` on `main`.
 - Style: 2-space indent, LF, ES modules. No inline style writes from JS — toggle CSS classes (`ui/layout-classes.js`). Escape any user text inserted as HTML (`escapeHtml` in `views/view-utils.js`).
-- Add or update tests in `test/` for behavior changes; `test/setup.js` provides `MemoryStorage`.
+- Test-first: for behavior changes, write or update the failing test in `test/` first, confirm it fails, then implement until it passes. Never weaken or skip a test to make it pass. `test/setup.js` provides `MemoryStorage`.
 - Mobile matters: check layouts at narrow widths (~320–390 px) as well as desktop.
+- UI changes: after `npm run check`, run `npm run dev` with `VITE_DEV_AUTH_BYPASS=true` (demo data is seeded) and inspect Playwright screenshots at ~320 px, ~390 px and desktop for the affected screens before reporting done.
 - Never commit secrets or personal data; `.env*` files are ignored except `.env.example`. `work/` is a local scratch area (ignored).

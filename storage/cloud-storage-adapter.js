@@ -1,8 +1,9 @@
 import { LocalStorageAdapter } from "./local-storage-adapter.js";
-import { normalizeApplicationData } from "../data-validation.js";
+import { isPlainObject, normalizeApplicationData } from "../data-validation.js";
 
 const REQUEST_TIMEOUT_MS = 20_000;
 const SAVE_DEBOUNCE_MS = 600;
+const HTTP_BAD_REQUEST = 400;
 const HTTP_CONFLICT = 409;
 const HTTP_PAYLOAD_TOO_LARGE = 413;
 
@@ -37,15 +38,48 @@ export class CloudStorageAdapter {
     this.request = request;
     this.onStatus = onStatus;
     this.schedule = schedule;
+    this.recoveryKey = `${this.key}:recovery`;
     this.raw = storage.getItem(this.key);
-    this.envelope = this.raw ? JSON.parse(this.raw) : null;
-    if (this.envelope) {
-      if (!Number.isSafeInteger(this.envelope.version) || this.envelope.version < 0) throw new Error("Invalid local cloud state");
-      normalizeApplicationData(this.envelope.data, { strict: true });
-    }
+    this.envelope = this.raw ? this.readEnvelope(this.raw) : null;
     this.stopped = false;
     this.blocked = false;
     this.running = null;
+  }
+
+  // A cached envelope that no longer validates must never keep the account
+  // from opening: keep the original as the recovery copy, salvage what still
+  // validates as an unsynced edit, or fall back to the cloud version.
+  readEnvelope(raw) {
+    let envelope = null;
+    try { envelope = JSON.parse(raw); } catch { /* Unreadable cache. */ }
+    if (!isPlainObject(envelope) || !Number.isSafeInteger(envelope.version) || envelope.version < 0) {
+      this.retainRecoveryCopy(raw);
+      return null;
+    }
+    try {
+      normalizeApplicationData(envelope.data, { strict: true });
+      return envelope;
+    } catch {
+      this.retainRecoveryCopy(raw);
+      try {
+        const data = normalizeApplicationData(envelope.data);
+        normalizeApplicationData(data, { strict: true });
+        return { version: envelope.version, dirty: true, pending: null, data };
+      } catch { return null; }
+    }
+  }
+
+  // Only the latest recovery copy is kept; each can be as large as the account state.
+  retainRecoveryCopy(raw) {
+    const legacyPrefix = `${this.recoveryKey}:`;
+    const legacyKeys = [];
+    for (let index = 0; index < (this.storage.length ?? 0); index++) {
+      const key = this.storage.key(index);
+      if (key?.startsWith(legacyPrefix)) legacyKeys.push(key);
+    }
+    legacyKeys.forEach(key => this.storage.removeItem(key));
+    try { this.storage.setItem(this.recoveryKey, raw); }
+    catch { /* The user is offered a backup download before data is replaced. */ }
   }
 
   status(value) { this.statusValue = value; this.onStatus(value); }
@@ -135,13 +169,15 @@ export class CloudStorageAdapter {
     } catch (error) {
       if (error.status === HTTP_CONFLICT) { this.blocked = true; this.status("conflict"); }
       else if (!this.stopped && !this.blocked) {
-        if (error.status === HTTP_PAYLOAD_TOO_LARGE) {
-          // A rejected oversized request was not committed. Let a smaller edit
-          // replace it; ambiguous network failures must retain the original ID.
+        const rejected = error.status === HTTP_PAYLOAD_TOO_LARGE || error.status === HTTP_BAD_REQUEST;
+        if (rejected) {
+          // A rejected request was not committed. Let a later edit replace it;
+          // ambiguous network failures must retain the original ID.
           try { this.commit({ ...this.envelope, pending: null, dirty: true }); }
           catch { if (!this.blocked) this.status("error"); return; }
         }
-        this.status(error.status === HTTP_PAYLOAD_TOO_LARGE ? "too-large" : "error");
+        this.status(error.status === HTTP_PAYLOAD_TOO_LARGE ? "too-large"
+          : error.status === HTTP_BAD_REQUEST ? "invalid" : "error");
       }
     }
   }
@@ -163,7 +199,7 @@ export class CloudStorageAdapter {
     if (this.storage.getItem(this.key) !== this.raw) return;
     const remote = await this.request("GET");
     // Retain a recovery copy before the explicit switch to the cloud version.
-    this.storage.setItem(`${this.key}:recovery:${crypto.randomUUID()}`, this.raw);
+    this.retainRecoveryCopy(this.raw);
     this.commit({ version: remote.version, dirty: false, pending: null,
       data: remote.data ? normalizeApplicationData(remote.data, { strict: true }) : createBlankState() });
   }

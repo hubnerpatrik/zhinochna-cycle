@@ -2,15 +2,16 @@ import { getAdjustedTemp } from './core.js';
 import { jpegPagesPdf } from './pdf-document.js';
 export { jpegPagesPdf } from './pdf-document.js';
 import { t } from './i18n.js';
-import { EXPORT_FIELDS, EXPORT_LABELS, observationText, sortedMapEntries } from './export-data.js';
+import { EXPORT_FIELDS, EXPORT_LABELS, exportDay, observationText, sortedMapEntries } from './export-data.js';
+import { cycleModel } from './cycle-model.js';
 import { MILLISECONDS_PER_DAY } from './date-utils.js';
 import { templatePages, TEMPLATE_ROWS } from './observation-template.js';
-import { mapBackupPayload } from './map-transfer.js';
+import { serializeMapBackup } from './backup.js';
 import { calculateSummary } from './cycle-summary.js';
 import { drawTemplateLabels } from './pdf-template-labels.js';
 import { PROFILE_GOALS, MEASUREMENT_METHODS } from './profile-options.js';
 
-export async function mapPdf(map, backup = mapBackupPayload(map)) {
+export async function mapPdf(map, backup = serializeMapBackup(map)) {
   const image = new Image();
   image.src = new URL('./assets/observation-template.png', import.meta.url).href;
   await image.decode();
@@ -19,6 +20,7 @@ export async function mapPdf(map, backup = mapBackupPayload(map)) {
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas unavailable');
   const pages = [];
+  const model = cycleModel(map);
   for (const page of templatePages(map)) {
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     ctx.save(); ctx.scale(2, 2);
@@ -47,7 +49,7 @@ export async function mapPdf(map, backup = mapBackupPayload(map)) {
     const tempY = temp => 417.4 - (temp - 36) / 1.4 * 310.7;
     let previous = null;
     page.dates.forEach((date, index) => {
-      const e = map.entries[date] || {}, x = left + (index + .5) * step;
+      const e = exportDay(model, map.entries, date), x = left + (index + .5) * step;
       ctx.save(); ctx.translate(x + 2, 89); ctx.rotate(-Math.PI / 2); text(date.slice(5), 0, 0, 6.5); ctx.restore();
       // Continuation sheets retain the actual cycle day, including days >43.
       if (page.offset) for (const y of [100, 479, 716, 839]) {

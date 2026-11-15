@@ -91,7 +91,7 @@ test("stale devices cannot overwrite cloud data; recovery retains their local co
   assert.equal((await remote.request("GET")).data.profile.name, "Cloud winner");
   await second.loadCloud();
   assert.equal(second.snapshot().profile.name, "Cloud winner");
-  assert.ok([...storage.values.keys()].some(key => key.includes(":recovery:")));
+  assert.equal(JSON.parse(storage.getItem("cycle-account:account-a:cloud-v1:recovery")).data.profile.name, "Local draft");
 });
 
 test("another tab's pending envelope is never overwritten", async () => {
@@ -146,4 +146,49 @@ test("cloud transport fetches an in-memory JWT and never trusts an owner supplie
   assert.equal(calls[0][0], "/api/state");
   assert.equal(calls[0][1].headers.Authorization, "Bearer test-jwt");
   assert.equal(calls[0][1].credentials, "same-origin");
+});
+
+test("loading the cloud version keeps a single recovery copy and removes older ones", async () => {
+  const remote = server(); const storage = new MemoryStorage({
+    "cycle-account:account-a:cloud-v1:recovery:old-1": "x".repeat(10),
+    "cycle-account:account-a:cloud-v1:recovery:old-2": "x".repeat(10),
+  });
+  const client = adapter(remote, storage); await client.initialize();
+  await client.loadCloud(); await client.loadCloud();
+  const recoveryKeys = [...storage.values.keys()].filter(key => key.includes(":recovery"));
+  assert.deepEqual(recoveryKeys, ["cycle-account:account-a:cloud-v1:recovery"]);
+});
+
+test("an unreadable cached envelope is kept aside and the account opens from the cloud", async () => {
+  const remote = server(); const seed = adapter(remote); await seed.initialize();
+  seed.saveState(state("Cloud copy")); await seed.flush();
+  const storage = new MemoryStorage({ "cycle-account:account-a:cloud-v1": "{not json" });
+  const client = adapter(remote, storage); await client.initialize();
+  assert.equal(client.snapshot().profile.name, "Cloud copy");
+  assert.equal(storage.getItem("cycle-account:account-a:cloud-v1:recovery"), "{not json");
+});
+
+test("a cached envelope that fails validation is salvaged as an unsynced edit", async () => {
+  const remote = server(); const seed = adapter(remote); await seed.initialize();
+  const cached = { version: 0, dirty: true, pending: null, data: {
+    profile: { name: "Salvaged", setupCompleted: true, consultantName: 7 }, maps: {}, activeMapId: null,
+  } };
+  const storage = new MemoryStorage({ "cycle-account:account-a:cloud-v1": JSON.stringify(cached) });
+  const client = adapter(remote, storage); await client.initialize();
+  assert.equal(client.statusValue, "saved");
+  assert.equal((await remote.request("GET")).data.profile.name, "Salvaged");
+  assert.equal(JSON.parse(storage.getItem("cycle-account:account-a:cloud-v1:recovery")).data.profile.consultantName, 7);
+});
+
+test("a write the server rejects as invalid is reported and can be replaced", async () => {
+  const remote = server();
+  const client = adapter(remote, undefined, { request: async (method, body) => {
+    if (method === "PUT" && body.data.profile.name === "Rejected") throw Object.assign(new Error("Invalid"), { status: 400 });
+    return remote.request(method, body);
+  } });
+  await client.initialize(); client.saveState(state("Rejected")); await client.flush();
+  assert.equal(client.statusValue, "invalid");
+  assert.equal(client.envelope.pending, null);
+  client.saveState(state("Accepted")); await client.flush();
+  assert.equal(client.statusValue, "saved");
 });

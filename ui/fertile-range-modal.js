@@ -1,9 +1,9 @@
 import { setText, setDateText, setTranslatedAttribute } from '../i18n.js';
 import { store } from "../store.js";
-import { calendarDayDifference, formatDateKey, getDaysInMonth, parseDateKey, getElementById } from "../core.js";
+import { formatDateKey, getDaysInMonth, parseDateKey, getElementById } from "../core.js";
 import { LAST_MONTH_INDEX } from '../date-utils.js';
 import { appendCalendarHeader } from './calendar-shared.js';
-import { clearFertileRange, getFertileRange, getCycleStartDates } from "../domain.js";
+import { activeCycleModel, clearFertileRange, getFertileRange } from "../domain.js";
 import { hideModal, persistStore, showModal } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
 import { isBlankEntry } from "../data-validation.js";
@@ -100,7 +100,7 @@ function renderPicker() {
   const calendar = getElementById("fertileRangeCalendar");
   calendar.replaceChildren();
   appendCalendarHeader(calendar, draft.year, draft.month);
-  const starts = getCycleStartDates().reverse();
+  const model = activeCycleModel();
   for (let day = 1; day <= getDaysInMonth(draft.year, draft.month); day++) {
     const key = formatDateKey(new Date(draft.year, draft.month, day));
     const cell = document.createElement("button");
@@ -108,18 +108,18 @@ function renderPicker() {
     cell.setAttribute("data-date", key);
     cell.className = "day";
     setTranslatedAttribute(cell, 'title', `${key} · Manually mark or unmark individual fertile days.`);
-    const start = starts.find(start => start <= parseDateKey(key));
-    if (start) {
+    const cycleDay = model.cycleDay(key);
+    if (cycleDay != null) {
       const cycleNumber = document.createElement("span");
       cycleNumber.className = "day-cycle-num";
-      cycleNumber.textContent = calendarDayDifference(parseDateKey(key), start) + 1;
+      cycleNumber.textContent = cycleDay;
       cell.appendChild(cycleNumber);
     }
     const dayNumber = document.createElement("span");
     dayNumber.textContent = day;
     cell.appendChild(dayNumber);
     cell.setAttribute("aria-pressed", String(draft.selectedKeys.has(key)));
-    setTranslatedAttribute(cell, "aria-label", start ? `${key} (CD ${calendarDayDifference(parseDateKey(key), start) + 1})` : key);
+    setTranslatedAttribute(cell, "aria-label", cycleDay != null ? `${key} (CD ${cycleDay})` : key);
     cell.classList.toggle("fertile-day", draft.selectedKeys.has(key));
     cell.onclick = () => {
       if (suppressNextClick) {

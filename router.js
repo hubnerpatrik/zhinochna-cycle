@@ -10,10 +10,9 @@ import { enhanceTimeInputs } from "./ui/time-picker.js";
 import { readMapSettings, renderMapSettingsFields } from "./views/map-settings-fields.js";
 import { closeExportMenu } from './ui/export-menu.js';
 import { escapeHtml } from "./views/view-utils.js";
-import { backupFilename } from "./backup.js";
 import { createNavigation } from "./navigation.js";
-import { downloadFile, exportFilename, mapCsv, mapPdf, mapXlsx } from './map-export.js';
-import { readMapImport } from './map-transfer.js';
+import { downloadFile } from './browser-download.js';
+import { exportMap, readMapImport } from './map-transfer.js';
 
 const BACKUP_URL_LIFETIME_MS = 0;
 
@@ -22,12 +21,6 @@ export const MODAL_ROUTES = Object.freeze({
   mucusModal: "mucus", cervixModal: "cervix", otherModal: "other",
   markersModal: "markers", fertileRangeModal: "fertile-range", dayInfoModal: "day-info",
 });
-
-function downloadBackup(contents, mapName) {
-  downloadFile(contents, 'application/json', backupFilename(new Date(), mapName), {
-    urlLifetimeMs: BACKUP_URL_LIFETIME_MS,
-  });
-}
 
 export function createRouter({ root, showStandaloneScreen, openActiveMap, openMapPage, showMessage, auth, preferActiveMapOnResume, browser = window }) {
   let rendering = false;
@@ -181,25 +174,18 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           activeMapId: store.getActiveMapId(),
           onCreate: () => navigate("create-map"),
           onImport: async file => {
-            let contents;
+            let importedState;
             try {
-              contents = await readMapImport(file);
+              importedState = await readMapImport(file);
             } catch (error) {
               showMessage?.(error.message || "The map backup could not be read.");
-              return;
-            }
-
-            try {
-              store.validateMapBackup(contents);
-            } catch (error) {
-              showMessage?.(error.message || "The map backup is invalid.");
               return;
             }
 
             if (!confirm(t("Import this shared map? It will be added to My Maps without changing your profile or existing maps."))) return;
 
             try {
-              const importedMap = store.importMapBackup(contents);
+              const importedMap = store.importMapState(importedState);
               showMessage?.(`“${importedMap.name || "Untitled map"}” imported ✓`);
               navigate("my-maps");
             } catch (error) {
@@ -235,10 +221,10 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
             try {
               const map = store.getMap(mapId);
               if (!map) throw new Error("Map not found");
-              if (format === 'csv') downloadFile(mapCsv(map), 'text/csv;charset=utf-8', exportFilename(map.name, 'csv'));
-              else if (format === 'xlsx') downloadFile(mapXlsx(map, store.createMapBackup(mapId)), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', exportFilename(map.name, 'xlsx'));
-              else if (format === 'pdf') downloadFile(await mapPdf(map, store.createMapBackup(mapId)), 'application/pdf', exportFilename(map.name, 'pdf'));
-              else downloadBackup(store.createMapBackup(mapId), map.name);
+              const { contents, mimeType, filename } = await exportMap(map, format, {
+                accountProfile: store.getProfile(), active: store.getActiveMapId() === mapId,
+              });
+              downloadFile(contents, mimeType, filename, format === 'json' ? { urlLifetimeMs: BACKUP_URL_LIFETIME_MS } : undefined);
               showMessage?.(`“${map.name || "Untitled map"}” exported ✓`);
             } catch {
               showMessage?.("Map export failed. Your data was not changed.");

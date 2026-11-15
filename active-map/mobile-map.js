@@ -3,7 +3,7 @@ import { setText, setDateText, setMonthPeriod } from '../i18n.js';
 import { store } from "../store.js";
 import { openCycleSummary } from "../ui/cycle-summary.js";
 import { openProfileInfo } from "../ui/profile-info-modal.js";
-import { cycleStarts } from "../cycle-summary.js";
+import { cycleStarts } from "../cycle-model.js";
 import { buildColumns } from '../domain.js';
 import { DEFAULT_LAYOUT, LAYOUT, PHONE_LAYOUT_QUERY, TEMP_FACTORS, chartY, formatDateKey, formatTemp, getAdjustedTemp, parseDateKey, getElementById, syncCSSVariables } from "../core.js";
 import { applyLayoutClass } from '../ui/layout-classes.js';

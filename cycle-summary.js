@@ -1,4 +1,5 @@
 import { ISO_DATE_KEY_LENGTH, MILLISECONDS_PER_DAY } from './date-utils.js';
+import { cycleStarts } from './cycle-model.js';
 
 export const DEFAULT_HISTORY_COUNT = 6;
 export const EXTENDED_HISTORY_COUNT = 12;
@@ -14,14 +15,6 @@ export const manualFields = [
   ['mucusPeak', 'Mucus peak'],
   ['cervixPeak', 'Cervix peak'],
 ];
-
-export function cycleStarts(entries) {
-  return Object.keys(entries).sort().filter(key => {
-    if (entries[key].bleeding !== 'menstruation') return false;
-    const previous = new Date((dayNumber(key) - 1) * MILLISECONDS_PER_DAY).toISOString().slice(0, ISO_DATE_KEY_LENGTH);
-    return entries[previous]?.bleeding !== 'menstruation';
-  });
-}
 
 // Local maps belong to this installation's profile. Shared/imported maps have
 // locked profile snapshots and must never contribute to the owner's history.

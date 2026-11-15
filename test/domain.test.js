@@ -4,50 +4,8 @@ import { MemoryStorage } from "./setup.js";
 
 globalThis.localStorage = new MemoryStorage();
 const { store } = await import("../store.js");
-const { parseDateKey } = await import("../core.js");
-const { buildColumns, getCycleStartDates, resolveCycleDay, resolveCycleId } = await import("../domain.js");
-
-function cycleKeys(entries) {
-  store.entries = entries;
-  return getCycleStartDates().map(date => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  });
-}
-
-test("consecutive period days form one cycle start", () => {
-  assert.deepEqual(cycleKeys({
-    "2026-06-01": { bleeding: "menstruation" },
-    "2026-06-02": { bleeding: "menstruation" },
-  }), ["2026-06-01"]);
-});
-
-test("separated period entries form separate cycle starts", () => {
-  assert.deepEqual(cycleKeys({
-    "2026-06-01": { bleeding: "menstruation" },
-    "2026-07-01": { bleeding: "menstruation" },
-  }), ["2026-06-01", "2026-07-01"]);
-});
-
-test("consecutive dates across a year boundary remain one period", () => {
-  assert.deepEqual(cycleKeys({
-    "2026-12-31": { bleeding: "menstruation" },
-    "2027-01-01": { bleeding: "menstruation" },
-  }), ["2026-12-31"]);
-});
-
-test("consecutive dates across the spring DST change remain one period", () => {
-  assert.deepEqual(cycleKeys({
-    "2026-03-29": { bleeding: "menstruation" },
-    "2026-03-30": { bleeding: "menstruation" },
-  }), ["2026-03-29"]);
-  assert.equal(
-    resolveCycleDay(parseDateKey("2026-03-30"), [parseDateKey("2026-03-29")], 1),
-    2,
-  );
-});
+const { buildColumns } = await import("../domain.js");
+const { sortedMapEntries } = await import("../export-data.js");
 
 test("columns expose all three marker types for the same day", () => {
   store.entries = {
@@ -67,17 +25,23 @@ test("columns expose all three marker types for the same day", () => {
   });
 });
 
-test("cycle IDs advance only when a new cycle start occurs", () => {
+test("column cycle IDs advance only when a new cycle start occurs", () => {
   store.entries = {
     "2026-08-01": { bleeding: "menstruation" },
     "2026-08-02": { bleeding: "menstruation" },
+    "2026-08-05": {},
     "2026-08-20": { bleeding: "menstruation" },
+    "2026-08-25": {},
   };
+  const ids = Object.fromEntries(buildColumns().map(column => [column.key, column.cycleId]));
+  assert.equal(ids["2026-08-05"], "cycle-1");
+  assert.equal(ids["2026-08-20"], "cycle-2");
+  assert.equal(ids["2026-08-25"], "cycle-2");
+});
 
-  const starts = getCycleStartDates();
-  assert.equal(resolveCycleId(new Date(2026, 7, 5), starts), "cycle-1");
-  assert.equal(resolveCycleId(new Date(2026, 7, 20), starts), "cycle-2");
-  assert.equal(resolveCycleId(new Date(2026, 7, 25), starts), "cycle-2");
+test("columns number days from the map's first day before any cycle start", () => {
+  store.entries = { "2026-09-10": { temp: 36.4 }, "2026-09-12": { bleeding: "menstruation" } };
+  assert.deepEqual(buildColumns().map(column => column.cycleDay), [1, 2, 1]);
 });
 
 test('charts include unrecorded days and calendar-based cycle numbers without inserting records', () => {
@@ -89,4 +53,27 @@ test('charts include unrecorded days and calendar-based cycle numbers without in
   assert.equal(Object.hasOwn(store.entries, '2026-10-06'), false);
   store.entries = { '2026-03-28': {}, '2026-03-30': {} };
   assert.deepEqual(buildColumns().map(column => column.key), ['2026-03-28', '2026-03-29', '2026-03-30']);
+});
+
+test("the chart and exports agree on fertile days, including the legacy fertile range", () => {
+  const map = {
+    entries: {
+      "2026-11-01": { temp: 36.4 },
+      "2026-11-02": { temp: 36.5 },
+      "2026-11-03": { temp: 36.6, isFertile: true },
+      "2026-11-04": { temp: 36.7 },
+    },
+    fertileRange: { start: "2026-11-01", end: "2026-11-02" },
+  };
+  store.entries = map.entries;
+  store.fertileRange = map.fertileRange;
+  try {
+    const onScreen = buildColumns().filter(column => column.isFertile).map(column => column.key);
+    const exported = sortedMapEntries(map).filter(([, entry]) => entry.isFertile).map(([date]) => date);
+    assert.deepEqual(onScreen, ["2026-11-01", "2026-11-02", "2026-11-03"]);
+    assert.deepEqual(exported, onScreen);
+    assert.equal(Object.hasOwn(map.entries["2026-11-01"], "isFertile"), false, "exports must not rewrite stored days");
+  } finally {
+    store.fertileRange = { start: null, end: null };
+  }
 });

@@ -31,11 +31,13 @@ cleared when the session is concealed and while the inbox refreshes.
 
 1. Run `npm run db:migrate` with the existing server-only `DATABASE_URL`. This runs
    the idempotent migrations, including `002-feedback.sql`.
-2. Set server-only `FEEDBACK_ADMIN_EMAILS=hiba.p@seznam.cz` in the deployment environment.
+2. Set server-only `FEEDBACK_ADMIN_EMAILS=support@example.com` in the deployment environment.
    Only verified email claims from signed Neon tokens count. If a provider omits
    email claims, use `FEEDBACK_ADMIN_IDS` with the verified account subject instead.
 3. Deploy the frontend and `/api/feedback` together. Verify with an ordinary account
    and the administrator account. No administrator permission is derived from the client.
+4. Optional: `FEEDBACK_PIN_EMAILS` lists administrator emails that also see numbered
+   pins over the interface. Without it, no one sees pins.
 
 Anchors contain the screen route, a DOM selector, a control label, relative click
 coordinates, viewport dimensions and app version. They deliberately omit input

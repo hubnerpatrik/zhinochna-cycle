@@ -21,3 +21,24 @@ test('state input preserves the database version boundary and the existing mutat
   assert.throws(() => normalizeStateInput({ ...source, userId: 'forged' }));
   assert.throws(() => normalizeStateInput({ ...source, data: { maps: [] } }));
 });
+
+test('an inherited property name is never accepted as the active map', () => {
+  for (const activeMapId of ['constructor', 'toString', '__proto__']) {
+    assert.throws(() => normalizeStateInput({ ...input(), data: { ...input().data, activeMapId } }));
+  }
+});
+
+test('stored state keeps only known profile and coverline fields', () => {
+  const source = input();
+  source.data.profile.extra = { nested: 'x'.repeat(100) };
+  source.data.maps = { 'map-1': {
+    id: 'map-1', name: 'Map',
+    profileSnapshot: { name: 'Author', injected: true },
+    coverlines: { default: { horizontalTemp: 36.5, verticalKey: '2026-10-01', verticalPosition: 'start', payload: 'x' } },
+  } };
+  const { data } = normalizeStateInput(source);
+  assert.equal('extra' in data.profile, false);
+  assert.equal(data.profile.setupCompleted, true);
+  assert.equal('injected' in data.maps['map-1'].profileSnapshot, false);
+  assert.deepEqual(data.maps['map-1'].coverlines.default, { horizontalTemp: 36.5, verticalKey: '2026-10-01', verticalPosition: 'start' });
+});

@@ -41,3 +41,14 @@ test('feedback transport propagates HTTP and authentication failures', async con
   await assert.rejects(createFeedbackRequest({ token: async () => 'test-token' })('GET'), /Request failed/);
   await assert.rejects(createFeedbackRequest({ token: async () => { throw new Error('Expired'); } })('GET'), /Expired/);
 });
+
+test('feedback transport reads one thread by a validated ID', async context => {
+  const urls = [];
+  context.mock.method(globalThis, 'fetch', async url => { urls.push(url); return Response.json({ thread: {} }); });
+  const request = createFeedbackRequest({ token: async () => 'test-token' });
+  const id = crypto.randomUUID();
+  await request('GET', undefined, id);
+  assert.deepEqual(urls, [`/api/feedback?id=${id}`]);
+  await assert.rejects(request('GET', undefined, '../state'), /Invalid ID/);
+  assert.equal(urls.length, 1);
+});

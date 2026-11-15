@@ -71,15 +71,43 @@ test('feedback handler derives admin solely from verified identity and configure
   assert.equal(calls.length, 2);
 });
 
-test('only the designated support administrator receives numbered pins', async () => {
-  const identity = { userId: 'owner', email: 'hiba.p@seznam.cz' };
+test('only configured pin administrators receive numbered pins', async () => {
+  const identity = { userId: 'owner', email: 'support@example.test' };
   const identify = async () => identity;
   const repository = { list: async () => [] };
-  for (const adminEmails of [[], [identity.email]]) {
+  for (const [adminEmails, pinEmails, expected] of [
+    [[], [], false], [[identity.email], [], false], [[], [identity.email], false], [[identity.email], [identity.email], true],
+  ]) {
     const result = response();
-    await createFeedbackHandler({ identify, repository, adminEmails })(req('GET'), result);
-    assert.equal(result.body.showPins, adminEmails.length > 0);
+    await createFeedbackHandler({ identify, repository, adminEmails, pinEmails })(req('GET'), result);
+    assert.equal(result.body.showPins, expected);
   }
+});
+
+test('the feedback list omits screenshots and one thread is read with them, scoped to owner or admin', async () => {
+  const queries = [];
+  const sql = async (strings, ...values) => { queries.push({ query: strings.join('?'), values }); return []; };
+  const repository = createFeedbackRepository(sql);
+  await repository.list('a', false);
+  assert.match(queries[0].query, /message - 'image'/);
+  assert.match(queries[0].query, /hasImage/);
+  const id = crypto.randomUUID();
+  assert.equal(await repository.get('a', false, id), null);
+  assert.match(queries[1].query, /id = \?::uuid AND \(owner_id = \? OR \?\)/);
+  assert.deepEqual(queries[1].values, [id, 'a', false]);
+
+  const calls = [];
+  const handler = createFeedbackHandler({ identify: async () => 'a', repository: {
+    get: async (...args) => { calls.push(args); return args[2] === id ? { id } : null; },
+  } });
+  const found = response(); await handler({ ...req('GET'), query: { id } }, found);
+  assert.equal(found.code, 200); assert.deepEqual(found.body, { thread: { id } });
+  const missing = response(); await handler({ ...req('GET'), query: { id: crypto.randomUUID() } }, missing);
+  assert.equal(missing.code, 404);
+  const invalid = response(); await handler({ ...req('GET'), query: { id: 'not-a-uuid' } }, invalid);
+  assert.equal(invalid.code, 400);
+  assert.deepEqual(calls[0], ['a', false, id]);
+  assert.equal(calls.length, 2);
 });
 
 test('repository scopes list and reply to owner or server-approved admin; only admin changes status', async () => {

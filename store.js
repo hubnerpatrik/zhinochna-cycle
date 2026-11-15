@@ -23,7 +23,7 @@ import {
   normalizeProfile,
   normalizeCycleSummaries,
 } from "./data-validation.js";
-import { parseBackup, serializeBackup } from "./backup.js";
+import { parseBackup, parseMapBackup, serializeBackup, serializeMapBackup } from "./backup.js";
 import { PROFILE_IDENTITY_FIELDS, pickMapSettings } from "./profile-options.js";
 
 const MAP_ID_RADIX = 36;
@@ -319,27 +319,15 @@ export class Store {
   /** Creates a portable backup containing one selected map and its profile context. */
   createMapBackup(mapId, exportedAt) {
     const state = this.getPersistentState();
-    const map = state.maps[mapId];
+    const map = Object.hasOwn(state.maps, mapId) ? state.maps[mapId] : null;
     if (!map) throw new Error("The selected map no longer exists.");
-    const profileSnapshot = map.profileSnapshot || state.profile;
-    const portableMap = { ...map, profileSnapshot };
-    return serializeBackup({
-      profile: profileSnapshot,
-      maps: { [mapId]: portableMap },
-      activeMapId: state.activeMapId === mapId ? mapId : null,
-    }, exportedAt);
+    return serializeMapBackup({ ...map, id: mapId }, {
+      accountProfile: state.profile, active: state.activeMapId === mapId, exportedAt,
+    });
   }
 
   validateBackup(json) {
     return parseBackup(json);
-  }
-
-  validateMapBackup(json) {
-    const state = parseBackup(json);
-    if (Object.keys(state.maps).length !== 1) {
-      throw new Error("A shared-map backup must contain exactly one map.");
-    }
-    return state;
   }
 
   _applyRestoredState(nextState, { clearTransient = true } = {}) {
@@ -361,10 +349,16 @@ export class Store {
 
   /** Adds one shared-map backup without replacing the recipient's profile or maps. */
   importMapBackup(json) {
-    const importedState = this.validateMapBackup(json);
+    return this.importMapState(parseMapBackup(json));
+  }
+
+  /** Adds an already parsed single-map backup state (validated again before storage). */
+  importMapState(state) {
+    const importedState = normalizeApplicationData(state, { strict: true });
     const importedMaps = Object.values(importedState.maps);
+    if (importedMaps.length !== 1) throw new Error("A shared-map backup must contain exactly one map.");
     const sourceMap = importedMaps[0];
-    const mapId = this.maps[sourceMap.id] ? this._generateMapId() : sourceMap.id;
+    const mapId = Object.hasOwn(this.maps, sourceMap.id) ? this._generateMapId() : sourceMap.id;
     const importedMap = {
       ...sourceMap,
       id: mapId,

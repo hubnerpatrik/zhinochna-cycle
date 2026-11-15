@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildCycleHistory, calculateSummary, cycleStarts } from '../cycle-summary.js';
+import { buildCycleHistory, calculateSummary } from '../cycle-summary.js';
+import { cycleStarts } from '../cycle-model.js';
 import { normalizeMap } from '../data-validation.js';
 
 test('calendar days survive DST; phase counting includes first BBT day but excludes mucus peak', () => {

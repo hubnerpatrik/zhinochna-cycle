@@ -1,5 +1,6 @@
 import { t } from './i18n.js';
 import { TEMP_FACTORS } from './core.js';
+import { cycleModel } from './cycle-model.js';
 
 export const EXPORT_FIELDS = [
   'temp', 'measurementTime', 'tempFactors', 'bleeding', 'sediment', 'sensation',
@@ -28,8 +29,15 @@ export function observationText(key, value) {
   return valueText(value);
 }
 
+/** A day record as exports show it: fertility comes from the cycle model, like on screen. */
+export function exportDay(model, entries, date) {
+  const entry = entries?.[date] || {};
+  return model.isFertile(date) && entry.isFertile !== true ? { ...entry, isFertile: true } : entry;
+}
+
 export function sortedMapEntries(map) {
-  return Object.entries(map.entries || {}).sort(([firstDate], [secondDate]) => firstDate.localeCompare(secondDate));
+  const model = cycleModel(map);
+  return Object.keys(map.entries || {}).sort().map(date => [date, exportDay(model, map.entries, date)]);
 }
 
 export function mapExportRows(map) {
