@@ -39,6 +39,6 @@ Node ≥ 20.19 (`.nvmrc`). If `node` is not on PATH, say so instead of silently 
 - Record user-visible changes under `## Unreleased` in `CHANGELOG.md`.
 - Releases (see `CONTRIBUTING.md`, `docs/release-notes.md`): bump `package.json` + `package-lock.json`, `currentRelease` in `release-notes.js` (with translations in `i18n/form-feedback.js`), changelog section, tag `vX.Y.Z` on `main`.
 - Style: 2-space indent, LF, ES modules. No inline style writes from JS — toggle CSS classes (`ui/layout-classes.js`). Escape any user text inserted as HTML (`escapeHtml` in `views/view-utils.js`).
-- Add or update tests in `test/` for behavior changes; `test/setup.js` provides `MemoryStorage`.
+- Test-first: for behavior changes, write or update the failing test in `test/` first, confirm it fails, then implement until it passes. Never weaken or skip a test to make it pass. `test/setup.js` provides `MemoryStorage`.
 - Mobile matters: check layouts at narrow widths (~320–390 px) as well as desktop.
 - Never commit secrets or personal data; `.env*` files are ignored except `.env.example`. `work/` is a local scratch area (ignored).
