@@ -178,6 +178,26 @@ test("mobile startup still honors direct links and restored day editors", () => 
   assert.equal(store.selectedKey, "2026-11-10");
 });
 
+test("mobile cold start on a restored list screen opens the active map; other devices and links keep the URL", () => {
+  for (const hash of ["#/menu", "#/my-maps"]) {
+    const phone = setup(hash);
+    store.createMap("Active cycle");
+    const router = phone.newRouter(() => true);
+    router.start();
+    assert.equal(router.currentScreen, "active-map", hash);
+    assert.equal(phone.browser.history.length, 1);
+
+    const desktop = setup(hash);
+    store.createMap("Active cycle");
+    desktop.router.start();
+    assert.equal(desktop.router.currentScreen, hash.slice(2), hash);
+  }
+  const profile = setup("#/my-profile");
+  store.createMap("Active cycle");
+  profile.newRouter(() => true).start();
+  assert.equal(profile.browser.location.hash, "#/my-profile");
+});
+
 function setupMapDialogs(hash = "") {
   const context = setup(hash);
   const dialogs = [];
