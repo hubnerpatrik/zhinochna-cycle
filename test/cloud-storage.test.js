@@ -192,3 +192,21 @@ test("a write the server rejects as invalid is reported and can be replaced", as
   client.saveState(state("Accepted")); await client.flush();
   assert.equal(client.statusValue, "saved");
 });
+
+test("opening the account removes recovery copies left by older versions", async () => {
+  const remote = server(); const seed = adapter(remote); await seed.initialize();
+  seed.saveState(state("Cloud copy")); await seed.flush();
+  const storage = new MemoryStorage({
+    "cycle-account:account-a:cloud-v1": seed.storage.getItem("cycle-account:account-a:cloud-v1"),
+    "cycle-account:account-a:cloud-v1:recovery": "latest",
+    "cycle-account:account-a:cloud-v1:recovery:old-1": "x",
+    "cycle-account:account-a:cloud-v1:recovery:old-2": "x",
+    "cycle-account:account-b:cloud-v1:recovery:other": "kept",
+  });
+  const client = adapter(remote, storage); await client.initialize();
+  assert.deepEqual([...storage.values.keys()].filter(key => key.includes(":recovery")).sort(), [
+    "cycle-account:account-a:cloud-v1:recovery",
+    "cycle-account:account-b:cloud-v1:recovery:other",
+  ]);
+  assert.equal(client.snapshot().profile.name, "Cloud copy");
+});
