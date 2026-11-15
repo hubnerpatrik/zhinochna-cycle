@@ -9,3 +9,6 @@ coverage
 test
 docs
 assets/readme
+.agents
+.claude
+skills-lock.json

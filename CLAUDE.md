@@ -41,4 +41,5 @@ Node ≥ 20.19 (`.nvmrc`). If `node` is not on PATH, say so instead of silently 
 - Style: 2-space indent, LF, ES modules. No inline style writes from JS — toggle CSS classes (`ui/layout-classes.js`). Escape any user text inserted as HTML (`escapeHtml` in `views/view-utils.js`).
 - Test-first: for behavior changes, write or update the failing test in `test/` first, confirm it fails, then implement until it passes. Never weaken or skip a test to make it pass. `test/setup.js` provides `MemoryStorage`.
 - Mobile matters: check layouts at narrow widths (~320–390 px) as well as desktop.
+- UI changes: after `npm run check`, run `npm run dev` with `VITE_DEV_AUTH_BYPASS=true` (demo data is seeded) and inspect Playwright screenshots at ~320 px, ~390 px and desktop for the affected screens before reporting done.
 - Never commit secrets or personal data; `.env*` files are ignored except `.env.example`. `work/` is a local scratch area (ignored).
