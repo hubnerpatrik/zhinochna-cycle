@@ -1,0 +1,52 @@
+// Home and welcome page copy: English source → Czech, Slovak, Ukrainian.
+export const homeMessages = {
+  'Record your cycle, day by day.': ['Zapisuj svůj cyklus, den po dni.', 'Zapisuj svoj cyklus, deň po dni.', 'Записуй свій цикл день за днем.'],
+  'Temperature, observations and a clear cycle map. Calm, simple and yours to interpret.': [
+    'Teplota, pozorování a přehledná mapa cyklu. V klidu, jednoduše a s výkladem jen na tobě.',
+    'Teplota, pozorovania a prehľadná mapa cyklu. V pokoji, jednoducho a s výkladom len na tebe.',
+    'Температура, спостереження і зрозуміла карта циклу. Спокійно, просто, а тлумачення — за тобою.',
+  ],
+  'What the app does': ['Co aplikace umí', 'Čo aplikácia vie', 'Що вміє застосунок'],
+  'Record a day in a few taps': ['Den zapíšeš pár ťuknutími', 'Deň zapíšeš pár ťuknutiami', 'Запиши день кількома дотиками'],
+  'Temperature, bleeding, mucus, cervix and other signs, one day at a time.': [
+    'Teplota, krvácení, hlen, čípek a další příznaky, den po dni.',
+    'Teplota, krvácanie, hlien, krčok a ďalšie príznaky, deň po dni.',
+    'Температура, кровотеча, слиз, шийка матки та інші ознаки — день за днем.',
+  ],
+  'See the whole cycle': ['Uvidíš celý cyklus', 'Uvidíš celý cyklus', 'Побач увесь цикл'],
+  'A calendar and a temperature chart on one map. You decide what it means.': [
+    'Kalendář a teplotní graf na jedné mapě. Co to znamená, rozhoduješ ty.',
+    'Kalendár a teplotný graf na jednej mape. Čo to znamená, rozhoduješ ty.',
+    'Календар і графік температури на одній карті. Що це означає, вирішуєш ти.',
+  ],
+  'Keep your data': ['Data zůstanou tvoje', 'Údaje zostanú tvoje', 'Дані залишаються твоїми'],
+  'Export to PDF, XLSX or JSON and import it back whenever you need.': [
+    'Export do PDF, XLSX nebo JSON a zpětný import, kdykoli potřebuješ.',
+    'Export do PDF, XLSX alebo JSON a spätný import, kedykoľvek potrebuješ.',
+    'Експорт у PDF, XLSX або JSON і повернення даних, коли потрібно.',
+  ],
+  'Coming soon': ['Připravujeme', 'Pripravujeme', 'Незабаром'],
+  'Soon': ['Brzy', 'Čoskoro', 'Скоро'],
+  'Who makes Cycle Tracker': ['Kdo za Cycle Trackerem stojí', 'Kto stojí za Cycle Trackerom', 'Хто створює Cycle Tracker'],
+  'Meet the person behind the app.': ['Seznam se s člověkem, který appku tvoří.', 'Zoznám sa s človekom, ktorý appku tvorí.', 'Познайомся з людиною, яка створює застосунок.'],
+  'Why it exists': ['Proč vznikl', 'Prečo vznikol', 'Навіщо він існує'],
+  'How the app came to be and what it is for.': ['Jak aplikace vznikla a k čemu slouží.', 'Ako aplikácia vznikla a na čo slúži.', 'Як з’явився застосунок і для чого він.'],
+  'Step-by-step guide': ['Návod krok za krokem', 'Návod krok za krokom', 'Покрокова інструкція'],
+  'An article on recording your first cycle.': ['Článek o zápisu prvního cyklu.', 'Článok o zápise prvého cyklu.', 'Стаття про запис першого циклу.'],
+  'Courses': ['Kurzy', 'Kurzy', 'Курси'],
+  'Where to learn symptothermal observation.': ['Kde se naučit symptotermální pozorování.', 'Kde sa naučiť symptotermálne pozorovanie.', 'Де навчитися симптотермального спостереження.'],
+  'Cycle Tracker is an educational tool for recording your own observations. It does not give medical advice.': [
+    'Cycle Tracker je vzdělávací nástroj pro zápis vlastních pozorování. Neposkytuje lékařské rady.',
+    'Cycle Tracker je vzdelávací nástroj na zápis vlastných pozorovaní. Neposkytuje lekárske rady.',
+    'Cycle Tracker — це освітній інструмент для запису власних спостережень. Він не надає медичних порад.',
+  ],
+  'Changelog': ['Přehled změn', 'Prehľad zmien', 'Журнал змін'],
+  'Welcome back.': ['Vítej zpátky.', 'Vitaj späť.', 'З поверненням.'],
+  'Record today in Active Map. Here you will find what the app can do and what is coming next.': [
+    'Dnešek zapíšeš v Aktivní mapě. Tady najdeš, co aplikace umí a co připravujeme.',
+    'Dnešok zapíšeš v Aktívnej mape. Tu nájdeš, čo aplikácia vie a čo pripravujeme.',
+    'Сьогоднішній день запишеш в «Активній карті». Тут дізнаєшся, що вміє застосунок і що ми готуємо.',
+  ],
+  'Home': ['Domů', 'Domov', 'Головна'],
+  'Back to home': ['Zpět na úvod', 'Späť na úvod', 'Назад на головну'],
+};

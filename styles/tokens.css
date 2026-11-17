@@ -49,6 +49,33 @@
   --bloom-leaf: #98b293;
   --bloom-leaf-tint: #e1ebdc;
 
+  /* Home meadow: the welcome page's gerbera field under a blush sky (styles/home.css).
+     Decoration only; no meadow colour encodes an observation. */
+  --meadow-sky: #fbe7ea;
+  --meadow-hill-far: #dbe8d0;
+  --meadow-hill-mid: #cfe0c3;
+  --meadow-hill-near: #b5cfa8;
+  --meadow-ground: #e4eddb;
+  --meadow-stem: #7f9e74;
+  --meadow-leaf: #9cbb8f;
+  --meadow-disc: #6b4a33;
+  --meadow-sun: #f6d27a;
+  --meadow-ink: #33242b;
+  --meadow-ink-muted: #5f4a51;
+  --meadow-post: #a88b72;
+  --meadow-soon-line: #c9a5b1;
+  --meadow-rule: rgba(51, 36, 43, 0.12);
+  --meadow-peach: #f6a98d;
+  --meadow-peach-inner: #ee8c6c;
+  --meadow-rose: #f19bb0;
+  --meadow-rose-inner: #e57e98;
+  --meadow-butter: #f6d27a;
+  --meadow-butter-inner: #ecbd52;
+  --meadow-lavender: #c8b6e8;
+  --meadow-lavender-inner: #ad97dc;
+  --meadow-white: #ffffff;
+  --meadow-white-inner: #f3e3e8;
+
   /* Overlays and shadows. */
   --backdrop: rgba(31, 26, 23, 0.32);
   --shade: rgba(31, 26, 23, 0.12);

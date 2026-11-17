@@ -16,10 +16,17 @@ test('the app header is one bar: brand mark, name, account tools and navigation 
   }
 });
 
-test('the hidden Menu tab has no unused phone label', () => {
+test('tabs run Home, Active Map, Maps, Profile: from the overview to daily recording, the map library and settings', () => {
+  const order = [...header.matchAll(/<button id="(nav\w+Btn)"/g)].map(match => match[1]);
+  assert.deepEqual(order, ['navMenuBtn', 'navActiveMapBtn', 'navMapsBtn', 'navProfileBtn']);
+});
+
+test('phones show the Home tab in the bottom bar, four tabs side by side', () => {
   const menuBtn = header.match(/<button id="navMenuBtn"[\s\S]*?<\/button>/)?.[0] || '';
-  assert.ok(menuBtn, 'the Menu tab exists');
-  assert.doesNotMatch(menuBtn, /nav-label-mobile/, 'phones hide this tab, so it needs no phone label');
+  assert.match(menuBtn, /class="nav-label-mobile"[^>]*>Home</, 'the Home tab has its phone label');
+  const refresh = readFileSync(new URL('../styles/mobile-refresh.css', import.meta.url), 'utf8');
+  assert.doesNotMatch(refresh, /#navMenuBtn\s*\{\s*display:\s*none|, #navMenuBtn \{ display: none/, 'phones no longer hide the Home tab');
+  assert.match(refresh, /\.header-nav \{[^}]*grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/, 'the tab bar holds four tabs');
 });
 
 test('on wide screens navigation is plain text tabs with an accent underline, not pills with icons', () => {
@@ -31,9 +38,16 @@ test('on wide screens navigation is plain text tabs with an accent underline, no
   assert.doesNotMatch(wide, /border-radius:\s*(?:1[0-9]|[2-9][0-9])px[^}]*\}/, 'no rounded pill containers');
 });
 
-test('on wide screens every tab has a visible label, so the Menu tab is not an empty underlined box', () => {
+test('on wide screens every tab has a visible label, so the Home tab is not an empty underlined box', () => {
   const wide = components.match(/@media \(min-width: 561px\) and \(min-height: 501px\), \(min-width: 561px\) and \(pointer: fine\) \{([\s\S]*?)\n\}/)?.[1] || '';
-  const menuBtn = header.match(/<button id="navMenuBtn"[\s\S]*?<\/button>/)?.[0] || '';
-  assert.match(menuBtn, /class="nav-label-desktop"[^>]*>Main Menu</, 'the Menu tab carries its Main Menu label');
-  assert.match(wide, /#navMenuBtn \.nav-label-desktop\s*\{[^}]*display:\s*inline/, 'wide screens show that label, since the tab has no short one');
+  assert.match(wide, /\.nav-label-mobile \{ display: inline; \}/, 'wide screens show the short labels');
+  for (const button of header.match(/<button id="nav\w+Btn"[\s\S]*?<\/button>/g)) {
+    assert.match(button, /class="nav-label-mobile"/, 'every tab carries a short label');
+  }
+});
+
+test('on phones the header makes no stacking context, so the fixed tab bar stays above page content', () => {
+  const phone = [...components.matchAll(/@media \(max-width: 560px\), \(max-height: 500px\) and \(pointer: coarse\) \{([\s\S]*?)\n\}/g)].map(match => match[1]).join('\n');
+  assert.match(components, /\.app-header \{[^}]*isolation: isolate/, 'wide screens isolate the header for the sprig');
+  assert.match(phone, /\.app-header \{[^}]*isolation: auto/, 'phones undo it for the tab bar');
 });

@@ -1,6 +1,6 @@
 import { AUTH_NAME_MAX_LENGTH, EMAIL_MAX_LENGTH, VERIFICATION_CODE_MAX_LENGTH, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } from '../form-limits.js';
 import { escapeHtml } from "./view-utils.js";
-import { getLanguage, setLanguage, setText, translateDOM } from "../i18n.js";
+import { mountLanguagePicker, setText, translateDOM } from "../i18n.js";
 import { showFieldError, initializeFieldErrors } from '../ui/field-errors.js';
 
 const AUTH_SCREENS = {
@@ -22,11 +22,7 @@ export function renderAuthView(root, { mode, email = "", message = "", error = f
   const emailField = hasForm && mode !== "reset-password";
   const passwordField = ["sign-in", "sign-up", "reset-password"].includes(mode);
   root.innerHTML = `
-    <div class="auth-language">
-      <select data-auth-language aria-label="Language" data-i18n-aria-label="Language">
-        <option value="en" lang="en">EN</option><option value="uk" lang="uk">UA</option><option value="cs" lang="cs">CZ</option><option value="sk" lang="sk">SK</option>
-      </select>
-    </div>
+    <div class="auth-language"><details class="language-picker"></details></div>
     <section class="auth-card" aria-labelledby="authTitle">
       <p class="auth-brand">MARTA ZHINOCHNA STM</p>
       <h1 id="authTitle" tabindex="-1" data-i18n>${escapeHtml(title)}</h1>
@@ -46,14 +42,13 @@ export function renderAuthView(root, { mode, email = "", message = "", error = f
         ${mode === "resend-code" ? '<button type="button" class="auth-link" data-auth-mode="verify-email" data-i18n>I already have a code</button>' : ""}
         ${mode === "sign-in" ? '<button type="button" class="auth-link" data-auth-mode="sign-up" data-i18n>Create account</button><button type="button" class="auth-link" data-auth-mode="forgot-password" data-i18n>Forgot your password?</button><button type="button" class="auth-link" data-auth-mode="verify-email" data-i18n>Verify your email</button>' : ""}
         ${hasForm && mode !== "sign-in" ? '<button type="button" class="auth-link" data-auth-mode="sign-in" data-i18n>Back to sign in</button>' : ""}
+        ${mode === "sign-in" || mode === "sign-up" ? '<button type="button" class="auth-link" data-auth-mode="welcome" data-i18n>Back to home</button>' : ""}
       </div>
       ${mode === "sign-in" || mode === "sign-up" ? '<p class="auth-note" data-i18n>Your maps sync with your account. A local copy is kept on this device.</p>' : ""}
     </section>`;
   setText(root.querySelector(".auth-feedback"), message);
   translateDOM(root);
-  const language = root.querySelector("[data-auth-language]");
-  language.value = getLanguage();
-  language.onchange = () => setLanguage(language.value);
+  mountLanguagePicker(root.querySelector(".language-picker"));
   root.querySelectorAll("[data-auth-mode]").forEach(button => {
     button.onclick = () => onMode(button.dataset.authMode, root.querySelector('[name="email"]')?.value);
   });

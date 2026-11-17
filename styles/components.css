@@ -748,8 +748,6 @@ select:not([multiple]) {
   .nav-icon { display: none; }
   .nav-label-desktop { display: none; }
   .nav-label-mobile { display: inline; }
-  /* The Menu tab has no short label (phones hide it), so wide screens show its full one. */
-  #navMenuBtn .nav-label-desktop { display: inline; }
 
 }
 
@@ -775,6 +773,12 @@ select:not([multiple]) {
   .app-header > .language-picker {
     top: 8px;
     right: 8px;
+  }
+
+  /* The phone tab bar lives inside the header; without a stacking context of its own here,
+     its z-index lifts it above page content (the sprig that needed isolation is hidden on phones). */
+  .app-header {
+    isolation: auto;
   }
 
   /* Phones keep the flower mark and the band; the sprig would crowd the language button. */

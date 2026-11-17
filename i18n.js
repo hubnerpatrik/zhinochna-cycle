@@ -177,20 +177,37 @@ function initializeLanguagePicker(picker, template) {
   };
 }
 
+// Every flag picker on the page, with its updater. Pages rendered later (welcome, sign-in)
+// mount theirs too; pickers that left the DOM are dropped on the next update.
+const mountedPickers = new Map();
+
+function updateMountedPickers() {
+  mountedPickers.forEach((update, picker) => {
+    if (picker.isConnected) update();
+    else mountedPickers.delete(picker);
+  });
+}
+
+export function mountLanguagePicker(picker) {
+  const template = globalThis.document?.getElementById('languagePickerTemplate');
+  if (!picker || !template || mountedPickers.has(picker)) return;
+  const update = initializeLanguagePicker(picker, template);
+  mountedPickers.set(picker, update);
+  update();
+}
+
 export function initializeLanguage() {
   try {
     const saved = localStorage.getItem(LANGUAGE_KEY);
     language = Object.hasOwn(languages, saved) ? saved : 'en';
   } catch { language = 'en'; }
-  const pickers = [...document.querySelectorAll('.language-picker')];
-  const template = document.getElementById('languagePickerTemplate');
-  const updatePickers = pickers.map(picker => initializeLanguagePicker(picker, template));
+  document.querySelectorAll('.language-picker').forEach(mountLanguagePicker);
   document.addEventListener('pointerdown', event => {
-    pickers.forEach(picker => { if (!picker.contains(event.target)) picker.open = false; });
+    mountedPickers.forEach((_, picker) => { if (!picker.contains(event.target)) picker.open = false; });
   });
   const update = () => {
     document.documentElement.lang = language;
-    updatePickers.forEach(updatePicker => updatePicker());
+    updateMountedPickers();
     translateDOM();
   };
   listeners.add(update);

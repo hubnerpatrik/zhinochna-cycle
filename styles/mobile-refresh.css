@@ -35,7 +35,7 @@
     z-index: 100;
     inset: auto max(12px, env(safe-area-inset-right)) var(--mobile-nav-bottom) max(12px, env(safe-area-inset-left));
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 2px;
     width: auto;
     max-width: 360px;
@@ -46,7 +46,7 @@
     box-shadow: var(--shadow-float);
     overflow: visible;
   }
-  .header-nav.hidden, #navMenuBtn { display: none; }
+  .header-nav.hidden { display: none; }
   .header-nav-btn, .header-nav-btn:last-child {
     display: flex;
     flex-direction: column;

@@ -18,6 +18,13 @@ vMAJOR.MINOR.PATCH
 
 - New look across the app: white cards on a warm off-white background, one coral accent, solid coral primary buttons with white labels, a sunken segmented switch, soft borderless calendar tiles with the selected day filled in coral and today marked in coral, and a white bottom tab bar on phones. Observation colours in the calendar and chart are unchanged.
 - The app header is a soft blush band with a small flower mark and, on wide screens, a thin botanical sprig in its corner; the map title on phones shares the same band. Long profile names now shorten with an ellipsis instead of running into the account text.
+- The Main Menu is now a home page: a hand-drawn gerbera meadow under a blush sky that introduces the app, three short examples of what it does, and "Coming soon" signs for who makes it, why it exists, a step-by-step guide and courses. Signed-out visitors see the same page before signing in, with Sign in and Create account; the menu tab is renamed Home. The flowers sway gently and stay still with reduced motion.
+- Tabs now run Home, Active Map, Maps, Profile, and phones show the Home tab in the bottom bar.
+- The welcome page and the sign-in card use the same flag language picker as the app.
+
+### Fixes
+
+- On phones, page content no longer draws over the bottom tab bar.
 
 ### Accessibility
 

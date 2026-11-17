@@ -13,7 +13,7 @@ body.auth-locked .modal, body.auth-locked dialog, body.auth-locked dialog::backd
 .auth-feedback { margin: 18px 0 0; font-size: 0.875rem; line-height: 1.6; }
 .auth-feedback[data-error="true"] { color: var(--danger); }
 .auth-language { display: flex; justify-content: flex-end; margin: 0 0 16px; }
-.auth-language select { width: auto; }
+.auth-language .language-picker { position: relative; }
 .account-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; font-size: 0.8125rem; }
 #accountEmail { overflow-wrap: anywhere; }
 .account-bar .btn { margin-left: auto; }

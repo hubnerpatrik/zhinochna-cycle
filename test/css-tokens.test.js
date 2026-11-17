@@ -253,7 +253,7 @@ test('the floral motif lives only in the header and is decorative', () => {
     for (const [, selectors, body] of source.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
       if (!/var\(--bloom-/.test(body)) continue;
       const parts = selectors.split(',').map(part => part.trim());
-      if (!parts.every(part => /^(\.app-header|\.header-|\.brand-|\.mobile-map-header|#navMenuBtn|body\.mobile-map-active)/.test(part))) offenders.push(`${name}: ${selectors.trim()}`);
+      if (!parts.every(part => /^(\.app-header|\.header-|\.brand-|\.mobile-map-header|#navMenuBtn|body\.mobile-map-active|\.home-brand)/.test(part))) offenders.push(`${name}: ${selectors.trim()}`);
     }
   }
   assert.deepEqual(offenders, [], 'bloom colours stay in the header');
