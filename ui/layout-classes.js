@@ -16,7 +16,7 @@ function getLayoutStyles(ownerDocument) {
 export function applyLayoutClass(element, slot, pixelValues) {
   const className = `layout-${slot}`;
   const declarations = Object.entries(pixelValues)
-    .map(([property, value]) => `${property}: ${value}px;`).join(' ');
+    .map(([property, value]) => `${property}: ${typeof value === 'number' ? `${value}px` : value};`).join(' ');
   const ruleText = `.${className} { ${declarations} }`;
   const { sheet, rules } = getLayoutStyles(element.ownerDocument);
   const previous = rules.get(className);

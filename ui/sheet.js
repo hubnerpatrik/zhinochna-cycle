@@ -1,7 +1,8 @@
 // Bottom sheets on phones: drag the grabber or the title down and the sheet follows the finger,
 // resists when pulled up, and on release a projected-momentum decision either slides it away
 // (then closes it through the dialog's own close path) or springs it back. Grabbing a moving
-// sheet takes it over where it is. Entering and leaving are plain CSS transitions.
+// sheet takes it over where it is. On phones a sheet also rises on the same spring when it opens, so it can
+// be grabbed while it is still moving; the scrim follows the sheet. Leaving by a button is a CSS transition.
 import { applyLayoutClass } from './layout-classes.js';
 import { createSpringDriver, createVelocityTracker, project, rubberband } from './motion.js';
 
@@ -27,6 +28,41 @@ function layoutOffset(element) {
   };
 }
 
+// The scrim sits on the dialog itself (its ::backdrop) or on the .modal that wraps an editor card.
+const scrimOwner = card => (card.localName === 'dialog' ? card
+  : card.parentElement?.classList?.contains('modal') ? card.parentElement : null);
+
+/** 0 = scrim fully shown (sheet at rest), 1 = fully clear (sheet gone). */
+function layoutDim(card) {
+  const owner = scrimOwner(card);
+  if (!owner?.ownerDocument?.head) return () => {};
+  return progress => {
+    if (!progress) {
+      owner.classList.remove('sheet-dimming', 'layout-sheet-dim');
+      return;
+    }
+    owner.classList.add('sheet-dimming');
+    applyLayoutClass(owner, 'sheet-dim', { '--sheet-dim': String(Math.round(progress * 1000) / 1000) });
+  };
+}
+
+// Reports each change between closed and open (a dialog's `open`, or `show` on a .modal).
+function watchOpening(card, onChange) {
+  if (typeof MutationObserver === 'undefined' || !card.ownerDocument) return;
+  const isDialog = card.localName === 'dialog';
+  const target = isDialog ? card : card.parentElement;
+  if (!target) return;
+  const opened = () => (isDialog ? card.open : target.classList.contains('show'));
+  let was = opened();
+  new MutationObserver(() => {
+    const now = opened();
+    if (now !== was) onChange(now);
+    was = now;
+  }).observe(target, { attributes: true, attributeFilter: [isDialog ? 'open' : 'class'] });
+}
+
+const SCRIM_RELEASE_MS = 400; // longer than the dialog's leave transition
+
 const startsOnGrip = event => {
   const target = event.target;
   return Boolean(target?.closest?.(GRIP)) && !target.closest(CONTROLS);
@@ -38,28 +74,63 @@ export function bindSheetDismiss(card, {
   isPhone = () => false,
   reducedMotion = () => false,
   setOffset = layoutOffset(card),
+  setDim = layoutDim(card),
+  setTimer = (callback, ms) => setTimeout(callback, ms),
+  watchOpen = watchOpening,
   schedule = callback => requestAnimationFrame(callback),
   cancelSchedule = frame => cancelAnimationFrame(frame),
   now = () => performance.now(),
 }) {
-  if (!card) return;
+  if (!card) return { enter() {} };
   const tracker = createVelocityTracker();
-  const spring = createSpringDriver({ setOffset, schedule, cancelSchedule, now });
+  let leaving = false;     // our own dismissal is closing the sheet
+  let holdDim = false;     // a dismissed sheet keeps the scrim clear while the dialog fades out
+  let dimEpoch = 0;
+  const apply = offset => {
+    setOffset(offset);
+    if (holdDim) return;
+    dimEpoch += 1;
+    setDim(Math.max(0, Math.min(1, offset / (card.offsetHeight || 1))));
+  };
+  const spring = createSpringDriver({ setOffset: apply, schedule, cancelSchedule, now });
   let pointer = null;           // { id, startX, startY, base, locked }
 
   const capture = id => { try { card.setPointerCapture?.(id); } catch { /* the pointer may be gone */ } };
   const uncapture = id => { try { card.releasePointerCapture?.(id); } catch { /* ignore */ } };
   const { show, animateTo, stop: stopAnimation } = spring;
 
+  function leave() {
+    leaving = false;
+    holdDim = true;
+    show(0);
+    holdDim = false;
+    const mine = dimEpoch;
+    setTimer(() => { if (mine === dimEpoch) setDim(0); }, SCRIM_RELEASE_MS);
+  }
+
   function close() {
+    leaving = true;
     requestClose();
-    if (reducedMotion()) { show(0); return; }
+    if (reducedMotion()) { leave(); return; }
     // Keep the sheet where it is until the close has taken effect; if it has not, bring it back.
     spring.later(() => {
       if (isOpen()) animateTo(0, 0, () => show(0));
-      else show(0);
+      else leave();
     });
   }
+
+  // Opening on a phone: the sheet rises from below on the same spring as everything else.
+  function enter() {
+    if (!isPhone() || reducedMotion()) return;
+    show(card.offsetHeight || 1);
+    animateTo(0, 0, () => show(0));
+  }
+  // Closed by something else (a button, Escape) while still rising: stop the spring so the CSS leave
+  // transition continues from the current position instead of the sheet finishing its climb.
+  watchOpen(card, opened => {
+    if (opened) enter();
+    else if (!leaving && spring.animating) { stopAnimation(); show(0); }
+  });
 
   function release(velocity) {
     const height = card.offsetHeight || 1;
@@ -109,6 +180,7 @@ export function bindSheetDismiss(card, {
   };
   card.addEventListener('pointerup', finish(false));
   card.addEventListener('pointercancel', finish(true));
+  return { enter };
 }
 
 /** Adds the visible grabber and marks the title area as part of the drag zone. */

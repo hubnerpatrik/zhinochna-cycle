@@ -1,12 +1,13 @@
 import { store } from "../store.js";
-import { getElementById, parseDateKey, querySelectorAll } from "../core.js";
+import { PHONE_LAYOUT_QUERY, getElementById, parseDateKey, querySelectorAll } from "../core.js";
 import { setDateText } from "../i18n.js";
 import { activeCycleModel } from "../domain.js";
 import { showMessage } from "./toast.js";
 import { clearFieldErrors } from './field-errors.js';
 import { observationChoiceValue } from './observation-values.js';
 import { cervixPositionIcon } from './observation-scales.js';
-import { focusModal, markModalClosed, markModalOpen, rememberFocus, restoreFocus } from './modal-a11y.js';
+import { focusModal, markModalClosed, markModalOpen, openingControl, rememberFocus, restoreFocus } from './modal-a11y.js';
+import { growFromTrigger } from './modal-origin.js';
 
 let navigation = null;
 export function configureModalNavigation(callbacks) {
@@ -32,6 +33,10 @@ export function showModal(modalId) {
   hideAllModals();
   clearFieldErrors(modal);
   modal.classList.remove("hidden");
+  growFromTrigger(modal, openingControl(), {
+    isPhone: () => window.matchMedia(PHONE_LAYOUT_QUERY).matches,
+    reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
   modal.classList.add("show");
   markModalOpen(modal, pageBehindModal());
   focusModal(modal);

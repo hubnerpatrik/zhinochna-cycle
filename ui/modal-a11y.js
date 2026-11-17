@@ -35,6 +35,9 @@ export function rememberFocus() {
   if (active && active !== globalThis.document.body) returnFocusTo = active;
 }
 
+/** The control that had focus when the editor opened, if any. */
+export const openingControl = () => returnFocusTo;
+
 /** Puts focus inside the editor so keyboard and screen-reader users land in it. */
 export function focusModal(modal) {
   const card = modal.querySelector?.(":scope > .modal-card");

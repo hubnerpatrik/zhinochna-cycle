@@ -890,6 +890,19 @@ select:not([multiple]) {
 
 /* Replacing one editor with another: the old card is gone at once (only its dimming cross-fades),
    so two sheets never move at the same time. A real close keeps its leave transition. */
+/* Wide screens: an editor opened from a control grows out of it, not out of its own centre. */
+.modal-card.has-origin {
+  transform-origin: var(--modal-origin-x) var(--modal-origin-y);
+}
+
+.modal-card.origin-settling {
+  transition: none;
+}
+
+.modal:not(.show) .modal-card.has-origin {
+  transform: scale(0.85); /* the state it grows from; also covers a style flush before .show is added */
+}
+
 html:has(.modal.show) .modal.hidden .modal-card {
   transition: none;
 }
@@ -947,6 +960,16 @@ html:has(.modal.show) .modal.hidden .modal-card {
 
   dialog.sheet-dialog[open] {
     transform: translateY(0);
+  }
+
+  /* While a sheet is dragged, rising or being dismissed, its scrim follows it (--sheet-dim: 0 at rest, 1 gone). */
+  dialog.sheet-dialog.sheet-dimming[open]::backdrop {
+    opacity: calc(1 - var(--sheet-dim, 0));
+    transition: none;
+  }
+
+  .modal.sheet-dimming {
+    background: color-mix(in srgb, var(--backdrop) calc((1 - var(--sheet-dim, 0)) * 100%), transparent);
   }
 
   dialog.sheet-dialog::backdrop {
