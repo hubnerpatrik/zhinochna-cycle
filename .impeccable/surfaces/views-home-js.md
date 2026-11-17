@@ -17,7 +17,7 @@ Constraints: educational framing only, a footer line saying the app is not medic
 
 THESIS: The page is standing in a gerbera meadow: the first viewport is a pink sky over three layered hills of hand-drawn gerberas, and the content grows out of the meadow like garden signs. Refuses the category's phone-mockup hero over a row of feature cards.
 
-OWN-WORLD: Flat sky blush #fbe7ea; hills in three sage steps (#dbe8d0, #cfe0c3, #b5cfa8); gerberas with slim petals in peach #f6a98d, rose #f19bb0, butter #f6d27a, lavender #c8b6e8 and white, cocoa-and-butter centres; ink #33242b, muted #6a4f58; coral only on the one action. Rounded friendly display face (Rubik, self-hosted, Cyrillic-capable) over Inter body. Sections below sit on meadow-green ground as white rounded garden-sign cards on short stems; coming-soon signs are dashed and carry a "Brzy" tag. Flat colour only, no gradients.
+OWN-WORLD: Flat sky blush #fbe7ea; hills in three sage steps (#dbe8d0, #cfe0c3, #b5cfa8); gerberas with slim petals in peach #f6a98d, rose #f19bb0, butter #f6d27a, lavender #c8b6e8 and white, cocoa-and-butter centres; ink #33242b, muted #5f4a51; coral only on the one action. Rounded friendly display face (Rubik, self-hosted, Cyrillic-capable) over Inter body. Sections below sit on meadow-green ground as white rounded garden-sign cards on short stems; coming-soon signs are dashed and carry a "Brzy" tag. Flat colour only, no gradients.
 
 STORY: The visitor sees the meadow, reads one line about recording a cycle day by day, understands she owns the interpretation, signs in (or, signed in, scrolls to what is coming).
 
