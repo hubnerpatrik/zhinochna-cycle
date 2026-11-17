@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-17T01:18:09.232Z",
+        "reason": "assistant: static index.html is scanned without styles/*.css, where DESIGN.md sets the real h1/h2 sizes; the rendered screens show a clear scale"
+      }
+    ]
+  }
+}

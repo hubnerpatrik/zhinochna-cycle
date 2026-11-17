@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-17T12:00:00Z",
+  "title": "Design System: Cycle Tracker",
+  "extensions": {
+    "colorMeta": {
+      "coral": { "role": "primary", "displayName": "Coral", "canonical": "#c84a32", "tonalRamp": ["#3d140c", "#6a2316", "#972f1f", "#c84a32", "#e0674f", "#ec9584", "#f5c3b8", "#fdeae4"] },
+      "coral-deep": { "role": "primary", "displayName": "Coral Deep", "canonical": "#ad3e29" },
+      "coral-soft": { "role": "primary", "displayName": "Coral Soft (rings and icons only)", "canonical": "#e0674f" },
+      "coral-tint": { "role": "primary", "displayName": "Coral Tint", "canonical": "#fdeae4" },
+      "ground": { "role": "neutral", "displayName": "Warm Ground", "canonical": "#f7f3f0", "tonalRamp": ["#1f1a17", "#3b332e", "#5a4f48", "#6f655c", "#9b9087", "#c9bfb7", "#f2ece8", "#f7f3f0"] },
+      "surface": { "role": "neutral", "displayName": "Surface White", "canonical": "#ffffff" },
+      "surface-sunken": { "role": "neutral", "displayName": "Sunken", "canonical": "#f2ece8" },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#1f1a17" },
+      "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "#6f655c" },
+      "line": { "role": "neutral", "displayName": "Line", "canonical": "rgba(31, 26, 23, 0.12)" },
+      "line-soft": { "role": "neutral", "displayName": "Line Soft", "canonical": "rgba(31, 26, 23, 0.06)" },
+      "calendar-fertile": { "role": "data", "displayName": "Fertile Day Fill", "canonical": "#cfe7b4" },
+      "calendar-period": { "role": "data", "displayName": "Menstruation Day Fill", "canonical": "#f4c7cf" },
+      "data-adjusted": { "role": "data", "displayName": "Adjusted Temperature", "canonical": "#2563eb" },
+      "data-coverline": { "role": "data", "displayName": "Coverline", "canonical": "#b41414" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Screen titles on Profile and My Maps; clamps 1.8125-2.125rem on phones." },
+      "headline": { "displayName": "Headline", "purpose": "The selected day's temperature on the phone dock; tabular figures." },
+      "title": { "displayName": "Title", "purpose": "App name, month label, card titles (1.0625-1.125rem)." },
+      "body": { "displayName": "Body", "purpose": "Running text; supporting paragraphs at 0.9375rem." },
+      "control": { "displayName": "Control", "purpose": "Field values, button and tab labels; primary labels at 600." },
+      "label": { "displayName": "Label", "purpose": "Field labels, section titles, metadata; sentence case." }
+    },
+    "shadows": [
+      { "name": "card", "value": "0 1px 2px rgba(31, 26, 23, 0.04), 0 6px 20px rgba(31, 26, 23, 0.05)", "purpose": "Every resting card; unchanged on hover." },
+      { "name": "float", "value": "0 16px 40px rgba(31, 26, 23, 0.14), 0 2px 8px rgba(31, 26, 23, 0.06)", "purpose": "Dialogs, bottom sheets, time-picker panel." },
+      { "name": "thumb", "value": "0 1px 2px rgba(31, 26, 23, 0.08), 0 2px 6px rgba(31, 26, 23, 0.06)", "purpose": "White thumb of a segmented control." },
+      { "name": "tab-bar", "value": "0 -4px 20px rgba(31, 26, 23, 0.05)", "purpose": "Upward edge of the phone tab bar." },
+      { "name": "focus-ring", "value": "0 0 0 2px #f7f3f0, 0 0 0 4px #e0674f", "purpose": "Focus ring token; controls use a 2px coral-soft outline offset 2px." }
+    ],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for colour and state changes (0.15s)." },
+      { "name": "sheet", "value": "transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)", "purpose": "Bottom sheets rising and leaving on phones." },
+      { "name": "screen-crossfade", "value": "160ms ease-out", "purpose": "View transition between Profile, My Maps and Active Map." },
+      { "name": "press", "value": "scale(0.94)", "purpose": "Calendar day press feedback; removed under reduced motion." }
+    ],
+    "breakpoints": [
+      { "name": "phone", "value": "(max-width: 560px), (max-height: 500px) and (pointer: coarse)" },
+      { "name": "narrow", "value": "380px" },
+      { "name": "tablet", "value": "900px" },
+      { "name": "container", "value": "1100px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one filled coral action per view.",
+      "html": "<button class=\"ds-btn-primary\">Day record</button>",
+      "css": ".ds-btn-primary { height: 44px; padding: 0 18px; border: 0; border-radius: 14px; background: #c84a32; color: #fff; font: 600 0.875rem 'Inter Variable', Inter, system-ui, sans-serif; cursor: pointer; transition: background 0.18s ease, transform 0.18s ease; } .ds-btn-primary:hover { background: #ad3e29; } .ds-btn-primary:active { transform: scale(0.995); } .ds-btn-primary:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White with one hairline; every non-primary action.",
+      "html": "<button class=\"ds-btn-secondary\">Tools</button>",
+      "css": ".ds-btn-secondary { height: 44px; padding: 0 18px; border: 1px solid rgba(31,26,23,0.12); border-radius: 14px; background: #fff; color: #1f1a17; font: 500 0.875rem 'Inter Variable', Inter, system-ui, sans-serif; cursor: pointer; transition: background 0.16s ease, border-color 0.16s ease; } .ds-btn-secondary:hover { background: #f2ece8; border-color: rgba(31,26,23,0.22); } .ds-btn-secondary:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "White card on the warm ground with one ambient lift.",
+      "html": "<div class=\"ds-ground\"><div class=\"ds-card\"><div class=\"ds-card-title\">Today</div><div class=\"ds-card-temp\">36.52 °C</div></div></div>",
+      "css": ".ds-ground { padding: 16px; background: #f7f3f0; } .ds-card { padding: 16px; border: 1px solid transparent; border-radius: 22px; background: #fff; box-shadow: 0 1px 2px rgba(31,26,23,0.04), 0 6px 20px rgba(31,26,23,0.05); font-family: 'Inter Variable', Inter, system-ui, sans-serif; color: #1f1a17; transition: border-color 0.16s ease; } .ds-card:hover { border-color: rgba(31,26,23,0.06); } .ds-card-title { font-size: 0.8125rem; font-weight: 600; color: #6f655c; } .ds-card-temp { font-size: 2rem; font-weight: 650; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Select Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "White field with a hairline, coral focus and an authored chevron.",
+      "html": "<select class=\"ds-select\"><option>Thermometer: oral</option></select>",
+      "css": ".ds-select { appearance: none; -webkit-appearance: none; width: 100%; height: 44px; padding: 0 36px 0 12px; border: 1px solid rgba(31,26,23,0.12); border-radius: 12px; background: #fff url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f655c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E\") no-repeat right 10px center / 18px; color: #1f1a17; font: 0.875rem 'Inter Variable', Inter, system-ui, sans-serif; } .ds-select:hover { border-color: rgba(31,26,23,0.22); } .ds-select:focus { outline: none; border-color: #e0674f; box-shadow: 0 0 0 3px rgba(224,103,79,0.22); }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "segmented-track",
+      "description": "Sunken track with a lifted white thumb (Calendar / Graph).",
+      "html": "<div class=\"ds-seg\" role=\"tablist\"><button class=\"ds-seg-btn is-active\" role=\"tab\" aria-selected=\"true\">Calendar</button><button class=\"ds-seg-btn\" role=\"tab\" aria-selected=\"false\">Graph</button></div>",
+      "css": ".ds-seg { display: inline-grid; grid-auto-flow: column; gap: 2px; padding: 3px; border-radius: 15px; background: #f2ece8; font-family: 'Inter Variable', Inter, system-ui, sans-serif; } .ds-seg-btn { min-height: 38px; padding: 0 16px; border: 1px solid transparent; border-radius: 12px; background: transparent; color: #6f655c; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.18s ease, box-shadow 0.18s ease; } .ds-seg-btn:hover:not(.is-active) { color: #1f1a17; } .ds-seg-btn.is-active { background: #fff; color: #1f1a17; font-weight: 600; box-shadow: 0 1px 2px rgba(31,26,23,0.08), 0 2px 6px rgba(31,26,23,0.06); } .ds-seg-btn:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Calendar Day Cells",
+      "kind": "custom",
+      "refersTo": "calendar-day",
+      "description": "Bare numerals by default; only data states fill; selected is coral, today is ringed.",
+      "html": "<div class=\"ds-days\"><button class=\"ds-day\"><span class=\"ds-cd\">3</span>12</button><button class=\"ds-day ds-period\"><span class=\"ds-cd\">1</span>10</button><button class=\"ds-day ds-fertile\"><span class=\"ds-cd\">14</span>23</button><button class=\"ds-day ds-today\"><span class=\"ds-cd\">4</span>13</button><button class=\"ds-day ds-selected\"><span class=\"ds-cd\">5</span>14</button></div>",
+      "css": ".ds-days { display: grid; grid-template-columns: repeat(5, 44px); gap: 6px; padding: 12px; background: #fff; border-radius: 22px; } .ds-day { position: relative; height: 44px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: #1f1a17; font: 500 0.8125rem 'Inter Variable', Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums; cursor: pointer; transition: background 0.15s cubic-bezier(0.4,0,0.2,1), transform 0.1s cubic-bezier(0.4,0,0.2,1); } .ds-day:hover { background: #f2ece8; } .ds-day:active { transform: scale(0.94); } .ds-cd { position: absolute; top: 3px; left: 4px; font-size: 0.5625rem; font-weight: 600; color: #6f655c; } .ds-period { background: #f4c7cf; color: #793744; } .ds-period .ds-cd { color: #793744; } .ds-fertile { background: #cfe7b4; color: #4d6246; } .ds-fertile .ds-cd { color: #4d6246; } .ds-today { box-shadow: inset 0 0 0 1.5px #e0674f; color: #c84a32; font-weight: 700; } .ds-selected { background: #c84a32; border-color: #c84a32; color: #fff; } .ds-selected .ds-cd { color: #fff; } .ds-day:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Action List",
+      "kind": "custom",
+      "refersTo": "action-list",
+      "description": "One grouped list with dividers for sidebar actions and the Edit Day sheet.",
+      "html": "<div class=\"ds-actions\"><button class=\"ds-action\"><span class=\"ds-chip\"></span>Temperature</button><button class=\"ds-action\"><span class=\"ds-chip\"></span>Bleeding</button><button class=\"ds-action\"><span class=\"ds-chip\"></span>Notes</button></div>",
+      "css": ".ds-actions { display: grid; overflow: hidden; border-radius: 14px; background: #f7f3f0; font: 500 0.875rem 'Inter Variable', Inter, system-ui, sans-serif; } .ds-action { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border: 0; background: transparent; color: #1f1a17; text-align: left; cursor: pointer; } .ds-action + .ds-action { box-shadow: inset 0 1px 0 rgba(31,26,23,0.06); } .ds-action:hover { background: #f2ece8; } .ds-action:focus-visible { outline: 2px solid #e0674f; outline-offset: -2px; } .ds-chip { width: 32px; height: 32px; border-radius: 10px; background: #f2ece8; }"
+    },
+    {
+      "name": "Phone Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab-bar-phone",
+      "description": "Frosted white bottom tab bar; coral active tab; solid without blur or under reduced transparency.",
+      "html": "<nav class=\"ds-tabbar\"><button class=\"ds-tab\">Profile</button><button class=\"ds-tab\">My Maps</button><button class=\"ds-tab is-active\" aria-current=\"page\">Active Map</button></nav>",
+      "css": ".ds-tabbar { display: flex; gap: 4px; padding: 6px 12px; border-top: 1px solid rgba(31,26,23,0.06); background: rgba(255,255,255,0.78); -webkit-backdrop-filter: saturate(1.6) blur(20px); backdrop-filter: saturate(1.6) blur(20px); box-shadow: 0 -4px 20px rgba(31,26,23,0.05); font-family: 'Inter Variable', Inter, system-ui, sans-serif; } @supports not (backdrop-filter: blur(1px)) { .ds-tabbar { background: #fff; } } @media (prefers-reduced-transparency: reduce) { .ds-tabbar { background: #fff; backdrop-filter: none; } } .ds-tab { flex: 1; height: 52px; border: 0; border-radius: 14px; background: transparent; color: #6f655c; font-size: 0.8125rem; font-weight: 600; cursor: pointer; } .ds-tab.is-active { color: #c84a32; } .ds-tab:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Desktop Tabs",
+      "kind": "nav",
+      "refersTo": "nav-desktop-active",
+      "description": "Plain text tabs on the header hairline; the active tab carries a coral underline.",
+      "html": "<nav class=\"ds-dtabs\"><button class=\"ds-dtab\">Profile</button><button class=\"ds-dtab\">My Maps</button><button class=\"ds-dtab is-active\" aria-current=\"page\">Active Map</button></nav>",
+      "css": ".ds-dtabs { display: flex; gap: 4px; border-bottom: 1px solid rgba(31,26,23,0.12); font-family: 'Inter Variable', Inter, system-ui, sans-serif; } .ds-dtab { height: 44px; margin-bottom: -1px; padding: 0 12px; border: 0; background: transparent; color: #6f655c; font-size: 0.9375rem; font-weight: 500; cursor: pointer; } .ds-dtab:hover { color: #1f1a17; } .ds-dtab.is-active { color: #1f1a17; box-shadow: inset 0 -2px 0 #c84a32; } .ds-dtab:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Morning Card",
+    "overview": "The category standard, played straight at a high craft level. One person, often in bed in dim morning light, opens the app, sees the month and today's reading at a glance, taps one coral button to record the day, and reads the chart without hunting for controls. Everything in the interface serves that: soft white cards on a warm off-white ground, one coral accent, a neutral sans with tabular figures, and generous touch targets.\n\nThe interface stays quiet so the observations can speak. Colour in the interface means exactly one thing (coral: act here, you are here, this is selected); every other colour on screen belongs to the recorded data and the chart. Depth is a single soft ambient lift under white cards and a deeper float under sheets. The one translucent material is the phone tab bar, frosted at the user's explicit request, with a solid fallback.\n\nThis world replaces the earlier notebook look: no cream paper, no pastel button fills, no hairline-boxed day cells. It must not feel clinical, dark or technical, and it carries no medical, contraceptive or decorative-feminine styling.",
+    "keyCharacteristics": [
+      "Warm off-white ground, white cards, one ambient shadow.",
+      "One coral accent, used for the primary action, selection, focus, today and the active tab.",
+      "Inter, self-hosted, tabular figures for every number that is compared.",
+      "44px minimum controls, 52px action rows, 50px primary buttons on the phone dock.",
+      "Observation colours are data, never decoration."
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "Coral is the only interface colour. It marks what to press, what is selected, where focus is, and where you are. Nothing else in the chrome is tinted.", "section": "colors" },
+      { "name": "The Data Is Not Decoration Rule", "body": "Observation colours appear only where they encode a recorded observation or a chart tool's mark. Never use them for navigation, emphasis, illustration or brand.", "section": "colors" },
+      { "name": "The Mirror Rule", "body": "A colour the chart draws lives in `tokens.css` first and is mirrored in `chart-palette.js`; change both or neither.", "section": "colors" },
+      { "name": "The Tabular Figures Rule", "body": "Every number a reader compares across rows or days (temperature, date numerals, times) uses `font-variant-numeric: tabular-nums`.", "section": "typography" },
+      { "name": "The rem Rule", "body": "Text sizes are in rem so they follow the reader's text setting; container-query clamps are allowed only inside fixed-size cells.", "section": "typography" },
+      { "name": "The One Lift Rule", "body": "A card has one shadow and keeps it on hover; hover shows as a soft border or a sunken fill, never as a card jumping up.", "section": "elevation" },
+      { "name": "The Single Glass Rule", "body": "The phone tab bar is the only translucent surface: 78% white, `saturate(1.6) blur(20px)`, solid white without `backdrop-filter` support or under `prefers-reduced-transparency`. Project tests forbid gradients and glass everywhere else except the time-picker drum's fade.", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** use coral (#c84a32) for exactly one primary action per view, the selected day, focus, today and the active tab, and nothing else.",
+      "**Do** keep observation colours bound to recorded data and chart tools; add a new chart colour to `tokens.css` and `chart-palette.js` together.",
+      "**Do** put content on white 22px cards with the one Card shadow on the warm ground.",
+      "**Do** keep controls at least 44px tall and set text in rem.",
+      "**Do** use tabular figures for temperatures, dates and times.",
+      "**Do** honour `prefers-reduced-motion`, `prefers-contrast: more` and `prefers-reduced-transparency`, each with a real fallback.",
+      "**Do** change appearance by toggling CSS classes; never write inline styles from JS.",
+      "**Do** check every change at about 320px, 390px and desktop width."
+    ],
+    "donts": [
+      "**Don't** bring back the notebook look: cream paper, pastel or peach button fills, hairline-boxed day cells.",
+      "**Don't** use observation colours for decoration, navigation, brand or emphasis.",
+      "**Don't** add gradients or glass anywhere except the time-picker drum fade and the phone tab bar.",
+      "**Don't** lift cards on hover or stack a second shadow inside a card.",
+      "**Don't** add medical or contraceptive styling, fertility verdict colours, flowers, hearts, or gamification.",
+      "**Don't** add uppercase eyebrow or kicker labels above titles.",
+      "**Don't** make the interface dark, clinical or technical."
+    ]
+  }
+}
