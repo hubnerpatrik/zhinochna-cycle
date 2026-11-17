@@ -2,13 +2,13 @@
 // so the values mirror styles/tokens.css; test/chart-palette.test.js keeps the two in sync.
 export const CHART_COLORS = Object.freeze({
   // Interface (from --ink, --ink-muted, --surface, --action).
-  ink: '#162029',
-  inkMuted: '#5f666d',
-  paper: '#fffaf6',
-  gridMajor: 'rgba(22,32,41,0.28)',
-  gridMinor: 'rgba(22,32,41,0.10)',
-  selection: 'rgba(194,73,46,0.08)',
-  hover: 'rgba(194,73,46,0.45)',
+  ink: '#1f1a17',
+  inkMuted: '#6f655c',
+  paper: '#ffffff',
+  gridMajor: 'rgba(31,26,23,0.26)',
+  gridMinor: 'rgba(31,26,23,0.09)',
+  selection: 'rgba(200,74,50,0.08)',
+  hover: 'rgba(200,74,50,0.45)',
 
   // Observations (from the --data-* tokens).
   adjusted: '#2563eb',

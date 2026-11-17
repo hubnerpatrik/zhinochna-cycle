@@ -8,11 +8,11 @@
 :root {
   --card: var(--surface);
   --accent: var(--action);
-  --hairline: rgba(22, 32, 41, 0.06);
-  --card-elev: 0 14px 40px rgba(22, 32, 41, 0.06);
-  --radius-lg: 16px;
-  --radius-md: 12px;
-  --radius-sm: 10px;
+  --hairline: rgba(31, 26, 23, 0.06);
+  --card-elev: var(--shadow-card);
+  --radius-lg: var(--r-lg);
+  --radius-md: var(--r-md);
+  --radius-sm: var(--r-sm);
 }
 
 .time-picker { position: relative; }
@@ -28,7 +28,7 @@
   position: absolute; top: calc(100% + 8px); left: 0; z-index: 100;
   width: min(280px, 100%); padding: 16px; box-sizing: border-box;
   border: 1px solid var(--line); border-radius: 18px; background: var(--surface);
-  box-shadow: 0 16px 40px rgba(92, 55, 38, .14);
+  box-shadow: 0 16px 40px rgba(31, 26, 23, .14);
 }
 .time-picker-panel[hidden] { display: none; }
 .time-picker-panel.is-above { top: auto; bottom: calc(100% + 8px); }
@@ -123,8 +123,8 @@
 
 .action-btn {
   background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(255, 138, 101, 0.16);
-  box-shadow: 0 8px 20px rgba(22, 32, 41, 0.05);
+  border: 1px solid rgba(200, 74, 50, 0.16);
+  box-shadow: 0 8px 20px rgba(31, 26, 23, 0.05);
 }
 
 .action-btn:hover {
@@ -144,10 +144,6 @@
   transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
 }
 
-.day:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 36px rgba(22, 32, 41, 0.06);
-}
 
 .day.red,
 .day.red.selected,
@@ -194,7 +190,7 @@
   background: rgba(255, 255, 255, 0.88);
   padding: 2px 7px;
   border-radius: 999px;
-  box-shadow: 0 5px 16px rgba(22, 32, 41, 0.06);
+  box-shadow: 0 5px 16px rgba(31, 26, 23, 0.06);
 }
 
 /* ─── motions & feedback ────────────────── */
@@ -203,7 +199,7 @@
   padding: 6px 10px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 8px 20px rgba(22, 32, 41, 0.04);
+  box-shadow: 0 8px 20px rgba(31, 26, 23, 0.04);
 }
 
 .legend,
@@ -223,7 +219,7 @@ select:focus,
   background: var(--surface);
   border-radius: 12px;
   padding: 10px 12px;
-  box-shadow: 0 2px 10px rgba(22, 32, 41, 0.05);
+  box-shadow: 0 2px 10px rgba(31, 26, 23, 0.05);
 }
 
 .modal {
@@ -305,7 +301,7 @@ select:focus,
 .map-row-group-end .map-cells {
   border-bottom-left-radius: 14px;
   border-bottom-right-radius: 14px;
-  box-shadow: 0 6px 16px rgba(22, 32, 41, 0.04);
+  box-shadow: 0 6px 16px rgba(31, 26, 23, 0.04);
 }
 
 .map-row-group-single {
@@ -315,7 +311,7 @@ select:focus,
 
 .map-row-group-single .map-cells {
   border-radius: 14px;
-  box-shadow: 0 6px 16px rgba(22, 32, 41, 0.04);
+  box-shadow: 0 6px 16px rgba(31, 26, 23, 0.04);
 }
 
 .map-row-group .map-cell {
@@ -329,11 +325,11 @@ select:focus,
   top: 3px;
   bottom: 3px;
   width: 1px;
-  background: rgba(15, 23, 32, 0.16);
+  background: rgba(31, 26, 23, 0.16);
 }
 
 .map-row-group .map-cell:nth-child(5n):not(:last-child)::after {
-  background: rgba(15, 23, 32, 0.28);
+  background: rgba(31, 26, 23, 0.28);
 }
 
 .map-cell-accent-red,
@@ -375,14 +371,14 @@ select:focus,
 }
 
 .highlight-strong {
-  box-shadow: 0 18px 48px rgba(255, 138, 101, 0.12);
+  box-shadow: 0 18px 48px rgba(200, 74, 50, 0.12);
 }
 
 /* ─── pastel design polish ───────────────── */
 
 :root {
-  --shadow-soft: 0 12px 34px rgba(92, 61, 52, 0.07), 0 2px 8px rgba(92, 61, 52, 0.035);
-  --shadow-lifted: 0 20px 48px rgba(92, 61, 52, 0.11), 0 4px 12px rgba(92, 61, 52, 0.05);
+  --shadow-soft: 0 12px 34px rgba(31, 26, 23, 0.07), 0 2px 8px rgba(31, 26, 23, 0.035);
+  --shadow-lifted: 0 20px 48px rgba(31, 26, 23, 0.11), 0 4px 12px rgba(31, 26, 23, 0.05);
 }
 
 .app-header {
@@ -482,7 +478,7 @@ select:focus,
 .menu-card-icon {
   color: var(--ink);
   background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 6px 16px rgba(92, 61, 52, 0.07), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 6px 16px rgba(31, 26, 23, 0.07), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
 }
 
 .menu-card-title {
@@ -547,7 +543,7 @@ select:focus,
   background: rgba(255, 255, 255, 0.58);
   color: rgba(92, 72, 68, 0.36);
   box-shadow:
-    0 16px 34px rgba(92, 61, 52, 0.08),
+    0 16px 34px rgba(31, 26, 23, 0.08),
     inset 0 0 0 9px rgba(255, 255, 255, 0.34);
 }
 
@@ -598,14 +594,14 @@ select {
 
 input:hover,
 select:hover {
-  border-color: rgba(255, 138, 101, 0.3);
-  background: rgba(255, 255, 255, 0.9);
+  border-color: color-mix(in srgb, var(--ink) 22%, transparent);
+  background: var(--surface);
 }
 
 input:focus,
 select:focus {
-  border-color: rgba(235, 116, 84, 0.72);
-  box-shadow: 0 0 0 4px rgba(255, 138, 101, 0.12), 0 8px 20px rgba(92, 61, 52, 0.05);
+  border-color: var(--action-soft);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--action-soft) 22%, transparent);
 }
 
 .screen-actions {
@@ -627,13 +623,9 @@ select:focus {
 
 .action-btn {
   border-color: rgba(111, 73, 62, 0.09);
-  box-shadow: 0 7px 18px rgba(92, 61, 52, 0.055);
+  box-shadow: 0 7px 18px rgba(31, 26, 23, 0.055);
 }
 
-.day:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 9px 24px rgba(92, 61, 52, 0.075);
-}
 
 .active-map-name {
   letter-spacing: -0.035em;

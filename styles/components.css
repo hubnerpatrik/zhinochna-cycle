@@ -15,17 +15,18 @@
 .btn.secondary:hover,
 .btn.map-import-btn:hover,
 .btn.map-export-btn:hover {
-  border-color: rgba(22, 32, 41, 0.22);
+  border-color: rgba(31, 26, 23, 0.22);
   background: var(--surface-alt);
 }
 
-/* Flat cards: surface and hairline, no gradient, glass or shadow. */
+/* Cards: white on the warm ground, no border, one soft ambient lift. */
 .screen-card,
 .menu-card,
 .menu-summary-card {
-  border: 1px solid var(--line-soft);
+  border: 1px solid transparent;
+  border-radius: var(--r-lg);
   background: var(--surface);
-  box-shadow: none;
+  box-shadow: var(--shadow-card);
 }
 
 .menu-summary-card {
@@ -36,15 +37,15 @@
 
 .menu-card:hover,
 button.menu-summary-card:not(:disabled):hover {
-  transform: translateY(-2px);
-  border-color: var(--line);
-  box-shadow: none;
+  transform: none;
+  border-color: var(--line-soft);
+  box-shadow: var(--shadow-card);
 }
 
 .menu-card-icon {
   border-radius: var(--r-md);
-  background: var(--surface-alt);
-  color: var(--ink-muted);
+  background: var(--action-tint);
+  color: var(--action);
 }
 
 .screen-hero {
@@ -97,7 +98,7 @@ body {
   background: var(--bg);
 }
 
-/* Surfaces on every screen: one flat card recipe. */
+/* Surfaces on every screen: one white card recipe. */
 .calendar-card,
 .info-card,
 .chart-card,
@@ -105,30 +106,75 @@ body {
 .screen-form-card,
 .map-filter-card,
 .map-list-card {
-  border: 1px solid var(--line-soft);
+  border: 1px solid transparent;
+  border-radius: var(--r-lg);
   background: var(--surface);
-  box-shadow: none;
+  box-shadow: var(--shadow-card);
 }
 
 .map-list-card {
-  transition: transform 0.16s ease, border-color 0.16s ease;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
 .map-list-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--line);
-  box-shadow: none;
+  transform: none;
+  border-color: var(--line-soft);
+  box-shadow: var(--shadow-card);
 }
 
 .map-list-card.is-active {
-  border-color: var(--action);
-  box-shadow: none;
+  border-color: var(--action-soft);
+  box-shadow: var(--shadow-card);
 }
 
 .modal-card {
-  border: 1px solid var(--line-soft);
+  border: 0;
+  border-radius: var(--r-lg);
   background: var(--surface);
   box-shadow: var(--shadow-float);
+}
+
+/* Primary action: solid coral, white label, generous touch height. */
+.btn.primary {
+  border-radius: var(--r-md);
+  background: var(--action-fill);
+  color: var(--action-fill-ink);
+  font-weight: 600;
+}
+
+.btn.primary:hover:not(:disabled) {
+  background: var(--action-fill-hover);
+}
+
+.btn.secondary,
+.btn.map-import-btn,
+.btn.map-export-btn,
+.btn.map-delete-btn {
+  border-radius: var(--r-md);
+}
+
+/* Fields: white, hairline, coral focus. */
+input,
+select,
+textarea {
+  border-color: var(--line);
+  border-radius: var(--control-radius);
+  background: var(--surface);
+  caret-color: var(--action);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--action-soft);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--action-soft) 22%, transparent);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-color: var(--action-soft);
 }
 
 .toast {
@@ -150,28 +196,318 @@ body {
   background: var(--danger-tint);
 }
 
-/* Calendar / graph switch and other segmented choices. */
+/* Calendar / graph switch and other segmented choices: a sunken track with a lifted white thumb. */
+.segmented {
+  background: var(--surface-alt);
+  border-radius: calc(var(--control-radius) + 3px);
+}
+
+.segmented button {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.segmented button:hover:not(.active):not(.disabled) {
+  background: transparent;
+  color: var(--ink);
+  transform: none;
+}
+
 .segmented button.active {
-  border: 1px solid var(--line);
+  border: 1px solid transparent;
   background: var(--surface);
   color: var(--ink);
   font-weight: 600;
   outline: none;
+  box-shadow: 0 1px 2px rgba(31, 26, 23, 0.08), 0 2px 6px rgba(31, 26, 23, 0.06);
+}
+
+/* Calendar day cells: soft tiles without borders; the observation colours stay as they are. */
+.calendar-grid {
+  gap: 6px;
+}
+
+.day {
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  box-shadow: none;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  transition: background 0.15s var(--ease), color 0.15s var(--ease), transform 0.1s var(--ease);
+}
+
+.day:hover {
+  transform: none;
+  background: var(--surface-alt);
   box-shadow: none;
 }
 
-/* Selected day: action outline; a fertile day keeps its data colour. */
+.day:active {
+  transform: scale(0.94);
+}
+
+.day:empty,
+.day.empty,
+.day[disabled] {
+  background: transparent;
+}
+
+.day-cycle-num,
+.day.fertile-day .day-cycle-num,
+.day.red .day-cycle-num {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink-muted);
+  font-weight: 600;
+}
+
+.day.fertile-day {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.day.fertile-day:hover {
+  background: color-mix(in srgb, var(--calendar-green) 82%, var(--ink));
+}
+
+.day.fertile-day .day-cycle-num {
+  color: var(--calendar-green-text);
+}
+
+.day.red .day-cycle-num {
+  color: var(--calendar-red-text);
+}
+
+/* Selected day: filled coral tile with a white numeral; on observation-coloured days a coral ring keeps the data colour visible. */
 .day.selected {
   border: 1px solid var(--action);
-  background: var(--action-tint);
+  background: var(--action);
+  color: var(--action-ink);
   box-shadow: none;
+}
+
+.day.selected:hover {
+  background: var(--action-hover);
+}
+
+.day.selected .day-cycle-num {
+  color: var(--action-ink);
+}
+
+/* Today, when it is not the selected day, carries a coral ring as well as coral numerals. */
+.day[aria-current="date"]:not(.selected) {
+  box-shadow: inset 0 0 0 1.5px var(--action-soft);
+}
+
+/* Action rows (sidebar Actions, Edit Day sheet): one grouped list with dividers, not separate boxes. */
+.action-list {
+  gap: 0;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: var(--bg);
+}
+
+.action-list .action-btn {
+  min-height: 52px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.action-list .action-btn + .action-btn {
+  box-shadow: inset 0 1px 0 var(--line-soft);
+}
+
+.action-list .action-btn:hover {
+  background: var(--surface-alt);
+  transform: none;
+}
+
+/* Cycle summary inside the white info panel: a quiet tinted block, not a nested bordered card. */
+.cycle-summary-card {
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--bg);
+}
+
+/* Selects draw their own chevron in the interface ink (:not() lifts this over the older .modal-card select background). */
+select:not([multiple]) {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f655c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 18px;
+}
+
+.day.fertile-day.selected,
+.day.red.selected {
+  outline: 0;
+  border-color: var(--action);
+  box-shadow: inset 0 0 0 2px var(--action);
 }
 
 .day.fertile-day.selected {
-  border-color: var(--action);
-  background: color-mix(in srgb, var(--green) 80%, var(--surface));
+  background: var(--calendar-green);
+  color: var(--calendar-green-text);
+}
+
+.day.fertile-day.selected .day-cycle-num {
+  color: var(--calendar-green-text);
+}
+
+.day.red.selected {
+  background: var(--calendar-red);
+  color: var(--calendar-red-text);
+}
+
+.day.red.selected .day-cycle-num {
+  color: var(--calendar-red-text);
+}
+
+.calendar-nav button {
+  background: var(--surface-alt);
   color: var(--ink);
-  box-shadow: none;
+}
+
+.calendar-nav button:hover {
+  background: color-mix(in srgb, var(--surface-alt) 80%, var(--ink));
+}
+
+.month-label {
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+/* Today is marked in the accent unless it is the selected (filled) day. */
+.day[aria-current="date"]:not(.selected) {
+  color: var(--action);
+  font-weight: 700;
+}
+
+/* Phone shell: a white tab bar on the bottom edge, coral for the current screen;
+   white cards for the selected-day dock and the map switcher. */
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  :root {
+    --mobile-nav-item-height: 52px;
+    --mobile-nav-bottom: env(safe-area-inset-bottom);
+    --mobile-nav-space: calc(var(--mobile-nav-item-height) + 24px + var(--mobile-nav-bottom));
+  }
+
+  .header-nav {
+    inset: auto 0 0;
+    max-width: none;
+    padding: 6px max(12px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    border: 0;
+    border-top: 1px solid var(--line-soft);
+    border-radius: 0;
+    box-shadow: 0 -4px 20px rgba(31, 26, 23, 0.05);
+  }
+
+  /* Frosted glass: the calendar and chart stay faintly visible as they scroll under the tab bar. */
+  .header-nav {
+    background: color-mix(in srgb, var(--surface) 78%, transparent);
+    backdrop-filter: saturate(1.6) blur(20px);
+    -webkit-backdrop-filter: saturate(1.6) blur(20px);
+  }
+
+  .header-nav-btn,
+  .header-nav-btn:last-child {
+    border-radius: var(--r-md);
+    background: transparent;
+    color: var(--ink-muted);
+  }
+
+  .header-nav-btn.is-active {
+    background: transparent;
+    color: var(--action);
+  }
+
+  .header-nav-btn.is-active .nav-icon {
+    stroke-width: 2;
+  }
+
+  .app-header .language-picker-trigger {
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .mobile-map-tabs {
+    background: var(--surface-alt);
+  }
+
+  .mobile-map-tabs button[aria-selected="true"] {
+    color: var(--action);
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(31, 26, 23, 0.08), 0 2px 6px rgba(31, 26, 23, 0.06);
+  }
+
+  #mobileProfileBtn,
+  #mobileSummaryBtn {
+    border: 0;
+    border-radius: var(--r-pill);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  #activeMapScreen .calendar-card {
+    padding: 16px 12px;
+    box-shadow: var(--shadow-card);
+  }
+
+  #mobileMapDock {
+    padding: 18px 16px 16px;
+    border: 0;
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  #mobileSelectedTemp {
+    font-size: 2rem;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mobile-map-actions > .btn {
+    min-height: 50px;
+    border-radius: var(--r-md);
+  }
+
+  #mobileTools {
+    border: 1px solid transparent;
+    background: var(--surface-alt);
+    color: var(--ink);
+  }
+
+  #mobileTools[aria-expanded="true"] {
+    border-color: var(--action-soft);
+    background: var(--action-tint);
+  }
+}
+
+/* No blur support, or the reader asked for less transparency: a solid white tab bar. */
+@supports not (backdrop-filter: blur(1px)) {
+  @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+    .header-nav { background: var(--surface); }
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) and (max-width: 560px), (prefers-reduced-transparency: reduce) and (max-height: 500px) and (pointer: coarse) {
+  .header-nav {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 /* Desktop chart tools: secondary until active (.tool-btn.active). */

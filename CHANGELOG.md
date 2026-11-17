@@ -14,6 +14,10 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Design
+
+- New look across the app: white cards on a warm off-white background, one coral accent, solid coral primary buttons with white labels, a sunken segmented switch, soft borderless calendar tiles with the selected day filled in coral and today marked in coral, and a white bottom tab bar on phones. Observation colours in the calendar and chart are unchanged.
+
 ### Accessibility
 
 - Calendar days are real buttons: reachable with Tab and the arrow keys, announced with the date in words, the cycle day and every recorded observation (colour is no longer the only signal), and the selected day is marked.

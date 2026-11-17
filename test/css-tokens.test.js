@@ -93,9 +93,10 @@ test('secondary actions share one flat recipe built from tokens', () => {
   }
 });
 
-test('cards, icon chips and navigation are flat: no gradients, glass blur or decorative stripes', () => {
+test('cards, icon chips and navigation are flat: no gradients, glass blur or decorative stripes (the phone tab bar may be glass)', () => {
   const css = allCss();
-  const flat = ['.screen-card', '.menu-card', '.menu-summary-card', '.header-nav', '.header-nav-btn.is-active',
+  for (const body of rules(css, '.header-nav')) assert.doesNotMatch(body, /gradient\(/, '.header-nav has no gradient');
+  const flat = ['.screen-card', '.menu-card', '.menu-summary-card', '.header-nav-btn.is-active',
     '.action-icon', '.action-icon.chip-blue', '.action-icon.chip-orange', '.action-icon.chip-red', '.action-icon.chip-purple',
     '.action-icon.chip-green', '.action-icon.chip-teal', '.action-icon.chip-gray', '.action-icon.chip-edit-special'];
   for (const selector of flat) {
@@ -168,8 +169,21 @@ test('the cervix chip uses the same green as the cervix editor', () => {
   }
 });
 
-test('no surface anywhere uses a gradient or glass blur, except the time picker drum fade', () => {
-  const allowed = new Set(['.time-picker-drum::after']);
+test('the phone tab bar is frosted glass, with a solid fallback', () => {
+  const css = read('components.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  const glass = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .filter(([, selectors]) => selectors.replace(/\s+/g, ' ').trim() === '.header-nav')
+    .map(([, , body]) => body)
+    .find(body => /backdrop-filter/.test(body));
+  assert.ok(glass, 'the tab bar has a backdrop-filter rule');
+  assert.match(glass, /backdrop-filter:\s*saturate\([^)]*\)\s*blur\(/);
+  assert.match(glass, /background:\s*color-mix\(in srgb, var\(--surface\) \d+%, transparent\)/);
+  assert.match(css, /@supports not \(backdrop-filter: blur\(1px\)\)/, 'browsers without blur get a solid bar');
+  assert.match(css, /prefers-reduced-transparency: reduce/, 'reduced transparency gets a solid bar');
+});
+
+test('no surface anywhere uses a gradient or glass blur, except the time picker drum fade and the phone tab bar', () => {
+  const allowed = new Set(['.time-picker-drum::after', '.header-nav']);
   const offenders = [];
   for (const name of readdirSync(STYLES).filter(file => file.endsWith('.css'))) {
     const css = read(name).replace(/\/\*[\s\S]*?\*\//g, '');
