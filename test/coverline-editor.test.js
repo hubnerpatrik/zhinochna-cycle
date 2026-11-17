@@ -25,6 +25,8 @@ function editor(onToolCancel) {
   const interactions = createChartInteractions({ getColumns: () => [], renderApp() {}, selectColumn() {}, showMessage() {}, onToolCancel });
   interactions.init();
   return { interactions, start: () => nodes.get('coverlineBtn').onclick(),
+    markers: () => nodes.get('markersActionBtn').onclick(),
+    toastButton: label => nodes.get('toast').children.find(child => child.textContent === label),
     cancel: () => nodes.get('toast').children.find(button => button.textContent === 'Cancel').onclick(),
     save: () => nodes.get('toast').children.find(button => button.textContent === 'Save').onclick(),
   };
@@ -97,4 +99,18 @@ test('marker mode stays on after a marker editor closes and ends only with Done'
   nodes.set('toast', element());
   interactions.resumeMarkerPlacement();
   assert.equal(nodes.get('toast').children.length, 0);
+});
+
+test('marker mode offers Cancel next to Done, and Cancel leaves the mode and reports the cancellation', () => {
+  store.reset(); store.createMap('Markers');
+  let canceled = 0;
+  const controls = editor(() => { canceled += 1; });
+  controls.markers();
+  assert.ok(controls.toastButton('Done'), 'Done is still there');
+  const cancel = controls.toastButton('Cancel');
+  assert.ok(cancel, 'Cancel is offered');
+  assert.equal(store.markerSelectionMode, true);
+  cancel.onclick();
+  assert.equal(store.markerSelectionMode, false);
+  assert.equal(canceled, 1);
 });

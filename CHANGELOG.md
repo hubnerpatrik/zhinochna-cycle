@@ -24,6 +24,7 @@ vMAJOR.MINOR.PATCH
 - Layout breakpoints now come from one small set (phone up to 560 px, mid 561–900 px, wide above), so the profile editor stacks its photo above the form on tablets up to 900 px and the home page uses its wider spacing from 561 px. The two catch-up stylesheets (`mobile-refresh.css`, `feedback-improvements.css`) are merged into `mobile.css` and `components.css`.
 - With reduced motion, dialogs and sheets cross-fade briefly instead of appearing abruptly. With reduced transparency or higher contrast the frosted tab bar becomes solid on every screen size (high contrast adds a firm top line), and its edge is otherwise a faint hairline over the content.
 - Fertile range: tapping a single day on a phone marks it reliably; the click a browser sends after the tap can no longer toggle the day a second time.
+- Marker mode now has a Cancel button next to Done, on phones and on wide screens; on a phone it returns to the Tools list like the other tools.
 - Sheets and the calendar swipe share one spring animator; dragging a coverline or marking fertile days no longer relies on a timer to ignore the click that follows.
 
 ### Design

@@ -153,7 +153,16 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     done.className = "toast-action toast-action-primary";
     setText(done, "Done");
     done.onclick = finishMarkerPlacement;
-    toast.replaceChildren(label, done);
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "toast-action toast-action-cancel";
+    setText(cancel, "Cancel");
+    cancel.onclick = () => {
+      cancelMarkerPlacement();
+      hideToolPill();
+      onToolCancel?.();
+    };
+    toast.replaceChildren(label, cancel, done);
     toast.classList.add("action-toast");
   }
 
