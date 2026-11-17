@@ -136,9 +136,6 @@
   body:has(.mobile-chart-expanded:not(.hidden)) { overflow: hidden; }
   .mobile-chart-expanded .mobile-chart-toolbar { margin-bottom: 12px; }
 }
-@media (max-width: 560px) and (prefers-reduced-transparency: reduce), (max-height: 500px) and (pointer: coarse) and (prefers-reduced-transparency: reduce) {
-
-}
 
 #mucusModal .modal-card, #otherModal .modal-card { gap: 12px; }
 #otherModalDetails[hidden] { display: none; }
@@ -590,7 +587,8 @@ select:not([multiple]) {
     max-width: none;
     padding: 6px max(12px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
     border: 0;
-    border-top: 1px solid var(--line-soft);
+    /* A faint hairline: the frosted bar blends into what scrolls under it instead of cutting it off. */
+    border-top: 1px solid color-mix(in srgb, var(--line-soft) 55%, transparent);
     border-radius: 0;
     box-shadow: 0 -4px 20px rgba(31, 26, 23, 0.05);
   }
@@ -685,11 +683,21 @@ select:not([multiple]) {
   }
 }
 
-@media (prefers-reduced-transparency: reduce) and (max-width: 560px), (prefers-reduced-transparency: reduce) and (max-height: 500px) and (pointer: coarse) {
+@media (prefers-reduced-transparency: reduce) {
   .header-nav {
     background: var(--surface);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+}
+
+/* High contrast: no see-through bar, and a firm line where it meets the content. */
+@media (prefers-contrast: more) {
+  .header-nav {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-top-color: var(--line);
   }
 }
 
@@ -1219,12 +1227,31 @@ html:has(.modal.show) .modal.hidden .modal-card {
     animation: none !important;
   }
 
-  .modal,
+  /* No sliding or scaling, but a short cross-fade so nothing pops in or out. */
   .modal-card,
-  .map-export-popover,
-  dialog.sheet-dialog,
-  dialog.sheet-dialog::backdrop {
+  .map-export-popover {
     transition: none;
+  }
+
+  .modal {
+    transition: opacity 150ms linear;
+  }
+
+  dialog.sheet-dialog {
+    opacity: 0;
+    transition: opacity 150ms linear, display 150ms allow-discrete, overlay 150ms allow-discrete;
+  }
+
+  dialog.sheet-dialog[open] {
+    opacity: 1;
+  }
+
+  @starting-style {
+    dialog.sheet-dialog[open] { opacity: 0; }
+  }
+
+  dialog.sheet-dialog::backdrop {
+    transition: opacity 150ms linear, display 150ms allow-discrete, overlay 150ms allow-discrete;
   }
 
   .modal-card,

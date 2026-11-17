@@ -22,6 +22,7 @@ vMAJOR.MINOR.PATCH
 - On phones the Calendar and Graph panels slide in from the side of their tab. The zoom buttons move on a spring, so quick repeated taps flow into each other. Pinching past the zoom limit resists and springs back on release. A coverline you drag keeps the offset from where you grabbed it instead of jumping under the finger.
 - Moving between Home, Active Map, Maps and Profile slides the new screen in from the side its tab is on (forward or back); the tab bar stays put. Short messages can be pushed away with a finger and stay while touched. The export menu and the language picker grow out of their button, and the time picker settles when scrolling actually ends.
 - Layout breakpoints now come from one small set (phone up to 560 px, mid 561–900 px, wide above), so the profile editor stacks its photo above the form on tablets up to 900 px and the home page uses its wider spacing from 561 px. The two catch-up stylesheets (`mobile-refresh.css`, `feedback-improvements.css`) are merged into `mobile.css` and `components.css`.
+- With reduced motion, dialogs and sheets cross-fade briefly instead of appearing abruptly. With reduced transparency or higher contrast the frosted tab bar becomes solid on every screen size (high contrast adds a firm top line), and its edge is otherwise a faint hairline over the content.
 - Sheets and the calendar swipe share one spring animator; dragging a coverline or marking fertile days no longer relies on a timer to ignore the click that follows.
 
 ### Design
