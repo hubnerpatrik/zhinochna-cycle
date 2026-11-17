@@ -15,11 +15,6 @@
   </title>
 
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  >
-
-  <link
     rel="stylesheet"
     href="styles/index.css"
   >
@@ -91,9 +86,9 @@
       <section id="mobileCalendarPanel" class="layout" aria-label="Cycle tracker dashboard" data-i18n-aria-label="Cycle tracker dashboard">
         <section class="calendar-card" aria-label="Calendar view" data-i18n-aria-label="Calendar view">
           <div class="calendar-nav">
-            <button id="prevMonth" type="button">‹</button>
+            <button id="prevMonth" type="button" aria-label="Previous month" data-i18n-aria-label="Previous month">‹</button>
             <div id="monthLabel" class="month-label"></div>
-            <button id="nextMonth" type="button">›</button>
+            <button id="nextMonth" type="button" aria-label="Next month" data-i18n-aria-label="Next month">›</button>
           </div>
 
           <div id="calendar" class="calendar-grid"></div>
@@ -225,16 +220,16 @@
 
       <div class="modal-section">
         <div class="section-title" data-i18n>Temperature</div>
-        <input id="tempInput" type="number" inputmode="decimal" step="0.01" min="36" max="43" placeholder="36.50">
+        <input id="tempInput" aria-label="Temperature" data-i18n-aria-label="Temperature" type="number" inputmode="decimal" step="0.01" min="36" max="43" placeholder="36.50">
 
-        <label class="input-label" data-i18n>Influence factors</label>
+        <label class="input-label" for="tempFactorsInput" data-i18n>Influence factors</label>
         <select id="tempFactorsInput"></select>
         <label id="tempFactorsOtherWrapper" class="hidden"><span class="input-label" data-i18n>Other influence factor</span><input id="tempFactorsOtherInput" type="text" maxlength="1000"></label>
 
         <label class="checkbox-row"><input id="measurementTimeCheckbox" type="checkbox"><span data-i18n>Different measurement time</span></label>
 
         <div id="measurementTimeWrapper" class="hidden">
-          <label class="input-label" data-i18n>Measurement time</label>
+          <label class="input-label" for="measurementTimeInput" data-i18n>Measurement time</label>
           <input id="measurementTimeInput" type="time">
           <div id="timeAdjustmentHint" class="field-hint"></div>
         </div>
@@ -324,7 +319,7 @@
           <button type="button" data-group="color" data-value="translucent" data-i18n>Translucent</button>
         </div>
         <label class="checkbox-row"><input type="checkbox" id="mucusColorOtherCheckbox"><span data-i18n>Other</span></label>
-        <input id="mucusColorOtherInput" type="text" placeholder="Describe color" data-i18n-placeholder="Describe color" class="hidden" />
+        <input id="mucusColorOtherInput" aria-label="Describe color" data-i18n-aria-label="Describe color" type="text" placeholder="Describe color" data-i18n-placeholder="Describe color" class="hidden" />
       </div>
 
       <div class="modal-actions">
@@ -357,7 +352,7 @@
 
       <div class="modal-section">
         <div id="markersMarkerLabel" class="section-title" data-i18n>Mucus Marker</div>
-        <select id="markersMarker">
+        <select id="markersMarker" aria-labelledby="markersMarkerLabel">
           <option value="" data-i18n>None</option>
           <option value="P" data-i18n>P</option>
           <option value="1">1</option>
@@ -456,7 +451,7 @@
 
       <div id="otherModalDetails" class="modal-section" hidden>
         <div class="section-title" data-i18n>Additional symptoms</div>
-        <input id="otherModalInput" type="text" placeholder="Additional symptoms or observations" data-i18n-placeholder="Additional symptoms or observations">
+        <input id="otherModalInput" aria-label="Additional symptoms" data-i18n-aria-label="Additional symptoms" type="text" placeholder="Additional symptoms or observations" data-i18n-placeholder="Additional symptoms or observations">
       </div>
 
       <div class="modal-actions">

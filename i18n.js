@@ -19,6 +19,12 @@ export function setLanguage(value, storage) {
 
 export function t(source) {
   const text = String(source ?? '');
+  // Spoken day label: "@2026-11-17 · Cycle day 22 · Menstruation" becomes the date in words plus translated parts.
+  const dayLabel = /^@(\d{4})-(\d{2})-(\d{2})((?: · .+)?)$/.exec(text);
+  if (dayLabel) {
+    const date = formatDate(new Date(Number(dayLabel[1]), Number(dayLabel[2]) - 1, Number(dayLabel[3])), 'day');
+    return date + dayLabel[4].split(' · ').filter(Boolean).map(part => ` · ${t(part)}`).join('');
+  }
   if (language === 'en') return text;
   const key = text.trim();
   const translated = messages[key]?.[LANGUAGE_INDEX[language]];

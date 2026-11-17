@@ -11,6 +11,9 @@ import { getCycleCoverlineValues, setCycleCoverlineValues } from "./domain.js";
 import { calendarDayDifference } from './date-utils.js';
 import { CHART_COLORS } from './chart-palette.js';
 
+// Same stack as the page (--font-sans) so canvas labels match the HTML text.
+const CHART_FONT = '"Inter Variable", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+
 const GRID_MAJOR_INTERVAL = 5;
 const GRID_PIXEL_OFFSET = 0.5;
 const DASH_PATTERN = [4, 4];
@@ -375,7 +378,7 @@ function drawOverflowTemperature(context, column, temp, color) {
   context.fillStyle = color;
   context.fill();
   if (LAYOUT.columnWidth >= MIN_LABEL_COLUMN_WIDTH || column.key === store.selectedKey) {
-    context.font = 'bold 10px Inter';
+    context.font = `bold 10px ${CHART_FONT}`;
     context.textAlign = 'center';
     context.fillText(`${temp.toFixed(TEMPERATURE_DECIMAL_PLACES)}°`, column.centerX, y + direction * OVERFLOW_LABEL_OFFSET);
   }
@@ -420,7 +423,7 @@ export function drawMeasurementTimes(context, columns) {
     if (column.temp == null || !column.measurementTime) return;
     if (!isChartTemperature(column.temp)) return;
     const pointY = chartY(column.temp);
-    context.font = "10px Inter";
+    context.font = `10px ${CHART_FONT}`;
     context.fillStyle = CHART_COLORS.inkMuted;
     context.textAlign = "center";
     context.fillText(column.measurementTime, column.centerX, pointY + MEASUREMENT_TIME_OFFSET);
@@ -443,7 +446,7 @@ export function drawMarkers(context, columns) {
       labelBelow = usingAdjusted ? adjustedY > tempY : tempY > adjustedY;
     }
 
-    context.font = "bold 14px Inter";
+    context.font = `bold 14px ${CHART_FONT}`;
     context.fillStyle = CHART_COLORS.fertile;
     context.textAlign = "center";
     const markerTemp = usingAdjusted ? column.adjustedTemp : column.temp;

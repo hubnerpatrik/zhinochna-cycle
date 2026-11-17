@@ -19,7 +19,8 @@ const MIN_EXPANDED_CHART_HEIGHT = 240;
 const EXPANDED_CHART_RESERVED_HEIGHT = 120;
 const MIN_CHART_HEIGHT = 320;
 const MAX_CHART_HEIGHT = 560;
-const CHART_RESERVED_HEIGHT = 110;
+// Room below the plot for the floating navigation and the "Show observations" toggle, so neither is hidden at rest.
+const CHART_RESERVED_HEIGHT = 185;
 const SCREEN_HORIZONTAL_PADDING = 16;
 const PLOT_EXTRA_HEIGHT = 30;
 const MIN_LABEL_SPACING = 28;

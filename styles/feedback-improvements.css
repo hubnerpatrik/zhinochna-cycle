@@ -62,7 +62,14 @@
   .mobile-selected-measurement { display: grid; justify-items: end; gap: 4px; min-width: 0; max-width: 55%; }
   #mobileSelectedFactor { max-width: 100%; font-size: 0.75rem; color: var(--ink-muted); overflow-wrap: anywhere; text-align: right; }
   #activeMapScreen .calendar .day, #calendar .day { font-size: 0.8125rem; }
-  #calendar .day-cycle-num { font-size: 0.5625rem; font-weight: 500; padding: 1px 3px; box-shadow: none; }
+  #calendar .day-cycle-num { font-size: 0.6875rem; font-weight: 600; padding: 1px 3px; box-shadow: none; }
+  /* Give the number the room below the cycle-day badge so the two never overlap at 320 px. */
+  #calendar .day:has(.day-cycle-num) { padding-top: 12px; }
+  /* Cells are about 33 px wide at 320 px: the cycle day lives in the day card and each day's spoken label instead of a badge. */
+  @media (max-width: 359px) {
+    #calendar .day-cycle-num { display: none; }
+    #calendar .day:has(.day-cycle-num) { padding-top: 0; }
+  }
   #mobileObservationPanel[hidden] { display: none; }
   .mobile-observation-hint { color: var(--muted); font-size: 0.75rem; line-height: 1.5; }
   #mobileObservationScroll { overflow-x: auto; overscroll-behavior-x: contain; touch-action: pan-x pan-y; border: 1px solid var(--hairline); border-radius: 14px; background: var(--surface); }

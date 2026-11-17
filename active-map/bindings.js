@@ -11,6 +11,7 @@ import { bindCalendarSwipe } from "./calendar-swipe.js";
 import { addSheetGrip, bindSheetDismiss } from "../ui/sheet.js";
 import { observationChoiceValue } from '../ui/observation-values.js';
 import { configureMapSettingsEditor } from '../ui/profile-info-modal.js';
+import { installModalKeyboard } from '../ui/modal-a11y.js';
 import {
   bindFertileRangeDrag,
   changeFertileRangeMonth,
@@ -188,6 +189,8 @@ export function initializeActiveMapControls({
       reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     });
   });
+
+  installModalKeyboard();
 
   const mapScroll = document.querySelector(".map-scroll");
   const fixedWidth = () => LAYOUT.sideLabelWidth + LAYOUT.tempScaleWidth;

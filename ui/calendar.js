@@ -51,6 +51,25 @@ function appendDayMarks(cell, entry) {
   cell.appendChild(dots);
 }
 
+/** Source text of a day's spoken label; i18n turns "@date" into the date in words. Colour and dots are never the only signal. */
+export function calendarDayLabelSource(key, entry, cycleDay, fertile) {
+  const parts = [`@${key}`];
+  if (cycleDay != null) parts.push(`Cycle day ${cycleDay}`);
+  if (entry?.bleeding === "menstruation") parts.push("Menstruation");
+  if (entry?.bleeding === "spotting") parts.push("Spotting");
+  if (fertile) parts.push("Fertile");
+  CALENDAR_DAY_MARKS.forEach(([, label, recorded]) => { if (recorded(entry)) parts.push(label); });
+  return parts.join(" · ");
+}
+
+const WEEK = 7;
+/** Day of month a calendar arrow or Home/End key moves to, or null for other keys. */
+export function calendarArrowTarget(day, totalDays, key) {
+  const moves = { ArrowLeft: day - 1, ArrowRight: day + 1, ArrowUp: day - WEEK, ArrowDown: day + WEEK, Home: 1, End: totalDays };
+  if (!(key in moves)) return null;
+  return Math.min(totalDays, Math.max(1, moves[key]));
+}
+
 export function renderMonth() {
   setDateText(getElementById("monthLabel"), new Date(store.year, store.month));
 }
@@ -71,22 +90,31 @@ export function renderTempScale() {
 
 export function renderCalendar(selectColumn) {
   const element = getElementById("calendar");
+  const hadFocus = element.contains(document.activeElement);
   element.innerHTML = "";
 
   appendCalendarHeader(element, store.year, store.month);
 
   const totalDays = getDaysInMonth(store.year, store.month);
   const model = activeCycleModel();
+  const monthPrefix = formatDateKey(new Date(store.year, store.month, 1)).slice(0, 7);
+  const selectedInMonth = Boolean(store.selectedKey?.startsWith(monthPrefix));
+  const todayKey = formatDateKey(new Date());
 
   Array.from({ length: totalDays }, (_, index) => index + 1).forEach(day => {
     const date = new Date(store.year, store.month, day);
     const key = formatDateKey(date);
     const entry = store.entries[key];
-    const cell = document.createElement("div");
+    const cell = document.createElement("button");
+    cell.type = "button";
     cell.className = "day";
-    setTranslatedAttribute(cell, 'title', `${key} · Select this day to review or edit its observations.`);
-
+    cell.dataset.day = String(day);
+    // One tab stop for the whole month: the selected day, or the first day when the selection is elsewhere.
+    cell.tabIndex = store.selectedKey === key || (day === 1 && !selectedInMonth) ? 0 : -1;
     const cycleDay = model.cycleDay(key);
+    setTranslatedAttribute(cell, 'aria-label', calendarDayLabelSource(key, entry, cycleDay, model.isFertile(key)));
+    if (store.selectedKey === key) cell.setAttribute("aria-pressed", "true");
+    if (key === todayKey) cell.setAttribute("aria-current", "date");
     if (cycleDay != null) {
       const cycleNumber = document.createElement("span");
       cycleNumber.className = "day-cycle-num";
@@ -107,6 +135,17 @@ export function renderCalendar(selectColumn) {
     cell.onclick = () => selectColumn(key);
     element.appendChild(cell);
   });
+
+  element.onkeydown = event => {
+    const current = event.target.closest?.(".day");
+    if (!current) return;
+    const target = calendarArrowTarget(Number(current.dataset.day), totalDays, event.key);
+    if (target == null) return;
+    event.preventDefault();
+    element.querySelector(`.day[data-day="${target}"]`)?.focus();
+  };
+  // Selecting a day re-renders the month; keep keyboard users where they were.
+  if (hadFocus) element.querySelector('.day[tabindex="0"]')?.focus();
 }
 
 export function renderTempFactorsOptions() {

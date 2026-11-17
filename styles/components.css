@@ -78,7 +78,8 @@ button.menu-summary-card:not(:disabled):hover {
   border-color: transparent;
   background: var(--action-tint);
   box-shadow: none;
-  color: var(--action);
+  /* Darker than the accent so a small label keeps 4.5:1 on the tint. */
+  color: var(--action-hover);
 }
 
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
@@ -651,3 +652,6 @@ html:has(.modal.show) .modal.hidden .modal-card {
     animation: none !important;
   }
 }
+
+/* The sheet itself takes focus when it opens so screen readers start inside it; it is not a control, so it draws no ring. */
+.modal-card:focus { outline: none; }

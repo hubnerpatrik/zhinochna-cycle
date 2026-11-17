@@ -416,9 +416,6 @@ select:focus,
   background: rgba(255, 255, 255, 0.7);
 }
 
-.header-nav-btn:focus-visible {
-  outline-color: rgba(255, 138, 101, 0.52);
-}
 
 .screen-shell {
   isolation: isolate;
@@ -622,8 +619,8 @@ select:focus {
 }
 
 .map-pill {
-  border: 1px solid rgba(10, 132, 255, 0.08);
-  background: rgba(220, 235, 255, 0.82);
+  border: 1px solid var(--info-line);
+  background: var(--info-tint);
 }
 
 /* Functional map: surface-only polish, no structural changes. */
@@ -894,7 +891,7 @@ select:focus {
 
   .calendar-weekday {
     padding-bottom: 2px;
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
   }
 
   .day {
@@ -906,7 +903,7 @@ select:focus {
     top: 3px;
     left: 3px;
     padding-inline: 4px;
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
   }
 
   .legend {

@@ -111,6 +111,8 @@ export const messages = {
   'Edit day': ['Upravit den', 'Upraviť deň', 'Редагувати день'],
   'Previous day': ['Předchozí den', 'Predchádzajúci deň', 'Попередній день'],
   'Next day': ['Další den', 'Nasledujúci deň', 'Наступний день'],
+  'Previous month': ['Předchozí měsíc', 'Predchádzajúci mesiac', 'Попередній місяць'],
+  'Next month': ['Další měsíc', 'Nasledujúci mesiac', 'Наступний місяць'],
   'Day Info': ['Informace o dni', 'Informácie o dni', 'Інформація про день'],
   'Day info': ['Informace o dni', 'Informácie o dni', 'Інформація про день'],
   'Influence factors': ['Ovlivňující faktory', 'Ovplyvňujúce faktory', 'Фактори впливу'],

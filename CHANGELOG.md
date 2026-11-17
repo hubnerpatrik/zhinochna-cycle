@@ -14,6 +14,19 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Accessibility
+
+- Calendar days are real buttons: reachable with Tab and the arrow keys, announced with the date in words, the cycle day and every recorded observation (colour is no longer the only signal), and the selected day is marked.
+- Observation editors announce themselves as dialogs, keep keyboard focus inside, close with Escape and return focus to where you were; the page behind them is inert.
+- Temperature, influence factor, measurement time, marker and symptom fields have labels; the month arrows are named "Previous month" and "Next month".
+- Active navigation label, map status pills and chart day numbers now meet the 4.5:1 text contrast; the focus ring is the coral accent everywhere; text is never smaller than 11 px.
+
+### Changed
+
+- Inter is now served from the app itself instead of Google Fonts, so no request leaves for a third party and the font weights match what the design asks for.
+- On the phone graph the plot leaves room for the navigation and the "Show observations" toggle.
+- Cycle-day badges no longer overlap the date on 320 px screens; the Day info toggle is a 44 px target with a chevron.
+
 ### Fixed
 
 - Save, Open map and other primary buttons no longer keep pulsing forever after the first click.
