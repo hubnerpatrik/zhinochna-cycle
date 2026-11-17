@@ -1,7 +1,9 @@
 import { t } from '../i18n.js';
-import { setOverlayPosition } from './layout-classes.js';
+import { applyLayoutClass, setOverlayPosition } from './layout-classes.js';
+import { modalOrigin } from './modal-origin.js';
 
 const VIEWPORT_GAP = 8;
+const LEAVE_MS = 140;
 const EXPORT_FORMATS = [['pdf', 'PDF'], ['xlsx', 'Excel (.xlsx)'], ['json', 'JSON']];
 
 export function exportMenuPosition(triggerBounds, menuSize, viewportSize) {
@@ -27,18 +29,27 @@ export function openExportMenu(trigger, onExport) {
   menu.setAttribute('aria-label', t('Export'));
   const positionMenu = () => {
     const viewport = document.documentElement;
-    setOverlayPosition(menu, 'export-menu', exportMenuPosition(
-      trigger.getBoundingClientRect(),
+    const bounds = trigger.getBoundingClientRect();
+    const position = exportMenuPosition(
+      bounds,
       { width: menu.offsetWidth, height: menu.offsetHeight },
       { width: viewport.clientWidth, height: viewport.clientHeight },
-    ));
+    );
+    setOverlayPosition(menu, 'export-menu', position);
+    // The menu scales out of the button that opened it and back into it.
+    const origin = modalOrigin({ trigger: bounds, card: position });
+    applyLayoutClass(menu, 'export-menu-origin', { '--menu-origin-x': origin.x, '--menu-origin-y': origin.y });
   };
   const dismiss = () => {
     window.removeEventListener('resize', positionMenu);
     window.removeEventListener('scroll', positionMenu, true);
     trigger.setAttribute('aria-expanded', 'false');
     trigger.removeAttribute('aria-controls');
-    menu.remove();
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) menu.remove();
+    else {
+      menu.classList.add('is-leaving');
+      setTimeout(() => menu.remove(), LEAVE_MS);
+    }
     if (dismissActiveMenu === dismiss) dismissActiveMenu = null;
   };
   dismissActiveMenu = dismiss;

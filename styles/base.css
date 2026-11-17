@@ -1634,6 +1634,17 @@ input:focus{
   transform:translateX(-50%) translateY(0);
 }
 
+.toast.show:not(.persistent-toast){
+  pointer-events:auto; /* so it can be pushed away; it is a small pill at the bottom */
+}
+
+.toast.toast-dragging{
+  /* The finger owns the position while the message is pushed down. */
+  transform:translateX(-50%) translateY(var(--toast-drag-y, 0px));
+  transition:none;
+  touch-action:none;
+}
+
 .toast.action-toast{
   display:flex;
   align-items:center;

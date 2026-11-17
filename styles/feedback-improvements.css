@@ -13,6 +13,17 @@
 .feedback-image-picker small { color: var(--ink-muted); }
 .map-export-popover { position: fixed; inset: auto; margin: 0; display: none; grid-template-columns: 1fr; gap: 6px; width: 180px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 10px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card); box-shadow: 0 12px 36px var(--shade); }
 .map-export-popover:popover-open { display: grid; }
+.map-export-popover {
+  transform-origin: var(--menu-origin-x, 50%) var(--menu-origin-y, 0);
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease-out-soft);
+}
+@starting-style {
+  .map-export-popover:popover-open { opacity: 0; transform: scale(0.9); }
+}
+.map-export-popover.is-leaving { opacity: 0; transform: scale(0.9); pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .map-export-popover { transition: none; }
+}
 .map-export-popover .btn { width: 100%; min-height: 44px; }
 .bleeding-intensity button { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .bleeding-intensity [data-bleeding-icon] { display: block; width: 42px; height: 26px; color: var(--data-bleeding); }

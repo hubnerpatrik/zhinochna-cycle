@@ -87,7 +87,9 @@ export function enhanceTimeInputs(root) {
       };
       list.addEventListener("wheel", () => { interacting = true; }, { passive: true });
       list.addEventListener("pointerdown", () => { interacting = true; });
-      list.addEventListener("scroll", () => {
+      // The browser says when scrolling (including its momentum) has ended; the timer is only the fallback.
+      if ("onscrollend" in window) list.addEventListener("scrollend", settle);
+      else list.addEventListener("scroll", () => {
         clearTimeout(timer);
         if (interacting) timer = setTimeout(settle, SCROLL_SETTLE_DELAY_MS);
       });

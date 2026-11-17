@@ -1101,11 +1101,23 @@ html:has(.modal.show) .modal.hidden .modal-card {
 /* Switching screens (Menu, My Maps, Active Map) cross-fades briefly; the tab bar stays put. */
 .header-nav { view-transition-name: app-nav; }
 
+/* The new screen arrives from the side it sits on in the tab bar; the old one leaves the other way. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 160ms;
-  animation-timing-function: ease-out;
+  animation-duration: 180ms;
+  animation-timing-function: var(--ease-out-soft);
+  animation-fill-mode: both;
 }
+
+@keyframes screen-out-left { to { opacity: 0; transform: translateX(-24px); } }
+@keyframes screen-out-right { to { opacity: 0; transform: translateX(24px); } }
+@keyframes screen-in-right { from { opacity: 0; transform: translateX(24px); } }
+@keyframes screen-in-left { from { opacity: 0; transform: translateX(-24px); } }
+
+html.screen-forward::view-transition-old(root) { animation-name: screen-out-left; }
+html.screen-forward::view-transition-new(root) { animation-name: screen-in-right; }
+html.screen-back::view-transition-old(root) { animation-name: screen-out-right; }
+html.screen-back::view-transition-new(root) { animation-name: screen-in-left; }
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),

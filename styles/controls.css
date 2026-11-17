@@ -50,6 +50,17 @@
   background: var(--surface);
   box-shadow: 0 8px 24px rgba(46, 32, 25, .16);
 }
+.language-picker-menu {
+  transform-origin: 50% 0;
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease-out-soft);
+}
+.language-picker[open] .language-picker-menu { opacity: 1; transform: none; }
+@starting-style {
+  .language-picker[open] .language-picker-menu { opacity: 0; transform: scale(0.92); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .language-picker-menu { transition: none; }
+}
 .language-picker-menu button { display: grid; place-items: center; min-height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; cursor: pointer; }
 .language-picker-menu button[aria-pressed="true"] { background: var(--surface-alt); }
 

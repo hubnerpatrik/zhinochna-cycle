@@ -109,6 +109,7 @@
   #mobileMapActions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   #mobileToolFeedback .toast { position: static; width: 100%; max-width: none; margin: 0 0 8px; transform: none; border-radius: 14px; box-shadow: none; font-size: 0.75rem; padding: 10px; }
   #mobileToolFeedback .toast:not(.show) { display: none; }
+  #mobileToolFeedback .toast.toast-dragging { transform: translateY(var(--toast-drag-y, 0px)); }
   #mobileCancelToolBtn { display: block; min-width: 100px; margin: 0 auto; }
   #mobileCancelToolBtn.hidden, #mobileMapActions.hidden { display: none; }
   #mobileDayBtn { background: var(--action-fill); border-color: transparent; color: var(--action-fill-ink); }
