@@ -699,9 +699,10 @@ select:not([multiple]) {
   .header-brand { grid-area: brand; justify-self: stretch; }
   .app-header .account-bar { grid-area: account; justify-self: end; }
 
+  /* Relative, so the flag menu opens under its own button rather than across the header. */
   .app-header > .language-picker {
     grid-area: language;
-    position: static;
+    position: relative;
   }
 
   .header-nav {

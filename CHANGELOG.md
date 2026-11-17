@@ -28,6 +28,7 @@ vMAJOR.MINOR.PATCH
 ### Fixes
 
 - On phones, page content no longer draws over the bottom tab bar.
+- On wide screens, the language menu opens under its own button instead of stretching across the whole header.
 
 ### Accessibility
 

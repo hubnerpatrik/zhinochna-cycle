@@ -51,3 +51,11 @@ test('on phones the header makes no stacking context, so the fixed tab bar stays
   assert.match(components, /\.app-header \{[^}]*isolation: isolate/, 'wide screens isolate the header for the sprig');
   assert.match(phone, /\.app-header \{[^}]*isolation: auto/, 'phones undo it for the tab bar');
 });
+
+test('on wide screens the language menu opens under its own button, not across the whole header', () => {
+  const wide = components.match(/@media \(min-width: 561px\) and \(min-height: 501px\), \(min-width: 561px\) and \(pointer: fine\) \{([\s\S]*?)\n\}/)?.[1] || '';
+  const picker = wide.match(/\.app-header > \.language-picker \{([^}]*)\}/)?.[1] || '';
+  assert.ok(picker, 'the wide header places the picker in its grid area');
+  assert.doesNotMatch(picker, /position:\s*static/, 'a static picker would anchor its 100%-wide menu to the header');
+  assert.match(picker, /position:\s*relative/);
+});
