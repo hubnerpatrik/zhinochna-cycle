@@ -38,6 +38,17 @@
   --warning-line: #dcb977;
   --warning-ink: #634817;
 
+  /* Header bloom: the one floral place in the app. A pale blush band with a thin botanical
+     sprig and a flower mark; these colours stay inside the header (test/css-tokens.test.js). */
+  --bloom-ground: #f8e4e6;
+  --bloom-ink: #2a1f21;
+  --bloom-ink-muted: #75565b;
+  --bloom-petal: #f4ccd2;
+  --bloom-petal-edge: #dd9eaa;
+  --bloom-heart: #ecc77f;
+  --bloom-leaf: #98b293;
+  --bloom-leaf-tint: #e1ebdc;
+
   /* Overlays and shadows. */
   --backdrop: rgba(31, 26, 23, 0.32);
   --shade: rgba(31, 26, 23, 0.12);
@@ -130,6 +141,11 @@
     --line: rgba(31, 26, 23, 0.45);
     --line-soft: rgba(31, 26, 23, 0.3);
     --ink-muted: #4a423c;
+    --bloom-ink-muted: #523a3e;
+  }
+
+  .header-sprig {
+    display: none;
   }
 }
 

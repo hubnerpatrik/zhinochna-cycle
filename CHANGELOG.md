@@ -17,6 +17,7 @@ vMAJOR.MINOR.PATCH
 ### Design
 
 - New look across the app: white cards on a warm off-white background, one coral accent, solid coral primary buttons with white labels, a sunken segmented switch, soft borderless calendar tiles with the selected day filled in coral and today marked in coral, and a white bottom tab bar on phones. Observation colours in the calendar and chart are unchanged.
+- The app header is a soft blush band with a small flower mark and, on wide screens, a thin botanical sprig in its corner; the map title on phones shares the same band. Long profile names now shorten with an ellipsis instead of running into the account text.
 
 ### Accessibility
 

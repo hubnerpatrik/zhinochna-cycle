@@ -561,29 +561,55 @@ select:not([multiple]) {
   }
 }
 
-/* App header: brand mark and name, quiet account tools, plain text tabs on one hairline. */
+/* App header: a pale blush band with a flower mark, one thin botanical sprig in the corner,
+   quiet account tools and plain text tabs. The only floral place in the app. */
+.app-header {
+  isolation: isolate;
+  border-radius: var(--r-lg);
+  background: var(--bloom-ground);
+  color: var(--bloom-ink);
+}
+
+.header-sprig {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  width: 210px;
+  clip-path: inset(0 round 0 0 var(--r-lg) 0);
+  height: 100%;
+  pointer-events: none;
+}
+
+.header-sprig .sprig-stem {
+  fill: none;
+  stroke: var(--bloom-leaf);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+}
+
+.header-sprig .sprig-leaf {
+  fill: var(--bloom-leaf-tint);
+  stroke: var(--bloom-leaf);
+  stroke-width: 1;
+}
+
+.header-sprig .sprig-blossom,
+.brand-bloom .bloom-petals {
+  fill: var(--bloom-petal);
+  stroke: var(--bloom-petal-edge);
+  stroke-width: 1;
+}
+
+.header-sprig .sprig-heart,
+.brand-bloom .bloom-heart {
+  fill: var(--bloom-heart);
+}
+
 .brand-mark {
   flex: none;
   width: 28px;
   height: 28px;
-}
-
-.brand-mark-track {
-  fill: none;
-  stroke: var(--ink);
-  stroke-opacity: 0.14;
-  stroke-width: 3;
-}
-
-.brand-mark-arc {
-  fill: none;
-  stroke: var(--action);
-  stroke-width: 3;
-  stroke-linecap: round;
-}
-
-.brand-mark-dot {
-  fill: var(--action-fill);
 }
 
 .header-brand {
@@ -598,10 +624,12 @@ select:not([multiple]) {
 }
 
 .header-brand h1 {
+  display: block;
   margin: 0;
   font-size: 1.125rem;
   font-weight: 650;
   letter-spacing: -0.02em;
+  color: var(--bloom-ink);
   text-shadow: none;
   white-space: nowrap;
   overflow: hidden;
@@ -614,7 +642,7 @@ select:not([multiple]) {
   gap: 8px;
   margin: 0;
   min-width: 0;
-  color: var(--ink-muted);
+  color: var(--bloom-ink-muted);
   font-size: 0.8125rem;
 }
 
@@ -624,15 +652,15 @@ select:not([multiple]) {
   padding: 0 10px;
   border-color: transparent;
   background: transparent;
-  color: var(--ink-muted);
+  color: var(--bloom-ink-muted);
   font-size: 0.8125rem;
   font-weight: 500;
 }
 
 .app-header .account-bar .btn:hover {
   border-color: transparent;
-  background: var(--surface-alt);
-  color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  color: var(--bloom-ink);
 }
 
 .app-header .language-picker-trigger {
@@ -642,7 +670,7 @@ select:not([multiple]) {
 }
 
 .app-header .language-picker-trigger:hover {
-  background: var(--surface-alt);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
 }
 
 #accountEmail {
@@ -662,13 +690,13 @@ select:not([multiple]) {
       "nav nav nav";
     align-items: center;
     column-gap: 16px;
-    row-gap: 6px;
-    margin: 0 -14px 24px;
-    padding: 12px 14px 0;
-    border-bottom: 1px solid var(--line);
+    row-gap: 4px;
+    margin: 0 0 24px;
+    padding: 14px 216px 0 18px;
+    border-bottom: 0;
   }
 
-  .header-brand { grid-area: brand; }
+  .header-brand { grid-area: brand; justify-self: stretch; }
   .app-header .account-bar { grid-area: account; justify-self: end; }
 
   .app-header > .language-picker {
@@ -681,7 +709,7 @@ select:not([multiple]) {
     justify-self: stretch;
     display: flex;
     gap: 4px;
-    margin-bottom: -1px;
+    margin: 0;
     padding: 0;
     border: 0;
     border-radius: 0;
@@ -697,14 +725,14 @@ select:not([multiple]) {
     border: 0;
     border-radius: 0;
     background: transparent;
-    color: var(--ink-muted);
+    color: var(--bloom-ink-muted);
     font-size: 0.9375rem;
     font-weight: 500;
   }
 
   .header-nav-btn:hover:not(:disabled) {
     background: transparent;
-    color: var(--ink);
+    color: var(--bloom-ink);
   }
 
   .header-nav-btn:active {
@@ -713,7 +741,7 @@ select:not([multiple]) {
 
   .header-nav-btn.is-active {
     background: transparent;
-    color: var(--ink);
+    color: var(--bloom-ink);
     box-shadow: inset 0 -2px 0 var(--action);
   }
 
@@ -725,10 +753,46 @@ select:not([multiple]) {
 
 }
 
+/* Narrow desktop and tablet: the account tools need the room, so the sprig steps aside. */
+@media (min-width: 561px) and (max-width: 900px) {
+  .app-header {
+    padding-right: 18px;
+  }
+
+  .header-sprig {
+    display: none;
+  }
+}
+
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
   .app-header {
     flex-wrap: wrap;
     row-gap: 10px;
+    min-height: 60px;
+    padding: 8px 76px 8px 12px;
+  }
+
+  .app-header > .language-picker {
+    top: 8px;
+    right: 8px;
+  }
+
+  /* Phones keep the flower mark and the band; the sprig would crowd the language button. */
+  .header-sprig {
+    display: none;
+  }
+
+  .mobile-map-header {
+    min-height: 60px;
+    padding: 8px 8px 8px 12px;
+    border-radius: var(--r-lg);
+    background: var(--bloom-ground);
+    color: var(--bloom-ink);
+  }
+
+  .mobile-map-header .brand-mark {
+    width: 26px;
+    height: 26px;
   }
 
   .header-brand h1 {

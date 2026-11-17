@@ -7,7 +7,7 @@ const header = html.match(/<header class="app-header">([\s\S]*?)<\/header>/)?.[1
 const components = readFileSync(new URL('../styles/components.css', import.meta.url), 'utf8');
 
 test('the app header is one bar: brand mark, name, account tools and navigation together', () => {
-  assert.match(header, /<svg class="brand-mark"/, 'the brand has its own mark');
+  assert.match(header, /<svg class="brand-mark[ "]/, 'the brand has its own mark');
   assert.match(header, /<div class="account-bar">/, 'account tools live inside the header');
   assert.doesNotMatch(html.replace(header, ''), /class="account-bar"/, 'no separate account row above the header');
   assert.match(header, /<p class="app-kicker visually-hidden"/, 'the tracked-caps kicker is not shown');

@@ -21,6 +21,14 @@ colors:
   success-tint: "#e2f2dd"
   warning-tint: "#fff4dc"
   warning-ink: "#634817"
+  bloom-ground: "#f8e4e6"
+  bloom-ink: "#2a1f21"
+  bloom-ink-muted: "#75565b"
+  bloom-petal: "#f4ccd2"
+  bloom-petal-edge: "#dd9eaa"
+  bloom-heart: "#ecc77f"
+  bloom-leaf: "#98b293"
+  bloom-leaf-tint: "#e1ebdc"
   calendar-fertile: "#cfe7b4"
   calendar-fertile-text: "#4d6246"
   calendar-period: "#f4c7cf"
@@ -166,7 +174,7 @@ The category standard, played straight at a high craft level. One person, often 
 
 The interface stays quiet so the observations can speak. Colour in the interface means exactly one thing (coral: act here, you are here, this is selected); every other colour on screen belongs to the recorded data and the chart. Depth is a single soft ambient lift under white cards and a deeper float under sheets. The one translucent material is the phone tab bar, frosted at the user's explicit request, with a solid fallback.
 
-This world replaces the earlier notebook look: no cream paper, no pastel button fills, no hairline-boxed day cells. It must not feel clinical, dark or technical, and it carries no medical, contraceptive or decorative-feminine styling.
+This world replaces the earlier notebook look: no cream paper, no pastel button fills, no hairline-boxed day cells. It must not feel clinical, dark or technical, and it carries no medical or contraceptive styling. The one decorative exception is the header bloom: a pale blush band with a flower mark and a thin botanical sprig.
 
 **Key Characteristics:**
 - Warm off-white ground, white cards, one ambient shadow.
@@ -201,8 +209,13 @@ A warm neutral interface with a single coral voice, set beside a fixed, separate
 ### Observation data (fixed)
 The `--data-*`, `--calendar-*`, `--tool-*` and legacy base colours (`--blue`, `--red`, `--orange`, `--green`, `--mucus-navy`, `--cervix-light`) are unchanged by this world. Fertile days fill pale green (#cfe7b4), menstruation days fill pale rose (#f4c7cf); the chart draws with the `data-*` values; the four chart tools each carry a soft pastel of what they draw. `chart-palette.js` mirrors these values for the canvas and `test/chart-palette.test.js` keeps them in sync with `styles/tokens.css`.
 
+### Header bloom
+The app header is the one floral place in the app, at the user's explicit request (2026-11-17): a flat pale blush band (**Bloom Ground** #f8e4e6, 22px radius) with **Bloom Ink** (#2a1f21) for the name and **Bloom Ink Muted** (#75565b) for account text and inactive tabs (both above 4.5:1 on the band). The brand mark is a five-petal flower (**Bloom Petal** #f4ccd2 with a **Petal Edge** #dd9eaa outline and a buttery **Heart** #ecc77f). On wide screens (over 900px) a thin botanical sprig (sage **Leaf** #98b293 strokes on **Leaf Tint** #e1ebdc, two small blossoms) sits in the band's bottom-right corner behind the content; it is hidden on phones, on narrow desktop and under `prefers-contrast: more`. The phone map title row (`.mobile-map-header`) takes the same band and flower. The active tab keeps the coral underline.
+
 ### Named Rules
-**The One Voice Rule.** Coral is the only interface colour. It marks what to press, what is selected, where focus is, and where you are. Nothing else in the chrome is tinted.
+**The One Voice Rule.** Coral is the only interface accent. It marks what to press, what is selected, where focus is, and where you are. The only other tinted chrome is the header bloom band, which carries no meaning.
+
+**The Bloom Stays Home Rule.** `--bloom-*` colours and floral drawings appear only in the app header and the phone map title row; `test/css-tokens.test.js` enforces it.
 
 **The Data Is Not Decoration Rule.** Observation colours appear only where they encode a recorded observation or a chart tool's mark. Never use them for navigation, emphasis, illustration or brand.
 
@@ -294,7 +307,7 @@ Sidebar actions and the Edit Day sheet are one grouped list, not separate boxes:
 
 ### Navigation
 - **Phone:** a frosted bottom tab bar (see The Single Glass Rule) with icon over label; inactive tabs in Ink Muted, the active tab in coral with a 2px icon stroke.
-- **Desktop:** plain text tabs (0.9375rem, 500) on the header hairline; the active tab is ink with a 2px coral underline.
+- **Desktop:** plain text tabs (0.9375rem, 500) along the bottom edge of the blush header band; the active tab is Bloom Ink with a 2px coral underline.
 - **Screen changes** cross-fade in 160ms; the tab bar holds still.
 
 ### Sheets and Dialogs
@@ -320,6 +333,6 @@ Ink ground, white text, full width minus 24px on phones; a single action (Undo) 
 - **Don't** use observation colours for decoration, navigation, brand or emphasis.
 - **Don't** add gradients or glass anywhere except the time-picker drum fade and the phone tab bar.
 - **Don't** lift cards on hover or stack a second shadow inside a card.
-- **Don't** add medical or contraceptive styling, fertility verdict colours, flowers, hearts, or gamification.
+- **Don't** add medical or contraceptive styling, fertility verdict colours, hearts, or gamification; flowers stay in the header bloom only.
 - **Don't** add uppercase eyebrow or kicker labels above titles.
 - **Don't** make the interface dark, clinical or technical.

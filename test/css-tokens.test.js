@@ -224,3 +224,37 @@ test('colour values live only in tokens.css; other stylesheets reference tokens'
   }
   assert.deepEqual(offenders, []);
 });
+
+test('the app header is a flat pastel bloom band whose text stays readable', () => {
+  const css = read('tokens.css');
+  const ground = token(css, '--bloom-ground');
+  const ink = token(css, '--bloom-ink');
+  const muted = token(css, '--bloom-ink-muted');
+  const surface = token(css, '--surface');
+  assert.ok(ground && ink && muted, 'bloom tokens are hex colours');
+  assert.ok(contrast(ground, surface) <= 1.25, 'the band stays a pale pastel');
+  assert.ok(contrast(ink, ground) >= 4.5, `title on the band is ${contrast(ink, ground).toFixed(2)}:1`);
+  assert.ok(contrast(muted, ground) >= 4.5, `secondary text on the band is ${contrast(muted, ground).toFixed(2)}:1`);
+  for (const selector of ['.app-header', '.mobile-map-header']) {
+    const body = rules(allCss(), selector).join(';');
+    assert.match(body, /background:\s*var\(--bloom-ground\)/, `${selector} sits on the bloom band`);
+  }
+});
+
+test('the floral motif lives only in the header and is decorative', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const header = html.match(/<header class="app-header">([\s\S]*?)<\/header>/)[1];
+  assert.match(header, /<svg class="brand-mark brand-bloom"[^>]*aria-hidden="true"/, 'flower brand mark');
+  assert.match(header, /<svg class="header-sprig"[^>]*aria-hidden="true"/, 'botanical sprig');
+  assert.match(html.match(/<div class="mobile-map-header[^"]*">([\s\S]*?)<\/div>/)[1], /class="brand-mark brand-bloom"/, 'phone map header carries the flower');
+  const offenders = [];
+  for (const name of readdirSync(STYLES).filter(file => file.endsWith('.css'))) {
+    const source = read(name).replace(/\/\*[\s\S]*?\*\//g, '');
+    for (const [, selectors, body] of source.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (!/var\(--bloom-/.test(body)) continue;
+      const parts = selectors.split(',').map(part => part.trim());
+      if (!parts.every(part => /^(\.app-header|\.header-|\.brand-|\.mobile-map-header|#navMenuBtn|body\.mobile-map-active)/.test(part))) offenders.push(`${name}: ${selectors.trim()}`);
+    }
+  }
+  assert.deepEqual(offenders, [], 'bloom colours stay in the header');
+});

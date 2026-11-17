@@ -21,6 +21,8 @@ STORY: The visitor opens the app, sees the month and today's reading at a glance
 
 FIRST VIEWPORT (phone): title row (map name, language); segmented Calendar/Graph track beside Map info and Summary; white calendar card where ordinary days are bare numerals and only data states fill a tile (fertile, menstruation), rounded-square tiles because each cell carries a cycle-day numeral and marker dots; selected day filled coral, today ringed in coral; a Today card with date, cycle day, big temperature, and Day record (coral) beside Tools, kept side by side because the user asked that layout and functions stay; frosted-glass bottom tab bar with coral active tab.
 
+HEADER BLOOM (2026-11-17, user request "floral, pastel, but not crazy"): the app header and the phone map title row are a flat pale blush band with a five-petal flower mark; wide screens add one thin botanical sprig in the band corner. Tabs stay plain text with the coral underline. Floral colours stay in the header only.
+
 FORM: Category standard (canon), chosen by the user in the safer re-roll round; quality bar named by the user: Flo. seed:2bdb6436d73fa440
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
