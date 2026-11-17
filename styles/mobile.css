@@ -159,17 +159,18 @@
 }
 
 /* Small, presentation-only transitions; navigation and saves never wait for them. */
-@keyframes mobile-panel-in {
-  from { opacity: .65; }
-  to { opacity: 1; }
+/* The Calendar/Graph panel slides in on a spring (active-map/tab-slide.js). */
+.tab-sliding {
+  transform: translateX(var(--tab-slide-x, 0px));
+  opacity: var(--tab-slide-alpha, 1);
+}
+
+/* The panel arrives from beyond the edge; it must not give the page a sideways scrollbar meanwhile. */
+#activeMapScreen:has(> .tab-sliding) {
+  overflow-x: clip;
 }
 
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
-  #activeMapScreen:not(.mobile-calendar-view) > .chart-card,
-  #activeMapScreen.mobile-calendar-view > .layout {
-    animation: mobile-panel-in 160ms ease-out;
-  }
-
   .mobile-map-tabs button,
   .mobile-map-actions > .btn,
   .mobile-tools-list button {
@@ -185,9 +186,6 @@
 }
 
 @media (max-width: 560px) and (prefers-reduced-motion: reduce), (max-height: 500px) and (pointer: coarse) and (prefers-reduced-motion: reduce) {
-  #activeMapScreen:not(.mobile-calendar-view) > .chart-card,
-  #activeMapScreen.mobile-calendar-view > .layout { animation: none; }
-
   .mobile-map-tabs button,
   .mobile-map-actions > .btn,
   .mobile-tools-list button,

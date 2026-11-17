@@ -9,6 +9,7 @@ import { DEFAULT_LAYOUT, LAYOUT, PHONE_LAYOUT_QUERY, TEMP_FACTORS, chartY, forma
 import { makeSheetDialog } from "../ui/sheet-dialog.js";
 import { applyLayoutClass } from '../ui/layout-classes.js';
 import { ZOOM_MIN, ZOOM_MAX, clampZoom } from './map-gestures.js';
+import { slideIn } from './tab-slide.js';
 
 const MOBILE_AXIS_WIDTH = 48;
 const CHART_BORDER_WIDTH = 2;
@@ -67,6 +68,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
       view().left = scroll.scrollLeft;
       view().top = scroll.scrollTop;
     }
+    const changed = view().tab !== tab;
     view().tab = tab;
     if (tab === "calendar" && store.selectedKey) {
       const date = parseDateKey(store.selectedKey);
@@ -74,6 +76,13 @@ export function createMobileMap({ render, getColumns, interactions }) {
       store.year = date.getFullYear();
     }
     render();
+    if (changed) {
+      slideIn({
+        direction: tab === "graph" ? 1 : -1,
+        element: document.querySelector(tab === "graph" ? "#activeMapScreen > .chart-card" : "#activeMapScreen > .layout"),
+        reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      });
+    }
     if (tab === "graph") {
       const firstVisit = view().left === null;
       scroll.scrollLeft = view().left ?? 0;
@@ -358,7 +367,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
     },
     clampWidth(width) { return active() ? Math.max(fitWidth, Math.min(Math.max(ZOOM_MAX, fitWidth), width)) : clampZoom(width); },
     setWidth(width) {
-      if (active()) view().zoom = this.clampWidth(width) / fitWidth;
+      if (active()) view().zoom = width / fitWidth; // callers clamp; a pinch may stretch past the limit while held
       else { desktopWidth = width; LAYOUT.columnWidth = width; }
     },
     zoomStep(direction, width = LAYOUT.columnWidth) {

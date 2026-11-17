@@ -19,6 +19,7 @@ vMAJOR.MINOR.PATCH
 - Every tappable card, chip and button now answers a press at once with the same small scale; hover effects only apply on devices that can hover, so nothing stays highlighted after a tap on a phone.
 - Small targets (calendar days, the language picker, the "What's new" link) have a larger invisible touch area, and taps no longer wait for a possible double-tap zoom.
 - On phones a sheet now rises on a spring and can be grabbed while it is still moving; the dimmed background follows the sheet as it is dragged, rises or is dismissed. On wide screens an editor opened from a button grows out of that button.
+- On phones the Calendar and Graph panels slide in from the side of their tab. The zoom buttons move on a spring, so quick repeated taps flow into each other. Pinching past the zoom limit resists and springs back on release. A coverline you drag keeps the offset from where you grabbed it instead of jumping under the finger.
 - Sheets and the calendar swipe share one spring animator; dragging a coverline or marking fertile days no longer relies on a timer to ignore the click that follows.
 
 ### Design

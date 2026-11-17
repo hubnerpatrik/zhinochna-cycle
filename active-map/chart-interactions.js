@@ -2,6 +2,7 @@ import { setText } from '../i18n.js';
 import { store } from "../store.js";
 import { clearCycleCoverlineValues } from "../domain.js";
 import {
+  coverlineGrabOffset,
   getCoverlineDragTarget,
   handleCanvasClick,
   renderChart,
@@ -326,7 +327,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       coverlineSelected = true;
       showCoverlinePill();
       renderCurrentChart();
-      activeDrag = { pointerId: event.pointerId, target, startX: point.x, startY: point.y, moved: false };
+      activeDrag = { pointerId: event.pointerId, target, startX: point.x, startY: point.y, moved: false, grab: coverlineGrabOffset(target, point.x, point.y, getColumns()) };
       canvas.setPointerCapture?.(event.pointerId);
       setCursor(canvas, target, true);
     });
@@ -337,7 +338,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       if (activeDrag?.pointerId === event.pointerId) {
         event.preventDefault();
         if (Math.hypot(point.x - activeDrag.startX, point.y - activeDrag.startY) >= 3) activeDrag.moved = true;
-        if (activeDrag.moved && updateCoverlineDrag(activeDrag.target, point.x, point.y, getColumns())) {
+        if (activeDrag.moved && updateCoverlineDrag(activeDrag.target, point.x - activeDrag.grab.dx, point.y - activeDrag.grab.dy, getColumns())) {
           renderCurrentChart();
         }
         return;

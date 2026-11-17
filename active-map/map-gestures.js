@@ -1,7 +1,10 @@
+import { createSpringDriver, rubberband } from '../ui/motion.js';
+
 export const ZOOM_MIN = 24;
 export const ZOOM_MAX = 90;
 const CHART_HEADER_HEIGHT = 28;
 const TOUCH_DRAG_THRESHOLD = 8;
+const STRETCH_RATIO = 0.25; // how far past a zoom limit a pinch can stretch, as a share of the limit
 export const clampZoom = width => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, width));
 
 // Labels stay fixed in size; only the day columns change width.
@@ -10,13 +13,34 @@ export function zoomScrollLeft(scrollLeft, anchorX, fixedWidth, oldWidth, newWid
   return Math.max(0, fixedWidth + day * newWidth - anchorX);
 }
 
-/** Keep native one-finger scrolling and inertia. Intercept only two-finger zoom. */
-export function bindMapGestures(element, { getWidth, setWidth, fixedWidth, onPinch = () => {}, clampWidth = clampZoom, getHeight = () => 0 }) {
+/**
+ * Keep native one-finger scrolling and inertia. Intercept only two-finger zoom. Past either zoom limit the
+ * pinch resists progressively, and on release the width springs back to the limit.
+ */
+export function bindMapGestures(element, { getWidth, setWidth, fixedWidth, onPinch = () => {}, clampWidth = clampZoom, getHeight = () => 0, now }) {
   let pinch = null;
   let firstTouch = null;
   let suppressClick = false;
   let frame = null;
   let pending = null;
+  let anchor = { x: 0, y: 0 };   // where the last pinch was centred, kept while the width springs back
+  const soft = raw => {
+    const low = clampWidth(0);
+    const high = clampWidth(Infinity);
+    if (raw > high) return high + rubberband(raw - high, high * STRETCH_RATIO);
+    if (raw < low) return low - rubberband(low - raw, low * STRETCH_RATIO);
+    return raw;
+  };
+  const bounce = width => {
+    const oldWidth = getWidth();
+    const oldHeight = getHeight();
+    const left = element.scrollLeft;
+    const top = element.scrollTop;
+    setWidth(width);
+    element.scrollLeft = zoomScrollLeft(left, anchor.x, fixedWidth(), oldWidth, width);
+    if (oldHeight) element.scrollTop = Math.max(0, (top + anchor.y - CHART_HEADER_HEIGHT) * getHeight() / oldHeight - anchor.y + CHART_HEADER_HEIGHT);
+  };
+  const springBack = createSpringDriver({ setOffset: bounce, now });
   const distance = touches => Math.hypot(
     touches[0].clientX - touches[1].clientX,
     touches[0].clientY - touches[1].clientY,
@@ -43,6 +67,7 @@ export function bindMapGestures(element, { getWidth, setWidth, fixedWidth, onPin
     if (event.touches.length !== 2) return;
     event.preventDefault();
     flush();
+    springBack.stop();
     onPinch();
     suppressClick = true;
     pinch = {
@@ -62,7 +87,8 @@ export function bindMapGestures(element, { getWidth, setWidth, fixedWidth, onPin
         event.touches[0].clientY - firstTouch.y) > TOUCH_DRAG_THRESHOLD) suppressClick = true;
     if (!pinch || event.touches.length !== 2) return;
     event.preventDefault();
-    const width = clampWidth(pinch.width * distance(event.touches) / pinch.distance);
+    const width = soft(pinch.width * distance(event.touches) / pinch.distance);
+    anchor = { x: midpoint(event.touches), y: (event.touches[0].clientY + event.touches[1].clientY) / 2 - element.getBoundingClientRect().top };
     pending = {
       width,
       height: pinch.height, top: pinch.top, anchorY: pinch.anchorY,
@@ -76,6 +102,13 @@ export function bindMapGestures(element, { getWidth, setWidth, fixedWidth, onPin
   const finish = event => {
     if (event.touches.length < 2) {
       flush();
+      if (pinch) {
+        const target = clampWidth(getWidth());
+        if (target !== getWidth()) {
+          springBack.show(getWidth());
+          springBack.animateTo(target, 0);
+        }
+      }
       pinch = null;
     }
     if (!event.touches.length) firstTouch = null;

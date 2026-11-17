@@ -9,6 +9,7 @@ import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
 import { LAYOUT, PHONE_LAYOUT_QUERY, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
 import { bindCalendarSwipe } from "./calendar-swipe.js";
 import { addSheetGrip, bindSheetDismiss } from "../ui/sheet.js";
+import { createZoomAnimator } from "./zoom-spring.js";
 import { observationChoiceValue } from '../ui/observation-values.js';
 import { configureMapSettingsEditor } from '../ui/profile-info-modal.js';
 import { installModalKeyboard } from '../ui/modal-a11y.js';
@@ -55,8 +56,6 @@ import {
 } from "../ui.js";
 
 const CHART_HEADER_HEIGHT = 28;
-const ZOOM_ANIMATION_DURATION_MS = 180;
-const ZOOM_EASING_EXPONENT = 3;
 
 let initialized = false;
 
@@ -200,13 +199,6 @@ export function initializeActiveMapControls({
     renderZoom();
     renderZoomLabel();
   };
-  let zoomFrame = null;
-  let zoomTarget = null;
-  const cancelZoom = () => {
-    if (zoomFrame !== null) cancelAnimationFrame(zoomFrame);
-    zoomFrame = null;
-    zoomTarget = null;
-  };
   const applyZoom = width => {
     const oldHeight = LAYOUT.chartHeight;
     const top = mapScroll?.scrollTop || 0;
@@ -218,21 +210,15 @@ export function initializeActiveMapControls({
     if (mapScroll && mobileMap.active()) mapScroll.scrollTop = Math.max(0,
       (top + anchorY - CHART_HEADER_HEIGHT) * LAYOUT.chartHeight / oldHeight - anchorY + CHART_HEADER_HEIGHT);
   };
-  const zoomBy = step => {
-    const target = mobileMap.clampWidth(mobileMap.zoomStep(step, zoomTarget ?? LAYOUT.columnWidth));
-    cancelZoom();
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return applyZoom(target);
-    const startWidth = LAYOUT.columnWidth;
-    const start = performance.now();
-    zoomTarget = target;
-    const animate = now => {
-      const progress = Math.min(1, (now - start) / ZOOM_ANIMATION_DURATION_MS);
-      applyZoom(startWidth + (target - startWidth) * (1 - (1 - progress) ** ZOOM_EASING_EXPONENT));
-      if (progress < 1) zoomFrame = requestAnimationFrame(animate);
-      else { zoomFrame = null; zoomTarget = null; }
-    };
-    zoomFrame = requestAnimationFrame(animate);
-  };
+  const zoomer = createZoomAnimator({
+    getWidth: () => LAYOUT.columnWidth,
+    applyWidth: applyZoom,
+    clamp: width => mobileMap.clampWidth(width),
+    step: (direction, width) => mobileMap.zoomStep(direction, width),
+    reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
+  const cancelZoom = () => zoomer.cancel();
+  const zoomBy = step => zoomer.by(step);
   bindButton("zoomInBtn", () => zoomBy(1));
   bindButton("zoomOutBtn", () => zoomBy(-1));
   mapScroll?.addEventListener("touchstart", cancelZoom, { passive: true });

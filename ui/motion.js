@@ -81,10 +81,11 @@ export function createSpringDriver({
   };
   const show = x => { state = { x, v: 0 }; setOffset(x); };
 
-  function animateTo(target, velocity = 0, done) {
+  // An omitted velocity keeps the one the value already has, so re-targeting never stops the motion dead.
+  function animateTo(target, velocity, done) {
     stop();
     const mine = session;
-    state = { x: state.x, v: velocity };
+    state = { x: state.x, v: velocity ?? state.v };
     let last = now();
     const tick = () => {
       if (mine !== session) return;

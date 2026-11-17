@@ -577,6 +577,22 @@ function coverlineTempFromY(y, allowTopBoundary = false) {
   return Math.min(maximum, Math.max(LAYOUT.minTemp, pixelYToTemp(y)));
 }
 
+/**
+ * How far the touch is from the exact spot the dragged part sits at, along the axis it moves on, so the
+ * line keeps that offset instead of jumping to the finger.
+ */
+export function coverlineGrabOffset(target, x, y, columns) {
+  const { horizontal, vertical } = getCoverlineGeometry(columns);
+  const none = { dx: 0, dy: 0 };
+  if (target === "horizontal" && horizontal) return { dx: 0, dy: y - horizontal.y };
+  if (target === "vertical" && vertical) return { dx: x - vertical.x, dy: 0 };
+  if (target === "horizontal-start" && horizontal) return { dx: x - horizontal.startX, dy: 0 };
+  if (target === "horizontal-end" && horizontal) return { dx: x - horizontal.endX, dy: 0 };
+  if (target === "vertical-top" && vertical) return { dx: 0, dy: y - vertical.topY };
+  if (target === "vertical-bottom" && vertical) return { dx: 0, dy: y - vertical.bottomY };
+  return none;
+}
+
 /** Moves a coverline body or resizes one endpoint independently. */
 export function updateCoverlineDrag(target, x, y, columns) {
   const values = {};
