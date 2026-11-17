@@ -720,6 +720,8 @@ select:not([multiple]) {
   .nav-icon { display: none; }
   .nav-label-desktop { display: none; }
   .nav-label-mobile { display: inline; }
+  /* The Menu tab has no short label (phones hide it), so wide screens show its full one. */
+  #navMenuBtn .nav-label-desktop { display: inline; }
 
 }
 

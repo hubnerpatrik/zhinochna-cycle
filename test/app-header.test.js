@@ -30,3 +30,10 @@ test('on wide screens navigation is plain text tabs with an accent underline, no
   assert.match(wide, /\.header-nav\s*\{[^}]*background:\s*transparent/, 'the tab row has no container box');
   assert.doesNotMatch(wide, /border-radius:\s*(?:1[0-9]|[2-9][0-9])px[^}]*\}/, 'no rounded pill containers');
 });
+
+test('on wide screens every tab has a visible label, so the Menu tab is not an empty underlined box', () => {
+  const wide = components.match(/@media \(min-width: 561px\) and \(min-height: 501px\), \(min-width: 561px\) and \(pointer: fine\) \{([\s\S]*?)\n\}/)?.[1] || '';
+  const menuBtn = header.match(/<button id="navMenuBtn"[\s\S]*?<\/button>/)?.[0] || '';
+  assert.match(menuBtn, /class="nav-label-desktop"[^>]*>Main Menu</, 'the Menu tab carries its Main Menu label');
+  assert.match(wide, /#navMenuBtn \.nav-label-desktop\s*\{[^}]*display:\s*inline/, 'wide screens show that label, since the tab has no short one');
+});
