@@ -66,6 +66,7 @@ export function bindFertileRangeDrag() {
   if (!calendar || calendar.dataset.dragBound) return;
   calendar.dataset.dragBound = "true";
   calendar.addEventListener("pointerdown", event => {
+    suppressNextClick = false;
     if (!draft || (event.pointerType === "mouse" && event.button !== 0)) return;
     const key = event.target.closest?.("[data-date]")?.dataset.date;
     if (!key) return;
@@ -89,7 +90,6 @@ export function bindFertileRangeDrag() {
     drag = null;
     // The pointer already applied the change; ignore the click that follows it.
     suppressNextClick = true;
-    setTimeout(() => { suppressNextClick = false; }, 0);
   };
   calendar.addEventListener("pointerup", finish);
   calendar.addEventListener("pointercancel", finish);
@@ -121,11 +121,10 @@ function renderPicker() {
     cell.setAttribute("aria-pressed", String(draft.selectedKeys.has(key)));
     setTranslatedAttribute(cell, "aria-label", cycleDay != null ? `${key} (CD ${cycleDay})` : key);
     cell.classList.toggle("fertile-day", draft.selectedKeys.has(key));
-    cell.onclick = () => {
-      if (suppressNextClick) {
-        suppressNextClick = false;
-        return;
-      }
+    cell.onclick = event => {
+      const suppressed = suppressNextClick && event.detail !== 0;
+      suppressNextClick = false;
+      if (suppressed) return;
       toggleDay(key);
     };
     calendar.appendChild(cell);

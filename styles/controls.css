@@ -51,7 +51,11 @@
   box-shadow: 0 8px 24px rgba(46, 32, 25, .16);
 }
 .language-picker-menu button { display: grid; place-items: center; min-height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; cursor: pointer; }
-.language-picker-menu button:hover, .language-picker-menu button[aria-pressed="true"] { background: var(--surface-alt); }
+.language-picker-menu button[aria-pressed="true"] { background: var(--surface-alt); }
+
+@media (hover: hover) {
+  .language-picker-menu button:hover { background: var(--surface-alt); }
+}
 .language-flag {
   display: block;
   flex: 0 0 24px;
@@ -69,7 +73,9 @@
 button.menu-summary-card { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
 button.menu-summary-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 button.menu-summary-card:disabled { cursor: default; opacity: .65; }
-button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
+@media (hover: hover) {
+  button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
+}
 #fertileRangeCalendar button.day { font: inherit; color: var(--text); }
 #fertileRangeCalendar button.day:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .map-day.cycle-boundary, .map-cell.cycle-boundary { box-shadow: inset 2px 0 var(--data-coverline); }
@@ -118,8 +124,10 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   cursor: pointer;
   transition: background 0.15s var(--ease), transform 0.1s var(--ease);
 }
-.day-switcher-btn:hover { background: var(--hairline); }
-.day-switcher-btn:active { transform: scale(0.92); }
+@media (hover: hover) {
+  .day-switcher-btn:hover { background: var(--hairline); }
+}
+.day-switcher-btn:active { transform: scale(var(--press-scale-small)); }
 
 /* Fertile range: dragging across days marks them, so the grid must not scroll or select text. */
 .fertile-range-calendar .day {
@@ -163,8 +171,10 @@ button.menu-summary-card:not(:disabled):hover { border-color: var(--accent); }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.profile-info-edit:hover { background: var(--action-fill-hover); border-color: var(--action-fill-hover); }
-.profile-info-edit:active { transform: scale(0.96); }
+@media (hover: hover) {
+  .profile-info-edit:hover { background: var(--action-fill-hover); border-color: var(--action-fill-hover); }
+}
+.profile-info-edit:active { transform: scale(var(--press-scale)); }
 .profile-info-edit:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 
 /* Map settings in the create and edit dialogs. */

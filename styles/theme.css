@@ -82,12 +82,14 @@
   transition: background 0.18s ease, transform 0.18s ease;
 }
 
-.btn.primary:hover {
-  background: var(--action-fill-hover);
+@media (hover: hover) {
+  .btn.primary:hover {
+    background: var(--action-fill-hover);
+  }
 }
 
 .btn.primary:active {
-  transform: translateY(0) scale(0.995);
+  transform: scale(var(--press-scale));
 }
 
 .segmented button {
@@ -355,8 +357,10 @@ select:focus,
   border: 1px solid transparent;
 }
 
-.header-nav-btn:hover {
-  background: var(--surface-alt);
+@media (hover: hover) {
+  .header-nav-btn:hover {
+    background: var(--surface-alt);
+  }
 }
 
 
@@ -526,10 +530,12 @@ select {
   box-shadow: none;
 }
 
-input:hover,
-select:hover {
-  border-color: color-mix(in srgb, var(--ink) 22%, transparent);
-  background: var(--surface);
+@media (hover: hover) {
+  input:hover,
+  select:hover {
+    border-color: color-mix(in srgb, var(--ink) 22%, transparent);
+    background: var(--surface);
+  }
 }
 
 input:focus,

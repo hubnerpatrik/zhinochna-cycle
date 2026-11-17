@@ -121,13 +121,15 @@ select:focus-visible{
   transition:background 0.15s var(--ease), color 0.15s var(--ease), transform 0.1s var(--ease);
 }
 
-.header-nav-btn:hover{
-  background:var(--hairline);
-  color:var(--text);
+@media (hover: hover) {
+  .header-nav-btn:hover {
+    background:var(--hairline);
+    color:var(--text);
+  }
 }
 
 .header-nav-btn:active{
-  transform:scale(0.97);
+  transform: scale(var(--press-scale));
 }
 
 .header-nav-btn.is-active{
@@ -266,9 +268,11 @@ select:focus-visible{
   transition:transform 0.16s var(--ease), box-shadow 0.16s var(--ease), border-color 0.16s var(--ease);
 }
 
-.menu-card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 12px 28px rgba(31, 26, 23,0.08);
+@media (hover: hover) {
+  .menu-card:hover {
+    transform:translateY(-3px);
+    box-shadow:0 12px 28px rgba(31, 26, 23,0.08);
+  }
 }
 
 .menu-card.is-disabled{
@@ -521,12 +525,14 @@ h1{
   transition:background 0.15s var(--ease), transform 0.1s var(--ease);
 }
 
-.calendar-nav button:hover{
-  background:var(--hairline);
+@media (hover: hover) {
+  .calendar-nav button:hover {
+    background:var(--hairline);
+  }
 }
 
 .calendar-nav button:active{
-  transform:scale(0.92);
+  transform: scale(var(--press-scale-small));
 }
 
 .calendar-grid{
@@ -562,15 +568,17 @@ h1{
   transition:background 0.15s var(--ease), transform 0.1s var(--ease), box-shadow 0.15s var(--ease), border-color 0.15s var(--ease);
 }
 
-.day:hover{
-  background:var(--bg);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.65),
-    0 2px 4px rgba(31, 26, 23,0.07);
+@media (hover: hover) {
+  .day:hover {
+    background:var(--bg);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.65),
+      0 2px 4px rgba(31, 26, 23,0.07);
+  }
 }
 
 .day:active{
-  transform:scale(0.93);
+  transform: scale(var(--press-scale-small));
 }
 
 .day.selected{
@@ -810,12 +818,14 @@ h1{
   transition:background 0.15s var(--ease), transform 0.1s var(--ease);
 }
 
-.action-btn:hover{
-  background:var(--bg);
+@media (hover: hover) {
+  .action-btn:hover {
+    background:var(--bg);
+  }
 }
 
 .action-btn:active{
-  transform:scale(0.98);
+  transform: scale(var(--press-scale));
 }
 
 .action-btn:focus-visible{
@@ -963,12 +973,14 @@ h1{
     transform 0.1s var(--ease);
 }
 
-.tool-btn:hover{
-  background:var(--hairline);
+@media (hover: hover) {
+  .tool-btn:hover {
+    background:var(--hairline);
+  }
 }
 
 .tool-btn:active{
-  transform:scale(0.96);
+  transform: scale(var(--press-scale));
 }
 
 .tool-btn.active{
@@ -979,7 +991,7 @@ h1{
 }
 
 .marker-btn:active{
-  transform:scale(0.96);
+  transform: scale(var(--press-scale));
 }
 
 .coverline-btn{
@@ -988,7 +1000,7 @@ h1{
 }
 
 .coverline-btn:active{
-  transform:scale(0.96);
+  transform: scale(var(--press-scale));
 }
 
 /* ─── map structure ──────────────────────── */
@@ -1190,8 +1202,10 @@ h1{
   cursor:crosshair;
 }
 
-.map-cell.cross-cell-selectable:hover{
-  box-shadow:inset 0 0 0 2px var(--action);
+@media (hover: hover) {
+  .map-cell.cross-cell-selectable:hover {
+    box-shadow:inset 0 0 0 2px var(--action);
+  }
 }
 
 .zoom-controls .tool-btn{
@@ -1558,7 +1572,7 @@ input:focus{
 }
 
 .btn:active{
-  transform:scale(0.97);
+  transform: scale(var(--press-scale));
 }
 
 .modal-actions .btn{
@@ -1575,8 +1589,10 @@ input:focus{
   color:white;
 }
 
-.btn.danger:hover{
-  background:var(--danger);
+@media (hover: hover) {
+  .btn.danger:hover {
+    background:var(--danger);
+  }
 }
 
 .field-hint{
@@ -1664,8 +1680,10 @@ input:focus{
   color:var(--data-coverline);
 }
 
-.toast-action:hover{
-  transform:translateY(-1px);
+@media (hover: hover) {
+  .toast-action:hover {
+    transform:translateY(-1px);
+  }
 }
 
 /* ─── dev panel ──────────────────────────── */
@@ -1696,8 +1714,10 @@ input:focus{
   cursor:pointer;
 }
 
-.text-btn:hover{
-  color:var(--red);
+@media (hover: hover) {
+  .text-btn:hover {
+    color:var(--red);
+  }
 }
 
 /* ─── responsive ─────────────────────────── */

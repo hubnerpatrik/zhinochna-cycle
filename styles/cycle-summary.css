@@ -1,5 +1,7 @@
 .cycle-summary-card { display:block; width:100%; margin-top:16px; padding:14px 12px; color:var(--text); text-align:left; font:inherit; background:var(--surface); border:1px solid var(--line); border-radius:16px; cursor:pointer; }
-.cycle-summary-card:hover { border-color:rgba(31, 26, 23, 0.22); }
+@media (hover: hover) {
+  .cycle-summary-card:hover { border-color:rgba(31, 26, 23, 0.22); }
+}
 .cycle-summary-card:focus-visible { outline:2px solid var(--action); outline-offset:3px; }
 .cycle-summary-card:disabled { cursor:default; }
 .cycle-summary-heading { display:block; font-size:0.8125rem; font-weight:700; margin-bottom:4px; }

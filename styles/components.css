@@ -12,11 +12,13 @@
   transition: background 0.16s ease, border-color 0.16s ease;
 }
 
-.btn.secondary:hover,
-.btn.map-import-btn:hover,
-.btn.map-export-btn:hover {
-  border-color: rgba(31, 26, 23, 0.22);
-  background: var(--surface-alt);
+@media (hover: hover) {
+  .btn.secondary:hover,
+  .btn.map-import-btn:hover,
+  .btn.map-export-btn:hover {
+    border-color: rgba(31, 26, 23, 0.22);
+    background: var(--surface-alt);
+  }
 }
 
 /* Cards: white on the warm ground, no border, one soft ambient lift. */
@@ -35,11 +37,13 @@
   overflow: hidden;
 }
 
-.menu-card:hover,
-button.menu-summary-card:not(:disabled):hover {
-  transform: none;
-  border-color: var(--line-soft);
-  box-shadow: var(--shadow-card);
+@media (hover: hover) {
+  .menu-card:hover,
+  button.menu-summary-card:not(:disabled):hover {
+    transform: none;
+    border-color: var(--line-soft);
+    box-shadow: var(--shadow-card);
+  }
 }
 
 .menu-card-icon {
@@ -116,10 +120,12 @@ body {
   transition: border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
-.map-list-card:hover {
-  transform: none;
-  border-color: var(--line-soft);
-  box-shadow: var(--shadow-card);
+@media (hover: hover) {
+  .map-list-card:hover {
+    transform: none;
+    border-color: var(--line-soft);
+    box-shadow: var(--shadow-card);
+  }
 }
 
 .map-list-card.is-active {
@@ -142,8 +148,10 @@ body {
   font-weight: 600;
 }
 
-.btn.primary:hover:not(:disabled) {
-  background: var(--action-fill-hover);
+@media (hover: hover) {
+  .btn.primary:hover:not(:disabled) {
+    background: var(--action-fill-hover);
+  }
 }
 
 .btn.secondary,
@@ -191,9 +199,11 @@ textarea:focus-visible {
   box-shadow: none;
 }
 
-.btn.map-delete-btn:hover {
-  border-color: var(--danger);
-  background: var(--danger-tint);
+@media (hover: hover) {
+  .btn.map-delete-btn:hover {
+    border-color: var(--danger);
+    background: var(--danger-tint);
+  }
 }
 
 /* Calendar / graph switch and other segmented choices: a sunken track with a lifted white thumb. */
@@ -208,10 +218,12 @@ textarea:focus-visible {
   color: var(--ink-muted);
 }
 
-.segmented button:hover:not(.active):not(.disabled) {
-  background: transparent;
-  color: var(--ink);
-  transform: none;
+@media (hover: hover) {
+  .segmented button:hover:not(.active):not(.disabled) {
+    background: transparent;
+    color: var(--ink);
+    transform: none;
+  }
 }
 
 .segmented button.active {
@@ -238,14 +250,16 @@ textarea:focus-visible {
   transition: background 0.15s var(--ease), color 0.15s var(--ease), transform 0.1s var(--ease);
 }
 
-.day:hover {
-  transform: none;
-  background: var(--surface-alt);
-  box-shadow: none;
+@media (hover: hover) {
+  .day:hover {
+    transform: none;
+    background: var(--surface-alt);
+    box-shadow: none;
+  }
 }
 
 .day:active {
-  transform: scale(0.94);
+  transform: scale(var(--press-scale-small));
 }
 
 .day:empty,
@@ -270,8 +284,10 @@ textarea:focus-visible {
   box-shadow: none;
 }
 
-.day.fertile-day:hover {
-  background: color-mix(in srgb, var(--calendar-green) 82%, var(--ink));
+@media (hover: hover) {
+  .day.fertile-day:hover {
+    background: color-mix(in srgb, var(--calendar-green) 82%, var(--ink));
+  }
 }
 
 .day.fertile-day .day-cycle-num {
@@ -290,8 +306,10 @@ textarea:focus-visible {
   box-shadow: none;
 }
 
-.day.selected:hover {
-  background: var(--action-hover);
+@media (hover: hover) {
+  .day.selected:hover {
+    background: var(--action-hover);
+  }
 }
 
 .day.selected .day-cycle-num {
@@ -324,9 +342,11 @@ textarea:focus-visible {
   box-shadow: inset 0 1px 0 var(--line-soft);
 }
 
-.action-list .action-btn:hover {
-  background: var(--surface-alt);
-  transform: none;
+@media (hover: hover) {
+  .action-list .action-btn:hover {
+    background: var(--surface-alt);
+    transform: none;
+  }
 }
 
 /* Cycle summary inside the white info panel: a quiet tinted block, not a nested bordered card. */
@@ -377,8 +397,10 @@ select:not([multiple]) {
   color: var(--ink);
 }
 
-.calendar-nav button:hover {
-  background: color-mix(in srgb, var(--surface-alt) 80%, var(--ink));
+@media (hover: hover) {
+  .calendar-nav button:hover {
+    background: color-mix(in srgb, var(--surface-alt) 80%, var(--ink));
+  }
 }
 
 .month-label {
@@ -520,10 +542,12 @@ select:not([multiple]) {
   box-shadow: none;
 }
 
-.marker-btn:hover,
-.coverline-btn:hover,
-.cross-cells-btn:hover {
-  background: var(--surface-alt);
+@media (hover: hover) {
+  .marker-btn:hover,
+  .coverline-btn:hover,
+  .cross-cells-btn:hover {
+    background: var(--surface-alt);
+  }
 }
 
 /* Marker editor choices keep their data colour as a flat tint. */
@@ -657,10 +681,12 @@ select:not([multiple]) {
   font-weight: 500;
 }
 
-.app-header .account-bar .btn:hover {
-  border-color: transparent;
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
-  color: var(--bloom-ink);
+@media (hover: hover) {
+  .app-header .account-bar .btn:hover {
+    border-color: transparent;
+    background: color-mix(in srgb, var(--surface) 70%, transparent);
+    color: var(--bloom-ink);
+  }
 }
 
 .app-header .language-picker-trigger {
@@ -669,8 +695,10 @@ select:not([multiple]) {
   background: transparent;
 }
 
-.app-header .language-picker-trigger:hover {
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
+@media (hover: hover) {
+  .app-header .language-picker-trigger:hover {
+    background: color-mix(in srgb, var(--surface) 70%, transparent);
+  }
 }
 
 #accountEmail {
@@ -731,9 +759,11 @@ select:not([multiple]) {
     font-weight: 500;
   }
 
-  .header-nav-btn:hover:not(:disabled) {
-    background: transparent;
-    color: var(--bloom-ink);
+  @media (hover: hover) {
+    .header-nav-btn:hover:not(:disabled) {
+      background: transparent;
+      color: var(--bloom-ink);
+    }
   }
 
   .header-nav-btn:active {
@@ -1019,10 +1049,12 @@ html:has(.modal.show) .modal.hidden .modal-card {
     transform: none;
   }
 
-  .menu-card:hover,
-  .map-list-card:hover,
-  button.menu-summary-card:not(:disabled):hover {
-    transform: none;
+  @media (hover: hover) {
+    .menu-card:hover,
+    .map-list-card:hover,
+    button.menu-summary-card:not(:disabled):hover {
+      transform: none;
+    }
   }
 }
 

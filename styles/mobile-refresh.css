@@ -121,7 +121,10 @@
   .menu-card-icon svg { width: 24px; height: 24px; }
   .menu-card-title { grid-column: 2; font-size: 1.0625rem; letter-spacing: -.4px; align-self: end; }
   .menu-card-description { grid-column: 2; font-size: 0.75rem; line-height: 1.45; align-self: start; }
-  .menu-card:hover, .map-list-card:hover { transform: none; }
+  @media (hover: hover) {
+    .menu-card:hover,
+    .map-list-card:hover { transform: none; }
+  }
 
   .screen-form-card, .profile-editor-card, .map-filter-card, .map-list-card { padding: 20px; }
   .profile-fields { gap: 20px; }

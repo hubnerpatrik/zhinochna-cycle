@@ -45,9 +45,11 @@
   .time-picker > .time-picker-toggle { width: 44px; height: 44px; }
   .time-picker > input { min-height: 56px; padding-right: 58px; }
 
-  .btn.primary:hover,
-  .menu-card:hover,
-  .day:hover { transform: none; }
+  @media (hover: hover) {
+    .btn.primary:hover,
+    .menu-card:hover,
+    .day:hover { transform: none; }
+  }
 }
 
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
@@ -178,7 +180,7 @@
   .mobile-map-tabs button:active,
   .mobile-map-actions > .btn:active,
   .mobile-tools-list button:active {
-    transform: scale(.98);
+    transform: scale(var(--press-scale));
   }
 }
 

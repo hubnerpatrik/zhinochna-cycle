@@ -77,12 +77,14 @@
   transition: background 0.15s var(--ease), transform 0.1s var(--ease);
 }
 
-.home-cta:hover {
-  background: var(--action-fill-hover);
+@media (hover: hover) {
+  .home-cta:hover {
+    background: var(--action-fill-hover);
+  }
 }
 
 .home-cta:active {
-  transform: scale(0.98);
+  transform: scale(var(--press-scale));
 }
 
 .home-link {
@@ -100,8 +102,10 @@
   cursor: pointer;
 }
 
-.home-link:hover {
-  text-decoration-color: var(--action);
+@media (hover: hover) {
+  .home-link:hover {
+    text-decoration-color: var(--action);
+  }
 }
 
 .home-cta:focus-visible,
@@ -449,8 +453,10 @@
   cursor: pointer;
 }
 
-.home-pill:hover {
-  background: color-mix(in srgb, var(--surface) 80%, var(--meadow-sky));
+@media (hover: hover) {
+  .home-pill:hover {
+    background: color-mix(in srgb, var(--surface) 80%, var(--meadow-sky));
+  }
 }
 
 @media (min-width: 720px) {

@@ -57,3 +57,64 @@ export function createVelocityTracker() {
     },
   };
 }
+
+/**
+ * One animatable offset shared by every gesture surface (sheets, calendar swipe). The live on-screen
+ * value and velocity are the source of truth: a new animation always starts from them, and stop()
+ * invalidates whatever is running, so a grab or a reversal never jumps.
+ */
+export function createSpringDriver({
+  setOffset,
+  schedule = callback => requestAnimationFrame(callback),
+  cancelSchedule = frame => cancelAnimationFrame(frame),
+  now = () => performance.now(),
+  response = SPRING_RESPONSE,
+}) {
+  let state = { x: 0, v: 0 };
+  let frame = null;
+  let session = 0;
+
+  const stop = () => {
+    session += 1;
+    if (frame !== null) cancelSchedule(frame);
+    frame = null;
+  };
+  const show = x => { state = { x, v: 0 }; setOffset(x); };
+
+  function animateTo(target, velocity = 0, done) {
+    stop();
+    const mine = session;
+    state = { x: state.x, v: velocity };
+    let last = now();
+    const tick = () => {
+      if (mine !== session) return;
+      const time = now();
+      state = springStep(state, target, (time - last) / 1000, response);
+      last = time;
+      if (settled(state, target)) {
+        frame = null;
+        show(target);
+        done?.();
+        return;
+      }
+      setOffset(state.x);
+      frame = schedule(tick);
+    };
+    frame = schedule(tick);
+  }
+
+  // Runs once on the next frame, unless the driver is stopped or re-targeted first.
+  function later(callback) {
+    const mine = session;
+    frame = schedule(() => {
+      frame = null;
+      if (mine === session) callback();
+    });
+  }
+
+  return {
+    get x() { return state.x; },
+    get animating() { return frame !== null; },
+    show, stop, animateTo, later,
+  };
+}

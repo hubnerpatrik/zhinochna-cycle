@@ -3,7 +3,7 @@
 // (then closes it through the dialog's own close path) or springs it back. Grabbing a moving
 // sheet takes it over where it is. Entering and leaving are plain CSS transitions.
 import { applyLayoutClass } from './layout-classes.js';
-import { createVelocityTracker, project, rubberband, settled, springStep } from './motion.js';
+import { createSpringDriver, createVelocityTracker, project, rubberband } from './motion.js';
 
 const LOCK_DISTANCE = 8;   // px before a drag is classified
 const LOCK_RATIO = 1.2;    // vertical must clearly beat horizontal
@@ -44,50 +44,18 @@ export function bindSheetDismiss(card, {
 }) {
   if (!card) return;
   const tracker = createVelocityTracker();
-  let state = { x: 0, v: 0 };   // live on-screen offset: the source of truth for every animation
-  let frame = null;
-  let session = 0;              // invalidates callbacks of an interrupted animation
+  const spring = createSpringDriver({ setOffset, schedule, cancelSchedule, now });
   let pointer = null;           // { id, startX, startY, base, locked }
 
   const capture = id => { try { card.setPointerCapture?.(id); } catch { /* the pointer may be gone */ } };
   const uncapture = id => { try { card.releasePointerCapture?.(id); } catch { /* ignore */ } };
-  const show = x => { state = { x, v: 0 }; setOffset(x); };
-  const stopAnimation = () => {
-    session += 1;
-    if (frame !== null) cancelSchedule(frame);
-    frame = null;
-  };
-
-  function animateTo(target, velocity, done) {
-    stopAnimation();
-    const mine = session;
-    state = { x: state.x, v: velocity };
-    let last = now();
-    const tick = () => {
-      if (mine !== session) return;
-      const time = now();
-      state = springStep(state, target, (time - last) / 1000);
-      last = time;
-      if (settled(state, target)) {
-        frame = null;
-        show(target);
-        done?.();
-        return;
-      }
-      setOffset(state.x);
-      frame = schedule(tick);
-    };
-    frame = schedule(tick);
-  }
+  const { show, animateTo, stop: stopAnimation } = spring;
 
   function close() {
     requestClose();
     if (reducedMotion()) { show(0); return; }
     // Keep the sheet where it is until the close has taken effect; if it has not, bring it back.
-    const mine = session;
-    frame = schedule(() => {
-      frame = null;
-      if (mine !== session) return;
+    spring.later(() => {
       if (isOpen()) animateTo(0, 0, () => show(0));
       else show(0);
     });
@@ -95,7 +63,7 @@ export function bindSheetDismiss(card, {
 
   function release(velocity) {
     const height = card.offsetHeight || 1;
-    const { dismiss, target } = settleSheet({ offset: state.x, velocity, height });
+    const { dismiss, target } = settleSheet({ offset: spring.x, velocity, height });
     if (!dismiss) {
       reducedMotion() ? show(0) : animateTo(0, velocity, () => show(0));
       return;
@@ -106,11 +74,11 @@ export function bindSheetDismiss(card, {
 
   card.addEventListener('pointerdown', event => {
     if (pointer || event.pointerType !== 'touch' || !event.isPrimary || !isPhone()) return;
-    const grabbing = frame !== null || state.x !== 0;
+    const grabbing = spring.animating || spring.x !== 0;
     if (!grabbing && !startsOnGrip(event)) return;
     stopAnimation();
     tracker.reset();
-    pointer = { id: event.pointerId, startX: event.clientX, startY: event.clientY, base: grabbing ? state.x : 0, locked: grabbing };
+    pointer = { id: event.pointerId, startX: event.clientX, startY: event.clientY, base: grabbing ? spring.x : 0, locked: grabbing };
     if (grabbing) capture(event.pointerId);
     tracker.add(event.clientY, now());
   });

@@ -1,6 +1,14 @@
 /* Design tokens: the one source of colour, spacing, radius, type and elevation.
    Other stylesheets reference these variables instead of raw values. */
 :root {
+  /* Motion: one vocabulary for press, enter and leave. Gesture-driven motion uses the spring in ui/motion.js. */
+  --press-scale: 0.97;
+  --press-scale-small: 0.94;
+  --dur-press: 100ms;
+  --dur-fast: 160ms;
+  --dur-base: 250ms;
+  --dur-sheet: 300ms;
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
   /* Neutrals: a warm off-white ground with white cards; colour belongs to the observations. */
   /* Warm inset ground: nested blocks, sunken controls and hovers inside white panels. */
   --bg: #f7f3f0;

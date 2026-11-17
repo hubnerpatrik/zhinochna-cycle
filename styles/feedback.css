@@ -11,7 +11,9 @@
 .feedback-panel [data-resolve] { background: var(--success-tint); border-color: var(--success-line); color: var(--ink); }
 .feedback-panel [data-resolve="reopen"] { background: var(--warning-tint); border-color: var(--warning-line); color: var(--warning-ink); }
 .feedback-panel button:focus-visible { outline: 3px solid var(--action); outline-offset: 3px; }
-.feedback-panel button:not(:disabled):hover { filter: brightness(.96); }
+@media (hover: hover) {
+  .feedback-panel button:not(:disabled):hover { filter: brightness(.96); }
+}
 .feedback-panel textarea { display: block; width: 100%; min-height: 120px; resize: vertical; font: inherit; font-size: max(16px, 1rem); padding: 12px; border: 1px solid var(--line); border-radius: 10px; margin: 8px 0 12px; }
 .feedback-panel label { display: block; }
 .feedback-panel form { margin: 18px 0; }

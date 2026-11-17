@@ -14,6 +14,12 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Touch and motion
+
+- Every tappable card, chip and button now answers a press at once with the same small scale; hover effects only apply on devices that can hover, so nothing stays highlighted after a tap on a phone.
+- Small targets (calendar days, the language picker, the "What's new" link) have a larger invisible touch area, and taps no longer wait for a possible double-tap zoom.
+- Sheets and the calendar swipe share one spring animator; dragging a coverline or marking fertile days no longer relies on a timer to ignore the click that follows.
+
 ### Design
 
 - New look across the app: white cards on a warm off-white background, one coral accent, solid coral primary buttons with white labels, a sunken segmented switch, soft borderless calendar tiles with the selected day filled in coral and today marked in coral, and a white bottom tab bar on phones. Observation colours in the calendar and chart are unchanged.

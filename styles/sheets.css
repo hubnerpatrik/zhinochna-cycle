@@ -7,8 +7,10 @@
   background: var(--list-ground);
 }
 
-.action-list .action-btn:hover {
-  background: var(--list-ground-hover);
+@media (hover: hover) {
+  .action-list .action-btn:hover {
+    background: var(--list-ground-hover);
+  }
 }
 
 .action-icon,
@@ -84,9 +86,14 @@
   border-radius: 0 0 var(--r-md) var(--r-md);
 }
 
-#mobileToolsList > button:hover,
 #mobileToolsList > button:active {
   background: var(--list-ground-hover);
+}
+
+@media (hover: hover) {
+  #mobileToolsList > button:hover {
+    background: var(--list-ground-hover);
+  }
 }
 
 #mobileToolsList .mobile-tool-icon {
@@ -106,8 +113,10 @@
   color: var(--action-fill-ink);
 }
 
-#sidebarActions #editBtn:hover {
-  background: var(--action-fill-hover);
+@media (hover: hover) {
+  #sidebarActions #editBtn:hover {
+    background: var(--action-fill-hover);
+  }
 }
 
 #sidebarActions #editBtn .action-icon {
@@ -122,4 +131,66 @@
 
 #sidebarActions #editBtn + .action-btn {
   box-shadow: none;
+}
+
+/* Press feedback: every tappable surface answers the finger at once, with the same scale. Cards that
+   hold their own buttons stay still while one of those buttons is pressed. */
+html {
+  touch-action: manipulation; /* no double-tap delay; pinch zoom stays */
+}
+
+.segmented button,
+.language-picker-trigger,
+.home-pill,
+.home-link,
+.cycle-summary-card,
+button.menu-summary-card:not(:disabled) {
+  transition-property: background, border-color, box-shadow, color, transform;
+  transition-duration: var(--dur-fast), var(--dur-fast), var(--dur-fast), var(--dur-fast), var(--dur-press);
+  transition-timing-function: var(--ease);
+}
+
+.segmented button:not(.disabled):active,
+.language-picker-trigger:active,
+.home-pill:active,
+.cycle-summary-card:active,
+button.menu-summary-card:not(:disabled):active {
+  transform: scale(var(--press-scale));
+}
+
+.menu-card:active:not(:has(button:active, a:active, summary:active)),
+.map-list-card:active:not(:has(button:active, a:active, summary:active)) {
+  transform: scale(var(--press-scale));
+}
+
+.menu-card,
+.map-list-card {
+  transition-property: background, border-color, box-shadow, transform;
+  transition-duration: var(--dur-fast), var(--dur-fast), var(--dur-fast), var(--dur-press);
+  transition-timing-function: var(--ease);
+}
+
+/* Small targets keep their look; an invisible padding makes them reachable with a thumb. */
+.language-picker-trigger,
+.home-changelog {
+  position: relative;
+}
+
+.language-picker-trigger::after,
+.home-changelog::after {
+  content: "";
+  position: absolute;
+  inset: -9px 0 0; /* only upward: the content below paints over anything that reaches down */
+}
+
+.home-changelog::after {
+  inset: -12px -6px;
+}
+
+@media (pointer: coarse) {
+  .day::after {
+    content: "";
+    position: absolute;
+    inset: -7px -4px; /* absolute offsets start inside the 1px border; cells are 6px apart, so the areas meet without overlapping */
+  }
 }

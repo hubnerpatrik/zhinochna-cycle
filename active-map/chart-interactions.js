@@ -313,6 +313,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     const canvas = getElementById("tempChart");
     if (!canvas) return;
     canvas.addEventListener("pointerdown", event => {
+      suppressNextClick = false;
       // First touch selects a line with a tap; swiping over it still scrolls the page.
       if (event.pointerType === "touch" && (!coverlineSelected || !event.isPrimary)) return;
       if (event.button !== 0 || store.crossCellSelectionMode || store.markerSelectionMode
@@ -356,7 +357,6 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       setCursor(canvas, null);
       if (event.type === "pointerup") {
         suppressNextClick = true;
-        setTimeout(() => { suppressNextClick = false; }, 0);
       }
       if (!moved) return;
       renderCurrentChart();
@@ -365,10 +365,9 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     canvas.addEventListener("pointercancel", finishDrag);
 
     canvas.addEventListener("click", event => {
-      if (suppressNextClick) {
-        suppressNextClick = false;
-        return;
-      }
+      const suppressed = suppressNextClick && event.detail !== 0;
+      suppressNextClick = false;
+      if (suppressed) return;
       const point = canvasPointerPosition(event, canvas);
       if (!point) return;
       const columns = getColumns();

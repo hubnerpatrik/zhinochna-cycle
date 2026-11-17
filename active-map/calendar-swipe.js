@@ -2,7 +2,7 @@
 // and a critically damped spring carries the release velocity into the slide. Touching the grid
 // during the animation grabs it where it is.
 import { applyLayoutClass } from '../ui/layout-classes.js';
-import { createVelocityTracker, project, settled, springStep } from '../ui/motion.js';
+import { createSpringDriver, createVelocityTracker, project, springStep } from '../ui/motion.js';
 
 const LOCK_DISTANCE = 10;       // px before a drag is classified
 const LOCK_RATIO = 1.5;         // horizontal must clearly beat vertical
@@ -40,47 +40,18 @@ export function bindCalendarSwipe(calendar, {
 }) {
   if (!calendar) return;
   const tracker = createVelocityTracker();
-  let state = { x: 0, v: 0 };   // current on-screen offset: the source of truth for every animation
-  let frame = null;             // running animation frame
-  let session = 0;              // invalidates callbacks of an interrupted animation
+  const spring = createSpringDriver({ setOffset, schedule, cancelSchedule, now });
   let pointer = null;           // { id, startX, startY, base, locked }
   let suppressClick = false;
 
   // The pointer may already be gone (lifted or cancelled); losing capture is harmless.
   const capture = id => { try { area.setPointerCapture?.(id); } catch { /* ignore */ } };
   const uncapture = id => { try { area.releasePointerCapture?.(id); } catch { /* ignore */ } };
-  const show = x => { state = { x, v: 0 }; setOffset(x); };
-  const stopAnimation = () => {
-    session += 1;
-    if (frame !== null) cancelSchedule(frame);
-    frame = null;
-  };
-
-  function animateTo(target, velocity, done) {
-    stopAnimation();
-    const mine = session;
-    state = { x: state.x, v: velocity };
-    let last = now();
-    const tick = () => {
-      if (mine !== session) return;
-      const time = now();
-      state = springStep(state, target, (time - last) / 1000);
-      last = time;
-      if (settled(state, target)) {
-        frame = null;
-        show(target);
-        done?.();
-        return;
-      }
-      setOffset(state.x);
-      frame = schedule(tick);
-    };
-    frame = schedule(tick);
-  }
+  const { show, animateTo, stop: stopAnimation } = spring;
 
   function release(velocity) {
     const width = calendar.clientWidth || 1;
-    const { direction, target } = settle({ offset: state.x, velocity, width });
+    const { direction, target } = settle({ offset: spring.x, velocity, width });
     if (!direction) {
       reducedMotion() ? show(0) : animateTo(0, velocity, () => show(0));
       return;
@@ -99,11 +70,11 @@ export function bindCalendarSwipe(calendar, {
 
   area.addEventListener('pointerdown', event => {
     if (pointer || event.pointerType !== 'touch' || !event.isPrimary || !isPhone() || !isInside(event)) return;
-    const grabbing = frame !== null || state.x !== 0;
+    const grabbing = spring.animating || spring.x !== 0;
     stopAnimation();
     suppressClick = false;
     tracker.reset();
-    pointer = { id: event.pointerId, startX: event.clientX, startY: event.clientY, base: grabbing ? state.x : 0, locked: grabbing };
+    pointer = { id: event.pointerId, startX: event.clientX, startY: event.clientY, base: grabbing ? spring.x : 0, locked: grabbing };
     if (grabbing) capture(event.pointerId);
     tracker.add(event.clientX, now());
   });
