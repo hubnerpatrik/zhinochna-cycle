@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-17T11:48:41.684Z",
+  "generatedAt": "2026-11-17T11:58:37.549Z",
   "title": "Design System: Cycle Tracker",
   "extensions": {
     "colorMeta": {
@@ -33,6 +33,11 @@
         "role": "primary",
         "displayName": "Coral Tint",
         "canonical": "#fdeae4"
+      },
+      "page-ground": {
+        "role": "neutral",
+        "displayName": "Page Ground",
+        "canonical": "#f3f6ef"
       },
       "ground": {
         "role": "neutral",
@@ -518,8 +523,8 @@
         "section": "colors"
       },
       {
-        "name": "The Meadow Stays on Home Rule",
-        "body": "`--meadow-*` colours are used only in `styles/home.css`.",
+        "name": "The Meadow Stays in the Garden Rule",
+        "body": "`--meadow-*` colours are used only in `styles/home.css` and for the garden accents in `styles/garden.css` (screen-title sprig, empty-state bloom), never inside the active map.",
         "section": "colors"
       },
       {
@@ -549,7 +554,7 @@
       },
       {
         "name": "The Two Voices Rule",
-        "body": "Rubik belongs to Home headlines and the welcome brand only; every working screen, control and number stays in Inter.",
+        "body": "Rubik sets titles only: Home headlines and the welcome brand, screen titles, the map and profile dialog titles, the calendar month label and the map name. The active map's own dialogs, every control, body line and number stay in Inter.",
         "section": "typography"
       },
       {

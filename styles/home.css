@@ -2,7 +2,7 @@
    The meadow is decoration only: no flower colour means anything. Flat colour, no gradients. */
 .screen-home {
   /* A rounded, friendly display face for the meadow's headlines; Inter keeps the body copy. */
-  --home-display: "Rubik Variable", "Inter Variable", system-ui, sans-serif;
+  --home-display: var(--font-display);
   color: var(--meadow-ink);
 }
 

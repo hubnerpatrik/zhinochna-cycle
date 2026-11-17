@@ -6,6 +6,7 @@ colors:
   coral-deep: "#ad3e29"
   coral-soft: "#e0674f"
   coral-tint: "#fdeae4"
+  page-ground: "#f3f6ef"
   ground: "#f7f3f0"
   surface: "#ffffff"
   surface-sunken: "#f2ece8"
@@ -253,9 +254,9 @@ Two decorative places, both requested by the user, frame that quiet core and car
 **Key Characteristics:**
 - Warm off-white ground, white cards, one ambient shadow.
 - One coral accent, used for the primary action, selection, focus, today and the active tab; on Home only for Sign in.
-- Inter, self-hosted, tabular figures for every number that is compared; Rubik only for Home headlines and the welcome brand.
+- Inter, self-hosted, tabular figures for every number that is compared; Rubik for Home headlines, screen titles, the map and profile dialog titles, the month label and the map name.
 - 44px minimum controls, 52px action rows, 50px primary buttons on the phone dock, 52px Sign in pill.
-- Flowers are scenery in two fixed places; observation colours are data, never decoration.
+- Flowers are scenery in fixed places (header bloom, Home meadow, screen-title sprig, empty-state bloom), never on the active map; observation colours are data, never decoration.
 
 ## Colors
 
@@ -268,7 +269,8 @@ A warm neutral interface with a single coral voice, a fixed palette of observati
 - **Coral Tint** (#fdeae4): selection background, the open Tools button, the time-picker's selected band.
 
 ### Neutral
-- **Warm Ground** (#f7f3f0): the page; also the inset ground of grouped action lists and the cycle summary block inside a white panel.
+- **Page Ground** (#f3f6ef, `--page-ground`): the page behind every screen, a pale step of the meadow green. Only `body` uses it.
+- **Warm Ground** (#f7f3f0, `--bg`): the inset ground inside white panels: grouped action lists, the cycle summary, segmented tracks, calendar navigation, tool buttons and hovers. It stays warm so the active map reads exactly as before.
 - **Surface White** (#ffffff): every card, sheet, field, segmented thumb and Home garden sign.
 - **Sunken** (#f2ece8): segmented tracks, calendar navigation buttons, neutral icon chips, hover on rows and secondary buttons, the Home export chips.
 - **Ink** (#1f1a17): all primary text in the working app; also the toast ground.
@@ -292,11 +294,11 @@ A flat **Meadow Sky** blush over three sage hills stepping from **Hill Far** thr
 ### Named Rules
 **The One Voice Rule.** Coral is the only interface accent. It marks what to press, what is selected, where focus is, and where you are. On Home it appears only as the Sign in pill, focus rings and the hover underline of the Create account link; the demo calendar's selected day is Meadow Ink, not coral.
 
-**The Scenery Rule.** Bloom and meadow colours are decoration only and never encode an observation, a state or a navigation target. Flowers are allowed in exactly two places: the header bloom and the Home meadow.
+**The Scenery Rule.** Bloom and meadow colours are decoration only and never encode an observation, a state or a navigation target. Flowers are allowed only in the header bloom, the Home meadow, the sprig above screen titles and the empty-state bloom; never on the active map, its calendar, chart or sheets.
 
 **The Bloom Stays Home Rule.** `--bloom-*` colours appear only in the app header, the phone map title row and the welcome brand mark; `test/css-tokens.test.js` enforces it.
 
-**The Meadow Stays on Home Rule.** `--meadow-*` colours are used only in `styles/home.css`.
+**The Meadow Stays in the Garden Rule.** `--meadow-*` colours are used only in `styles/home.css` and for the garden accents in `styles/garden.css` (screen-title sprig, empty-state bloom), never inside the active map.
 
 **The Data Is Not Decoration Rule.** Observation colours appear only where they encode a recorded observation or a chart tool's mark. Never use them for navigation, emphasis, illustration or brand.
 
@@ -306,11 +308,11 @@ A flat **Meadow Sky** blush over three sage hills stepping from **Hill Far** thr
 
 ## Typography
 
-**Display Font:** Inter (self-hosted variable, falling back to the system UI sans); Rubik Variable (self-hosted, Cyrillic-capable) on Home only
+**Display Font:** Inter (self-hosted variable, falling back to the system UI sans); Rubik Variable (self-hosted, Cyrillic-capable, `--font-display`) for titles
 **Body Font:** Inter
 **Label Font:** Inter
 
-**Character:** One neutral, highly legible sans across the working app, with tight negative tracking on large weights and tabular figures wherever numbers are compared. Home adds a rounded, friendly Rubik for its headlines and the welcome brand, over Inter body copy, so the meadow speaks a little warmer than the tools.
+**Character:** One neutral, highly legible sans across the working app, with tight negative tracking on large weights and tabular figures wherever numbers are compared. A rounded, friendly Rubik sets the titles (Home headlines and welcome brand, screen titles, map and profile dialog titles, the month label and the map name) over Inter body copy, so the app speaks a little warmer without touching its controls or numbers.
 
 ### Hierarchy
 - **Display** (700, 2rem, 1.05, -0.04em): screen titles on Profile and My Maps; phone size clamps between 1.8125rem and 2.125rem.
@@ -330,7 +332,7 @@ Calendar cells are the exception to rem-only sizing: the date numeral is `min(0.
 
 **The rem Rule.** Text sizes are in rem so they follow the reader's text setting; container-query clamps are allowed only inside fixed-size cells, and the Home hero headline's clamp keeps rem bounds.
 
-**The Two Voices Rule.** Rubik belongs to Home headlines and the welcome brand only; every working screen, control and number stays in Inter.
+**The Two Voices Rule.** Rubik sets titles only: Home headlines and the welcome brand, screen titles, the map and profile dialog titles, the calendar month label and the map name. The active map's own dialogs (Edit Day and its sheets), every control, every body line and every number stay in Inter.
 
 ## Layout
 
@@ -398,7 +400,7 @@ A sunken track (15px radius) holding transparent options in Ink Muted; the activ
 Ordinary days are bare numerals: no fill, no border, 10px rounded square, tabular 500 weight, cycle-day numeral in Ink Muted at the corner. Only data states fill a tile: fertile days pale green with green-grey text, menstruation pale rose with rose text, spotting as an inset rose ring. The selected day fills coral with a white numeral; a selected data day keeps its data fill and takes a 2px inset coral ring instead. Today, when not selected, carries a 1.5px coral-soft inset ring and coral bold numerals. Hover goes sunken; press scales to 0.94.
 
 ### Action List
-Sidebar actions and the Edit Day sheet are one grouped list: a ground-coloured 14px-rounded block, 52px rows, 1px soft dividers between rows, sunken hover. Observation rows keep a light tint of their data colour on their icon chip; interface rows use a neutral sunken chip.
+Sidebar actions, the Edit Day sheet and the Tools sheet are one grouped list: a **List Ground** (#f1f5ec, `--list-ground`) 14px-rounded block, 52px rows, 1px soft dividers, a slightly deeper green on hover (#e7eee0). Every icon chip, observation or tool, is 32px, 10px-rounded, a pale tint of its own colour with the icon in the deeper hue and one 1px ring of 16% of that hue: temperature `--chip-temperature` on its tint, bleeding and mucus their `--chip-*` pairs, cervix the cervix data pair, tools the `--tool-*` pairs; interface rows use the neutral sunken chip. The colours keep their meaning; only the treatment is shared (`styles/sheets.css`). In the sidebar, Edit Day leads the list as the one coral row (action fill, white label, a 20% white chip), the wide-screen twin of the phone dock's coral Day record button.
 
 ### App Header (bloom band)
 A 22px-rounded Bloom Ground band. On desktop: the flower mark (28px) and app name (Title, Bloom Ink) at left, account text and quiet transparent buttons (36px, Bloom Ink Muted, 70%-white hover) and the language picker at right, text tabs along the bottom edge. The sprig occupies a 210px corner on wide screens only, which is why the band reserves 216px of right padding there. On phones the band holds the flower, name and account row; the tabs leave for the bottom bar.
@@ -414,6 +416,12 @@ A generated SVG scene (1200 by 480 viewBox, sliced from the bottom so the foregr
 
 ### Garden Signs
 White 18px-rounded signs with the Card shadow on Meadow Ground, Rubik title, Inter text in Meadow Ink Muted, each holding a small drawn demo (a month grid, a temperature line, export chips). From 720px each sign stands on a 6px Post planted in a 72px grass tuft; on phones, where posts would read as connectors between stacked cards, a grass strip with three small buds is drawn in front of each sign's bottom edge instead.
+
+### Garden Sprig
+A 56 by 25px drawn stem with two Meadow Leaf leaves and one rose five-petal bloom with a butter heart, set just above each screen title (Profile, Saved cycle maps, Create map). Decorative, `aria-hidden`, one per screen, never on the active map. From `gardenSprig()` in `views/view-utils.js`.
+
+### Empty-State Bloom
+A single 56 by 86px peach gerbera on a sage stem with one leaf, centred above the empty-state title (a filtered map list with no results). Decorative, `aria-hidden`. From `gardenBloom()`.
 
 ### Coming-Soon Signs
 The same sign, unlifted: 70% white with a 1.5px dashed Soon Line border and no shadow. Its state rides as a small butter sticker tag in the top-right corner, rotated 3 degrees, never as a label above the title. Coming-soon signs hold honest placeholders only.
@@ -445,10 +453,10 @@ Ink ground, white text, full width minus 24px on phones; a single action (Undo) 
 - **Don't** bring back the notebook look: cream paper, pastel or peach button fills, hairline-boxed day cells.
 - **Don't** use observation colours for decoration, navigation, brand or emphasis.
 - **Don't** let a bloom or meadow colour, or a flower, encode an observation, a state or a fertility meaning.
-- **Don't** draw flowers anywhere except the header bloom and the Home meadow.
+- **Don't** draw flowers anywhere except the header bloom, the Home meadow, the screen-title sprig and the empty-state bloom; never on the active map.
 - **Don't** add gradients or glass anywhere except the time-picker drum fade and the phone tab bar.
 - **Don't** lift cards on hover or stack a second shadow inside a card.
-- **Don't** use Rubik outside Home headlines and the welcome brand.
+- **Don't** use Rubik for body text, controls, numbers or the active map's dialogs.
 - **Don't** add medical or contraceptive styling, fertility verdict colours, hearts, or gamification.
 - **Don't** add uppercase eyebrow or kicker labels above titles; a state goes on the sign as a corner tag.
 - **Don't** make the interface dark, clinical or technical.

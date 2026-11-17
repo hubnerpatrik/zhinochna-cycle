@@ -1,4 +1,4 @@
-import { escapeHtml } from "./view-utils.js";
+import { escapeHtml, gardenSprig } from "./view-utils.js";
 import { makeSheetDialog } from '../ui/sheet-dialog.js';
 import { prepareProfilePhoto, isStoredProfilePhoto } from '../profile-photo.js';
 import { setText } from '../i18n.js';
@@ -27,6 +27,7 @@ export function renderProfileScreen(container, {
     <section class="screen screen-form" aria-label="${escapeHtml(title)}" data-i18n-aria-label="${escapeHtml(title)}">
       <div class="screen-shell">
         <div class="screen-hero">
+          ${gardenSprig()}
           <h2> <span data-i18n>${escapeHtml(title)}</span></h2>
           <p> <span data-i18n>${escapeHtml(subtitle)}</span></p>
         </div>

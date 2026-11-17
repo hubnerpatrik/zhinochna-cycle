@@ -21,6 +21,9 @@ vMAJOR.MINOR.PATCH
 - The Main Menu is now a home page: a hand-drawn gerbera meadow under a blush sky that introduces the app, three short examples of what it does, and "Coming soon" signs for who makes it, why it exists, a step-by-step guide and courses. Signed-out visitors see the same page before signing in, with Sign in and Create account; the menu tab is renamed Home. The flowers sway gently and stay still with reduced motion.
 - Tabs now run Home, Active Map, Maps, Profile, and phones show the Home tab in the bottom bar.
 - The welcome page and the sign-in card use the same flag language picker as the app.
+- The garden look reaches the rest of the app: a pale meadow-green page background, screen, dialog and month titles in the rounded Rubik face, a small sprig above each screen title and a gerbera when a map list is empty. The calendar, chart and observation colours on the active map are unchanged.
+- The Tools and Edit Day sheets now match: one grouped list on a soft green block with dividers, and every icon chip a pale tint of its own colour with the icon in the deeper hue. The Tools close button is a drawn icon.
+- On wide screens, Edit Day leads the map's Actions list as a coral row, so the main action is easy to find.
 
 ### Fixes
 

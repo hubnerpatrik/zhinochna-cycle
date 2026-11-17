@@ -1,0 +1,125 @@
+/* Grouped lists and icon chips in the active map's sheets and sidebar (Edit Day, Tools, Actions).
+   Both sheets read as one family: rows on one garden-green block with soft dividers, every chip a
+   pale tint of its own colour with the icon in the deeper hue and one soft ring. The colours still
+   mean what they always meant: observation chips carry their observation's colour, tool chips their tool's. */
+
+.action-list {
+  background: var(--list-ground);
+}
+
+.action-list .action-btn:hover {
+  background: var(--list-ground-hover);
+}
+
+.action-icon,
+.mobile-tool-icon {
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 16%, transparent);
+}
+
+.action-icon.chip-orange { background: var(--chip-temperature-tint); color: var(--chip-temperature); }
+.action-icon.chip-red { background: var(--chip-bleeding-tint); color: var(--chip-bleeding); }
+.action-icon.chip-blue { background: var(--chip-mucus-tint); color: var(--chip-mucus); }
+
+/* Tools: the same grouped list as Edit Day instead of separate bordered boxes. */
+#mobileToolsList[open] {
+  gap: 0;
+}
+
+#mobileToolsList header {
+  margin-bottom: 14px;
+}
+
+#mobileToolsList h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+#mobileToolsList header button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface-alt);
+  color: var(--ink-muted);
+}
+
+#mobileToolsList header button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+#mobileToolsList > button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 0;
+  background: var(--list-ground);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+#mobileToolsList > button + button {
+  box-shadow: inset 0 1px 0 var(--line-soft);
+}
+
+#mobileToolsList > header + button {
+  border-radius: var(--r-md) var(--r-md) 0 0;
+}
+
+#mobileToolsList > button:last-child {
+  border-radius: 0 0 var(--r-md) var(--r-md);
+}
+
+#mobileToolsList > button:hover,
+#mobileToolsList > button:active {
+  background: var(--list-ground-hover);
+}
+
+#mobileToolsList .mobile-tool-icon {
+  width: 32px;
+  height: 32px;
+}
+
+/* The cycle summary is the other inset block in the same sidebar panel; it shares the list ground. */
+.cycle-summary-card {
+  background: var(--list-ground);
+}
+
+/* Edit Day is the main thing to do on the map: on the sidebar it leads the list as the one coral row,
+   the desktop twin of the phone's coral Day record button. */
+#sidebarActions #editBtn {
+  background: var(--action-fill);
+  color: var(--action-fill-ink);
+}
+
+#sidebarActions #editBtn:hover {
+  background: var(--action-fill-hover);
+}
+
+#sidebarActions #editBtn .action-icon {
+  background: color-mix(in srgb, var(--action-fill-ink) 20%, transparent);
+  color: var(--action-fill-ink);
+  box-shadow: none;
+}
+
+#sidebarActions #editBtn .action-chevron {
+  color: var(--action-fill-ink);
+}
+
+#sidebarActions #editBtn + .action-btn {
+  box-shadow: none;
+}

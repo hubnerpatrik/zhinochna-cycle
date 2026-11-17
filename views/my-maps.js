@@ -1,7 +1,7 @@
 import { MAP_NAME_MAX_LENGTH } from '../form-limits.js';
 import { MAP_KINDS, buildMapMeta, matchesFilter, matchesKind } from '../map-list-model.js';
 import { parseDateKey } from '../date-utils.js';
-import { escapeHtml } from "./view-utils.js";
+import { escapeHtml, gardenSprig, gardenBloom } from "./view-utils.js";
 import { formatDate, t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
@@ -85,6 +85,7 @@ function renderMapList(container, maps, activeMapId, { year, month, kind }, { on
   if (!filteredMaps.length) {
     list.innerHTML = `
       <div class="screen-card empty-state">
+        ${gardenBloom()}
         <h3 data-i18n>No maps found</h3>
         <p data-i18n>Try a different month or year, or create a new map.</p>
       </div>
@@ -154,6 +155,7 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
     <section class="screen" aria-label="My maps" data-i18n-aria-label="My maps">
       <div class="screen-shell">
         <div class="screen-hero">
+          ${gardenSprig()}
           <h2 data-i18n>Saved cycle maps</h2>
           <p data-i18n>Export maps or import a shared map.</p>
         </div>

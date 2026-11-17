@@ -2,7 +2,10 @@
    Other stylesheets reference these variables instead of raw values. */
 :root {
   /* Neutrals: a warm off-white ground with white cards; colour belongs to the observations. */
+  /* Warm inset ground: nested blocks, sunken controls and hovers inside white panels. */
   --bg: #f7f3f0;
+  /* Page ground: a pale garden green, the same family as the home meadow; white cards lift off it. */
+  --page-ground: #f3f6ef;
   --surface: #ffffff;
   --surface-alt: #f2ece8;
   --ink: #1f1a17;
@@ -75,6 +78,22 @@
   --meadow-lavender-inner: #ad97dc;
   --meadow-white: #ffffff;
   --meadow-white-inner: #f3e3e8;
+
+  /* Display face: rounded Rubik for screen, sheet and month titles (self-hosted); Inter for everything else. */
+  --font-display: "Rubik Variable", "Inter Variable", Inter, system-ui, sans-serif;
+
+  /* Grouped lists in sheets and the sidebar (Edit Day, Tools, Actions): a garden-green inset. */
+  --list-ground: #f1f5ec;
+  --list-ground-hover: #e7eee0;
+
+  /* Edit Day chips: a pale tint of the observation's colour with the icon in a deeper hue,
+     the same treatment as the --tool-* chips. */
+  --chip-temperature: #b4592a;
+  --chip-temperature-tint: #fbe8dc;
+  --chip-bleeding: #b43c45;
+  --chip-bleeding-tint: #fbe6e8;
+  --chip-mucus: #355e91;
+  --chip-mucus-tint: #e6edf8;
 
   /* Overlays and shadows. */
   --backdrop: rgba(31, 26, 23, 0.32);

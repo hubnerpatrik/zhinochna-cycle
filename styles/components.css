@@ -95,7 +95,7 @@ button.menu-summary-card:not(:disabled):hover {
 
 /* Page ground. */
 body {
-  background: var(--bg);
+  background: var(--page-ground);
 }
 
 /* Surfaces on every screen: one white card recipe. */

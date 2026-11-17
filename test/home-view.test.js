@@ -78,7 +78,8 @@ test('the changelog arrow is drawn, not a text glyph', () => {
 
 test('the meadow headlines use the self-hosted rounded Rubik face', () => {
   assert.match(read('styles/index.css'), /@fontsource-variable\/rubik/);
-  assert.match(read('styles/home.css'), /--home-display: "Rubik Variable"/);
+  assert.match(read('styles/tokens.css'), /--font-display: "Rubik Variable"/);
+  assert.match(read('styles/home.css'), /--home-display: var\(--font-display\)/);
 });
 
 test('pages rendered after start-up mount the shared flag picker, including the sign-in card', () => {

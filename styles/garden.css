@@ -1,0 +1,88 @@
+/* Garden accents across the app: the home page's world, played quietly on working screens.
+   A pale meadow ground (--bg), Rubik for screen titles, map and profile dialog titles, the month and the map name, a small sprig above each
+   screen title and a gerbera in empty states. Cards, fields and buttons stay as they are.
+   The active map only takes the page ground, its month label and map name; its own dialogs keep Inter, and its calendar, chart and observation
+   colours are never touched here. Decoration only: no garden colour encodes anything. */
+
+.screen-hero h2,
+#mapDialogTitle,
+#profilePhotoTitle,
+.month-label,
+.mobile-map-header strong,
+.active-map-name {
+  font-family: var(--font-display);
+}
+
+.screen-hero h2 {
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+#mapDialogTitle,
+#profilePhotoTitle {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.month-label {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.mobile-map-header strong,
+.active-map-name {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+/* The sprig sits just above a screen title, like a pressed stem at the top of a page. */
+.garden-sprig {
+  display: block;
+  width: 56px;
+  height: 25px;
+  margin: 0 0 6px;
+  overflow: visible;
+}
+
+.garden-stem {
+  fill: none;
+  stroke: var(--meadow-stem);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.garden-leaf {
+  fill: var(--meadow-leaf);
+}
+
+.garden-petals {
+  fill: var(--meadow-rose);
+}
+
+.garden-heart {
+  fill: var(--meadow-sun);
+}
+
+/* Empty states grow a single gerbera. */
+.empty-state .garden-bloom {
+  display: block;
+  width: 56px;
+  height: 86px;
+  margin: 0 auto 10px;
+}
+
+.garden-bloom-petals {
+  fill: var(--meadow-peach);
+}
+
+.garden-disc {
+  fill: var(--meadow-disc);
+}
+
+.empty-state {
+  text-align: center;
+}
+
+.garden-bloom .garden-stem {
+  stroke-width: 2.4;
+}

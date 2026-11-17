@@ -1,3 +1,4 @@
+import { gardenSprig } from "./view-utils.js";
 import { MAP_NAME_MAX_LENGTH } from '../form-limits.js';
 import { showFieldError } from '../ui/field-errors.js';
 export function renderCreateMapView(container, { onBack, onCreate }) {
@@ -5,6 +6,7 @@ export function renderCreateMapView(container, { onBack, onCreate }) {
     <section class="screen screen-form" aria-label="Create map" data-i18n-aria-label="Create map">
       <div class="screen-shell narrow-shell">
         <div class="screen-hero">
+          ${gardenSprig()}
           <h2 data-i18n>Name your next map</h2>
           <p data-i18n>Create an empty map and jump straight into the active chart.</p>
         </div>
