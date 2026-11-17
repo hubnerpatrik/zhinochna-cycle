@@ -410,9 +410,9 @@ select:focus-visible{
   min-width:160px;
   padding:8px;
   border:1px solid var(--hairline);
-  border-radius:16px;
+  border-radius:var(--r-md);
   background:var(--card);
-  box-shadow:var(--shadow-lifted);
+  box-shadow:var(--shadow-float);
 }
 
 .map-more-list .btn{
