@@ -24,7 +24,7 @@ test('tabs run Home, Active Map, Maps, Profile: from the overview to daily recor
 test('phones show the Home tab in the bottom bar, four tabs side by side', () => {
   const menuBtn = header.match(/<button id="navMenuBtn"[\s\S]*?<\/button>/)?.[0] || '';
   assert.match(menuBtn, /class="nav-label-mobile"[^>]*>Home</, 'the Home tab has its phone label');
-  const refresh = readFileSync(new URL('../styles/mobile-refresh.css', import.meta.url), 'utf8');
+  const refresh = readFileSync(new URL('../styles/mobile.css', import.meta.url), 'utf8');
   assert.doesNotMatch(refresh, /#navMenuBtn\s*\{\s*display:\s*none|, #navMenuBtn \{ display: none/, 'phones no longer hide the Home tab');
   assert.match(refresh, /\.header-nav \{[^}]*grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/, 'the tab bar holds four tabs');
 });

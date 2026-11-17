@@ -581,7 +581,7 @@ select:focus {
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .profile-editor-card {
     padding: 20px;
   }
