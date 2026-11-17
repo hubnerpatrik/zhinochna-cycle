@@ -62,3 +62,10 @@ test('click suppression after a drag does not rely on a zero-delay timer', () =>
     assert.doesNotMatch(readFileSync(new URL(file, import.meta.url), 'utf8'), /setTimeout\(\(\) => \{ suppressNextClick/, file);
   }
 });
+
+test('the profile screen has no Back button: the tab bar already leads away', () => {
+  const view = readFileSync(new URL('../views/profile.js', import.meta.url), 'utf8');
+  const router = readFileSync(new URL('../router.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(view, /profileScreenCancelBtn|showCancel|onCancel/);
+  assert.doesNotMatch(router, /showCancel|onCancel:\s*back/);
+});

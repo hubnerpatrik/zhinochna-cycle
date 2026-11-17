@@ -16,9 +16,7 @@ export function renderProfileScreen(container, {
   subtitle,
   profile,
   submitLabel,
-  showCancel,
   onSave,
-  onCancel,
 }) {
   let photo = isStoredProfilePhoto(profile.photo) ? profile.photo : '';
   let photoGeneration = 0;
@@ -48,7 +46,6 @@ export function renderProfileScreen(container, {
               <p class="field-hint" data-i18n>Measurement time, method and age are set for each map when you create it.</p>
 
               <div class="modal-actions screen-actions">
-                ${showCancel ? '<button type="button" class="btn secondary" id="profileScreenCancelBtn" data-i18n>Back</button>' : ""}
                 <button type="submit" class="btn primary"> <span data-i18n>${escapeHtml(submitLabel)}</span></button>
               </div>
             </div>
@@ -139,5 +136,4 @@ export function renderProfileScreen(container, {
     if (!processingPhoto) onSave?.({ ...readProfile(container), photo });
   });
 
-  container.querySelector("#profileScreenCancelBtn")?.addEventListener("click", () => onCancel?.());
 }

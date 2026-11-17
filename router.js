@@ -150,7 +150,6 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           subtitle: "Create your profile to get started.",
           profile: store.getProfile(),
           submitLabel: "Save and continue",
-          showCancel: false,
           onSave: profile => {
             if (!runStoreAction(() => store.saveProfile(profile)).ok) return;
             showMessage?.("Profile saved ✓");
@@ -172,8 +171,6 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           subtitle: "Manage your name, consultant and profile photo.",
           profile: store.getProfile(),
           submitLabel: "Save profile",
-          showCancel: true,
-          onCancel: back,
           onSave: profile => {
             if (!runStoreAction(() => store.saveProfile(profile)).ok) return;
             showMessage?.("Profile saved ✓");
