@@ -25,6 +25,7 @@ vMAJOR.MINOR.PATCH
 - With reduced motion, dialogs and sheets cross-fade briefly instead of appearing abruptly. With reduced transparency or higher contrast the frosted tab bar becomes solid on every screen size (high contrast adds a firm top line), and its edge is otherwise a faint hairline over the content.
 - Fertile range: tapping a single day on a phone marks it reliably; the click a browser sends after the tap can no longer toggle the day a second time.
 - Marker mode now has a Cancel button next to Done, on phones and on wide screens; on a phone it returns to the Tools list like the other tools.
+- Header language picker on wide screens: the flag now sits level with the rest of the header row instead of being pushed down and to the left, and its menu shows all four flags above the page instead of being cut off by the first section.
 - Sheets and the calendar swipe share one spring animator; dragging a coverline or marking fertile days no longer relies on a timer to ignore the click that follows.
 
 ### Design

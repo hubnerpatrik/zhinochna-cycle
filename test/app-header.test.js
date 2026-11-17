@@ -59,3 +59,13 @@ test('on wide screens the language menu opens under its own button, not across t
   assert.doesNotMatch(picker, /position:\s*static/, 'a static picker would anchor its 100%-wide menu to the header');
   assert.match(picker, /position:\s*relative/);
 });
+
+test('on wide screens the language picker sits in its grid cell and its menu opens above the page', () => {
+  const wide = components.match(/@media \(min-width: 561px\) and \(min-height: 501px\), \(min-width: 561px\) and \(pointer: fine\) \{([\s\S]*?)\n\}/)?.[1] || '';
+  const picker = wide.match(/\.app-header > \.language-picker \{([^}]*)\}/)?.[1] || '';
+  assert.match(picker, /position:\s*relative/);
+  assert.match(picker, /top:\s*0/, 'no leftover phone offset pushes it down');
+  assert.match(picker, /right:\s*0/, 'and none pushes it left');
+  assert.match(picker, /align-self:\s*center/);
+  assert.match(wide, /\.app-header \{[^}]*z-index:\s*\d+/, 'the header, and its open menu, paint above the home page sections');
+});

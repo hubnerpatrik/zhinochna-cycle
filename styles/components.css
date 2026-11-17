@@ -900,6 +900,15 @@ select:not([multiple]) {
   .app-header > .language-picker {
     grid-area: language;
     position: relative;
+    top: 0;   /* the phone offsets from controls.css do not apply here */
+    right: 0;
+    align-self: center;
+  }
+
+  /* Above the page sections that follow, so the open flag menu is not covered by them. */
+  .app-header {
+    position: relative;
+    z-index: 10;
   }
 
   .header-nav {
