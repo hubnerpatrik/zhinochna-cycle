@@ -7,10 +7,11 @@ import { activeCycleModel, clearFertileRange, getFertileRange } from "../domain.
 import { hideModal, persistStore, showModal } from "./modal-shared.js";
 import { showMessage } from "./toast.js";
 import { isBlankEntry } from "../data-validation.js";
+import { createClickGuard } from "./click-guard.js";
 
 let draft = null;
 let drag = null;
-let suppressNextClick = false;
+const clickGuard = createClickGuard();
 
 function collectFertileDays() {
   const selected = new Set(Object.keys(store.entries).filter(key => store.entries[key]?.isFertile === true));
@@ -66,13 +67,13 @@ export function bindFertileRangeDrag() {
   if (!calendar || calendar.dataset.dragBound) return;
   calendar.dataset.dragBound = "true";
   calendar.addEventListener("pointerdown", event => {
-    suppressNextClick = false;
     if (!draft || (event.pointerType === "mouse" && event.button !== 0)) return;
     const key = event.target.closest?.("[data-date]")?.dataset.date;
     if (!key) return;
     event.preventDefault();
-    drag = { pointerId: event.pointerId, select: !draft.selectedKeys.has(key), lastKey: key };
+    drag = { pointerId: event.pointerId, select: !draft.selectedKeys.has(key), startKey: key, lastKey: key };
     setDraftDay(key, drag.select);
+    clickGuard.handledByPointer(key);
     calendar.setPointerCapture?.(event.pointerId);
   });
   calendar.addEventListener("pointermove", event => {
@@ -87,9 +88,9 @@ export function bindFertileRangeDrag() {
   const finish = event => {
     if (drag?.pointerId !== event.pointerId) return;
     calendar.releasePointerCapture?.(event.pointerId);
+    // The pointer already applied the change; the click that follows it is ignored (see click-guard.js).
+    clickGuard.handledByPointer(drag.startKey);
     drag = null;
-    // The pointer already applied the change; ignore the click that follows it.
-    suppressNextClick = true;
   };
   calendar.addEventListener("pointerup", finish);
   calendar.addEventListener("pointercancel", finish);
@@ -121,10 +122,8 @@ function renderPicker() {
     cell.setAttribute("aria-pressed", String(draft.selectedKeys.has(key)));
     setTranslatedAttribute(cell, "aria-label", cycleDay != null ? `${key} (CD ${cycleDay})` : key);
     cell.classList.toggle("fertile-day", draft.selectedKeys.has(key));
-    cell.onclick = event => {
-      const suppressed = suppressNextClick && event.detail !== 0;
-      suppressNextClick = false;
-      if (suppressed) return;
+    cell.onclick = () => {
+      if (clickGuard.shouldIgnoreClick(key)) return;
       toggleDay(key);
     };
     calendar.appendChild(cell);
