@@ -1,0 +1,553 @@
+/* Home page: a gerbera meadow under a blush sky, with the content set out as garden signs.
+   The meadow is decoration only: no flower colour means anything. Flat colour, no gradients. */
+.screen-home {
+  /* A rounded, friendly display face for the meadow's headlines; Inter keeps the body copy. */
+  --home-display: var(--font-display);
+  color: var(--meadow-ink);
+}
+
+.home-hero h1,
+.home-garden h2,
+.home-sign h3,
+.home-brand {
+  font-family: var(--home-display);
+}
+
+.home {
+  overflow: hidden;
+  background: var(--meadow-ground);
+}
+
+.home-member .home {
+  border-radius: 28px;
+}
+
+/* Hero: the sky holds the copy, the meadow grows from the bottom edge. */
+.home-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--meadow-sky);
+}
+
+.home-hero-copy {
+  position: relative;
+  z-index: 1;
+  padding: 40px 24px 0;
+}
+
+.home-hero h1 {
+  max-width: 13ch;
+  margin: 0;
+  color: var(--meadow-ink);
+  font-size: clamp(2.25rem, 1.55rem + 3.2vw, 4.25rem);
+  font-weight: 650;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.home-lede {
+  max-width: 34ch;
+  margin: 16px 0 0;
+  color: var(--meadow-ink-muted);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  margin-top: 24px;
+}
+
+.home-cta {
+  min-height: 52px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--action-fill);
+  color: var(--action-fill-ink);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), transform 0.1s var(--ease);
+}
+
+@media (hover: hover) {
+  .home-cta:hover {
+    background: var(--action-fill-hover);
+  }
+}
+
+.home-cta:active {
+  transform: scale(var(--press-scale));
+}
+
+.home-link {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--meadow-ink);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .home-link:hover {
+    text-decoration-color: var(--action);
+  }
+}
+
+.home-cta:focus-visible,
+.home-link:focus-visible,
+.home-pill:focus-visible,
+.home-changelog:focus-visible {
+  outline: 2px solid var(--action-soft);
+  outline-offset: 3px;
+}
+
+/* The meadow fills the rest of the first screen: down to the viewport bottom for visitors,
+   down to the tab bar for signed-in phones. */
+.home-public .home-hero {
+  min-height: 100svh;
+}
+
+.home-meadow {
+  display: block;
+  flex: 1 0 auto;
+  width: 100%;
+  height: auto;
+  min-height: clamp(330px, 100vw, 460px);
+  margin-top: -56px;
+}
+
+.home-row-1 { opacity: 0.78; }
+
+.home-hill-1 { fill: var(--meadow-hill-far); }
+.home-hill-2 { fill: var(--meadow-hill-mid); }
+.home-hill-3 { fill: var(--meadow-hill-near); }
+.home-hill-edge { fill: var(--meadow-ground); }
+.home-sun { fill: var(--meadow-sun); opacity: 0.85; }
+
+.gerbera-stem {
+  fill: none;
+  stroke: var(--meadow-stem);
+  stroke-linecap: round;
+}
+
+.gerbera-leaf { fill: var(--meadow-leaf); }
+.gerbera-petals { fill: currentColor; }
+.gerbera-inner { fill: var(--petal-inner); }
+.gerbera-disc { fill: var(--meadow-disc); }
+.gerbera-eye { fill: var(--meadow-sun); }
+
+.tone-peach { color: var(--meadow-peach); --petal-inner: var(--meadow-peach-inner); }
+.tone-rose { color: var(--meadow-rose); --petal-inner: var(--meadow-rose-inner); }
+.tone-butter { color: var(--meadow-butter); --petal-inner: var(--meadow-butter-inner); }
+.tone-lavender { color: var(--meadow-lavender); --petal-inner: var(--meadow-lavender-inner); }
+.tone-white { color: var(--meadow-white); --petal-inner: var(--meadow-white-inner); }
+
+/* The field sways as if in a light breeze; each row and flower keeps its own rhythm. */
+.gerbera {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: home-sway 7s ease-in-out 8 alternate both;
+}
+
+.sway-slow { animation-duration: 6s; }
+.sway-near { animation-duration: 9s; }
+.sway-1 { animation-delay: -2.2s; }
+.sway-2 { animation-delay: -4.6s; }
+
+@keyframes home-sway {
+  from { transform: rotate(-1.4deg); }
+  to { transform: rotate(1.4deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gerbera { animation: none; }
+}
+
+/* Garden: the meadow ground continues below, content set out as white signs on posts. */
+.home-garden {
+  /* Sits a hair over the meadow's bottom edge so no sky line shows at the seam. */
+  position: relative;
+  margin-top: -2px;
+  padding: 12px 20px 28px;
+  background: var(--meadow-ground);
+}
+
+.home-garden h2 {
+  margin: 28px 0 18px;
+  color: var(--meadow-ink);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.home-signs {
+  display: grid;
+  gap: 30px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-sign {
+  position: relative;
+  padding: 18px 18px 20px;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+/* On wide screens each sign stands on a post planted in a tuft of grass; stacked on phones
+   the posts would read as connectors, so there each sign rests on its own grass strip. */
+.home-sign::after {
+  display: none;
+}
+
+/* Phones: the sign rests on a strip of grass along its bottom edge, drawn in front of it. */
+.home-sign-foot {
+  position: absolute;
+  left: 16px;
+  bottom: -14px;
+  z-index: 1;
+  width: 55%;
+  max-width: 180px;
+  height: 28px;
+  fill: none;
+  stroke: var(--meadow-stem);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.home-sign-foot .home-sign-bud { fill: var(--meadow-rose); stroke: none; }
+.home-sign-foot.tuft-1 { left: auto; right: 16px; transform: scaleX(-1); }
+.home-sign-foot.tuft-1 .home-sign-bud { fill: var(--meadow-butter); }
+.home-sign-foot.tuft-2 .home-sign-bud { fill: var(--meadow-lavender); }
+
+.home-sign h3 {
+  margin: 14px 0 6px;
+  font-size: 1.0625rem;
+  font-weight: 560;
+  letter-spacing: 0;
+}
+
+.home-sign p {
+  margin: 0;
+  color: var(--meadow-ink-muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.home-sign-soon {
+  border: 1.5px dashed var(--meadow-soon-line);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  box-shadow: none;
+}
+
+.home-sign-soon h3 {
+  margin-top: 4px;
+  padding-right: 56px;
+}
+
+/* The state rides on the sign as a small sticker in its corner, not as a label above the title. */
+.home-soon-tag {
+  position: absolute;
+  top: -10px;
+  right: 16px;
+  transform: rotate(3deg);
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  background: var(--meadow-sun);
+  color: var(--meadow-ink);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+/* Small drawn examples of the app at work. */
+.home-demo-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.home-demo-day {
+  display: grid;
+  place-items: center;
+  height: 28px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-demo-day.is-period {
+  background: var(--calendar-red);
+  color: var(--calendar-red-text);
+}
+
+.home-demo-day.is-selected {
+  background: var(--meadow-ink);
+  color: var(--surface);
+  font-weight: 650;
+}
+
+.home-demo-chart {
+  display: block;
+  width: 100%;
+  height: 64px;
+}
+
+.home-demo-chart .home-demo-grid {
+  fill: none;
+  stroke: var(--line-soft);
+  stroke-width: 1;
+}
+
+.home-demo-chart polyline {
+  fill: none;
+  stroke: var(--meadow-ink);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.home-demo-chart circle {
+  fill: var(--surface);
+  stroke: var(--meadow-ink);
+  stroke-width: 1.4;
+}
+
+.home-demo-export {
+  display: flex;
+  gap: 8px;
+  min-height: 64px;
+  align-items: center;
+}
+
+.home-demo-export span {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--surface-alt);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.home-footer {
+  margin-top: 36px;
+  padding-top: 18px;
+  border-top: 1px solid var(--meadow-rule);
+  color: var(--meadow-ink-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.home-footer p {
+  max-width: 60ch;
+  margin: 0;
+}
+
+.home-footer-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.home-changelog {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--meadow-ink);
+  text-underline-offset: 3px;
+}
+
+.home-changelog-icon {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Visitors: the welcome page fills the screen, with its own brand bar over the sky. */
+.auth-shell.is-welcome {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home-topbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 0 20px;
+}
+
+.home-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.home-brand-mark {
+  width: 26px;
+  height: 26px;
+}
+
+.home-brand-mark .bloom-petals {
+  fill: var(--bloom-petal);
+  stroke: var(--bloom-petal-edge);
+  stroke-width: 1;
+}
+
+.home-brand-mark .bloom-heart {
+  fill: var(--bloom-heart);
+}
+
+.home-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-topbar .language-picker-trigger {
+  min-height: 40px;
+  border-color: transparent;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+
+.home-pill {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--meadow-ink);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .home-pill:hover {
+    background: color-mix(in srgb, var(--surface) 80%, var(--meadow-sky));
+  }
+}
+
+@media (min-width: 561px) {
+  .home-hero-copy {
+    padding: 64px 56px 0;
+  }
+
+  .home-meadow {
+    height: clamp(320px, 40vw, 600px);
+    margin-top: -64px;
+  }
+
+  .home-garden {
+    padding: 16px 56px 36px;
+  }
+
+  .home-features .home-signs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .home-signs-soon {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-signs {
+    row-gap: 52px;
+  }
+
+  .home-sign::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: -26px;
+    width: 6px;
+    height: 26px;
+    margin-left: -3px;
+    background: var(--meadow-post);
+  }
+
+  .home-sign-foot,
+  .home-sign-foot.tuft-1 {
+    display: block;
+    position: absolute;
+    right: auto;
+    left: 50%;
+    bottom: -36px;
+    z-index: 1;
+    width: 72px;
+    max-width: none;
+    height: 18px;
+    margin-left: -36px;
+    fill: none;
+    stroke: var(--meadow-stem);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .home-sign-foot.tuft-1 {
+    transform: scaleX(-1);
+  }
+
+  .home-topbar {
+    padding: 20px 40px 0 56px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .home-public .home-hero-copy,
+  .home-public .home-garden,
+  .home-public .home-topbar {
+    padding-left: max(56px, calc((100vw - 1100px) / 2));
+    padding-right: max(40px, calc((100vw - 1100px) / 2));
+  }
+}
+
+.home-brand,
+.home-pill {
+  white-space: nowrap;
+}
+
+/* The narrowest phones keep the hero's own Sign in button and drop the duplicate in the bar. */
+@media (max-width: 359px) {
+  .home-topbar .home-pill {
+    display: none;
+  }
+}
+
+/* Signed-in phones: the meadow reaches down to the tab bar under the header band. */
+@media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
+  .home-member .home-hero {
+    min-height: calc(100svh - var(--mobile-nav-space) - 170px);
+  }
+}

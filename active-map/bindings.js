@@ -7,8 +7,12 @@ import { t } from "../i18n.js";
 import { enhanceTimeInputs } from "../ui/time-picker.js";
 import { bindMapGestures, zoomScrollLeft } from "./map-gestures.js";
 import { LAYOUT, PHONE_LAYOUT_QUERY, getElementById, querySelectorAll, syncCSSVariables } from "../core.js";
+import { bindCalendarSwipe } from "./calendar-swipe.js";
+import { addSheetGrip, bindSheetDismiss } from "../ui/sheet.js";
+import { createZoomAnimator } from "./zoom-spring.js";
 import { observationChoiceValue } from '../ui/observation-values.js';
 import { configureMapSettingsEditor } from '../ui/profile-info-modal.js';
+import { installModalKeyboard } from '../ui/modal-a11y.js';
 import {
   bindFertileRangeDrag,
   changeFertileRangeMonth,
@@ -52,8 +56,6 @@ import {
 } from "../ui.js";
 
 const CHART_HEADER_HEIGHT = 28;
-const ZOOM_ANIMATION_DURATION_MS = 180;
-const ZOOM_EASING_EXPONENT = 3;
 
 let initialized = false;
 
@@ -62,43 +64,11 @@ function bindButton(id, handler) {
   if (button) button.onclick = handler;
 }
 
-function bindCalendarSwipe(changeMonth) {
-  const calendar = getElementById("calendar");
-  if (!calendar) return;
-  const phone = window.matchMedia(PHONE_LAYOUT_QUERY);
-  const minDistance = 45;
-  let start;
-
-  calendar.addEventListener("touchstart", event => {
-    start = phone.matches && event.touches.length === 1 ? event.touches[0] : null;
-  }, { passive: true });
-  calendar.addEventListener("touchcancel", () => { start = null; });
-  calendar.addEventListener("touchend", event => {
-    const origin = start;
-    start = null;
-    if (!origin || !phone.matches || event.touches.length || !event.cancelable) return;
-    const end = event.changedTouches[0];
-    if (!end || origin.identifier !== end.identifier) return;
-    const x = end.clientX - origin.clientX;
-    const y = end.clientY - origin.clientY;
-    if (Math.abs(x) < minDistance || Math.abs(x) < Math.abs(y) * 1.5) return;
-    event.preventDefault();
-    changeMonth(x < 0 ? 1 : -1);
-  }, { passive: false });
-}
-
 function bindOverlayClicks(definitions) {
   definitions.forEach(([id, close]) => {
     getElementById(id)?.addEventListener("click", event => {
       if (event.target.id === id) close();
     });
-  });
-}
-
-function animatePrimaryButton(button) {
-  button?.addEventListener("click", () => {
-    button.classList.add("pulse-attention");
-    button.addEventListener("animationend", () => button.classList.remove("pulse-attention"), { once: true });
   });
 }
 
@@ -145,9 +115,18 @@ export function initializeActiveMapControls({
   };
   bindButton("prevMonth", () => changeMonth(-1));
   bindButton("nextMonth", () => changeMonth(1));
-  bindCalendarSwipe(changeMonth);
+  const calendarGrid = getElementById("calendar");
+  bindCalendarSwipe(calendarGrid, {
+    area: calendarGrid?.closest(".calendar-card") ?? calendarGrid,
+    isInside: event => {
+      const band = calendarGrid.getBoundingClientRect();
+      return event.clientY >= band.top && event.clientY <= band.bottom;
+    },
+    changeMonth,
+    isPhone: () => window.matchMedia(PHONE_LAYOUT_QUERY).matches,
+    reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
 
-  querySelectorAll(".btn.primary").forEach(animatePrimaryButton);
   configureActionModal({ getColumns });
   configureMapSettingsEditor({ render });
   bindButton("editBtn", openActionModal);
@@ -198,6 +177,20 @@ export function initializeActiveMapControls({
     ["dayInfoModal", closeDayInfoModal],
   ]);
 
+  // On phones the editors are bottom sheets: drag the grabber or title down to close them.
+  querySelectorAll(".modal").forEach(modal => {
+    const card = modal.querySelector(":scope > .modal-card");
+    addSheetGrip(card);
+    bindSheetDismiss(card, {
+      requestClose: () => modal.dispatchEvent(new MouseEvent("click", { bubbles: true })),
+      isOpen: () => !modal.classList.contains("hidden"),
+      isPhone: () => window.matchMedia(PHONE_LAYOUT_QUERY).matches,
+      reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    });
+  });
+
+  installModalKeyboard();
+
   const mapScroll = document.querySelector(".map-scroll");
   const fixedWidth = () => LAYOUT.sideLabelWidth + LAYOUT.tempScaleWidth;
   const setWidth = width => {
@@ -205,13 +198,6 @@ export function initializeActiveMapControls({
     syncCSSVariables();
     renderZoom();
     renderZoomLabel();
-  };
-  let zoomFrame = null;
-  let zoomTarget = null;
-  const cancelZoom = () => {
-    if (zoomFrame !== null) cancelAnimationFrame(zoomFrame);
-    zoomFrame = null;
-    zoomTarget = null;
   };
   const applyZoom = width => {
     const oldHeight = LAYOUT.chartHeight;
@@ -224,21 +210,15 @@ export function initializeActiveMapControls({
     if (mapScroll && mobileMap.active()) mapScroll.scrollTop = Math.max(0,
       (top + anchorY - CHART_HEADER_HEIGHT) * LAYOUT.chartHeight / oldHeight - anchorY + CHART_HEADER_HEIGHT);
   };
-  const zoomBy = step => {
-    const target = mobileMap.clampWidth(mobileMap.zoomStep(step, zoomTarget ?? LAYOUT.columnWidth));
-    cancelZoom();
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return applyZoom(target);
-    const startWidth = LAYOUT.columnWidth;
-    const start = performance.now();
-    zoomTarget = target;
-    const animate = now => {
-      const progress = Math.min(1, (now - start) / ZOOM_ANIMATION_DURATION_MS);
-      applyZoom(startWidth + (target - startWidth) * (1 - (1 - progress) ** ZOOM_EASING_EXPONENT));
-      if (progress < 1) zoomFrame = requestAnimationFrame(animate);
-      else { zoomFrame = null; zoomTarget = null; }
-    };
-    zoomFrame = requestAnimationFrame(animate);
-  };
+  const zoomer = createZoomAnimator({
+    getWidth: () => LAYOUT.columnWidth,
+    applyWidth: applyZoom,
+    clamp: width => mobileMap.clampWidth(width),
+    step: (direction, width) => mobileMap.zoomStep(direction, width),
+    reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
+  const cancelZoom = () => zoomer.cancel();
+  const zoomBy = step => zoomer.by(step);
   bindButton("zoomInBtn", () => zoomBy(1));
   bindButton("zoomOutBtn", () => zoomBy(-1));
   mapScroll?.addEventListener("touchstart", cancelZoom, { passive: true });

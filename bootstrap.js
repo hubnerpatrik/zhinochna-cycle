@@ -6,6 +6,7 @@ import { configurePersistence, useAccountStorage } from "./storage/local-storage
 import { CloudStorageAdapter, createCloudTransport } from "./storage/cloud-storage-adapter.js";
 import { setupCloudStatus } from "./views/cloud-status.js";
 import { renderAuthView } from "./views/auth.js";
+import { renderWelcomeView } from "./views/welcome.js";
 import { setupFeedback, concealFeedback } from './ui/feedback.js';
 import { initializeFieldErrors } from './ui/field-errors.js';
 
@@ -57,14 +58,17 @@ function show(modeName, message = "", error = false, fieldErrors = []) {
   mode = modeName;
   concealApp();
   root.classList.remove("hidden");
+  root.classList.toggle("is-welcome", modeName === "welcome");
+  const onMode = (next, email) => {
+    if (email !== undefined) rememberedEmail = email.trim();
+    if (activeUserId) { location.replace("/"); return; }
+    history.replaceState(null, "", `/#/${next}`);
+    show(next);
+  };
+  if (modeName === "welcome") { renderWelcomeView(root, { onMode }); return; }
   renderAuthView(root, {
     mode, email: rememberedEmail, message, error, fieldErrors,
-    onMode: (next, email) => {
-      if (email !== undefined) rememberedEmail = email.trim();
-      if (activeUserId) { location.replace("/"); return; }
-      history.replaceState(null, "", `/#/${next}`);
-      show(next);
-    },
+    onMode,
     onRetry: () => signingOut ? signOut() : checkSession(),
     onSubmit: submit,
   });
@@ -89,7 +93,8 @@ async function enter(session, epoch = sessionEpoch) {
       show("verify-email");
     } else {
       const requested = location.hash.replace(/^#\//, "");
-      show(["sign-up", "forgot-password", "verify-email", "resend-code"].includes(requested) ? requested : "sign-in");
+      show(["sign-up", "forgot-password", "verify-email", "resend-code"].includes(requested) ? requested
+        : requested === "sign-in" ? "sign-in" : "welcome");
     }
     return;
   }

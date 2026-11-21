@@ -3,6 +3,14 @@ import { configurePersistence, LocalStorageAdapter } from "../storage/local-stor
 export const DEVELOPMENT_NAMESPACE = "cycle-development:";
 
 export async function startLocalPreview({ app, root }) {
+  // /#/welcome previews the public welcome page that signed-out visitors see.
+  if (location.hash === "#/welcome") {
+    const { renderWelcomeView } = await import("../views/welcome.js");
+    root.classList.add("is-welcome");
+    root.classList.remove("hidden");
+    renderWelcomeView(root, { onMode: () => { location.hash = ""; location.reload(); } });
+    return;
+  }
   // Select isolated local persistence before the application constructs its store.
   configurePersistence(() => new LocalStorageAdapter(globalThis.localStorage, DEVELOPMENT_NAMESPACE));
   const [{ store }, { seedDemoData }] = await Promise.all([import("../store.js"), import("./demo-data.js")]);

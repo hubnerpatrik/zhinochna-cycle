@@ -1,0 +1,596 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-17T11:58:37.549Z",
+  "title": "Design System: Cycle Tracker",
+  "extensions": {
+    "colorMeta": {
+      "coral": {
+        "role": "primary",
+        "displayName": "Coral",
+        "canonical": "#c84a32",
+        "tonalRamp": [
+          "#3d140c",
+          "#6a2316",
+          "#972f1f",
+          "#c84a32",
+          "#e0674f",
+          "#ec9584",
+          "#f5c3b8",
+          "#fdeae4"
+        ]
+      },
+      "coral-deep": {
+        "role": "primary",
+        "displayName": "Coral Deep",
+        "canonical": "#ad3e29"
+      },
+      "coral-soft": {
+        "role": "primary",
+        "displayName": "Coral Soft (rings and icons only)",
+        "canonical": "#e0674f"
+      },
+      "coral-tint": {
+        "role": "primary",
+        "displayName": "Coral Tint",
+        "canonical": "#fdeae4"
+      },
+      "page-ground": {
+        "role": "neutral",
+        "displayName": "Page Ground",
+        "canonical": "#f3f6ef"
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Warm Ground",
+        "canonical": "#f7f3f0",
+        "tonalRamp": [
+          "#1f1a17",
+          "#3b332e",
+          "#5a4f48",
+          "#6f655c",
+          "#9b9087",
+          "#c9bfb7",
+          "#f2ece8",
+          "#f7f3f0"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "#ffffff"
+      },
+      "surface-sunken": {
+        "role": "neutral",
+        "displayName": "Sunken",
+        "canonical": "#f2ece8"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1f1a17"
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "#6f655c"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "canonical": "rgba(31, 26, 23, 0.12)"
+      },
+      "line-soft": {
+        "role": "neutral",
+        "displayName": "Line Soft",
+        "canonical": "rgba(31, 26, 23, 0.06)"
+      },
+      "calendar-fertile": {
+        "role": "data",
+        "displayName": "Fertile Day Fill",
+        "canonical": "#cfe7b4"
+      },
+      "calendar-period": {
+        "role": "data",
+        "displayName": "Menstruation Day Fill",
+        "canonical": "#f4c7cf"
+      },
+      "data-adjusted": {
+        "role": "data",
+        "displayName": "Adjusted Temperature",
+        "canonical": "#2563eb"
+      },
+      "data-coverline": {
+        "role": "data",
+        "displayName": "Coverline",
+        "canonical": "#b41414"
+      },
+      "bloom-ground": {
+        "role": "decorative",
+        "displayName": "Bloom Ground (header band)",
+        "canonical": "#f8e4e6",
+        "tonalRamp": [
+          "#3a1e22",
+          "#5f3239",
+          "#874a53",
+          "#b0707b",
+          "#d39aa3",
+          "#e8c1c7",
+          "#f4d8dc",
+          "#f8e4e6"
+        ]
+      },
+      "bloom-ink": {
+        "role": "decorative",
+        "displayName": "Bloom Ink",
+        "canonical": "#2a1f21"
+      },
+      "bloom-ink-muted": {
+        "role": "decorative",
+        "displayName": "Bloom Ink Muted",
+        "canonical": "#75565b"
+      },
+      "bloom-petal": {
+        "role": "decorative",
+        "displayName": "Bloom Petal",
+        "canonical": "#f4ccd2"
+      },
+      "bloom-petal-edge": {
+        "role": "decorative",
+        "displayName": "Petal Edge",
+        "canonical": "#dd9eaa"
+      },
+      "bloom-heart": {
+        "role": "decorative",
+        "displayName": "Bloom Heart",
+        "canonical": "#ecc77f"
+      },
+      "bloom-leaf": {
+        "role": "decorative",
+        "displayName": "Sprig Leaf",
+        "canonical": "#98b293"
+      },
+      "bloom-leaf-tint": {
+        "role": "decorative",
+        "displayName": "Sprig Leaf Tint",
+        "canonical": "#e1ebdc"
+      },
+      "meadow-sky": {
+        "role": "decorative",
+        "displayName": "Meadow Sky",
+        "canonical": "#fbe7ea"
+      },
+      "meadow-hill-far": {
+        "role": "decorative",
+        "displayName": "Hill Far",
+        "canonical": "#dbe8d0"
+      },
+      "meadow-hill-mid": {
+        "role": "decorative",
+        "displayName": "Hill Mid",
+        "canonical": "#cfe0c3"
+      },
+      "meadow-hill-near": {
+        "role": "decorative",
+        "displayName": "Hill Near",
+        "canonical": "#b5cfa8",
+        "tonalRamp": [
+          "#1f2b1a",
+          "#34472d",
+          "#4c6543",
+          "#68845d",
+          "#8aa77f",
+          "#b5cfa8",
+          "#cfe0c3",
+          "#e4eddb"
+        ]
+      },
+      "meadow-ground": {
+        "role": "decorative",
+        "displayName": "Meadow Ground",
+        "canonical": "#e4eddb"
+      },
+      "meadow-stem": {
+        "role": "decorative",
+        "displayName": "Stem",
+        "canonical": "#7f9e74"
+      },
+      "meadow-leaf": {
+        "role": "decorative",
+        "displayName": "Meadow Leaf",
+        "canonical": "#9cbb8f"
+      },
+      "meadow-disc": {
+        "role": "decorative",
+        "displayName": "Cocoa Disc",
+        "canonical": "#6b4a33"
+      },
+      "meadow-sun": {
+        "role": "decorative",
+        "displayName": "Sun / Butter Petal",
+        "canonical": "#f6d27a"
+      },
+      "meadow-ink": {
+        "role": "decorative",
+        "displayName": "Meadow Ink (Home text)",
+        "canonical": "#33242b"
+      },
+      "meadow-ink-muted": {
+        "role": "decorative",
+        "displayName": "Meadow Ink Muted",
+        "canonical": "#5f4a51"
+      },
+      "meadow-post": {
+        "role": "decorative",
+        "displayName": "Sign Post",
+        "canonical": "#a88b72"
+      },
+      "meadow-soon-line": {
+        "role": "decorative",
+        "displayName": "Soon Line (dashed border)",
+        "canonical": "#c9a5b1"
+      },
+      "meadow-rule": {
+        "role": "decorative",
+        "displayName": "Meadow Rule",
+        "canonical": "rgba(51, 36, 43, 0.12)"
+      },
+      "meadow-peach": {
+        "role": "decorative",
+        "displayName": "Peach Petal",
+        "canonical": "#f6a98d"
+      },
+      "meadow-peach-inner": {
+        "role": "decorative",
+        "displayName": "Peach Inner",
+        "canonical": "#ee8c6c"
+      },
+      "meadow-rose": {
+        "role": "decorative",
+        "displayName": "Rose Petal",
+        "canonical": "#f19bb0"
+      },
+      "meadow-rose-inner": {
+        "role": "decorative",
+        "displayName": "Rose Inner",
+        "canonical": "#e57e98"
+      },
+      "meadow-butter-inner": {
+        "role": "decorative",
+        "displayName": "Butter Inner",
+        "canonical": "#ecbd52"
+      },
+      "meadow-lavender": {
+        "role": "decorative",
+        "displayName": "Lavender Petal",
+        "canonical": "#c8b6e8"
+      },
+      "meadow-lavender-inner": {
+        "role": "decorative",
+        "displayName": "Lavender Inner",
+        "canonical": "#ad97dc"
+      },
+      "meadow-white-inner": {
+        "role": "decorative",
+        "displayName": "White Petal Inner",
+        "canonical": "#f3e3e8"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Screen titles on Profile and My Maps; clamps 1.8125-2.125rem on phones."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The selected day's temperature on the phone dock; tabular figures."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "App name, month label, card titles (1.0625-1.125rem)."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text; supporting paragraphs at 0.9375rem."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Field values, button and tab labels; primary labels at 600."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, section titles, metadata; sentence case."
+      },
+      "home-display": {
+        "displayName": "Home Display (Rubik)",
+        "purpose": "The one hero headline in the Home sky; fluid rem-bounded clamp, max 13ch."
+      },
+      "home-headline": {
+        "displayName": "Home Headline (Rubik)",
+        "purpose": "Garden section titles on Home."
+      },
+      "home-title": {
+        "displayName": "Home Title (Rubik)",
+        "purpose": "Title on each garden sign."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 1px 2px rgba(31, 26, 23, 0.04), 0 6px 20px rgba(31, 26, 23, 0.05)",
+        "purpose": "Every resting card and Home garden sign; unchanged on hover."
+      },
+      {
+        "name": "float",
+        "value": "0 16px 40px rgba(31, 26, 23, 0.14), 0 2px 8px rgba(31, 26, 23, 0.06)",
+        "purpose": "Dialogs, bottom sheets, time-picker panel."
+      },
+      {
+        "name": "thumb",
+        "value": "0 1px 2px rgba(31, 26, 23, 0.08), 0 2px 6px rgba(31, 26, 23, 0.06)",
+        "purpose": "White thumb of a segmented control."
+      },
+      {
+        "name": "tab-bar",
+        "value": "0 -4px 20px rgba(31, 26, 23, 0.05)",
+        "purpose": "Upward edge of the phone tab bar."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 2px #f7f3f0, 0 0 0 4px #e0674f",
+        "purpose": "Focus ring token; controls use a 2px coral-soft outline offset 2px."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for colour and state changes (0.15s)."
+      },
+      {
+        "name": "sheet",
+        "value": "transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Bottom sheets rising and leaving on phones."
+      },
+      {
+        "name": "screen-crossfade",
+        "value": "160ms ease-out",
+        "purpose": "View transition between Home, Active Map, Maps and Profile."
+      },
+      {
+        "name": "press",
+        "value": "scale(0.94)",
+        "purpose": "Calendar day press feedback; removed under reduced motion."
+      },
+      {
+        "name": "meadow-sway",
+        "value": "rotate(-1.4deg to 1.4deg), 6-9s ease-in-out, 8 alternate iterations",
+        "purpose": "Home gerberas swaying from the stem base; none under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "(max-width: 560px), (max-height: 500px) and (pointer: coarse)"
+      },
+      {
+        "name": "narrow",
+        "value": "380px"
+      },
+      {
+        "name": "tablet",
+        "value": "900px"
+      },
+      {
+        "name": "container",
+        "value": "1100px"
+      },
+      {
+        "name": "home-wide",
+        "value": "720px"
+      },
+      {
+        "name": "header-sprig",
+        "value": "901px"
+      },
+      {
+        "name": "home-narrowest",
+        "value": "359px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one filled coral action per view.",
+      "html": "<button class=\"ds-btn-primary\">Day record</button>",
+      "css": ".ds-btn-primary { height: 44px; padding: 0 18px; border: 0; border-radius: 14px; background: #c84a32; color: #fff; font: 600 0.875rem 'Inter Variable', Inter, system-ui, sans-serif; cursor: pointer; transition: background 0.18s ease, transform 0.18s ease; } .ds-btn-primary:hover { background: #ad3e29; } .ds-btn-primary:active { transform: scale(0.995); } .ds-btn-primary:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White with one hairline; every non-primary action.",
+      "html": "<button class=\"ds-btn-secondary\">Tools</button>",
+      "css": ".ds-btn-secondary { height: 44px; padding: 0 18px; border: 1px solid rgba(31,26,23,0.12); border-radius: 14px; background: #fff; color: #1f1a17; font: 500 0.875rem 'Inter Variable', Inter, system-ui, sans-serif; cursor: pointer; transition: background 0.16s ease, border-color 0.16s ease; } .ds-btn-secondary:hover { background: #f2ece8; border-color: rgba(31,26,23,0.22); } .ds-btn-secondary:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "White card on the warm ground with one ambient lift.",
+      "html": "<div class=\"ds-ground\"><div class=\"ds-card\"><div class=\"ds-card-title\">Today</div><div class=\"ds-card-temp\">36.52 °C</div></div></div>",
+      "css": ".ds-ground { padding: 16px; background: #f7f3f0; } .ds-card { padding: 16px; border: 1px solid transparent; border-radius: 22px; background: #fff; box-shadow: 0 1px 2px rgba(31,26,23,0.04), 0 6px 20px rgba(31,26,23,0.05); font-family: 'Inter Variable', Inter, system-ui, sans-serif; color: #1f1a17; transition: border-color 0.16s ease; } .ds-card:hover { border-color: rgba(31,26,23,0.06); } .ds-card-title { font-size: 0.8125rem; font-weight: 600; color: #6f655c; } .ds-card-temp { font-size: 2rem; font-weight: 650; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Select Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "White field with a hairline, coral focus and an authored chevron.",
+      "html": "<select class=\"ds-select\"><option>Thermometer: oral</option></select>",
+      "css": ".ds-select { appearance: none; -webkit-appearance: none; width: 100%; height: 44px; padding: 0 36px 0 12px; border: 1px solid rgba(31,26,23,0.12); border-radius: 12px; background: #fff url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f655c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E\") no-repeat right 10px center / 18px; color: #1f1a17; font: 0.875rem 'Inter Variable', Inter, system-ui, sans-serif; } .ds-select:hover { border-color: rgba(31,26,23,0.22); } .ds-select:focus { outline: none; border-color: #e0674f; box-shadow: 0 0 0 3px rgba(224,103,79,0.22); }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "segmented-track",
+      "description": "Sunken track with a lifted white thumb (Calendar / Graph).",
+      "html": "<div class=\"ds-seg\" role=\"tablist\"><button class=\"ds-seg-btn is-active\" role=\"tab\" aria-selected=\"true\">Calendar</button><button class=\"ds-seg-btn\" role=\"tab\" aria-selected=\"false\">Graph</button></div>",
+      "css": ".ds-seg { display: inline-grid; grid-auto-flow: column; gap: 2px; padding: 3px; border-radius: 15px; background: #f2ece8; font-family: 'Inter Variable', Inter, system-ui, sans-serif; } .ds-seg-btn { min-height: 38px; padding: 0 16px; border: 1px solid transparent; border-radius: 12px; background: transparent; color: #6f655c; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.18s ease, box-shadow 0.18s ease; } .ds-seg-btn:hover:not(.is-active) { color: #1f1a17; } .ds-seg-btn.is-active { background: #fff; color: #1f1a17; font-weight: 600; box-shadow: 0 1px 2px rgba(31,26,23,0.08), 0 2px 6px rgba(31,26,23,0.06); } .ds-seg-btn:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Calendar Day Cells",
+      "kind": "custom",
+      "refersTo": "calendar-day",
+      "description": "Bare numerals by default; only data states fill; selected is coral, today is ringed.",
+      "html": "<div class=\"ds-days\"><button class=\"ds-day\"><span class=\"ds-cd\">3</span>12</button><button class=\"ds-day ds-period\"><span class=\"ds-cd\">1</span>10</button><button class=\"ds-day ds-fertile\"><span class=\"ds-cd\">14</span>23</button><button class=\"ds-day ds-today\"><span class=\"ds-cd\">4</span>13</button><button class=\"ds-day ds-selected\"><span class=\"ds-cd\">5</span>14</button></div>",
+      "css": ".ds-days { display: grid; grid-template-columns: repeat(5, 44px); gap: 6px; padding: 12px; background: #fff; border-radius: 22px; } .ds-day { position: relative; height: 44px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: #1f1a17; font: 500 0.8125rem 'Inter Variable', Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums; cursor: pointer; transition: background 0.15s cubic-bezier(0.4,0,0.2,1), transform 0.1s cubic-bezier(0.4,0,0.2,1); } .ds-day:hover { background: #f2ece8; } .ds-day:active { transform: scale(0.94); } .ds-cd { position: absolute; top: 3px; left: 4px; font-size: 0.5625rem; font-weight: 600; color: #6f655c; } .ds-period { background: #f4c7cf; color: #793744; } .ds-period .ds-cd { color: #793744; } .ds-fertile { background: #cfe7b4; color: #4d6246; } .ds-fertile .ds-cd { color: #4d6246; } .ds-today { box-shadow: inset 0 0 0 1.5px #e0674f; color: #c84a32; font-weight: 700; } .ds-selected { background: #c84a32; border-color: #c84a32; color: #fff; } .ds-selected .ds-cd { color: #fff; } .ds-day:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Action List",
+      "kind": "custom",
+      "refersTo": "action-list",
+      "description": "One grouped list with dividers for sidebar actions and the Edit Day sheet.",
+      "html": "<div class=\"ds-actions\"><button class=\"ds-action\"><span class=\"ds-chip\"></span>Temperature</button><button class=\"ds-action\"><span class=\"ds-chip\"></span>Bleeding</button><button class=\"ds-action\"><span class=\"ds-chip\"></span>Notes</button></div>",
+      "css": ".ds-actions { display: grid; overflow: hidden; border-radius: 14px; background: #f7f3f0; font: 500 0.875rem 'Inter Variable', Inter, system-ui, sans-serif; } .ds-action { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border: 0; background: transparent; color: #1f1a17; text-align: left; cursor: pointer; } .ds-action + .ds-action { box-shadow: inset 0 1px 0 rgba(31,26,23,0.06); } .ds-action:hover { background: #f2ece8; } .ds-action:focus-visible { outline: 2px solid #e0674f; outline-offset: -2px; } .ds-chip { width: 32px; height: 32px; border-radius: 10px; background: #f2ece8; }"
+    },
+    {
+      "name": "Phone Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab-bar-phone",
+      "description": "Frosted white bottom tab bar with four tabs (Home, Active Map, Maps, Profile); coral active tab; solid without blur or under reduced transparency.",
+      "html": "<nav class=\"ds-tabbar\"><button class=\"ds-tab\">Home</button><button class=\"ds-tab is-active\" aria-current=\"page\">Active Map</button><button class=\"ds-tab\">Maps</button><button class=\"ds-tab\">Profile</button></nav>",
+      "css": ".ds-tabbar { display: flex; gap: 4px; padding: 6px 12px; border-top: 1px solid rgba(31,26,23,0.06); background: rgba(255,255,255,0.78); -webkit-backdrop-filter: saturate(1.6) blur(20px); backdrop-filter: saturate(1.6) blur(20px); box-shadow: 0 -4px 20px rgba(31,26,23,0.05); font-family: 'Inter Variable', Inter, system-ui, sans-serif; } @supports not (backdrop-filter: blur(1px)) { .ds-tabbar { background: #fff; } } @media (prefers-reduced-transparency: reduce) { .ds-tabbar { background: #fff; backdrop-filter: none; } } .ds-tab { flex: 1; height: 52px; border: 0; border-radius: 14px; background: transparent; color: #6f655c; font-size: 0.8125rem; font-weight: 600; cursor: pointer; } .ds-tab.is-active { color: #c84a32; } .ds-tab:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "App Header (bloom band)",
+      "kind": "nav",
+      "refersTo": "app-header",
+      "description": "Pale blush band with a five-petal flower mark and text tabs; the active tab carries a coral underline.",
+      "html": "<header class=\"ds-bloom\"><div class=\"ds-bloom-brand\"><svg class=\"ds-bloom-mark\" viewBox=\"0 0 32 32\" aria-hidden=\"true\"><g fill=\"#f4ccd2\" stroke=\"#dd9eaa\"><ellipse cx=\"16\" cy=\"8.5\" rx=\"4.6\" ry=\"6.5\"/><ellipse cx=\"16\" cy=\"8.5\" rx=\"4.6\" ry=\"6.5\" transform=\"rotate(72 16 16)\"/><ellipse cx=\"16\" cy=\"8.5\" rx=\"4.6\" ry=\"6.5\" transform=\"rotate(144 16 16)\"/><ellipse cx=\"16\" cy=\"8.5\" rx=\"4.6\" ry=\"6.5\" transform=\"rotate(216 16 16)\"/><ellipse cx=\"16\" cy=\"8.5\" rx=\"4.6\" ry=\"6.5\" transform=\"rotate(288 16 16)\"/></g><circle cx=\"16\" cy=\"16\" r=\"3.4\" fill=\"#ecc77f\"/></svg>Cycle Tracker</div><nav class=\"ds-dtabs\"><button class=\"ds-dtab is-active\" aria-current=\"page\">Home</button><button class=\"ds-dtab\">Active Map</button><button class=\"ds-dtab\">Maps</button><button class=\"ds-dtab\">Profile</button></nav></header>",
+      "css": ".ds-bloom { padding: 14px 18px 0; border-radius: 22px; background: #f8e4e6; color: #2a1f21; font-family: 'Inter Variable', Inter, system-ui, sans-serif; } .ds-bloom-brand { display: flex; align-items: center; gap: 10px; font-size: 1.125rem; font-weight: 650; letter-spacing: -0.02em; } .ds-bloom-mark { width: 28px; height: 28px; } .ds-dtabs { display: flex; gap: 4px; margin-top: 4px; } .ds-dtab { height: 44px; padding: 0 12px; border: 0; background: transparent; color: #75565b; font: 500 0.9375rem 'Inter Variable', Inter, system-ui, sans-serif; cursor: pointer; } .ds-dtab:hover { color: #2a1f21; } .ds-dtab.is-active { color: #2a1f21; box-shadow: inset 0 -2px 0 #c84a32; } .ds-dtab:focus-visible { outline: 2px solid #e0674f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Home Sign in Pill",
+      "kind": "button",
+      "refersTo": "home-cta",
+      "description": "The one coral action on Home, for visitors only, beside a Create account text link.",
+      "html": "<div class=\"ds-home-actions\"><button class=\"ds-home-cta\">Sign in</button><button class=\"ds-home-link\">Create account</button></div>",
+      "css": ".ds-home-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 20px; background: #fbe7ea; } .ds-home-cta { min-height: 52px; padding: 0 28px; border: 0; border-radius: 999px; background: #c84a32; color: #fff; font: 650 1rem 'Inter Variable', Inter, system-ui, sans-serif; cursor: pointer; transition: background 0.15s cubic-bezier(0.4,0,0.2,1), transform 0.1s cubic-bezier(0.4,0,0.2,1); } .ds-home-cta:hover { background: #ad3e29; } .ds-home-cta:active { transform: scale(0.98); } .ds-home-link { min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #33242b; font: 600 1rem 'Inter Variable', Inter, system-ui, sans-serif; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; cursor: pointer; } .ds-home-link:hover { text-decoration-color: #c84a32; } .ds-home-cta:focus-visible, .ds-home-link:focus-visible { outline: 2px solid #e0674f; outline-offset: 3px; }"
+    },
+    {
+      "name": "Garden Signs",
+      "kind": "card",
+      "refersTo": "home-sign",
+      "description": "White signs on posts in the meadow ground; the coming-soon sign is dashed, unlifted and carries a rotated sticker tag.",
+      "html": "<div class=\"ds-garden\"><div class=\"ds-sign\"><h3>Calendar</h3><p>Record each day of your cycle.</p><span class=\"ds-post\"></span></div><div class=\"ds-sign ds-sign-soon\"><span class=\"ds-soon-tag\">Soon</span><h3>Step-by-step guide</h3><p>An article is on its way.</p><span class=\"ds-post\"></span></div></div>",
+      "css": ".ds-garden { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 24px 20px 44px; background: #e4eddb; color: #33242b; font-family: 'Inter Variable', Inter, system-ui, sans-serif; } .ds-sign { position: relative; padding: 18px 18px 20px; border-radius: 18px; background: #fff; box-shadow: 0 1px 2px rgba(31,26,23,0.04), 0 6px 20px rgba(31,26,23,0.05); } .ds-sign h3 { margin: 0 0 6px; font: 560 1.0625rem 'Rubik Variable', 'Inter Variable', system-ui, sans-serif; } .ds-sign p { margin: 0; color: #5f4a51; font-size: 0.9375rem; line-height: 1.5; } .ds-post { position: absolute; left: 50%; bottom: -26px; width: 6px; height: 26px; margin-left: -3px; background: #a88b72; } .ds-sign-soon { border: 1.5px dashed #c9a5b1; background: color-mix(in srgb, #fff 70%, transparent); box-shadow: none; } .ds-sign-soon h3 { padding-right: 56px; } .ds-soon-tag { position: absolute; top: -10px; right: 16px; transform: rotate(3deg); padding: 3px 10px; border-radius: 999px; background: #f6d27a; color: #33242b; font-size: 0.75rem; font-weight: 650; }"
+    },
+    {
+      "name": "Gerbera Meadow",
+      "kind": "custom",
+      "refersTo": "home-hero",
+      "description": "Blush sky over sage hills with swaying gerberas; decoration only, still under reduced motion.",
+      "html": "<div class=\"ds-meadow\"><h1>Your cycle, day by day</h1><svg viewBox=\"0 0 400 160\" aria-hidden=\"true\"><path class=\"ds-h1\" d=\"M0 70C120 40 260 60 400 50V160H0Z\"/><path class=\"ds-h3\" d=\"M0 110C140 90 260 120 400 100V160H0Z\"/><g class=\"ds-gerbera\"><path class=\"ds-stem\" d=\"M120 160C124 140 124 110 120 92\"/><g class=\"ds-petals\" transform=\"translate(120 92)\"><ellipse rx=\"4\" ry=\"13\" cy=\"-10\"/><ellipse rx=\"4\" ry=\"13\" cy=\"-10\" transform=\"rotate(45)\"/><ellipse rx=\"4\" ry=\"13\" cy=\"-10\" transform=\"rotate(90)\"/><ellipse rx=\"4\" ry=\"13\" cy=\"-10\" transform=\"rotate(135)\"/><ellipse rx=\"4\" ry=\"13\" cy=\"-10\" transform=\"rotate(180)\"/><ellipse rx=\"4\" ry=\"13\" cy=\"-10\" transform=\"rotate(225)\"/><ellipse rx=\"4\" ry=\"13\" cy=\"-10\" transform=\"rotate(270)\"/><ellipse rx=\"4\" ry=\"13\" cy=\"-10\" transform=\"rotate(315)\"/><circle r=\"6.5\" fill=\"#6b4a33\"/><circle r=\"3.4\" fill=\"#f6d27a\"/></g></g></svg></div>",
+      "css": ".ds-meadow { background: #fbe7ea; color: #33242b; } .ds-meadow h1 { margin: 0; padding: 28px 24px 0; max-width: 13ch; font: 650 2.25rem/1.04 'Rubik Variable', 'Inter Variable', system-ui, sans-serif; letter-spacing: -0.025em; } .ds-meadow svg { display: block; width: 100%; } .ds-h1 { fill: #dbe8d0; } .ds-h3 { fill: #b5cfa8; } .ds-stem { fill: none; stroke: #7f9e74; stroke-width: 3; stroke-linecap: round; } .ds-petals ellipse { fill: #f19bb0; } .ds-gerbera { transform-box: fill-box; transform-origin: 50% 100%; animation: ds-sway 7s ease-in-out 8 alternate both; } @keyframes ds-sway { from { transform: rotate(-1.4deg); } to { transform: rotate(1.4deg); } } @media (prefers-reduced-motion: reduce) { .ds-gerbera { animation: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Morning Card",
+    "overview": "The category standard, played straight at a high craft level. One person, often in bed in dim morning light, opens the app, sees the month and today's reading at a glance, taps one coral button to record the day, and reads the chart without hunting for controls. Everything in the working app serves that: soft white cards on a warm off-white ground, one coral accent, a neutral sans with tabular figures, and generous touch targets.\n\nThe interface stays quiet so the observations can speak. Colour in the interface means exactly one thing (coral: act here, you are here, this is selected); every other colour inside the working screens belongs to the recorded data and the chart. Depth is a single soft ambient lift under white cards and a deeper float under sheets. The one translucent material is the phone tab bar, frosted with a solid fallback.\n\nTwo decorative places, both requested by the user, frame that quiet core and carry no meaning. The **header bloom** is a flat pale blush band with a five-petal flower mark and, on wide screens, a thin botanical sprig. The **Home meadow** is the first screen for everyone: a field of hand-drawn gerberas on three sage hills under a blush sky, with the page's content set out below as white garden signs. It is both the public welcome page before sign-in and the signed-in Home. Nothing in either place is clinical, dark or technical, and neither carries medical or contraceptive styling.",
+    "keyCharacteristics": [
+      "Warm off-white ground, white cards, one ambient shadow.",
+      "One coral accent, used for the primary action, selection, focus, today and the active tab; on Home only for Sign in.",
+      "Inter, self-hosted, tabular figures for every number that is compared; Rubik only for Home headlines and the welcome brand.",
+      "44px minimum controls, 52px action rows, 50px primary buttons on the phone dock, 52px Sign in pill.",
+      "Flowers are scenery in two fixed places; observation colours are data, never decoration."
+    ],
+    "rules": [
+      {
+        "name": "The One Voice Rule",
+        "body": "Coral is the only interface accent. It marks what to press, what is selected, where focus is, and where you are. On Home it appears only as the Sign in pill, focus rings and the hover underline of the Create account link; the demo calendar's selected day is Meadow Ink, not coral.",
+        "section": "colors"
+      },
+      {
+        "name": "The Scenery Rule",
+        "body": "Bloom and meadow colours are decoration only and never encode an observation, a state or a navigation target. Flowers are allowed in exactly two places: the header bloom and the Home meadow.",
+        "section": "colors"
+      },
+      {
+        "name": "The Bloom Stays Home Rule",
+        "body": "`--bloom-*` colours appear only in the app header, the phone map title row and the welcome brand mark; `test/css-tokens.test.js` enforces it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Meadow Stays in the Garden Rule",
+        "body": "`--meadow-*` colours are used only in `styles/home.css` and for the garden accents in `styles/garden.css` (screen-title sprig, empty-state bloom), never inside the active map.",
+        "section": "colors"
+      },
+      {
+        "name": "The Data Is Not Decoration Rule",
+        "body": "Observation colours appear only where they encode a recorded observation or a chart tool's mark. Never use them for navigation, emphasis, illustration or brand.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mirror Rule",
+        "body": "A colour the chart draws lives in `tokens.css` first and is mirrored in `chart-palette.js`; change both or neither.",
+        "section": "colors"
+      },
+      {
+        "name": "The Token Source Rule",
+        "body": "Every hex colour lives in `styles/tokens.css`; other stylesheets reference tokens (tested).",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every number a reader compares across rows or days (temperature, date numerals, times) uses `font-variant-numeric: tabular-nums`.",
+        "section": "typography"
+      },
+      {
+        "name": "The rem Rule",
+        "body": "Text sizes are in rem so they follow the reader's text setting; container-query clamps are allowed only inside fixed-size cells, and the Home hero headline's clamp keeps rem bounds.",
+        "section": "typography"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Rubik sets titles only: Home headlines and the welcome brand, screen titles, the map and profile dialog titles, the calendar month label and the map name. The active map's own dialogs, every control, body line and number stay in Inter.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Lift Rule",
+        "body": "A card has one shadow and keeps it on hover; hover shows as a soft border or a sunken fill, never as a card jumping up. Coming-soon signs carry no shadow at all.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Single Glass Rule",
+        "body": "The phone tab bar is the only translucent surface: 78% white, `saturate(1.6) blur(20px)`, solid white without `backdrop-filter` support or under `prefers-reduced-transparency`. Project tests forbid gradients and glass everywhere else except the time-picker drum's fade. The header band, sky and hills are flat colour.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** use coral (#c84a32) for exactly one primary action per view, the selected day, focus, today and the active tab, and on Home only for Sign in.",
+      "**Do** keep observation colours bound to recorded data and chart tools; add a new chart colour to `tokens.css` and `chart-palette.js` together.",
+      "**Do** put content on white 22px cards with the one Card shadow on the warm ground.",
+      "**Do** keep every colour value in `styles/tokens.css` and reference it by token.",
+      "**Do** keep bloom colours in the header, the phone map title row and the welcome brand, and meadow colours on Home.",
+      "**Do** keep controls at least 44px tall and set text in rem.",
+      "**Do** use tabular figures for temperatures, dates and times.",
+      "**Do** honour `prefers-reduced-motion`, `prefers-contrast: more` and `prefers-reduced-transparency`, each with a real fallback; decorative motion must end on its own.",
+      "**Do** change appearance by toggling CSS classes; never write inline styles from JS.",
+      "**Do** check every change at about 320px, 390px and desktop width."
+    ],
+    "donts": [
+      "**Don't** bring back the notebook look: cream paper, pastel or peach button fills, hairline-boxed day cells.",
+      "**Don't** use observation colours for decoration, navigation, brand or emphasis.",
+      "**Don't** let a bloom or meadow colour, or a flower, encode an observation, a state or a fertility meaning.",
+      "**Don't** draw flowers anywhere except the header bloom and the Home meadow.",
+      "**Don't** add gradients or glass anywhere except the time-picker drum fade and the phone tab bar.",
+      "**Don't** lift cards on hover or stack a second shadow inside a card.",
+      "**Don't** use Rubik outside Home headlines and the welcome brand.",
+      "**Don't** add medical or contraceptive styling, fertility verdict colours, hearts, or gamification.",
+      "**Don't** add uppercase eyebrow or kicker labels above titles; a state goes on the sign as a corner tag.",
+      "**Don't** make the interface dark, clinical or technical."
+    ]
+  }
+}

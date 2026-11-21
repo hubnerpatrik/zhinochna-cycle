@@ -479,6 +479,26 @@ export class Store {
     return true;
   }
 
+  /** A copy of a map that can bring it back after deletion (null when there is no such map). */
+  snapshotMap(mapId) {
+    if (!Object.hasOwn(this.maps, mapId)) return null;
+    return { map: clonePersistentState(this.maps[mapId]), wasActive: this.activeMapId === mapId };
+  }
+
+  /** Puts a deleted map back. It becomes active again only if nothing else has been made active since. */
+  restoreMap(snapshot) {
+    const map = snapshot?.map;
+    if (!map?.id || Object.hasOwn(this.maps, map.id)) return false;
+    this.maps[map.id] = this._normalizeMap(clonePersistentState(map), map.id, map.name);
+    if (snapshot.wasActive && !this.activeMapId) {
+      this.activeMapId = map.id;
+      this._clearTransientSelection();
+      this._syncActiveMapState();
+    }
+    this._persistAll();
+    return true;
+  }
+
   getActiveMapId() {
     return this.activeMapId;
   }

@@ -1,4 +1,6 @@
 import { setText } from '../i18n.js';
+import { makeSheetDialog } from './sheet-dialog.js';
+import { removeAfterLeave } from './sheet.js';
 import { store } from '../store.js';
 import { MEASUREMENT_METHODS } from '../profile-options.js';
 import { openMapDialog } from './map-dialog.js';
@@ -83,8 +85,9 @@ export function openProfileInfo(trigger) {
     dialog.querySelector('[data-close]').before(edit);
   }
   dialog.querySelector('[data-close]').onclick = () => dialog.close();
+  makeSheetDialog(dialog);
   dialog.addEventListener('close', () => {
-    dialog.remove();
+    removeAfterLeave(dialog);
     if (!document.querySelector('dialog[open]')) trigger?.focus({ preventScroll: true });
   });
   document.body.append(dialog);

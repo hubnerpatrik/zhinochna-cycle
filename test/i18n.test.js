@@ -68,3 +68,11 @@ test('every marked static label has translations in all three additional languag
   }
   assert.deepEqual([...missing], []);
 });
+
+test('the undo texts are translated into every supported language', () => {
+  for (const text of ['Undo', 'Map restored ✓']) {
+    assert.ok(messages[text], `${text} has a translation entry`);
+    assert.equal(messages[text].length, 3);
+    assert.ok(messages[text].every(translation => translation && translation !== text));
+  }
+});

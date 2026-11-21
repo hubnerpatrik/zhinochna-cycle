@@ -11,9 +11,9 @@ import { cervixPositionIcon, observationScaleIcon, OBSERVATION_LABELS } from './
 import { CERVIX_FIRMNESS_CODES } from './observation-labels.js';
 
 const SIDEBAR_ACTIONS = [
-  ['editBtn', 'Edit Day', 'chip-edit-special', 'edit'],
-  ['dayInfoBtn', 'Day Info', 'chip-gray', 'info'],
-  ['fertileRangeActionBtn', 'Fertile range', 'chip-green', 'fertile'],
+  ['editBtn', 'Edit Day', 'chip-neutral', 'edit'],
+  ['dayInfoBtn', 'Day Info', 'chip-neutral', 'info'],
+  ['fertileRangeActionBtn', 'Fertile range', 'chip-neutral', 'fertile'],
 ];
 const MODAL_ACTIONS = [
   ['temperatureActionBtn', 'Temperature', 'chip-orange', 'temperature'],
@@ -241,7 +241,7 @@ export function renderMapRows(columns, selectColumn, hoverColumn, clearHover) {
     const dayCell = document.createElement("div");
     dayCell.className = ["map-day", selected, column.isFertile ? "fertility-cell" : ""].filter(Boolean).join(" ");
     dayCell.textContent = column.date.getDate();
-    setTranslatedAttribute(dayCell, 'title', `${column.key} · Select this day to review or edit its observations.`);
+    setTranslatedAttribute(dayCell, 'title', `@${column.key} · Select this day to review or edit its observations.`);
     if (boundary) dayCell.classList.add("cycle-boundary");
     attach(dayCell, column);
     dayNumbers.appendChild(dayCell);

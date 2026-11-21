@@ -1,4 +1,5 @@
-import { escapeHtml } from "./view-utils.js";
+import { escapeHtml, gardenSprig } from "./view-utils.js";
+import { makeSheetDialog } from '../ui/sheet-dialog.js';
 import { prepareProfilePhoto, isStoredProfilePhoto } from '../profile-photo.js';
 import { setText } from '../i18n.js';
 
@@ -15,9 +16,7 @@ export function renderProfileScreen(container, {
   subtitle,
   profile,
   submitLabel,
-  showCancel,
   onSave,
-  onCancel,
 }) {
   let photo = isStoredProfilePhoto(profile.photo) ? profile.photo : '';
   let photoGeneration = 0;
@@ -26,7 +25,7 @@ export function renderProfileScreen(container, {
     <section class="screen screen-form" aria-label="${escapeHtml(title)}" data-i18n-aria-label="${escapeHtml(title)}">
       <div class="screen-shell">
         <div class="screen-hero">
-          <p class="screen-kicker" data-i18n>Profile</p>
+          ${gardenSprig()}
           <h2> <span data-i18n>${escapeHtml(title)}</span></h2>
           <p> <span data-i18n>${escapeHtml(subtitle)}</span></p>
         </div>
@@ -47,7 +46,6 @@ export function renderProfileScreen(container, {
               <p class="field-hint" data-i18n>Measurement time, method and age are set for each map when you create it.</p>
 
               <div class="modal-actions screen-actions">
-                ${showCancel ? '<button type="button" class="btn secondary" id="profileScreenCancelBtn" data-i18n>Back</button>' : ""}
                 <button type="submit" class="btn primary"> <span data-i18n>${escapeHtml(submitLabel)}</span></button>
               </div>
             </div>
@@ -87,6 +85,7 @@ export function renderProfileScreen(container, {
   const submit = form.querySelector('[type="submit"]');
   const photoDialog = container.querySelector('#profilePhotoDialog');
   const photoActions = container.querySelector('#profilePhotoActions');
+  makeSheetDialog(photoDialog);
   photoActions.onclick = () => photoDialog.showModal();
   container.querySelector('#profilePhotoClose').onclick = () => photoDialog.close();
   photoDialog.addEventListener('close', () => photoActions.focus({ preventScroll: true }));
@@ -137,5 +136,4 @@ export function renderProfileScreen(container, {
     if (!processingPhoto) onSave?.({ ...readProfile(container), photo });
   });
 
-  container.querySelector("#profileScreenCancelBtn")?.addEventListener("click", () => onCancel?.());
 }

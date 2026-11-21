@@ -1,0 +1,53 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-17T01:18:09.232Z",
+        "reason": "assistant: static index.html is scanned without styles/*.css, where DESIGN.md sets the real h1/h2 sizes; the rendered screens show a clear scale"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          ".impeccable/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-17T11:21:45.663Z",
+        "reason": "assistant: throwaway decision-page sketch in the app's incumbent self-hosted face; the real home page picks its display face at build"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          ".impeccable/decision/pick.html"
+        ],
+        "createdAt": "2026-11-17T11:21:45.787Z",
+        "reason": "assistant: throwaway decision-page sketch in the app's incumbent self-hosted face; the real home page picks its display face at build"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          ".impeccable/decision/canon.html"
+        ],
+        "createdAt": "2026-11-17T11:21:45.909Z",
+        "reason": "assistant: throwaway decision-page sketch in the app's incumbent self-hosted face; the real home page picks its display face at build"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          ".impeccable/decision/canon.html"
+        ],
+        "createdAt": "2026-11-17T11:21:46.000Z",
+        "reason": "assistant: canon card deliberately shows the incumbent app ground #f7f3f0 from DESIGN.md"
+      }
+    ]
+  }
+}

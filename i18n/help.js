@@ -1,5 +1,5 @@
 export const helpMessages = {
-  'Open the overview and choose what to do next.': ['Otevře přehled a nabídku dalších kroků.', 'Otvorí prehľad a ponuku ďalších krokov.', 'Відкриває огляд і вибір наступної дії.'],
+  'Open the home page: what the app is and what is coming.': ['Otevře úvodní stránku: co aplikace je a co připravujeme.', 'Otvorí úvodnú stránku: čo aplikácia je a čo pripravujeme.', 'Відкриває головну сторінку: що це за застосунок і що готуємо.'],
   'Set your profile and usual measurement time.': ['Nastaví profil a obvyklý čas měření.', 'Nastaví profil a obvyklý čas merania.', 'Налаштуйте профіль і звичайний час вимірювання.'],
   'Review your profile and measurement settings.': ['Zobrazí profil a nastavení měření.', 'Zobrazí profil a nastavenia merania.', 'Перегляньте профіль і налаштування вимірювання.'],
   'Manage maps, import backups and download exports.': ['Správa map, import záloh a stažení exportů.', 'Správa máp, import záloh a stiahnutie exportov.', 'Керуйте картами, імпортуйте резервні копії та завантажуйте експорт.'],

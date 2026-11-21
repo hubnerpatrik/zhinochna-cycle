@@ -1,7 +1,7 @@
 import { MAP_NAME_MAX_LENGTH } from '../form-limits.js';
 import { MAP_KINDS, buildMapMeta, matchesFilter, matchesKind } from '../map-list-model.js';
 import { parseDateKey } from '../date-utils.js';
-import { escapeHtml } from "./view-utils.js";
+import { escapeHtml, gardenSprig, gardenBloom } from "./view-utils.js";
 import { formatDate, t } from "../i18n.js";
 import { openExportMenu } from '../ui/export-menu.js';
 import { openMapDialog } from '../ui/map-dialog.js';
@@ -51,13 +51,6 @@ export function renderMapCard(map, activeMapId) {
           <button type="button" class="btn primary map-open-btn" data-map-id="${escapeHtml(map.id)}" data-i18n>${map.status === "closed" ? "Reopen" : "Open map"}</button>
         </div>
       </div>
-      <div class="map-delete-confirmation hidden" data-map-delete-confirmation="${escapeHtml(map.id)}" role="alert">
-        <span data-i18n>Are you sure you want to delete this map? This cannot be undone.</span>
-        <div class="map-delete-confirmation-actions">
-          <button type="button" class="btn secondary" data-map-delete-no="${escapeHtml(map.id)}" data-i18n>No</button>
-          <button type="button" class="btn danger" data-map-delete-yes="${escapeHtml(map.id)}" data-i18n>Yes</button>
-        </div>
-      </div>
     </article>
   `;
 }
@@ -92,6 +85,7 @@ function renderMapList(container, maps, activeMapId, { year, month, kind }, { on
   if (!filteredMaps.length) {
     list.innerHTML = `
       <div class="screen-card empty-state">
+        ${gardenBloom()}
         <h3 data-i18n>No maps found</h3>
         <p data-i18n>Try a different month or year, or create a new map.</p>
       </div>
@@ -149,21 +143,7 @@ function renderMapList(container, maps, activeMapId, { year, month, kind }, { on
   });
 
   list.querySelectorAll("[data-map-delete-id]").forEach(button => {
-    button.addEventListener("click", () => {
-      const confirmation = button.closest(".map-list-card")?.querySelector(".map-delete-confirmation");
-      confirmation?.classList.remove("hidden");
-      confirmation?.querySelector("[data-map-delete-no]")?.focus();
-    });
-  });
-
-  list.querySelectorAll("[data-map-delete-no]").forEach(button => {
-    button.addEventListener("click", () => {
-      button.closest(".map-delete-confirmation")?.classList.add("hidden");
-    });
-  });
-
-  list.querySelectorAll("[data-map-delete-yes]").forEach(button => {
-    button.addEventListener("click", () => onDelete?.(button.dataset.mapDeleteYes));
+    button.addEventListener("click", () => onDelete?.(button.dataset.mapDeleteId));
   });
 }
 
@@ -175,7 +155,7 @@ export function renderMyMapsView(container, { maps, activeMapId, onCreate, onImp
     <section class="screen" aria-label="My maps" data-i18n-aria-label="My maps">
       <div class="screen-shell">
         <div class="screen-hero">
-          <p class="screen-kicker" data-i18n>My Maps</p>
+          ${gardenSprig()}
           <h2 data-i18n>Saved cycle maps</h2>
           <p data-i18n>Export maps or import a shared map.</p>
         </div>

@@ -1,0 +1,209 @@
+/* Design tokens: the one source of colour, spacing, radius, type and elevation.
+   Other stylesheets reference these variables instead of raw values. */
+:root {
+  /* Motion: one vocabulary for press, enter and leave. Gesture-driven motion uses the spring in ui/motion.js. */
+  --press-scale: 0.97;
+  --press-scale-small: 0.94;
+  --dur-press: 100ms;
+  --dur-fast: 160ms;
+  --dur-base: 250ms;
+  --dur-sheet: 300ms;
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Neutrals: a warm off-white ground with white cards; colour belongs to the observations. */
+  /* Warm inset ground: nested blocks, sunken controls and hovers inside white panels. */
+  --bg: #f7f3f0;
+  /* Page ground: a pale garden green, the same family as the home meadow; white cards lift off it. */
+  --page-ground: #f3f6ef;
+  --surface: #ffffff;
+  --surface-alt: #f2ece8;
+  --ink: #1f1a17;
+  --ink-muted: #6f655c;
+  --line: rgba(31, 26, 23, 0.12);
+  --line-soft: rgba(31, 26, 23, 0.06);
+
+  /* The one accent: coral for the primary action, selection, focus ring, links and active state.
+     --action carries white text at 4.5:1; --action-soft is for rings, icons and large marks only. */
+  --action: #c84a32;
+  --action-hover: #ad3e29;
+  --action-ink: #ffffff;
+  --action-soft: #e0674f;
+  --action-tint: #fdeae4;
+  /* Primary buttons: solid coral with a white label. */
+  --action-fill: var(--action);
+  --action-fill-hover: var(--action-hover);
+  --action-fill-ink: var(--action-ink);
+  --danger: #b42318;
+  --danger-tint: #fdecea;
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--action-soft);
+
+  --danger-line: #f1b8b3;
+  --danger-ring: rgba(180, 35, 24, 0.11);
+
+  /* Status notes (feedback threads, sync warnings). */
+  --info-tint: #e8f1ff;
+  --info-line: #a0bbdf;
+  --info-ink: #203f68;
+  --success-tint: #e2f2dd;
+  --success-line: #93bc82;
+  --warning-tint: #fff4dc;
+  --warning-line: #dcb977;
+  --warning-ink: #634817;
+
+  /* Header bloom: the one floral place in the app. A pale blush band with a thin botanical
+     sprig and a flower mark; these colours stay inside the header (test/css-tokens.test.js). */
+  --bloom-ground: #f8e4e6;
+  --bloom-ink: #2a1f21;
+  --bloom-ink-muted: #75565b;
+  --bloom-petal: #f4ccd2;
+  --bloom-petal-edge: #dd9eaa;
+  --bloom-heart: #ecc77f;
+  --bloom-leaf: #98b293;
+  --bloom-leaf-tint: #e1ebdc;
+
+  /* Home meadow: the welcome page's gerbera field under a blush sky (styles/home.css).
+     Decoration only; no meadow colour encodes an observation. */
+  --meadow-sky: #fbe7ea;
+  --meadow-hill-far: #dbe8d0;
+  --meadow-hill-mid: #cfe0c3;
+  --meadow-hill-near: #b5cfa8;
+  --meadow-ground: #e4eddb;
+  --meadow-stem: #7f9e74;
+  --meadow-leaf: #9cbb8f;
+  --meadow-disc: #6b4a33;
+  --meadow-sun: #f6d27a;
+  --meadow-ink: #33242b;
+  --meadow-ink-muted: #5f4a51;
+  --meadow-post: #a88b72;
+  --meadow-soon-line: #c9a5b1;
+  --meadow-rule: rgba(51, 36, 43, 0.12);
+  --meadow-peach: #f6a98d;
+  --meadow-peach-inner: #ee8c6c;
+  --meadow-rose: #f19bb0;
+  --meadow-rose-inner: #e57e98;
+  --meadow-butter: #f6d27a;
+  --meadow-butter-inner: #ecbd52;
+  --meadow-lavender: #c8b6e8;
+  --meadow-lavender-inner: #ad97dc;
+  --meadow-white: #ffffff;
+  --meadow-white-inner: #f3e3e8;
+
+  /* Display face: rounded Rubik for screen, sheet and month titles (self-hosted); Inter for everything else. */
+  --font-display: "Rubik Variable", "Inter Variable", Inter, system-ui, sans-serif;
+
+  /* Grouped lists in sheets and the sidebar (Edit Day, Tools, Actions): a garden-green inset. */
+  --list-ground: #f1f5ec;
+  --list-ground-hover: #e7eee0;
+
+  /* Edit Day chips: a pale tint of the observation's colour with the icon in a deeper hue,
+     the same treatment as the --tool-* chips. */
+  --chip-temperature: #b4592a;
+  --chip-temperature-tint: #fbe8dc;
+  --chip-bleeding: #b43c45;
+  --chip-bleeding-tint: #fbe6e8;
+  --chip-mucus: #355e91;
+  --chip-mucus-tint: #e6edf8;
+
+  /* Overlays and shadows. */
+  --backdrop: rgba(31, 26, 23, 0.32);
+  --shade: rgba(31, 26, 23, 0.12);
+
+  /* Legacy names kept as aliases while older rules migrate. */
+  --text: var(--ink);
+  --muted: var(--ink-muted);
+  --hairline: var(--line-soft);
+
+  /* Observation data colours, shared with the chart (chart-palette.js). */
+  --data-adjusted: #2563eb;
+  --data-fertile: #16a34a;
+  --data-coverline: #b41414;
+  --data-overflow: #b43c45;
+  --data-bleeding: #b43c45;
+  --data-bleeding-tint: #f9dfe1;
+  --data-bleeding-ink: #76232b;
+  --data-mucus: #355e91;
+  --data-mucus-tint: #e6edf8;
+  --data-mucus-fill: #b7d5e7;
+  --data-cervix: #287c7c;
+  --data-cervix-tint: #e1f2f1;
+  --data-cervix-fill: #b9ded9;
+  --data-cervix-marker: #10b981;
+  --data-factor: #e19a1c;
+  --data-sex: #0b7480;
+  --data-symptoms: #6a62d6;
+  --data-symptoms-tint: #efe4f1;
+  --data-marker-blue: #2563eb;
+  --data-marker-green: #16a34a;
+  --data-marker-orange: #ea580c;
+  --data-period-line: #e6aeb9;
+  --data-fertile-line: #698451;
+
+  /* Chart tools: soft pastels of what each tool draws (icon 3:1 on its tint). */
+  --tool-fertile: #559262;
+  --tool-fertile-tint: #e6f2e3;
+  --tool-coverline: #c0635f;
+  --tool-coverline-tint: #fae9e7;
+  --tool-marker: #6283cc;
+  --tool-marker-tint: #e7edf9;
+  --tool-cross: #a87d33;
+  --tool-cross-tint: #f8efdc;
+
+  /* Calendar and observation base colours (formerly in base.css and theme.css). */
+  --blue: #0a84ff;
+  --red: #ef4444;
+  --orange: #fb923c;
+  --green: #cfe7b4;
+  --mucus-navy: #001f6b;
+  --cervix-light: #7dd3fc;
+  --calendar-green: #cfe7b4;
+  --calendar-green-text: #4d6246;
+  --calendar-red: #f4c7cf;
+  --calendar-red-text: #793744;
+  --calendar-red-line: #b76878;
+
+  /* Spacing scale. */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+
+  /* Radius scale. */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-pill: 999px;
+
+  /* Type scale. */
+  --t-label: 0.8125rem;
+  --t-small: 0.875rem;
+  --t-body: 1rem;
+  --t-title: 1.125rem;
+  --t-h2: 1.375rem;
+  --t-h1: 1.75rem;
+
+  /* Elevation: white cards sit on the ground with a soft ambient lift; floating layers cast a deeper shadow. */
+  --shadow-card: 0 1px 2px rgba(31, 26, 23, 0.04), 0 6px 20px rgba(31, 26, 23, 0.05);
+  --shadow-float: 0 16px 40px rgba(31, 26, 23, 0.14), 0 2px 8px rgba(31, 26, 23, 0.06);
+}
+
+/* Higher contrast on request: firmer lines and darker quiet text. */
+@media (prefers-contrast: more) {
+  :root {
+    --line: rgba(31, 26, 23, 0.45);
+    --line-soft: rgba(31, 26, 23, 0.3);
+    --ink-muted: #4a423c;
+    --bloom-ink-muted: #523a3e;
+  }
+
+  .header-sprig {
+    display: none;
+  }
+}
+
+::selection {
+  background: var(--action-tint);
+  color: var(--ink);
+}

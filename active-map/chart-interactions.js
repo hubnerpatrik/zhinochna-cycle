@@ -2,6 +2,7 @@ import { setText } from '../i18n.js';
 import { store } from "../store.js";
 import { clearCycleCoverlineValues } from "../domain.js";
 import {
+  coverlineGrabOffset,
   getCoverlineDragTarget,
   handleCanvasClick,
   renderChart,
@@ -152,7 +153,16 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     done.className = "toast-action toast-action-primary";
     setText(done, "Done");
     done.onclick = finishMarkerPlacement;
-    toast.replaceChildren(label, done);
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "toast-action toast-action-cancel";
+    setText(cancel, "Cancel");
+    cancel.onclick = () => {
+      cancelMarkerPlacement();
+      hideToolPill();
+      onToolCancel?.();
+    };
+    toast.replaceChildren(label, cancel, done);
     toast.classList.add("action-toast");
   }
 
@@ -313,6 +323,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     const canvas = getElementById("tempChart");
     if (!canvas) return;
     canvas.addEventListener("pointerdown", event => {
+      suppressNextClick = false;
       // First touch selects a line with a tap; swiping over it still scrolls the page.
       if (event.pointerType === "touch" && (!coverlineSelected || !event.isPrimary)) return;
       if (event.button !== 0 || store.crossCellSelectionMode || store.markerSelectionMode
@@ -325,7 +336,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       coverlineSelected = true;
       showCoverlinePill();
       renderCurrentChart();
-      activeDrag = { pointerId: event.pointerId, target, startX: point.x, startY: point.y, moved: false };
+      activeDrag = { pointerId: event.pointerId, target, startX: point.x, startY: point.y, moved: false, grab: coverlineGrabOffset(target, point.x, point.y, getColumns()) };
       canvas.setPointerCapture?.(event.pointerId);
       setCursor(canvas, target, true);
     });
@@ -336,7 +347,7 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       if (activeDrag?.pointerId === event.pointerId) {
         event.preventDefault();
         if (Math.hypot(point.x - activeDrag.startX, point.y - activeDrag.startY) >= 3) activeDrag.moved = true;
-        if (activeDrag.moved && updateCoverlineDrag(activeDrag.target, point.x, point.y, getColumns())) {
+        if (activeDrag.moved && updateCoverlineDrag(activeDrag.target, point.x - activeDrag.grab.dx, point.y - activeDrag.grab.dy, getColumns())) {
           renderCurrentChart();
         }
         return;
@@ -356,7 +367,6 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
       setCursor(canvas, null);
       if (event.type === "pointerup") {
         suppressNextClick = true;
-        setTimeout(() => { suppressNextClick = false; }, 0);
       }
       if (!moved) return;
       renderCurrentChart();
@@ -365,10 +375,9 @@ export function createChartInteractions({ getColumns, renderApp, selectColumn, s
     canvas.addEventListener("pointercancel", finishDrag);
 
     canvas.addEventListener("click", event => {
-      if (suppressNextClick) {
-        suppressNextClick = false;
-        return;
-      }
+      const suppressed = suppressNextClick && event.detail !== 0;
+      suppressNextClick = false;
+      if (suppressed) return;
       const point = canvasPointerPosition(event, canvas);
       if (!point) return;
       const columns = getColumns();

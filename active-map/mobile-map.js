@@ -6,8 +6,10 @@ import { openProfileInfo } from "../ui/profile-info-modal.js";
 import { cycleStarts } from "../cycle-model.js";
 import { buildColumns } from '../domain.js';
 import { DEFAULT_LAYOUT, LAYOUT, PHONE_LAYOUT_QUERY, TEMP_FACTORS, chartY, formatDateKey, formatTemp, getAdjustedTemp, parseDateKey, getElementById, syncCSSVariables } from "../core.js";
+import { makeSheetDialog } from "../ui/sheet-dialog.js";
 import { applyLayoutClass } from '../ui/layout-classes.js';
 import { ZOOM_MIN, ZOOM_MAX, clampZoom } from './map-gestures.js';
+import { slideIn } from './tab-slide.js';
 
 const MOBILE_AXIS_WIDTH = 48;
 const CHART_BORDER_WIDTH = 2;
@@ -18,7 +20,8 @@ const MIN_EXPANDED_CHART_HEIGHT = 240;
 const EXPANDED_CHART_RESERVED_HEIGHT = 120;
 const MIN_CHART_HEIGHT = 320;
 const MAX_CHART_HEIGHT = 560;
-const CHART_RESERVED_HEIGHT = 110;
+// Room below the plot for the floating navigation and the "Show observations" toggle, so neither is hidden at rest.
+const CHART_RESERVED_HEIGHT = 185;
 const SCREEN_HORIZONTAL_PADDING = 16;
 const PLOT_EXTRA_HEIGHT = 30;
 const MIN_LABEL_SPACING = 28;
@@ -65,6 +68,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
       view().left = scroll.scrollLeft;
       view().top = scroll.scrollTop;
     }
+    const changed = view().tab !== tab;
     view().tab = tab;
     if (tab === "calendar" && store.selectedKey) {
       const date = parseDateKey(store.selectedKey);
@@ -72,6 +76,13 @@ export function createMobileMap({ render, getColumns, interactions }) {
       store.year = date.getFullYear();
     }
     render();
+    if (changed) {
+      slideIn({
+        direction: tab === "graph" ? 1 : -1,
+        element: document.querySelector(tab === "graph" ? "#activeMapScreen > .chart-card" : "#activeMapScreen > .layout"),
+        reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      });
+    }
     if (tab === "graph") {
       const firstVisit = view().left === null;
       scroll.scrollLeft = view().left ?? 0;
@@ -180,6 +191,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
       getElementById("mobileSaveBtn").onclick = () => getElementById("saveActiveMapBtn").click();
       getElementById("mobileDayBtn").onclick = () => getElementById("editBtn").click();
       const toolsList = getElementById("mobileToolsList");
+      makeSheetDialog(toolsList, ":scope > header");
       getElementById("mobileTools").onclick = openTools;
       getElementById("mobileCloseToolsBtn").onclick = () => toolsList.close();
       toolsList.addEventListener("close", () => getElementById("mobileTools").setAttribute("aria-expanded", String(toolsList.open)));
@@ -355,7 +367,7 @@ export function createMobileMap({ render, getColumns, interactions }) {
     },
     clampWidth(width) { return active() ? Math.max(fitWidth, Math.min(Math.max(ZOOM_MAX, fitWidth), width)) : clampZoom(width); },
     setWidth(width) {
-      if (active()) view().zoom = this.clampWidth(width) / fitWidth;
+      if (active()) view().zoom = width / fitWidth; // callers clamp; a pinch may stretch past the limit while held
       else { desktopWidth = width; LAYOUT.columnWidth = width; }
     },
     zoomStep(direction, width = LAYOUT.columnWidth) {

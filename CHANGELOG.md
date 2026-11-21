@@ -14,6 +14,70 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.20.0 — 2026-11-21
+
+### Touch and motion
+
+- Every tappable card, chip and button now answers a press at once with the same small scale; hover effects only apply on devices that can hover, so nothing stays highlighted after a tap on a phone.
+- Small targets (calendar days, the language picker, the "What's new" link) have a larger invisible touch area, and taps no longer wait for a possible double-tap zoom.
+- On phones a sheet now rises on a spring and can be grabbed while it is still moving; the dimmed background follows the sheet as it is dragged, rises or is dismissed. On wide screens an editor opened from a button grows out of that button.
+- On phones the Calendar and Graph panels slide in from the side of their tab. The zoom buttons move on a spring, so quick repeated taps flow into each other. Pinching past the zoom limit resists and springs back on release. A coverline you drag keeps the offset from where you grabbed it instead of jumping under the finger.
+- Moving between Home, Active Map, Maps and Profile slides the new screen in from the side its tab is on (forward or back); the tab bar stays put. Short messages can be pushed away with a finger and stay while touched. The export menu and the language picker grow out of their button, and the time picker settles when scrolling actually ends.
+- Layout breakpoints now come from one small set (phone up to 560 px, mid 561–900 px, wide above), so the profile editor stacks its photo above the form on tablets up to 900 px and the home page uses its wider spacing from 561 px. The two catch-up stylesheets (`mobile-refresh.css`, `feedback-improvements.css`) are merged into `mobile.css` and `components.css`.
+- With reduced motion, dialogs and sheets cross-fade briefly instead of appearing abruptly. With reduced transparency or higher contrast the frosted tab bar becomes solid on every screen size (high contrast adds a firm top line), and its edge is otherwise a faint hairline over the content.
+- Fertile range: tapping a single day on a phone marks it reliably; the click a browser sends after the tap can no longer toggle the day a second time.
+- Marker mode now has a Cancel button next to Done, on phones and on wide screens; on a phone it returns to the Tools list like the other tools.
+- Header language picker on wide screens: the flag now sits level with the rest of the header row instead of being pushed down and to the left, and its menu shows all four flags above the page instead of being cut off by the first section.
+- Sheets and the calendar swipe share one spring animator; dragging a coverline or marking fertile days no longer relies on a timer to ignore the click that follows.
+
+### Design
+
+- New look across the app: white cards on a warm off-white background, one coral accent, solid coral primary buttons with white labels, a sunken segmented switch, soft borderless calendar tiles with the selected day filled in coral and today marked in coral, and a white bottom tab bar on phones. Observation colours in the calendar and chart are unchanged.
+- The app header is a soft blush band with a small flower mark and, on wide screens, a thin botanical sprig in its corner; the map title on phones shares the same band. Long profile names now shorten with an ellipsis instead of running into the account text.
+- The Main Menu is now a home page: a hand-drawn gerbera meadow under a blush sky that introduces the app, three short examples of what it does, and "Coming soon" signs for who makes it, why it exists, a step-by-step guide and courses. Signed-out visitors see the same page before signing in, with Sign in and Create account; the menu tab is renamed Home. The flowers sway gently and stay still with reduced motion.
+- Tabs now run Home, Active Map, Maps, Profile, and phones show the Home tab in the bottom bar.
+- The welcome page and the sign-in card use the same flag language picker as the app.
+- The garden look reaches the rest of the app: a pale meadow-green page background, screen, dialog and month titles in the rounded Rubik face, a small sprig above each screen title and a gerbera when a map list is empty. The calendar, chart and observation colours on the active map are unchanged.
+- The Tools and Edit Day sheets now match: one grouped list on a soft green block with dividers, and every icon chip a pale tint of its own colour with the icon in the deeper hue. The Tools close button is a drawn icon.
+- On wide screens, Edit Day leads the map's Actions list as a coral row, so the main action is easy to find.
+
+### Changed
+
+- Switching between Profile, My Maps and Active Map cross-fades briefly while the tab bar stays in place; browsers without View Transitions, and anyone with reduced motion turned on, just see the new screen at once.
+- Deleting a map no longer asks "Are you sure?" first: it is deleted at once and a message offers Undo for 10 seconds, which brings the map back with its observations, its place in the list and, if it was open, its active state.
+- Text sizes now follow the browser's text-size setting instead of fixed pixels, so larger text in the browser makes the whole app larger; calendar day numbers grow only as far as their cell allows.
+- Small labels are plain 13 px sentence-case text instead of tracked capitals, and the screen-name labels above the headings (Main menu, My maps, Profile, Create map) are gone because the tab and the heading already say it.
+- On phones the Tools menu, the day editors (Edit Day, Temperature, Bleeding, Mucus, Cervix, Markers, Fertile range, Other, Day info), Map info, What's new and the profile photo menu are bottom sheets (dialogs with text fields or a full-screen form keep their layout): they rise from the bottom edge with a grabber, leave the same way, and can be dragged down by the grabber or the title, with a spring back when the pull is short and resistance when pulled up; switching between editors replaces the sheet instead of showing two at once.
+- Swiping the calendar on a phone now moves the month with your finger: the grid follows the drag, a flick carries it on, the next month slides in from the side you swiped toward, and you can grab it again mid-motion; a short slow drag springs back, and with reduced motion the month simply switches.
+- The app header is one quiet bar: a cycle mark beside the name, the account line, What's new and language on the right, and plain text tabs underlined in coral for the current screen; the separate account row, the tracked-caps label and the pill navigation are gone.
+- Fertile range has its own range icon instead of the marker flag, and each chart tool has its own soft pastel color, in the phone Tools menu and on the desktop tool buttons: green fertile range, red coverlines, blue markers and amber crossed cells.
+- Primary actions (Day record, Create map, Open map, Save, time picker Done, active tools) use one flat pastel coral with dark labels instead of a pale gradient; a stronger coral marks thin details such as links, focus rings, the selected day and the current screen.
+- Secondary buttons (Map info, Summary, Import map, export, more actions) share one plain style; cards, menu cards and the navigation are flat without gradients, glass blur or decorative stripes; action icons in the map sidebar are neutral, and observation icons keep a light tint of their data color.
+- Every screen uses one flat warm background and plain cards: the decorative background blobs, glass blur and gradients are gone; the selected day, the active map card and the Map info Edit button follow the coral accent, chart tools are plain until active, and Delete map is marked by a red label instead of a pink gradient.
+- The temperature chart sits on the same neutral surface as the rest of the app, with ink grid lines and a coral day selection; observation colors in the chart stay as before and now come from one shared palette.
+- All interface colors come from one set of design tokens, so borders, quiet labels, links, error messages, dialog backdrops and status notes look the same on every screen.
+- Inter is now served from the app itself instead of Google Fonts, so no request leaves for a third party and the font weights match what the design asks for.
+- On the phone graph the plot leaves room for the navigation and the "Show observations" toggle.
+- Cycle-day badges no longer overlap the date on 320 px screens; the Day info toggle is a 44 px target with a chevron.
+
+### Accessibility
+
+- Calendar days are real buttons: reachable with Tab and the arrow keys, announced with the date in words, the cycle day and every recorded observation (colour is no longer the only signal), and the selected day is marked.
+- Observation editors announce themselves as dialogs, keep keyboard focus inside, close with Escape and return focus to where you were; the page behind them is inert.
+- Temperature, influence factor, measurement time, marker and symptom fields have labels; the month arrows are named "Previous month" and "Next month".
+- Active navigation label, map status pills and chart day numbers now meet the 4.5:1 text contrast; the focus ring is the coral accent everywhere; text is never smaller than 11 px.
+
+### Fixed
+
+- On phones, page content no longer draws over the bottom tab bar.
+- On wide screens, the language menu opens under its own button instead of stretching across the whole header.
+- Save, Open map and other primary buttons no longer keep pulsing forever after the first click.
+- With reduced motion turned on, dialogs simply fade in without scaling, cards no longer lift on hover, and no animation plays; with increased contrast turned on, borders and secondary text are darker.
+- After swiping the calendar to another month, the first tap on the month arrows works again instead of being ignored; keyboard clicks are never swallowed.
+- An editor closed with the browser's Back button no longer leaves a stale opener behind: the next editor grows from, and returns focus to, the button that actually opened it.
+- Undoing a map deletion from another screen restores the map without pulling you back to My Maps.
+- Quick screen changes keep their slide direction, and reopening the export menu during its closing animation no longer leaves two menus with the same id.
+
 ## 0.19.1 — 2026-11-15
 
 ### Fixed

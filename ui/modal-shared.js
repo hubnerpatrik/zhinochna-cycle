@@ -1,16 +1,21 @@
 import { store } from "../store.js";
-import { getElementById, parseDateKey, querySelectorAll } from "../core.js";
+import { PHONE_LAYOUT_QUERY, getElementById, parseDateKey, querySelectorAll } from "../core.js";
 import { setDateText } from "../i18n.js";
 import { activeCycleModel } from "../domain.js";
 import { showMessage } from "./toast.js";
 import { clearFieldErrors } from './field-errors.js';
 import { observationChoiceValue } from './observation-values.js';
 import { cervixPositionIcon } from './observation-scales.js';
+import { focusModal, markModalClosed, markModalOpen, openingControl, rememberFocus, restoreFocus } from './modal-a11y.js';
+import { growFromTrigger } from './modal-origin.js';
 
 let navigation = null;
 export function configureModalNavigation(callbacks) {
   navigation = callbacks;
 }
+
+const pageBehindModal = () => getElementById("trackerApp");
+const anyModalShown = () => Array.from(querySelectorAll(".modal")).some(modal => modal.classList.contains("show"));
 
 export function hideAllModals() {
   querySelectorAll('dialog:modal').forEach(dialog => dialog.close());
@@ -18,15 +23,23 @@ export function hideAllModals() {
     modal.classList.remove("show");
     modal.classList.add("hidden");
   });
+  markModalClosed(pageBehindModal());
 }
 
 export function showModal(modalId) {
   const modal = getElementById(modalId);
   if (!modal) return;
+  rememberFocus();
   hideAllModals();
   clearFieldErrors(modal);
   modal.classList.remove("hidden");
+  growFromTrigger(modal, openingControl(), {
+    isPhone: () => window.matchMedia(PHONE_LAYOUT_QUERY).matches,
+    reducedMotion: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  });
   modal.classList.add("show");
+  markModalOpen(modal, pageBehindModal());
+  focusModal(modal);
   navigation?.modalOpened(modalId);
 }
 
@@ -36,6 +49,10 @@ export function hideModal(modalId) {
   const wasOpen = !modal.classList.contains("hidden");
   modal.classList.remove("show");
   modal.classList.add("hidden");
+  if (wasOpen && !anyModalShown()) {
+    markModalClosed(pageBehindModal());
+    restoreFocus();
+  }
   if (wasOpen) navigation?.modalClosed(modalId);
 }
 

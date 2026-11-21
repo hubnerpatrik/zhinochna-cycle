@@ -6,11 +6,14 @@ import { renderMenuView } from "./views/menu.js";
 import { renderProfileScreen } from "./views/profile.js";
 import { renderMyMapsView } from "./views/my-maps.js";
 import { openMapDialog } from "./ui/map-dialog.js";
+import { showActionMessage } from "./ui/toast.js";
+import { deleteMapWithUndo } from "./map-delete.js";
 import { enhanceTimeInputs } from "./ui/time-picker.js";
 import { readMapSettings, renderMapSettingsFields } from "./views/map-settings-fields.js";
 import { closeExportMenu } from './ui/export-menu.js';
 import { escapeHtml } from "./views/view-utils.js";
 import { createNavigation } from "./navigation.js";
+import { changeScreen } from "./ui/screen-transition.js";
 import { downloadFile } from './browser-download.js';
 import { exportMap, readMapImport } from './map-transfer.js';
 
@@ -101,7 +104,18 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
     return { screen, params: clean };
   }
 
+  let shownScreen = null;
+
   function renderRoute(route) {
+    const from = shownScreen;
+    shownScreen = route.screen;
+    changeScreen({
+      from, to: route.screen, update: () => showRoute(route),
+      reducedMotion: () => browser.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false,
+    });
+  }
+
+  function showRoute(route) {
     rendering = true;
     try {
       // The dialog lives outside root, so replacing the page cannot dismiss it.
@@ -136,7 +150,6 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           subtitle: "Create your profile to get started.",
           profile: store.getProfile(),
           submitLabel: "Save and continue",
-          showCancel: false,
           onSave: profile => {
             if (!runStoreAction(() => store.saveProfile(profile)).ok) return;
             showMessage?.("Profile saved ✓");
@@ -158,8 +171,6 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           subtitle: "Manage your name, consultant and profile photo.",
           profile: store.getProfile(),
           submitLabel: "Save profile",
-          showCancel: true,
-          onCancel: back,
           onSave: profile => {
             if (!runStoreAction(() => store.saveProfile(profile)).ok) return;
             showMessage?.("Profile saved ✓");
@@ -211,12 +222,12 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
             navigate("my-maps");
             return true;
           },
-          onDelete: mapId => {
-            const result = runStoreAction(() => store.deleteMap(mapId));
-            if (!result.ok || !result.value) return;
-            showMessage?.("Map deleted");
-            navigate("my-maps");
-          },
+          onDelete: mapId => deleteMapWithUndo(mapId, {
+            store, runStoreAction, offerUndo: showActionMessage, notify: text => showMessage?.(text),
+            refresh: () => navigate("my-maps"),
+            isListShown: () => navigation.current?.screen === "my-maps",
+            syncNavigation: () => syncHeaderNavigation(navigation.current?.screen),
+          }),
           onExport: async (mapId, format = 'json') => {
             try {
               const map = store.getMap(mapId);
