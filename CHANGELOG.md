@@ -14,6 +14,8 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.20.0 — 2026-11-21
+
 ### Touch and motion
 
 - Every tappable card, chip and button now answers a press at once with the same small scale; hover effects only apply on devices that can hover, so nothing stays highlighted after a tap on a phone.
@@ -27,10 +29,6 @@ vMAJOR.MINOR.PATCH
 - Marker mode now has a Cancel button next to Done, on phones and on wide screens; on a phone it returns to the Tools list like the other tools.
 - Header language picker on wide screens: the flag now sits level with the rest of the header row instead of being pushed down and to the left, and its menu shows all four flags above the page instead of being cut off by the first section.
 - Sheets and the calendar swipe share one spring animator; dragging a coverline or marking fertile days no longer relies on a timer to ignore the click that follows.
-- After swiping the calendar to another month, the first tap on the month arrows works again instead of being ignored; keyboard clicks are never swallowed.
-- An editor closed with the browser's Back button no longer leaves a stale opener behind: the next editor grows from, and returns focus to, the button that actually opened it.
-- Undoing a map deletion from another screen restores the map without pulling you back to My Maps.
-- Quick screen changes keep their slide direction, and reopening the export menu during its closing animation no longer leaves two menus with the same id.
 
 ### Design
 
@@ -42,29 +40,6 @@ vMAJOR.MINOR.PATCH
 - The garden look reaches the rest of the app: a pale meadow-green page background, screen, dialog and month titles in the rounded Rubik face, a small sprig above each screen title and a gerbera when a map list is empty. The calendar, chart and observation colours on the active map are unchanged.
 - The Tools and Edit Day sheets now match: one grouped list on a soft green block with dividers, and every icon chip a pale tint of its own colour with the icon in the deeper hue. The Tools close button is a drawn icon.
 - On wide screens, Edit Day leads the map's Actions list as a coral row, so the main action is easy to find.
-
-### Fixes
-
-- On phones, page content no longer draws over the bottom tab bar.
-- On wide screens, the language menu opens under its own button instead of stretching across the whole header.
-
-### Accessibility
-
-- Calendar days are real buttons: reachable with Tab and the arrow keys, announced with the date in words, the cycle day and every recorded observation (colour is no longer the only signal), and the selected day is marked.
-- Observation editors announce themselves as dialogs, keep keyboard focus inside, close with Escape and return focus to where you were; the page behind them is inert.
-- Temperature, influence factor, measurement time, marker and symptom fields have labels; the month arrows are named "Previous month" and "Next month".
-- Active navigation label, map status pills and chart day numbers now meet the 4.5:1 text contrast; the focus ring is the coral accent everywhere; text is never smaller than 11 px.
-
-### Changed
-
-- Inter is now served from the app itself instead of Google Fonts, so no request leaves for a third party and the font weights match what the design asks for.
-- On the phone graph the plot leaves room for the navigation and the "Show observations" toggle.
-- Cycle-day badges no longer overlap the date on 320 px screens; the Day info toggle is a 44 px target with a chevron.
-
-### Fixed
-
-- Save, Open map and other primary buttons no longer keep pulsing forever after the first click.
-- With reduced motion turned on, dialogs simply fade in without scaling, cards no longer lift on hover, and no animation plays; with increased contrast turned on, borders and secondary text are darker.
 
 ### Changed
 
@@ -81,6 +56,27 @@ vMAJOR.MINOR.PATCH
 - Every screen uses one flat warm background and plain cards: the decorative background blobs, glass blur and gradients are gone; the selected day, the active map card and the Map info Edit button follow the coral accent, chart tools are plain until active, and Delete map is marked by a red label instead of a pink gradient.
 - The temperature chart sits on the same neutral surface as the rest of the app, with ink grid lines and a coral day selection; observation colors in the chart stay as before and now come from one shared palette.
 - All interface colors come from one set of design tokens, so borders, quiet labels, links, error messages, dialog backdrops and status notes look the same on every screen.
+- Inter is now served from the app itself instead of Google Fonts, so no request leaves for a third party and the font weights match what the design asks for.
+- On the phone graph the plot leaves room for the navigation and the "Show observations" toggle.
+- Cycle-day badges no longer overlap the date on 320 px screens; the Day info toggle is a 44 px target with a chevron.
+
+### Accessibility
+
+- Calendar days are real buttons: reachable with Tab and the arrow keys, announced with the date in words, the cycle day and every recorded observation (colour is no longer the only signal), and the selected day is marked.
+- Observation editors announce themselves as dialogs, keep keyboard focus inside, close with Escape and return focus to where you were; the page behind them is inert.
+- Temperature, influence factor, measurement time, marker and symptom fields have labels; the month arrows are named "Previous month" and "Next month".
+- Active navigation label, map status pills and chart day numbers now meet the 4.5:1 text contrast; the focus ring is the coral accent everywhere; text is never smaller than 11 px.
+
+### Fixed
+
+- On phones, page content no longer draws over the bottom tab bar.
+- On wide screens, the language menu opens under its own button instead of stretching across the whole header.
+- Save, Open map and other primary buttons no longer keep pulsing forever after the first click.
+- With reduced motion turned on, dialogs simply fade in without scaling, cards no longer lift on hover, and no animation plays; with increased contrast turned on, borders and secondary text are darker.
+- After swiping the calendar to another month, the first tap on the month arrows works again instead of being ignored; keyboard clicks are never swallowed.
+- An editor closed with the browser's Back button no longer leaves a stale opener behind: the next editor grows from, and returns focus to, the button that actually opened it.
+- Undoing a map deletion from another screen restores the map without pulling you back to My Maps.
+- Quick screen changes keep their slide direction, and reopening the export menu during its closing animation no longer leaves two menus with the same id.
 
 ## 0.19.1 — 2026-11-15
 

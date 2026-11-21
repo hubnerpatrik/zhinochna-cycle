@@ -1,11 +1,11 @@
 // Update together with package.json when preparing a release. Keep copy user-facing.
 export const currentRelease = {
-  version: '0.19.1',
+  version: '0.20.0',
   githubUrl: 'https://github.com/hubnerpatrik/zhinochna-cycle/releases',
   changes: [
-    "On phones the app opens on your active map again after a fresh launch.",
-    "My Maps cards are simpler, with Edit name, Copy and Delete in a ⋯ menu.",
-    "The map's profile details are now called Map info, the optional goal setting was removed, and the sex dot has a new colour.",
+    "The main menu is now a Home page with a gerbera meadow; signed-out visitors see it before signing in.",
+    "A new look across the app, with sheets, the calendar swipe and screen changes that follow your finger on phones.",
+    "A deleted map can be brought back with Undo for 10 seconds, and the calendar works with the keyboard and screen readers.",
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';
