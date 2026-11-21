@@ -45,6 +45,8 @@ export function openExportMenu(trigger, onExport) {
     window.removeEventListener('scroll', positionMenu, true);
     trigger.setAttribute('aria-expanded', 'false');
     trigger.removeAttribute('aria-controls');
+    // A menu reopened during the leave animation must be the only element with this id.
+    menu.removeAttribute('id');
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) menu.remove();
     else {
       menu.classList.add('is-leaving');

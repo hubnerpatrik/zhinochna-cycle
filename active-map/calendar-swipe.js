@@ -69,10 +69,11 @@ export function bindCalendarSwipe(calendar, {
   }
 
   area.addEventListener('pointerdown', event => {
+    // A swipe produces no click of its own, so any new press (also on a month arrow outside the grid) disarms the guard.
+    if (!pointer) suppressClick = false;
     if (pointer || event.pointerType !== 'touch' || !event.isPrimary || !isPhone() || !isInside(event)) return;
     const grabbing = spring.animating || spring.x !== 0;
     stopAnimation();
-    suppressClick = false;
     tracker.reset();
     pointer = { id: event.pointerId, startX: event.clientX, startY: event.clientY, base: grabbing ? spring.x : 0, locked: grabbing };
     if (grabbing) capture(event.pointerId);
@@ -106,10 +107,11 @@ export function bindCalendarSwipe(calendar, {
   area.addEventListener('pointerup', finish(false));
   area.addEventListener('pointercancel', finish(true));
 
-  // The tap that ends a swipe must not select the day under the finger.
+  // The tap that ends a swipe must not select the day under the finger. Keyboard clicks (detail 0) always pass.
   area.addEventListener('click', event => {
     if (!suppressClick) return;
     suppressClick = false;
+    if (event.detail === 0) return;
     event.preventDefault();
     event.stopImmediatePropagation();
   }, true);

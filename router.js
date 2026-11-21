@@ -225,6 +225,8 @@ export function createRouter({ root, showStandaloneScreen, openActiveMap, openMa
           onDelete: mapId => deleteMapWithUndo(mapId, {
             store, runStoreAction, offerUndo: showActionMessage, notify: text => showMessage?.(text),
             refresh: () => navigate("my-maps"),
+            isListShown: () => navigation.current?.screen === "my-maps",
+            syncNavigation: () => syncHeaderNavigation(navigation.current?.screen),
           }),
           onExport: async (mapId, format = 'json') => {
             try {

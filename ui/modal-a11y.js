@@ -31,8 +31,11 @@ let returnFocusTo = null;
 
 export function rememberFocus() {
   const active = globalThis.document?.activeElement;
-  if (returnFocusTo) return;
-  if (active && active !== globalThis.document.body) returnFocusTo = active;
+  // Moving from one editor to the next keeps the control that opened the first one.
+  if (returnFocusTo && active?.closest?.(".modal")) return;
+  // Otherwise the editor opens from the page: remember that control, even if an earlier editor was closed
+  // without restoring focus (browser Back goes through hideAllModals).
+  returnFocusTo = active && active !== globalThis.document.body ? active : null;
 }
 
 /** The control that had focus when the editor opened, if any. */

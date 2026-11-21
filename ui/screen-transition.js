@@ -16,6 +16,8 @@ const STALL_MS = 250;
 
 const surface = error => queueMicrotask(() => { throw error; });
 
+let generation = 0;
+
 // Runs `update` (which swaps the screen) inside a View Transition when the browser supports it
 // and the person has not asked for less motion. Otherwise it runs at once, as before.
 export function changeScreen({
@@ -27,11 +29,13 @@ export function changeScreen({
   let ran = false;
   const once = () => { if (ran) return; ran = true; update(); };
   const stalled = setTimeout(() => { try { once(); } catch (error) { reportError(error); } }, stallMs);
-  // The stylesheet slides the old screen out and the new one in according to this class.
+  // The stylesheet slides the old screen out and the new one in according to this class. Only the newest
+  // transition owns it: an older one that is skipped and finishes later must not clear the newer direction.
   const marker = doc.documentElement?.classList;
-  const classes = screenDirection(from, to) > 0 ? 'screen-forward' : 'screen-back';
-  marker?.add(classes);
-  const clear = () => marker?.remove('screen-forward', 'screen-back');
+  const mine = ++generation;
+  marker?.remove('screen-forward', 'screen-back');
+  marker?.add(screenDirection(from, to) > 0 ? 'screen-forward' : 'screen-back');
+  const clear = () => { if (mine === generation) marker?.remove('screen-forward', 'screen-back'); };
   const transition = doc.startViewTransition(() => { clearTimeout(stalled); once(); });
   Promise.resolve(transition.finished).then(clear, clear);
   // A skipped transition (hidden tab, newer navigation) still ran the update; only a real error matters.

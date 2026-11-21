@@ -33,3 +33,30 @@ test("an open editor is a labelled modal dialog and the page behind it is inert 
   markModalClosed(page);
   assert.equal(attributes.has("page:inert"), false);
 });
+
+test("each editor opened from the page remembers its own opening control", async () => {
+  const { rememberFocus, openingControl, restoreFocus } = await import("../ui/modal-a11y.js");
+  const body = { closest: () => null };
+  const control = id => ({ id, isConnected: true, closest: () => null, focus() { globalThis.document.activeElement = this; } });
+  const previousDocument = globalThis.document;
+  globalThis.document = { body, activeElement: body };
+  try {
+    const editDay = control("editBtn");
+    const fertile = control("fertileRangeActionBtn");
+    editDay.focus();
+    rememberFocus();
+    assert.equal(openingControl(), editDay);
+    // Browser Back closes the editor through hideAllModals, which never restores focus.
+    fertile.focus();
+    rememberFocus();
+    assert.equal(openingControl(), fertile, "a newer opener from the page replaces the stale one");
+    // Moving from one editor to the next keeps the control that opened the first one.
+    globalThis.document.activeElement = { id: "mucusActionBtn", closest: selector => (selector === ".modal" ? {} : null) };
+    rememberFocus();
+    assert.equal(openingControl(), fertile);
+    restoreFocus();
+    assert.equal(globalThis.document.activeElement, fertile);
+  } finally {
+    globalThis.document = previousDocument;
+  }
+});

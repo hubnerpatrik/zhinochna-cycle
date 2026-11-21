@@ -187,6 +187,29 @@ test('the tap that ends a drag does not select a day', () => {
   assert.equal(prevented, false, 'a plain tap still reaches the day');
 });
 
+test('after a swipe, the next tap elsewhere in the card (a month arrow) is not swallowed', () => {
+  const band = event => event.clientY >= 50 && event.clientY <= 400;
+  const { fire, drag, release, advance } = harness({ isInside: band });
+  drag(-200, { stepMs: 40 });
+  release();
+  advance(1500);
+  // A swipe produces no click of its own, so the guard is still armed when the arrow above the grid is tapped.
+  fire('pointerdown', { clientX: 300, clientY: 20 });
+  fire('pointerup', { clientX: 300, clientY: 20 });
+  let prevented = false;
+  fire('click', { clientY: 20, preventDefault() { prevented = true; }, stopImmediatePropagation() { prevented = true; } });
+  assert.equal(prevented, false, 'the arrow receives its click');
+});
+
+test('a keyboard click after a swipe is never swallowed', () => {
+  const { fire, drag, release } = harness();
+  drag(-100);
+  release();
+  let prevented = false;
+  fire('click', { detail: 0, preventDefault() { prevented = true; }, stopImmediatePropagation() { prevented = true; } });
+  assert.equal(prevented, false);
+});
+
 test('the finger can grab the sliding grid by touching the empty part of its card', () => {
   // The grid moves sideways, so the listener lives on the stable card and only the grid's vertical band counts.
   const band = event => event.clientY >= 50 && event.clientY <= 400;

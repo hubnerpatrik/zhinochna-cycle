@@ -88,3 +88,27 @@ test('the router renders through the screen transition and styles keep it short 
   assert.match(css, /::view-transition-old\(root\)[^{]*\{[^}]*animation-duration:\s*1\d\dms/, 'a short cross-fade');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)\s*\{[^@]*::view-transition-group\(\*\)/, 'reduced motion switches it off');
 });
+
+test('an earlier transition that finishes late does not clear the direction of the newer one', async () => {
+  const classes = new Set();
+  const finishes = [];
+  const doc = {
+    documentElement: { classList: { add: name => classes.add(name), remove: (...names) => names.forEach(name => classes.delete(name)) } },
+    startViewTransition(update) {
+      let finish;
+      const finished = new Promise(resolve => { finish = resolve; });
+      finishes.push(finish);
+      return { updateCallbackDone: Promise.resolve().then(update), ready: Promise.resolve(), finished };
+    },
+  };
+  changeScreen({ from: 'menu', to: 'my-maps', update: () => {}, doc, stallMs: 1e6 });
+  changeScreen({ from: 'my-maps', to: 'menu', update: () => {}, doc, stallMs: 1e6 });
+  assert.ok(classes.has('screen-back'));
+  finishes[0](); // the browser skips the first transition once the second starts
+  await new Promise(resolve => setImmediate(resolve));
+  assert.ok(classes.has('screen-back'), 'the newer transition keeps its direction');
+  assert.ok(!classes.has('screen-forward'));
+  finishes[1]();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(classes.size, 0, 'the last transition cleans up');
+});

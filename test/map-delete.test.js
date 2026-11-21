@@ -53,3 +53,15 @@ test('a failed restore does not claim success', () => {
   offers[0][1].onAction();
   assert.ok(!calls.some(call => call[0] === 'notify'));
 });
+
+test('undo from another screen restores the map without pulling the user back to My Maps', () => {
+  const { calls, offers, options } = setup();
+  let listShown = true;
+  options.isListShown = () => listShown;
+  options.syncNavigation = () => calls.push(['sync']);
+  deleteMapWithUndo('map-1', options);
+  listShown = false; // the user moved on to Home within the undo window
+  offers[0][1].onAction();
+  assert.deepEqual(calls.slice(3).map(call => call[0]), ['restore', 'notify', 'sync'],
+    'only the navigation (Active Map tab) is brought up to date');
+});

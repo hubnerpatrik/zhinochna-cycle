@@ -1,5 +1,10 @@
 // Deleting a map is not confirmed up front; it is done and can be undone for a while instead.
-export function deleteMapWithUndo(mapId, { store, runStoreAction, offerUndo, notify, refresh }) {
+// Undo re-renders My Maps only when it is still on screen; elsewhere it just updates the navigation.
+export function deleteMapWithUndo(mapId, {
+  store, runStoreAction, offerUndo, notify, refresh,
+  isListShown = () => true,
+  syncNavigation = () => {},
+}) {
   const snapshot = store.snapshotMap(mapId);
   const deleted = runStoreAction(() => store.deleteMap(mapId));
   if (!deleted.ok || !deleted.value) return false;
@@ -10,7 +15,8 @@ export function deleteMapWithUndo(mapId, { store, runStoreAction, offerUndo, not
       const restored = runStoreAction(() => store.restoreMap(snapshot));
       if (!restored.ok || !restored.value) return;
       notify('Map restored ✓');
-      refresh();
+      if (isListShown()) refresh();
+      else syncNavigation();
     },
   });
   return true;

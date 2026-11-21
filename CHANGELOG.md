@@ -27,6 +27,10 @@ vMAJOR.MINOR.PATCH
 - Marker mode now has a Cancel button next to Done, on phones and on wide screens; on a phone it returns to the Tools list like the other tools.
 - Header language picker on wide screens: the flag now sits level with the rest of the header row instead of being pushed down and to the left, and its menu shows all four flags above the page instead of being cut off by the first section.
 - Sheets and the calendar swipe share one spring animator; dragging a coverline or marking fertile days no longer relies on a timer to ignore the click that follows.
+- After swiping the calendar to another month, the first tap on the month arrows works again instead of being ignored; keyboard clicks are never swallowed.
+- An editor closed with the browser's Back button no longer leaves a stale opener behind: the next editor grows from, and returns focus to, the button that actually opened it.
+- Undoing a map deletion from another screen restores the map without pulling you back to My Maps.
+- Quick screen changes keep their slide direction, and reopening the export menu during its closing animation no longer leaves two menus with the same id.
 
 ### Design
 
