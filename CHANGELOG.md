@@ -16,6 +16,7 @@ vMAJOR.MINOR.PATCH
 
 - Password fields on the sign-in, sign-up and reset screens have an eye button that shows or hides the password.
 - Add a web app manifest and app icons so Chrome on Android can install the site as an app.
+- The map export menu opens next to its button again instead of in the top-left corner.
 
 ## 0.20.0 — 2026-11-21
 

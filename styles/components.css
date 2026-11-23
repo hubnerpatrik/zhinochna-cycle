@@ -12,7 +12,7 @@
 .feedback-image-picker { display: grid; gap: 8px; margin-block: 16px; }
 .feedback-image-picker input { display: block; width: 100%; margin-top: 8px; font-size: 0.875rem; }
 .feedback-image-picker small { color: var(--ink-muted); }
-.map-export-popover { position: fixed; inset: auto; margin: 0; display: none; grid-template-columns: 1fr; gap: 6px; width: 180px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 10px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card); box-shadow: 0 12px 36px var(--shade); }
+.map-export-popover { position: fixed; right: auto; bottom: auto; margin: 0; display: none; grid-template-columns: 1fr; gap: 6px; width: 180px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 10px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card); box-shadow: 0 12px 36px var(--shade); }
 .map-export-popover:popover-open { display: grid; }
 .map-export-popover {
   transform-origin: var(--menu-origin-x, 50%) var(--menu-origin-y, 0);
