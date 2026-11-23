@@ -14,6 +14,9 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+- Password fields on the sign-in, sign-up and reset screens have an eye button that shows or hides the password.
+- Add a web app manifest and app icons so Chrome on Android can install the site as an app.
+
 ## 0.20.0 — 2026-11-21
 
 ### Touch and motion
