@@ -52,6 +52,8 @@ export const authMessages = {
   'Email': ['E-mail', 'E-mail', 'Електронна адреса'],
   'Password': ['Heslo', 'Heslo', 'Пароль'],
   'Confirm password': ['Potvrzení hesla', 'Potvrdenie hesla', 'Підтвердіть пароль'],
+  'Show password': ['Zobrazit heslo', 'Zobraziť heslo', 'Показати пароль'],
+  'Hide password': ['Skrýt heslo', 'Skryť heslo', 'Приховати пароль'],
   'Back to sign in': ['Zpět k přihlášení', 'Späť na prihlásenie', 'Назад до входу'],
   'Passwords do not match.': ['Hesla se neshodují.', 'Heslá sa nezhodujú.', 'Паролі не збігаються.'],
   'Too many attempts. Please wait and try again.': ['Příliš mnoho pokusů. Chvíli počkej a zkus to znovu.', 'Príliš veľa pokusov. Chvíľu počkaj a skús to znova.', 'Забагато спроб. Зачекайте та спробуйте ще раз.'],
