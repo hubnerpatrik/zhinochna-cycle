@@ -48,3 +48,14 @@ test('a map card\'s export and more buttons differ from the card and from each o
   assert.match(moreRule[1], /background:\s*var\(--surface-alt\)/);
   assert.match(moreRule[1], /border-color:\s*transparent/);
 });
+
+test('on phones the calendar dots sit in their own strip below the day number', () => {
+  // A centred number with a tall line box ran into the dots at 320 and 390 px.
+  const phone = [...css.matchAll(/@media \(max-width: 560px\)[^{]*\{([\s\S]*?)\n\}/g)].map(match => match[1]).join('\n');
+  const day = phone.match(/#calendar \.day\s*\{([^}]*)\}/g)?.find(rule => /padding-bottom/.test(rule));
+  assert.ok(day, 'phone days reserve room under the number');
+  assert.match(day, /line-height:\s*1;/);
+  assert.match(day, /padding-bottom:\s*5px/);
+  const marks = phone.match(/\.day-marks\s*\{([^}]*)\}/);
+  assert.ok(marks && /bottom:\s*3px/.test(marks[1]), 'dots sit 3 px above the cell edge');
+});

@@ -71,6 +71,8 @@
   .mobile-selected-measurement { display: grid; justify-items: end; gap: 4px; min-width: 0; max-width: 55%; }
   #mobileSelectedFactor { max-width: 100%; font-size: 0.75rem; color: var(--ink-muted); overflow-wrap: anywhere; text-align: right; }
   #activeMapScreen .calendar .day, #calendar .day { font-size: 0.8125rem; }
+  /* A compact line box and room underneath keep the number clear of the dots at 320–390 px. */
+  #calendar .day { line-height: 1; padding-bottom: 5px; }
   #calendar .day-cycle-num { font-size: 0.6875rem; font-weight: 600; padding: 1px 3px; box-shadow: none; }
   /* Give the number the room below the cycle-day badge so the two never overlap at 320 px. */
   #calendar .day:has(.day-cycle-num) { padding-top: 12px; }

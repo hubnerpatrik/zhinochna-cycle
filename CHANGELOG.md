@@ -21,6 +21,7 @@ vMAJOR.MINOR.PATCH
 
 ### Fixed
 
+- On phones, the calendar's dots for influence factors, sex and symptoms sit in their own strip below the day number instead of touching it.
 - On narrow phones, a day without a temperature shows "No temperature" as a quiet label that fits next to the date instead of running past the edge of the card.
 - The export menu on a map card opens next to its button again instead of in the top-left corner of the screen.
 

@@ -225,6 +225,6 @@ button.menu-summary-card:disabled { cursor: default; opacity: .65; }
 .day-mark-sex { background: var(--data-sex); }
 .day-mark-other { background: var(--data-symptoms); }
 @media (max-width: 560px), (max-height: 500px) and (pointer: coarse) {
-  .day-marks { bottom: 4px; gap: 2px; }
+  .day-marks { bottom: 3px; gap: 2px; }
   .day-mark { width: 6px; height: 6px; }
 }
