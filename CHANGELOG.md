@@ -26,7 +26,7 @@ vMAJOR.MINOR.PATCH
 
 ### Design
 
-- On a map card, the export and ⋯ buttons have a warm fill, so they stand apart from the white card and from Open map.
+- On a map card, the export button is pale coral with a coral icon and the ⋯ button a neutral warm fill, so the two stand apart from the white card and from each other.
 
 ## 0.20.0 — 2026-11-21
 

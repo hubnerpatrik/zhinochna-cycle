@@ -179,9 +179,21 @@
   }
 }
 
-/* On a map card the icon buttons sit on white: a warm fill keeps them distinct from the card
-   and from the coral Open map. Hover adds the hairline from the rule above. */
-.map-list-actions .map-export-btn,
+/* On a map card the icon buttons sit on white and must not blend into it or into each other:
+   export takes a pale coral from Open map's family, ⋯ a neutral warm fill. */
+.map-list-actions .btn.map-export-btn {
+  background: var(--action-tint);
+  border-color: transparent;
+  color: var(--action);
+}
+
+@media (hover: hover) {
+  .map-list-actions .btn.map-export-btn:hover {
+    background: var(--action-tint);
+    border-color: var(--action-soft);
+  }
+}
+
 .map-list-actions .map-more-btn {
   background: var(--surface-alt);
   border-color: transparent;

@@ -35,9 +35,16 @@ test('the phone day card shows a missing temperature as a quiet label that fits 
   assert.match(rule[1], /color:\s*var\(--ink-muted\)/);
 });
 
-test('a map card\'s export and more buttons are tinted so they stand apart from the white card', () => {
-  const rule = css.match(/\.map-list-actions \.map-export-btn,\s*\.map-list-actions \.map-more-btn\s*\{([^}]*)\}/);
-  assert.ok(rule, 'one shared rule tints both icon buttons');
-  assert.match(rule[1], /background:\s*var\(--surface-alt\)/);
-  assert.match(rule[1], /border-color:\s*transparent/);
+test('a map card\'s export and more buttons differ from the card and from each other', () => {
+  // Export takes the coral family of Open map; ⋯ stays a neutral warm fill.
+  const exportRule = css.match(/\.map-list-actions \.btn\.map-export-btn\s*\{([^}]*)\}/);
+  assert.ok(exportRule, 'export has its own rule');
+  assert.match(exportRule[1], /background:\s*var\(--action-tint\)/);
+  assert.match(exportRule[1], /color:\s*var\(--action\)/);
+  const hover = css.match(/\.map-list-actions \.btn\.map-export-btn:hover\s*\{([^}]*)\}/);
+  assert.ok(hover && /background:\s*var\(--action-tint\)/.test(hover[1]), 'hover keeps the coral tint');
+  const moreRule = css.match(/\.map-list-actions \.map-more-btn\s*\{([^}]*)\}/);
+  assert.ok(moreRule, '⋯ has its own rule');
+  assert.match(moreRule[1], /background:\s*var\(--surface-alt\)/);
+  assert.match(moreRule[1], /border-color:\s*transparent/);
 });
