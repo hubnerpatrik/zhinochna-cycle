@@ -18,6 +18,8 @@ The active map brings the calendar, temperature chart, cycle summary and daily o
 
 ## On your phone
 
+To use Cycle Tracker like an app, open it in Chrome on Android and choose **Install app** (or **Add to Home screen**) from the menu; on iPhone, use **Share → Add to Home Screen** in Safari. It then opens from its gerbera icon in its own window. An internet connection is still needed: the app checks your sign-in and syncs on start.
+
 The active map opens in Calendar. Switching to Graph keeps the selected day and zoom. Pinch to zoom, swipe to move across the chart or use **Show all** in **Tools** to reset the view. Below the chart, you can reveal the observation rows, expand the selected day's details or open **Day record**.
 
 <table>
@@ -89,6 +91,8 @@ npx vercel dev
 ```
 
 For localhost UI development, set `VITE_DEV_AUTH_BYPASS=true` in `.env.development.local` and run `npm run dev`. This mode uses isolated browser storage. Cloud sync, sharing and feedback require the server setup.
+
+The home-screen icons and favicon in `public/` are generated from `scripts/app-icons.js`; run `npm run icons` after changing the artwork.
 
 Run `npm run check` for lint, tests and the production build. See [CONTRIBUTING.md](CONTRIBUTING.md) for the branch and release workflow.
 

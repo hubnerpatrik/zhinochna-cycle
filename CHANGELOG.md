@@ -17,7 +17,7 @@ vMAJOR.MINOR.PATCH
 ### Added
 
 - Password fields on the sign-in, sign-up and reset screens have an eye button that shows or hides the password.
-- Add a web app manifest and app icons so Chrome on Android can install the site as an app.
+- Cycle Tracker can be installed on a phone: Chrome on Android offers **Install app**, and it opens from its own gerbera icon in a window without the browser bar (Safari on iPhone uses the same icon for **Add to Home Screen**). The browser tab shows the gerbera too, instead of a generic icon. An internet connection is still needed to sign in and sync.
 
 ### Changed
 

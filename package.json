@@ -8,6 +8,7 @@
   },
   "scripts": {
     "db:migrate": "node --env-file=.env scripts/migrate-db.js",
+    "icons": "node scripts/app-icons.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
