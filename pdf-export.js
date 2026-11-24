@@ -5,11 +5,23 @@ import { t } from './i18n.js';
 import { EXPORT_FIELDS, EXPORT_LABELS, exportDay, observationText, sortedMapEntries } from './export-data.js';
 import { cycleModel } from './cycle-model.js';
 import { MILLISECONDS_PER_DAY } from './date-utils.js';
-import { templatePages, TEMPLATE_ROWS } from './observation-template.js';
+import { templatePages } from './observation-template.js';
 import { serializeMapBackup } from './backup.js';
 import { calculateSummary } from './cycle-summary.js';
-import { drawTemplateLabels } from './pdf-template-labels.js';
-import { MEASUREMENT_METHODS } from './profile-options.js';
+import { drawFormChoices, drawTemplateLabels, formCodes } from './pdf-template-labels.js';
+import { FORM_ROWS, formDate, formMonth, formYear, isOtherMeasurementTime } from './pdf-form-rows.js';
+
+// Entries are written onto the reference card in one pen colour, like its filled-in sample.
+const ENTRY_INK = '#1f4e9e';
+const PRINT_INK = '#111';
+// Day grid of the card (714 × 1011 page space).
+const GRID_LEFT = 129.5;
+const GRID_RIGHT = 690.5;
+const GRID_DAYS = 43;
+const CHART_TOP = 102;
+const CHART_BOTTOM = 423;
+const FERTILE_ROW_Y = 834.3;
+const OTHER_TIME_STRIP = 30;
 
 export async function mapPdf(map, backup = serializeMapBackup(map)) {
   const image = new Image();
@@ -21,71 +33,93 @@ export async function mapPdf(map, backup = serializeMapBackup(map)) {
   if (!ctx) throw new Error('Canvas unavailable');
   const pages = [];
   const model = cycleModel(map);
+  const profile = map.profileSnapshot || {};
+  const rowContext = { codes: formCodes(), usualTime: profile.usualMeasurementTime };
+  const step = (GRID_RIGHT - GRID_LEFT) / GRID_DAYS;
+  const tempY = temp => 417.4 - (temp - 36) / 1.4 * 310.7;
+  const write = (value, x, y, { size = 8, bold = true, align = 'center', max = 60, color = ENTRY_INK } = {}) => {
+    if (value == null || value === '') return;
+    ctx.font = `${bold ? 'bold ' : ''}${size}px Arial, sans-serif`;
+    ctx.fillStyle = color; ctx.textAlign = align;
+    ctx.fillText(String(value), x, y, max);
+    ctx.textAlign = 'left';
+  };
+  const vertical = (value, x, y, options) => {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(-Math.PI / 2);
+    write(value, 0, 0, { align: 'left', ...options });
+    ctx.restore();
+  };
   for (const page of templatePages(map)) {
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     ctx.save(); ctx.scale(2, 2);
     drawTemplateLabels(ctx);
-    const text = (value, x, y, size = 8, max = 550) => {
-      ctx.font = `${size}px Arial, sans-serif`; ctx.fillStyle = '#111';
-      ctx.fillText(String(value ?? ''), x, y, max);
-    };
-    text(map.name || t('Untitled map'), 80, 59, 8, 105);
-    text(page.dates[0]?.slice(5, 7) || '', 237, 59);
-    text(page.dates[0]?.slice(0, 4) || '', 404, 59);
-    const profile = map.profileSnapshot || {};
-    text(profile.age || '', 552, 59, 8, 40);
-    text(map.name || '', 27, 887, 8, 177);
-    text(profile.usualMeasurementTime || '', 447, 887, 8, 36);
-    text(t(MEASUREMENT_METHODS[profile.measurementMethod] || ''), 555, 887, 8, 130);
+    drawFormChoices(ctx, profile.measurementMethod, ENTRY_INK);
+    write(map.name || t('Untitled map'), 72, 59.2, { align: 'left', max: 84 });
+    write(formMonth(page.dates), 284, 59.2, { max: 100 });
+    write(formYear(page.dates), 440.8, 59.2, { max: 80 });
+    write(profile.age, 574, 59.2, { max: 52 });
+    write(map.name, 220.5, 872.5, { size: 7.5, max: 52 });
+    write(profile.usualMeasurementTime, 460.5, 888.3, { max: 42 });
     const manual = map.cycleSummaries?.[page.start] || {};
     const summary = page.start ? calculateSummary(map.entries, page.start, manual) : {};
-    for (const [value, x, y] of [
-      [summary.max, 251, 914], [summary.min, 251, 927], [summary.lastInfertile, 251, 940], [summary.length, 251, 953],
-      [manual.firstMucus, 462, 914], [manual.qualityMucus, 462, 927], [manual.qualityDays, 462, 940], [manual.mucusPeak, 462, 953],
-      [summary.bbtRise, 644, 914], [summary.mucusPlus4, 644, 927], [summary.cervixPlus4, 644, 940], [summary.bbtPhase, 598, 953], [summary.mucusPhase, 657, 953],
-    ]) if (value != null) text(value, x, y, 8, 30);
-    const left = 129.5, step = (690.5 - left) / 43;
-    const tempY = temp => 417.4 - (temp - 36) / 1.4 * 310.7;
-    let previous = null;
-    page.dates.forEach((date, index) => {
-      const e = exportDay(model, map.entries, date), x = left + (index + .5) * step;
-      ctx.save(); ctx.translate(x + 2, 89); ctx.rotate(-Math.PI / 2); text(date.slice(5), 0, 0, 6.5); ctx.restore();
+    for (const [value, x, row] of [
+      [summary.max, 264.5, 0], [summary.min, 264.5, 1], [summary.lastInfertile, 264.5, 2], [summary.length, 264.5, 3],
+      [manual.firstMucus, 474.5, 0], [manual.qualityMucus, 474.5, 1], [manual.qualityDays, 474.5, 2], [manual.mucusPeak, 474.5, 3],
+      [summary.bbtRise, 658.5, 0], [summary.mucusPlus4, 658.5, 1], [summary.cervixPlus4, 658.5, 2], [summary.bbtPhase, 593.5, 3], [summary.mucusPhase, 658.5, 3],
+    ]) write(value, x, 913.6 + row * 13, { max: 38 });
+    const days = page.dates.map((date, index) => ({ date, index, e: exportDay(model, map.entries, date), x: GRID_LEFT + (index + .5) * step }));
+    for (const { date, index, e, x } of days) {
+      vertical(formDate(date), x + 2.3, 87.5, { size: 6.5, bold: false, max: 22 });
       // Continuation sheets retain the actual cycle day, including days >43.
       if (page.offset) for (const y of [100, 479, 716, 839]) {
-        ctx.fillStyle = '#fff'; ctx.fillRect(left + index * step + .6, y - 8, step - 1.2, 9);
-        text(page.offset + index + 1, x - 4, y, 6);
+        ctx.fillStyle = '#fff'; ctx.fillRect(GRID_LEFT + index * step + .6, y - 8, step - 1.2, 9);
+        write(page.offset + index + 1, x, y, { size: 6, color: PRINT_INK });
       }
-      for (const [, y, value] of TEMPLATE_ROWS) text(value(e), x - 4, y, 7, step - 1);
-      if (e.isFertile) { ctx.fillStyle = 'rgba(55,130,70,.12)'; ctx.fillRect(left + index * step, 102, step, 321); }
-      if (!Number.isFinite(e.temp)) { previous = null; return; }
-      if (e.temp < 36 || e.temp > 37.4) { text(`${e.temp.toFixed(2)}`, x - 6, 116, 5, step); previous = null; return; }
+      for (const [, y, value] of FORM_ROWS) write(value(e, rowContext), x, y, { size: 7.5, max: step - 1 });
+      if (e.isFertile) {
+        ctx.strokeStyle = ENTRY_INK; ctx.lineWidth = .8;
+        ctx.beginPath(); ctx.arc(x, FERTILE_ROW_Y, 4.9, 0, Math.PI * 2); ctx.stroke();
+      }
+      // A reading taken at another time gets its time written up the day's column, as on the sample card.
+      if (isOtherMeasurementTime(e.measurementTime, profile.usualMeasurementTime)) {
+        const pointY = Number.isFinite(e.temp) ? tempY(Math.min(37.4, Math.max(36, e.temp))) : CHART_BOTTOM;
+        const top = pointY < CHART_TOP + OTHER_TIME_STRIP + 6 ? CHART_BOTTOM - OTHER_TIME_STRIP - .6 : CHART_TOP + .6;
+        ctx.fillStyle = '#fff'; ctx.fillRect(GRID_LEFT + index * step + .7, top, step - 1.4, OTHER_TIME_STRIP);
+        vertical(e.measurementTime, x + 2.6, top + OTHER_TIME_STRIP - 2, { size: 7, max: OTHER_TIME_STRIP - 3 });
+      }
+    }
+    let previous = null;
+    for (const { e, x } of days) {
+      if (!Number.isFinite(e.temp)) { previous = null; continue; }
+      if (e.temp < 36 || e.temp > 37.4) { write(e.temp.toFixed(2), x, 116, { size: 5, bold: false, max: step }); previous = null; continue; }
       const y = tempY(e.temp);
-      ctx.strokeStyle = '#111'; ctx.lineWidth = 1;
+      ctx.strokeStyle = PRINT_INK; ctx.lineWidth = 1;
       if (previous) { ctx.beginPath(); ctx.moveTo(...previous); ctx.lineTo(x, y); ctx.stroke(); }
-      ctx.beginPath(); ctx.arc(x, y, 1.8, 0, Math.PI * 2); ctx.fillStyle = '#111'; ctx.fill(); previous = [x, y];
+      ctx.beginPath(); ctx.arc(x, y, 1.8, 0, Math.PI * 2); ctx.fillStyle = PRINT_INK; ctx.fill(); previous = [x, y];
       const adjusted = getAdjustedTemp(e.temp, e.measurementTime, profile.usualMeasurementTime);
       if (adjusted != null) {
         const adjustedY = tempY(Math.min(37.4, Math.max(36, adjusted)));
         ctx.save();
-        ctx.strokeStyle = '#2563eb'; ctx.fillStyle = '#2563eb';
+        ctx.strokeStyle = '#8a8a8a'; ctx.lineWidth = .8;
         ctx.setLineDash([2, 2]);
         ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, adjustedY); ctx.stroke();
-        ctx.beginPath(); ctx.arc(x, adjustedY, 1.8, 0, Math.PI * 2); ctx.fill();
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.arc(x, adjustedY, 1.6, 0, Math.PI * 2); ctx.stroke();
         ctx.restore();
       }
       const marker = e.markers?.bbt?.value;
-      if (marker) text(marker, x + 2, y - 4, 6);
-    });
+      if (marker) write(marker, x + 4, y - 4, { size: 6, align: 'left' });
+    }
     if (page.dates.length) {
-      const anchor = (key, position) => left + ((Date.parse(key + 'T00:00:00Z') - Date.parse(page.dates[0] + 'T00:00:00Z')) / MILLISECONDS_PER_DAY + ({ start: 0, center: .5, end: 1 }[position] ?? .5)) * step;
-      ctx.save(); ctx.beginPath(); ctx.rect(left, 102, step * 43, 321); ctx.clip(); ctx.strokeStyle = '#9b542e'; ctx.lineWidth = 1;
+      const anchor = (key, position) => GRID_LEFT + ((Date.parse(key + 'T00:00:00Z') - Date.parse(page.dates[0] + 'T00:00:00Z')) / MILLISECONDS_PER_DAY + ({ start: 0, center: .5, end: 1 }[position] ?? .5)) * step;
+      ctx.save(); ctx.beginPath(); ctx.rect(GRID_LEFT, CHART_TOP, step * GRID_DAYS, CHART_BOTTOM - CHART_TOP); ctx.clip(); ctx.strokeStyle = '#9b542e'; ctx.lineWidth = 1;
       for (const line of Object.values(map.coverlines || {})) {
-        if (Number.isFinite(line.horizontalTemp)) { ctx.beginPath(); ctx.moveTo(line.horizontalStartKey ? anchor(line.horizontalStartKey, line.horizontalStartPosition) : left, tempY(line.horizontalTemp)); ctx.lineTo(line.horizontalEndKey ? anchor(line.horizontalEndKey, line.horizontalEndPosition) : 690.5, tempY(line.horizontalTemp)); ctx.stroke(); }
+        if (Number.isFinite(line.horizontalTemp)) { ctx.beginPath(); ctx.moveTo(line.horizontalStartKey ? anchor(line.horizontalStartKey, line.horizontalStartPosition) : GRID_LEFT, tempY(line.horizontalTemp)); ctx.lineTo(line.horizontalEndKey ? anchor(line.horizontalEndKey, line.horizontalEndPosition) : GRID_RIGHT, tempY(line.horizontalTemp)); ctx.stroke(); }
         if (line.verticalKey) { const x = anchor(line.verticalKey, line.verticalPosition); ctx.beginPath(); ctx.moveTo(x, tempY(line.verticalTopTemp ?? 37.4)); ctx.lineTo(x, tempY(line.verticalBottomTemp ?? 36)); ctx.stroke(); }
       }
       ctx.restore();
     }
-    text(`${page.dates[0] || ''} – ${page.dates.at(-1) || ''}   ${pages.length + 1}`, 25, 984, 7);
+    write(`${page.dates[0] || ''} – ${page.dates.at(-1) || ''}   ${pages.length + 1}`, 25, 984, { size: 7, bold: false, align: 'left', max: 300, color: '#666' });
     ctx.restore();
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', .96));
     if (!blob) throw new Error('PDF image failed');

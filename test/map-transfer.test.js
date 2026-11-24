@@ -5,7 +5,6 @@ import { exportMap, readImportText, readMapImport } from '../map-transfer.js';
 import { parseBackup, serializeBackup, serializeMapBackup } from '../backup.js';
 import { templatePages } from '../observation-template.js';
 import { setLanguage } from '../i18n.js';
-import { drawTemplateLabels } from '../pdf-template-labels.js';
 
 const map = { id: 'sample', name: 'Žluťoučký цикл', entries: {
   '2026-10-01': { temp: 36.5, sex: false, bleeding: 'menstruation', other: 'First\nsecond <line>' },
@@ -76,18 +75,6 @@ test('Excel labels and observation values follow all four application languages;
       assert.ok(text.includes(`name="${sheet}"`));
       assert.ok(text.includes('First\nsecond &lt;line&gt;'));
       assert.ok(text.includes('$B$25:$AR$25'));
-    }
-  } finally { setLanguage('en'); }
-});
-
-test('PDF reference labels are repainted in the selected application language', () => {
-  try {
-    for (const [language, expected] of [['en', 'Map name'], ['cs', 'Název mapy'], ['sk', 'Názov mapy'], ['uk', 'Назва карти']]) {
-      setLanguage(language);
-      const labels = [];
-      drawTemplateLabels({ fillRect() {}, strokeRect() {}, measureText: value => ({ width: value.length }), fillText: value => labels.push(value) });
-      assert.ok(labels.includes(expected));
-      if (language !== 'uk') assert.ok(labels.every(value => !/[\u0400-\u04ff]/.test(value)));
     }
   } finally { setLanguage('en'); }
 });

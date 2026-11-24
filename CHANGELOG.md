@@ -19,6 +19,11 @@ vMAJOR.MINOR.PATCH
 - Password fields on the sign-in, sign-up and reset screens have an eye button that shows or hides the password.
 - Add a web app manifest and app icons so Chrome on Android can install the site as an app.
 
+### Changed
+
+- The PDF observation card now follows the printed self-observation chart: in Czech, Slovak and English its labels are translated in place with the chart's own bold headings, grouped mucus rows, legends and footer boxes; in Ukrainian the chart's own labels stay as printed.
+- Entries are written onto the card like the chart's filled-in sample: in one blue pen colour, with the month in words, dates as day.month, crosses for present observations and the legend's letters for coded ones (influence factors, sensation, colour, cervix). A reading taken more than 30 minutes from the usual time is marked V and its time is written up the day's column; fertile days are circled in the Fertile days row instead of shading the chart, and the map's measurement method is highlighted among the printed options.
+
 ### Fixed
 
 - On phones, the calendar's dots for influence factors, sex and symptoms sit in their own strip below the day number instead of touching it.
