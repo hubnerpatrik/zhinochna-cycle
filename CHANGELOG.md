@@ -14,9 +14,19 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+### Added
+
 - Password fields on the sign-in, sign-up and reset screens have an eye button that shows or hides the password.
 - Add a web app manifest and app icons so Chrome on Android can install the site as an app.
-- The map export menu opens next to its button again instead of in the top-left corner.
+
+### Fixed
+
+- On narrow phones, a day without a temperature shows "No temperature" as a quiet label that fits next to the date instead of running past the edge of the card.
+- The export menu on a map card opens next to its button again instead of in the top-left corner of the screen.
+
+### Design
+
+- On a map card, the export and ⋯ buttons have a warm fill, so they stand apart from the white card and from Open map.
 
 ## 0.20.0 — 2026-11-21
 

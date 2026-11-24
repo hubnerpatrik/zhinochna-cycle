@@ -179,6 +179,14 @@
   }
 }
 
+/* On a map card the icon buttons sit on white: a warm fill keeps them distinct from the card
+   and from the coral Open map. Hover adds the hairline from the rule above. */
+.map-list-actions .map-export-btn,
+.map-list-actions .map-more-btn {
+  background: var(--surface-alt);
+  border-color: transparent;
+}
+
 /* Cards: white on the warm ground, no border, one soft ambient lift. */
 .screen-card,
 .menu-card,
@@ -657,6 +665,15 @@ select:not([multiple]) {
     font-weight: 650;
     letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* A missing reading is a quiet label, not a 2rem number, so it fits next to the date on 320 px phones. */
+  #mobileSelectedTemp.is-empty {
+    font-size: 1rem;
+    font-weight: 550;
+    letter-spacing: 0;
+    color: var(--ink-muted);
+    text-align: right;
   }
 
   .mobile-map-actions > .btn {

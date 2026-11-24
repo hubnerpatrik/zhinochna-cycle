@@ -23,3 +23,21 @@ test('width breakpoints come from one small set', () => {
   const strays = [...new Set(found.filter(width => !ALLOWED_WIDTHS.has(width)))];
   assert.deepEqual(strays, []);
 });
+
+test('the phone day card shows a missing temperature as a quiet label that fits a 320 px screen', () => {
+  // At the 2rem reading size "No temperature" ran past the card edge on the narrowest phones.
+  const source = readFileSync(new URL('../active-map/mobile-map.js', import.meta.url), 'utf8');
+  assert.match(source, /mobileSelectedTemp[\s\S]{0,200}classList\.toggle\(['"]is-empty['"],\s*temp == null\)/);
+  const rule = css.match(/#mobileSelectedTemp\.is-empty\s*\{([^}]*)\}/);
+  assert.ok(rule, 'an empty temperature has its own rule');
+  const size = rule[1].match(/font-size:\s*([\d.]+)rem/);
+  assert.ok(size && Number(size[1]) <= 1, 'the empty label is body-sized, not the 2rem reading');
+  assert.match(rule[1], /color:\s*var\(--ink-muted\)/);
+});
+
+test('a map card\'s export and more buttons are tinted so they stand apart from the white card', () => {
+  const rule = css.match(/\.map-list-actions \.map-export-btn,\s*\.map-list-actions \.map-more-btn\s*\{([^}]*)\}/);
+  assert.ok(rule, 'one shared rule tints both icon buttons');
+  assert.match(rule[1], /background:\s*var\(--surface-alt\)/);
+  assert.match(rule[1], /border-color:\s*transparent/);
+});
