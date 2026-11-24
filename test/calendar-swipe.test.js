@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { bindCalendarSwipe, createVelocityTracker, project, settle, springStep } from '../active-map/calendar-swipe.js';
+import { readFileSync } from 'node:fs';
+import { bindCalendarSwipe, calendarOffset, createVelocityTracker, project, settle, springStep } from '../active-map/calendar-swipe.js';
 
 test('momentum projection follows the exponential deceleration Apple ships', () => {
   assert.equal(project(0), 0);
@@ -230,4 +231,39 @@ test('a touch outside the grid band never starts a swipe', () => {
   fire('pointerdown', { clientX: 300, clientY: 450 });
   for (let step = 1; step <= 6; step += 1) fire('pointermove', { clientX: 300 - step * 40, clientY: 450 });
   assert.deepEqual(offsets, []);
+});
+
+test('the sliding grid moves through one Web Animation, never by rewriting a stylesheet each frame', () => {
+  // Rewriting a stylesheet rule restyles the whole page on every frame (~1.4 ms here, far more on a phone).
+  const classes = new Set();
+  const keyframes = [];
+  let created = 0, cancelled = 0;
+  const animation = { effect: { setKeyframes: frames => keyframes.push(frames) }, cancel: () => { cancelled += 1; } };
+  const element = {
+    classList: { add: (...names) => names.forEach(name => classes.add(name)), remove: (...names) => names.forEach(name => classes.delete(name)) },
+    animate: frames => { created += 1; keyframes.push(frames); return animation; },
+    get ownerDocument() { throw new Error('no stylesheet access'); },
+  };
+  const setOffset = calendarOffset(element);
+  setOffset(-40); setOffset(-80); setOffset(-120);
+  assert.equal(created, 1, 'one animation is reused while dragging');
+  assert.deepEqual(keyframes.at(-1), [{ transform: 'translateX(-120px)' }]);
+  assert.ok(classes.has('calendar-dragging'));
+  setOffset(0);
+  assert.equal(cancelled, 1);
+  assert.equal(classes.has('calendar-dragging'), false);
+  setOffset(30);
+  assert.equal(created, 2, 'a new drag starts a fresh animation');
+});
+
+test('changing the month redraws only the calendar, not the whole map', () => {
+  // A full render in the middle of the slide (chart, rows, mobile panel) stalled one frame for 14-22 ms here.
+  const bindings = readFileSync(new URL('../active-map/bindings.js', import.meta.url), 'utf8');
+  const changeMonth = bindings.match(/const changeMonth = offset => \{([\s\S]*?)\n  \};/);
+  assert.ok(changeMonth);
+  assert.match(changeMonth[1], /renderMonthView\(\)/);
+  assert.doesNotMatch(changeMonth[1], /\brender\(\)/);
+  const app = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+  assert.match(app, /function renderMonthView\(\) \{\s*renderMonth\(\);\s*renderCalendar\(selectColumn\);\s*\}/);
+  assert.match(app, /initializeActiveMapControls\(\{[\s\S]*?renderMonthView,/);
 });

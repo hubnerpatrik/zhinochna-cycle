@@ -94,6 +94,8 @@ export function initializeActiveMapControls({
   mobileMap,
   getColumns,
   render,
+  // Only the calendar depends on the month; the chart and rows show the whole map.
+  renderMonthView = render,
   renderZoom = render,
   renderZoomLabel,
   restart,
@@ -111,7 +113,7 @@ export function initializeActiveMapControls({
     const date = new Date(store.year, store.month + offset);
     store.year = date.getFullYear();
     store.month = date.getMonth();
-    render();
+    renderMonthView();
   };
   bindButton("prevMonth", () => changeMonth(-1));
   bindButton("nextMonth", () => changeMonth(1));

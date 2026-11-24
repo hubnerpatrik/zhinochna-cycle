@@ -88,6 +88,12 @@ function renderActiveMapMeta() {
   save.disabled = activeMap.status === "closed";
 }
 
+// A month change (arrows or calendar swipe) redraws the month label and grid only.
+function renderMonthView() {
+  renderMonth();
+  renderCalendar(selectColumn);
+}
+
 export function render() {
   mobileMap.prepare();
   renderMonth();
@@ -133,6 +139,7 @@ function openActiveMapScreen() {
     mobileMap,
     getColumns: () => currentColumns,
     render,
+    renderMonthView,
     renderZoom,
     renderZoomLabel,
     restart: () => router?.start(),
