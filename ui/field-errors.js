@@ -35,7 +35,7 @@ export function showFieldError(input, text, { focus = false, constraint = false,
     const message = document.createElement('span');
     message.className = 'field-error'; message.id = `field-error-${++nextError}`;
     message.setAttribute('aria-live', 'polite');
-    (input.closest('.time-picker') || input).after(message);
+    (input.closest('.time-picker, .password-input') || input).after(message);
     error = { message, invalid: input.getAttribute('aria-invalid') };
     errors.set(input, error);
     input.setAttribute('aria-describedby', [input.getAttribute('aria-describedby'), message.id].filter(Boolean).join(' '));

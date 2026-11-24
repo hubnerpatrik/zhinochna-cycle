@@ -28,3 +28,22 @@ body.mobile-map-active .cloud-status { position: fixed; bottom: 8px; right: 8px;
   .auth-shell { margin: 3vh auto; padding: 16px; }
   .account-storage-note { order: 3; flex-basis: 100%; }
 }
+.password-input { position: relative; display: block; }
+.password-input > input { display: block; padding-right: 52px; }
+.password-input > .password-toggle {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px;
+  min-height: 0; padding: 0; margin: 0; line-height: 1;
+  display: grid; place-items: center; border: 0; border-radius: 10px;
+  background: transparent; color: var(--muted); cursor: pointer;
+}
+.password-toggle[aria-pressed="true"] { color: var(--text); }
+@media (hover: hover) {
+  .password-toggle:hover { color: var(--text); }
+}
+.password-toggle svg { width: 20px; height: 20px; }
+.password-toggle .password-eye-off, .password-toggle[aria-pressed="true"] .password-eye { display: none; }
+.password-toggle[aria-pressed="true"] .password-eye-off { display: block; }
+.password-input > input::-ms-reveal { display: none; }
+@media (pointer: coarse) {
+  .password-input > .password-toggle { width: 44px; height: 44px; right: 2px; }
+}

@@ -12,7 +12,7 @@
 .feedback-image-picker { display: grid; gap: 8px; margin-block: 16px; }
 .feedback-image-picker input { display: block; width: 100%; margin-top: 8px; font-size: 0.875rem; }
 .feedback-image-picker small { color: var(--ink-muted); }
-.map-export-popover { position: fixed; inset: auto; margin: 0; display: none; grid-template-columns: 1fr; gap: 6px; width: 180px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 10px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card); box-shadow: 0 12px 36px var(--shade); }
+.map-export-popover { position: fixed; right: auto; bottom: auto; margin: 0; display: none; grid-template-columns: 1fr; gap: 6px; width: 180px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow: auto; padding: 10px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--card); box-shadow: 0 12px 36px var(--shade); }
 .map-export-popover:popover-open { display: grid; }
 .map-export-popover {
   transform-origin: var(--menu-origin-x, 50%) var(--menu-origin-y, 0);
@@ -71,6 +71,8 @@
   .mobile-selected-measurement { display: grid; justify-items: end; gap: 4px; min-width: 0; max-width: 55%; }
   #mobileSelectedFactor { max-width: 100%; font-size: 0.75rem; color: var(--ink-muted); overflow-wrap: anywhere; text-align: right; }
   #activeMapScreen .calendar .day, #calendar .day { font-size: 0.8125rem; }
+  /* A compact line box and room underneath keep the number clear of the dots at 320–390 px. */
+  #calendar .day { line-height: 1; padding-bottom: 5px; }
   #calendar .day-cycle-num { font-size: 0.6875rem; font-weight: 600; padding: 1px 3px; box-shadow: none; }
   /* Give the number the room below the cycle-day badge so the two never overlap at 320 px. */
   #calendar .day:has(.day-cycle-num) { padding-top: 12px; }
@@ -177,6 +179,26 @@
     border-color: rgba(31, 26, 23, 0.22);
     background: var(--surface-alt);
   }
+}
+
+/* On a map card the icon buttons sit on white and must not blend into it or into each other:
+   export takes a pale coral from Open map's family, ⋯ a neutral warm fill. */
+.map-list-actions .btn.map-export-btn {
+  background: var(--action-tint);
+  border-color: transparent;
+  color: var(--action);
+}
+
+@media (hover: hover) {
+  .map-list-actions .btn.map-export-btn:hover {
+    background: var(--action-tint);
+    border-color: var(--action-soft);
+  }
+}
+
+.map-list-actions .map-more-btn {
+  background: var(--surface-alt);
+  border-color: transparent;
 }
 
 /* Cards: white on the warm ground, no border, one soft ambient lift. */
@@ -657,6 +679,15 @@ select:not([multiple]) {
     font-weight: 650;
     letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* A missing reading is a quiet label, not a 2rem number, so it fits next to the date on 320 px phones. */
+  #mobileSelectedTemp.is-empty {
+    font-size: 1rem;
+    font-weight: 550;
+    letter-spacing: 0;
+    color: var(--ink-muted);
+    text-align: right;
   }
 
   .mobile-map-actions > .btn {

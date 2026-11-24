@@ -16,14 +16,28 @@ export function settle({ offset, velocity, width }) {
   return projected < 0 ? { direction: 1, target: -width } : { direction: -1, target: width };
 }
 
-function layoutOffset(element) {
+/**
+ * Moves the grid sideways. One Web Animation is reused while it slides, so a frame changes only that
+ * element's transform; rewriting a stylesheet rule instead restyles the whole page on every frame.
+ * Browsers without Web Animations fall back to the shared layout class.
+ */
+export function calendarOffset(element) {
+  let animation = null;
   return offset => {
     if (!offset) {
+      animation?.cancel();
+      animation = null;
       element.classList.remove('calendar-dragging', 'layout-calendar-drag');
       return;
     }
     element.classList.add('calendar-dragging');
-    applyLayoutClass(element, 'calendar-drag', { '--calendar-drag-x': offset });
+    if (typeof element.animate !== 'function') {
+      applyLayoutClass(element, 'calendar-drag', { '--calendar-drag-x': offset });
+      return;
+    }
+    const frames = [{ transform: `translateX(${offset}px)` }];
+    if (animation) animation.effect.setKeyframes(frames);
+    else animation = element.animate(frames, { duration: 0, fill: 'forwards' });
   };
 }
 
@@ -33,7 +47,7 @@ export function bindCalendarSwipe(calendar, {
   reducedMotion = () => false,
   area = calendar,               // stable element that listens; the grid itself moves sideways
   isInside = () => true,         // is this touch within the grid's band (vertical bounds)?
-  setOffset = layoutOffset(calendar),
+  setOffset = calendarOffset(calendar),
   schedule = callback => requestAnimationFrame(callback),
   cancelSchedule = frame => cancelAnimationFrame(frame),
   now = () => performance.now(),

@@ -67,3 +67,11 @@ test('export menu retains its viewport gap and chooses the available side of its
   assert.deepEqual(exportMenuPosition({ left: 280, top: 650, bottom: 690 }, size, viewport), { left: 132, top: 482 });
   assert.deepEqual(exportMenuPosition({ left: -10, top: 10, bottom: 50 }, size, { width: 200, height: 100 }), { left: 8, top: 8 });
 });
+
+test('the export popover leaves left/top to the positioned-overlay class instead of pinning itself to a corner', async () => {
+  const { readFileSync } = await import('node:fs');
+  const css = readFileSync(new URL('../styles/components.css', import.meta.url), 'utf8');
+  const rules = [...css.matchAll(/\.map-export-popover\s*\{([^}]*)\}/g)].map(match => match[1]);
+  assert.ok(rules.length);
+  for (const body of rules) assert.doesNotMatch(body, /(^|[\s;])(inset|left|top)\s*:/, 'later stylesheet must not override .positioned-overlay');
+});

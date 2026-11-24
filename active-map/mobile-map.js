@@ -319,7 +319,9 @@ export function createMobileMap({ render, getColumns, interactions }) {
       const column = getColumns().find(item => item.key === key);
       setText(getElementById("mobileSelectedCycle"), column?.cycleDay ? `Cycle day ${column.cycleDay}` : "");
       const temp = store.entries[key]?.temp;
-      setText(getElementById("mobileSelectedTemp"), temp == null ? "No temperature" : `${formatTemp(temp)} °C`);
+      const selectedTemp = getElementById("mobileSelectedTemp");
+      setText(selectedTemp, temp == null ? "No temperature" : `${formatTemp(temp)} °C`);
+      selectedTemp.classList.toggle('is-empty', temp == null);
       const entry = store.entries[key];
       const factor = getElementById('mobileSelectedFactor');
       if (factor) {

@@ -14,6 +14,29 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.20.1 — 2026-11-24
+
+### Added
+
+- Password fields on the sign-in, sign-up and reset screens have an eye button that shows or hides the password.
+- Cycle Tracker can be installed on a phone: Chrome on Android offers **Install app**, and it opens from its own gerbera icon in a window without the browser bar (Safari on iPhone uses the same icon for **Add to Home Screen**). The browser tab shows the gerbera too, instead of a generic icon. An internet connection is still needed to sign in and sync.
+
+### Changed
+
+- The PDF observation card now follows the printed self-observation chart: in Czech, Slovak and English its labels are translated in place with the chart's own bold headings, grouped mucus rows, legends and footer boxes; in Ukrainian the chart's own labels stay as printed.
+- Entries are written onto the card like the chart's filled-in sample: in one blue pen colour, with the month in words, dates as day.month, crosses for present observations and the legend's letters for coded ones (influence factors, sensation, colour, cervix). A reading taken more than 30 minutes from the usual time is marked V and its time is written up the day's column; fertile days are circled in the Fertile days row instead of shading the chart, and the map's measurement method is highlighted among the printed options.
+
+### Fixed
+
+- The calendar month swipe is smooth again: the sliding grid moves through one Web Animation instead of rewriting a stylesheet rule (which restyled the whole page) on every frame, and changing the month redraws only the calendar instead of the whole map, so the slide no longer stalls halfway. The month arrows benefit too.
+- On phones, the calendar's dots for influence factors, sex and symptoms sit in their own strip below the day number instead of touching it.
+- On narrow phones, a day without a temperature shows "No temperature" as a quiet label that fits next to the date instead of running past the edge of the card.
+- The export menu on a map card opens next to its button again instead of in the top-left corner of the screen.
+
+### Design
+
+- On a map card, the export button is pale coral with a coral icon and the ⋯ button a neutral warm fill, so the two stand apart from the white card and from each other.
+
 ## 0.20.0 — 2026-11-21
 
 ### Touch and motion

@@ -7,9 +7,11 @@ import { helpMessages } from './help.js';
 import { profilePhotoMessages } from './profile-photo.js';
 import { feedbackImprovementMessages } from './feedback-improvements.js';
 import { homeMessages } from './home.js';
+import { observationCardMessages } from './observation-card.js';
 
 export const messages = {
   ...exportMessages,
+  ...observationCardMessages,
   ...homeMessages,
   ...feedbackImprovementMessages,
   ...profilePhotoMessages,

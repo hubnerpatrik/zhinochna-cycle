@@ -2,6 +2,7 @@ import { AUTH_NAME_MAX_LENGTH, EMAIL_MAX_LENGTH, VERIFICATION_CODE_MAX_LENGTH, P
 import { escapeHtml } from "./view-utils.js";
 import { mountLanguagePicker, setText, translateDOM } from "../i18n.js";
 import { showFieldError, initializeFieldErrors } from '../ui/field-errors.js';
+import { passwordInput, mountPasswordToggles, hidePasswords } from '../ui/password-toggle.js';
 
 const AUTH_SCREENS = {
   "sign-in": ["Welcome back", "Sign in to your account.", "Sign in"],
@@ -31,8 +32,8 @@ export function renderAuthView(root, { mode, email = "", message = "", error = f
         ${mode === "sign-up" ? `<label class="auth-field"><span data-i18n>Name</span><input name="name" autocomplete="name" maxlength="${AUTH_NAME_MAX_LENGTH}" required></label>` : ""}
         ${emailField ? `<label class="auth-field"><span data-i18n>Email</span><input name="email" type="email" autocomplete="email" maxlength="${EMAIL_MAX_LENGTH}" value="${escapeHtml(email)}" required></label>` : ""}
         ${mode === "verify-email" ? `<label class="auth-field"><span data-i18n>Verification code</span><input name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]+" maxlength="${VERIFICATION_CODE_MAX_LENGTH}" spellcheck="false" required></label>` : ""}
-        ${passwordField ? `<label class="auth-field"><span data-i18n>Password</span><input name="password" type="password" autocomplete="${mode === "sign-in" ? "current-password" : "new-password"}" ${mode === "sign-in" ? "" : `minlength="${PASSWORD_MIN_LENGTH}"`} maxlength="${PASSWORD_MAX_LENGTH}" required></label>` : ""}
-        ${mode === "sign-up" || mode === "reset-password" ? `<label class="auth-field"><span data-i18n>Confirm password</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="${PASSWORD_MIN_LENGTH}" maxlength="${PASSWORD_MAX_LENGTH}" required></label>` : ""}
+        ${passwordField ? `<div class="auth-field"><label for="authPassword" data-i18n>Password</label>${passwordInput(`<input id="authPassword" name="password" type="password" autocomplete="${mode === "sign-in" ? "current-password" : "new-password"}" ${mode === "sign-in" ? "" : `minlength="${PASSWORD_MIN_LENGTH}"`} maxlength="${PASSWORD_MAX_LENGTH}" required>`)}</div>` : ""}
+        ${mode === "sign-up" || mode === "reset-password" ? `<div class="auth-field"><label for="authConfirmPassword" data-i18n>Confirm password</label>${passwordInput(`<input id="authConfirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="${PASSWORD_MIN_LENGTH}" maxlength="${PASSWORD_MAX_LENGTH}" required>`)}</div>` : ""}
         <button type="submit" class="btn primary" data-i18n>${escapeHtml(action)}</button>
       </form>` : ""}
       ${mode === "error" ? '<button class="btn primary" type="button" data-retry data-i18n>Try again</button>' : ""}
@@ -49,6 +50,7 @@ export function renderAuthView(root, { mode, email = "", message = "", error = f
   setText(root.querySelector(".auth-feedback"), message);
   translateDOM(root);
   mountLanguagePicker(root.querySelector(".language-picker"));
+  mountPasswordToggles(root);
   root.querySelectorAll("[data-auth-mode]").forEach(button => {
     button.onclick = () => onMode(button.dataset.authMode, root.querySelector('[name="email"]')?.value);
   });
@@ -74,6 +76,7 @@ export function renderAuthView(root, { mode, email = "", message = "", error = f
     finally {
       form.removeAttribute("aria-busy");
       controls.forEach(control => { control.disabled = false; });
+      hidePasswords(form);
       form.querySelectorAll('input[type="password"], input[name="otp"]').forEach(input => { input.value = ""; });
     }
   });
