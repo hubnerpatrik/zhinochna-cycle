@@ -14,6 +14,8 @@ vMAJOR.MINOR.PATCH
 
 ## Unreleased
 
+## 0.20.1 — 2026-11-24
+
 ### Added
 
 - Password fields on the sign-in, sign-up and reset screens have an eye button that shows or hides the password.

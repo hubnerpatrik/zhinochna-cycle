@@ -1,11 +1,11 @@
 // Update together with package.json when preparing a release. Keep copy user-facing.
 export const currentRelease = {
-  version: '0.20.0',
+  version: '0.20.1',
   githubUrl: 'https://github.com/hubnerpatrik/zhinochna-cycle/releases',
   changes: [
-    "The main menu is now a Home page with a gerbera meadow; signed-out visitors see it before signing in.",
-    "A new look across the app, with sheets, the calendar swipe and screen changes that follow your finger on phones.",
-    "A deleted map can be brought back with Undo for 10 seconds, and the calendar works with the keyboard and screen readers.",
+    "Cycle Tracker can be installed on your phone and opens from its own gerbera icon.",
+    "The PDF observation card now looks like the printed self-observation chart and is filled in like its sample.",
+    "A smoother calendar swipe, a show/hide button for passwords and several fixes for phones.",
   ],
 };
 export const RELEASE_SEEN_KEY = 'cycle-release-notes-seen';
