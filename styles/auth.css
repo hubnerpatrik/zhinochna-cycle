@@ -36,7 +36,10 @@ body.mobile-map-active .cloud-status { position: fixed; bottom: 8px; right: 8px;
   display: grid; place-items: center; border: 0; border-radius: 10px;
   background: transparent; color: var(--muted); cursor: pointer;
 }
-.password-toggle:hover, .password-toggle[aria-pressed="true"] { color: var(--text); }
+.password-toggle[aria-pressed="true"] { color: var(--text); }
+@media (hover: hover) {
+  .password-toggle:hover { color: var(--text); }
+}
 .password-toggle svg { width: 20px; height: 20px; }
 .password-toggle .password-eye-off, .password-toggle[aria-pressed="true"] .password-eye { display: none; }
 .password-toggle[aria-pressed="true"] .password-eye-off { display: block; }
